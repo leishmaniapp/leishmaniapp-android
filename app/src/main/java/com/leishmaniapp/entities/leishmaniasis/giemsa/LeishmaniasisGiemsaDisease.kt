@@ -1,5 +1,13 @@
 package com.leishmaniapp.entities.leishmaniasis.giemsa
 
+import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.Disease
 
-sealed class LeishmaniasisGiemsaDisease: Disease(id = "leishmaniasis.giemsa")
+object LeishmaniasisGiemsaDisease : Disease(id = "leishmaniasis.giemsa") {
+    init {
+        models.apply {
+            add(DiagnosisModel(model = "macrophages", disease = this@LeishmaniasisGiemsaDisease))
+            add(DiagnosisModel(model = "parasites", disease = this@LeishmaniasisGiemsaDisease))
+        }
+    }
+}
