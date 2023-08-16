@@ -1,4 +1,4 @@
-package com.leishmaniapp.ui.theme
+package com.leishmaniapp.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
