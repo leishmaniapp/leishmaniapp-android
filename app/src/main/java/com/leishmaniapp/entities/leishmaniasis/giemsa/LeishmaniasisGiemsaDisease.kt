@@ -1,4 +1,4 @@
-package com.leishmaniapp.entities.leishmaniasis
+package com.leishmaniapp.entities.leishmaniasis.giemsa
 
 import com.leishmaniapp.entities.Disease
 
