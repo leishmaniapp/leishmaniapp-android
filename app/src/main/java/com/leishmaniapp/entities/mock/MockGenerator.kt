@@ -81,7 +81,7 @@ class MockGenerator {
                 patientDiagnosed = mockPatient(),
                 diagnosticDisease = MockDisease,
                 diagnosticImages = buildSet {
-                    for (i in 0..10) {
+                    repeat(10) {
                         add(mockImage())
                     }
                 }.toMutableSet()
