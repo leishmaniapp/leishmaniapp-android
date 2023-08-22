@@ -1,11 +1,13 @@
 package com.leishmaniapp.presentation.views
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,6 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.leishmaniapp.MainActivity
 import com.leishmaniapp.R
 import com.leishmaniapp.presentation.theme.LeishmaniappTheme
 
@@ -56,6 +59,8 @@ class DiseasesMenuActivity : ComponentActivity() {
         setContent(){
             LeishmaniappTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {
+                    val context = LocalContext.current
+
                     Column(modifier = Modifier.fillMaxSize()) {
                         leishmaniapNameBar()
                         Spacer(modifier = Modifier.height(52.dp))
@@ -66,12 +71,14 @@ class DiseasesMenuActivity : ComponentActivity() {
                         pacientList(
                             painter = painterResource(id = R.drawable.image_pantalla_inicial),
                             modifier = Modifier.align(Alignment.CenterHorizontally),
-                            stringResId = R.string.label_leishmaniasis
+                            stringResId = R.string.label_leishmaniasis,
+                            MenuTypeDeseaseActivity::class.java
                         )
                         pacientList(
                             painter = painterResource(id = R.drawable.image_pantalla_inicial),
                             modifier = Modifier.align(Alignment.CenterHorizontally),
-                            stringResId = R.string.label_Malaria
+                            stringResId = R.string.label_Malaria,
+                            MenuTypeDeseaseActivity::class.java
                         )
                     }
                 }
@@ -159,8 +166,13 @@ fun searchDisease(){
 }
 
 @Composable
-fun pacientList(painter: Painter, modifier: Modifier, stringResId: Int){
-    Column {
+fun pacientList(painter: Painter, modifier: Modifier, stringResId: Int, menuTypeDeseaseActivity: Class<*>){
+    val context = LocalContext.current
+
+    Column(modifier = Modifier.clickable{
+        val intent = Intent(context, menuTypeDeseaseActivity)
+        context.startActivity(intent)
+    }) {
         Row (
             modifier = Modifier.padding(29.dp),
             horizontalArrangement = Arrangement.Center,

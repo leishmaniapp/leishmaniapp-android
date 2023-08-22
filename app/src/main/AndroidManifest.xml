@@ -19,6 +19,12 @@
             android:name=".presentation.views.DiseasesMenuActivity"
             android:exported="false" />
         <activity
+            android:name=".presentation.views.MenuTypeDeseaseActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.views.earringsActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"

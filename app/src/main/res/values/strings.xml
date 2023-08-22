@@ -28,4 +28,9 @@
     <string name="label_diseases">Enfermedades</string>
     <string name="label_leishmaniasis">Leishmaniasis</string>
     <string name="label_Malaria">Malaria</string>
+    <string name="button_start_diagnosis">Comenzar diagnostico</string>
+    <string name="button_pacients">Pacientes</string>
+    <string name="button_reminder">Pendientes</string>
+    <string name="button_import_export">Importa o exporta</string>
+    <string name="label_synchronize">Sincronizar ahora</string>
 </resources>
