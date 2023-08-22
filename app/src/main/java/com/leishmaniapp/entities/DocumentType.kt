@@ -7,5 +7,5 @@ enum class DocumentType {
     CC,
     TI,
     CE,
-    PASSWORD
+    PASSPORT
 }

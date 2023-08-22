@@ -11,8 +11,9 @@ data class Diagnosis(
     val patientDiagnosed: Patient,
     val diagnosticDisease: Disease,
     val diagnosticImages: MutableSet<Image>,
-    var computedResults: Map<Pair<KClass<out DiagnosticElement>, String>, Int>,
 ) {
+    var computedResults: Map<Pair<KClass<out DiagnosticElement>, String>, Int> = mapOf()
+
     /**
      * Get the amount of images associated with the diagnosis
      * @TODO Write tests for this function

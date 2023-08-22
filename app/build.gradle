@@ -91,4 +91,7 @@ dependencies {
     // Functional programming with Arrow library
     implementation("io.arrow-kt:arrow-core:1.2.0")
     implementation("io.arrow-kt:arrow-fx-coroutines:1.2.0")
+
+    // Faker for mock data
+    implementation 'net.datafaker:datafaker:2.0.1'
 }
