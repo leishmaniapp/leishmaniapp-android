@@ -1,3 +1,39 @@
 <resources>
-    <string name="app_name">Leishmaniapp</string>
+    <string name="app_name">LeishmaniApp</string>
+    <string name="title_patients">Pacientes</string>
+    <string name="search_patients">Buscar pacientes</string>
+    <string name="add_patients">Agregar paciente</string>
+    <string name="patient_name">Nombre del paciente</string>
+    <string name="type_of_id">Tipo de identificación</string>
+    <string name="number_id">Número de identificación</string>
+
+    <string-array name="patients">
+        <item>1003452123 </item>
+        <item>3192839012</item>
+        <item>1002344122</item>
+        <item>12938120934</item>
+        <item>1000383832</item>
+        <item>1004445788</item>
+        <item>1004455236</item>
+        <item>54342634</item>
+        <item>1002566231</item>
+        <item>12938120934</item>
+        <item>1000383832</item>
+        <item>1004445788</item>
+        <item>1004455236</item>
+        <item>54342634</item>
+        <item>1002566231</item>
+    </string-array>
+
+
+    <string-array name="typeOfId">
+        <item>TI</item>
+        <item>CC</item>
+        <item>CE</item>
+        <item>Pasaporte</item>
+
+
+    </string-array>
 </resources>
+
+
