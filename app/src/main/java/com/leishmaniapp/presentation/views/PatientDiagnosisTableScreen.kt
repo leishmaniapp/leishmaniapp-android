@@ -5,15 +5,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.leishmaniapp.presentation.theme.LeishmaniappTheme
+import com.leishmaniapp.R
+import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
+import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
 fun PatientDiagnosisTableScreen() {
-    Scaffold { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
+    LeishmaniappScaffold(title = stringResource(id = R.string.patient_diagnosis_table_screen_appbar_title)) {
 
-        }
     }
 }
 

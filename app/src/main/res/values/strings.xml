@@ -5,4 +5,5 @@
     <string name="search">Buscar</string>
     <string name="patient_diagnosis_history_screen_appbar_title">Historial de Diagnóstico</string>
     <string name="patient_diagnosis_history_screen_missing">No hay diagnósticos previos</string>
+    <string name="patient_diagnosis_table_screen_appbar_title">Diagnóstico</string>
 </resources>
