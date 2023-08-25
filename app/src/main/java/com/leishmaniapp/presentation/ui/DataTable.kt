@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -100,8 +101,8 @@ class DataTableScope(
                 borderStroke: BorderStroke = this.borderStroke,
                 contentAlignment: Alignment = this.contentAlignment,
                 cellPaddingValues: PaddingValues = this.cellPaddingValues,
-                backgroundColor: Color = MaterialTheme.colorScheme.onPrimary,
-                foregroundColor: Color = MaterialTheme.colorScheme.background,
+                backgroundColor: Color = MaterialTheme.colorScheme.primary,
+                foregroundColor: Color = MaterialTheme.colorScheme.onPrimary,
                 content: @Composable () -> Unit
             ) = ColorCell(
                 modifier,
@@ -186,8 +187,8 @@ class DataTableScope(
         borderStroke: BorderStroke = this.borderStroke,
         contentAlignment: Alignment = Alignment.Center,
         cellPaddingValues: PaddingValues = this.cellPaddingValues,
-        backgroundColor: Color = MaterialTheme.colorScheme.onPrimary,
-        foregroundColor: Color = MaterialTheme.colorScheme.background,
+        backgroundColor: Color = MaterialTheme.colorScheme.primary,
+        foregroundColor: Color = MaterialTheme.colorScheme.onPrimary,
         content: @Composable TableRowScope.() -> Unit
     ) = ColorTableRow(
         modifier,
@@ -206,8 +207,8 @@ class DataTableScope(
         borderStroke: BorderStroke = this.borderStroke,
         contentAlignment: Alignment = Alignment.Center,
         cellPaddingValues: PaddingValues = this.cellPaddingValues,
-        backgroundColor: Color = MaterialTheme.colorScheme.primary,
-        foregroundColor: Color = MaterialTheme.colorScheme.onBackground,
+        backgroundColor: Color = MaterialTheme.colorScheme.primaryContainer,
+        foregroundColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
         content: @Composable TableRowScope.() -> Unit
     ) = ColorTableRow(
         modifier,
@@ -223,7 +224,7 @@ class DataTableScope(
 @Composable
 fun DataTable(
     modifier: Modifier = Modifier,
-    borderStroke: BorderStroke = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
+    borderStroke: BorderStroke = BorderStroke(0.dp, MaterialTheme.colorScheme.onBackground),
     contentAlignment: Alignment = Alignment.Center,
     cellPaddingValues: PaddingValues = PaddingValues(all = 0.dp),
     content: @Composable DataTableScope.() -> Unit
