@@ -10,4 +10,7 @@ data class Patient(
     val name: String,
     val id: IdentificationDocument,
     val documentType: DocumentType
-)
+) {
+    val documentString: String
+        get() = String.format("%s %s", documentType, id)
+}

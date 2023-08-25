@@ -1,10 +1,12 @@
 package com.leishmaniapp.entities
 
+import arrow.core.flatMap
 import kotlinx.datetime.LocalDateTime
 import kotlin.reflect.KClass
 
 data class Diagnosis(
-    val result: Boolean,
+    val specialistResult: Boolean,
+    val modelResult: Boolean,
     val date: LocalDateTime,
     val remarks: String,
     val specialist: Specialist,
@@ -12,7 +14,7 @@ data class Diagnosis(
     val diagnosticDisease: Disease,
     val diagnosticImages: MutableSet<Image>,
 ) {
-    var computedResults: Map<Pair<KClass<out DiagnosticElement>, String>, Int> = mapOf()
+    var computedResults: Map<String, Map<KClass<out DiagnosticElement>, Int>> = mapOf()
 
     /**
      * Get the amount of images associated with the diagnosis
@@ -37,8 +39,19 @@ data class Diagnosis(
     fun computeResults() {
         computedResults = diagnosticImages.flatMap {
             it.diagnosticElements
-        }.groupingBy {
-            it::class to it.name
-        }.eachCount()
+        }
+            .groupBy { it.name }
+            .mapValues {
+                it.value.map { diagnosticElement ->
+                    Pair(
+                        diagnosticElement::class,
+                        diagnosticElement.amount
+                    )
+                }.groupingBy { elementPair ->
+                    elementPair.first
+                }.aggregate { _, accumulator: Int?, element, _ ->
+                    accumulator?.plus(element.second) ?: element.second
+                }
+            }
     }
 }

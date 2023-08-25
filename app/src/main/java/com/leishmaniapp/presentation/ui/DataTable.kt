@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,8 +28,11 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  */
 class DataTableScope(
     private val columnScope: ColumnScope,
-    var borderStroke: BorderStroke
+    var borderStroke: BorderStroke,
+    var contentAlignment: Alignment,
+    var cellPaddingValues: PaddingValues,
 ) {
+    @Composable
     operator fun invoke() {
     }
 
@@ -38,9 +42,13 @@ class DataTableScope(
          */
         class TableRowScope(
             private val rowScope: RowScope,
-            private val dataTableScope: DataTableScope
+            private val dataTableScope: DataTableScope,
         ) {
-            var borderStroke: BorderStroke = dataTableScope.borderStroke;
+            var borderStroke: BorderStroke = this.dataTableScope.borderStroke
+            var contentAlignment: Alignment = this.dataTableScope.contentAlignment
+            var cellPaddingValues: PaddingValues = this.dataTableScope.cellPaddingValues
+
+            @Composable
             operator fun invoke() {
             }
 
@@ -48,6 +56,8 @@ class DataTableScope(
             fun Cell(
                 modifier: Modifier = Modifier,
                 borderStroke: BorderStroke = this.borderStroke,
+                contentAlignment: Alignment = this.contentAlignment,
+                cellPaddingValues: PaddingValues = this.cellPaddingValues,
                 content: @Composable () -> Unit
             ) {
                 rowScope.apply {
@@ -55,9 +65,11 @@ class DataTableScope(
                         modifier = modifier
                             .weight(1f)
                             .border(borderStroke),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = contentAlignment
                     ) {
-                        content.invoke()
+                        Box(modifier.padding(cellPaddingValues)) {
+                            content.invoke()
+                        }
                     }
                 }
             }
@@ -66,42 +78,59 @@ class DataTableScope(
             fun ColorCell(
                 modifier: Modifier = Modifier,
                 borderStroke: BorderStroke = this.borderStroke,
+                contentAlignment: Alignment = this.contentAlignment,
+                cellPaddingValues: PaddingValues = this.cellPaddingValues,
                 backgroundColor: Color,
                 foregroundColor: Color,
                 content: @Composable () -> Unit
+            ) = Cell(
+                modifier.background(backgroundColor),
+                borderStroke,
+                contentAlignment,
+                cellPaddingValues
             ) {
-                rowScope.apply {
-                    Box(
-                        modifier = modifier
-                            .weight(1f)
-                            .border(borderStroke)
-                            .background(backgroundColor),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CompositionLocalProvider(LocalContentColor provides foregroundColor) {
-                            content.invoke()
-                        }
-                    }
+                CompositionLocalProvider(LocalContentColor provides foregroundColor) {
+                    content.invoke()
                 }
             }
 
             @Composable
             fun HeadingCell(
                 modifier: Modifier = Modifier,
-                borderStroke: BorderStroke = this.dataTableScope.borderStroke,
+                borderStroke: BorderStroke = this.borderStroke,
+                contentAlignment: Alignment = this.contentAlignment,
+                cellPaddingValues: PaddingValues = this.cellPaddingValues,
                 backgroundColor: Color = MaterialTheme.colorScheme.onPrimary,
                 foregroundColor: Color = MaterialTheme.colorScheme.background,
                 content: @Composable () -> Unit
-            ) = ColorCell(modifier, borderStroke, backgroundColor, foregroundColor, content)
+            ) = ColorCell(
+                modifier,
+                borderStroke,
+                contentAlignment,
+                cellPaddingValues,
+                backgroundColor,
+                foregroundColor,
+                content
+            )
 
             @Composable
             fun SubheadingCell(
                 modifier: Modifier = Modifier,
-                borderStroke: BorderStroke = this.dataTableScope.borderStroke,
+                borderStroke: BorderStroke = this.borderStroke,
+                contentAlignment: Alignment = this.contentAlignment,
+                cellPaddingValues: PaddingValues = this.cellPaddingValues,
                 backgroundColor: Color = MaterialTheme.colorScheme.primary,
                 foregroundColor: Color = MaterialTheme.colorScheme.onBackground,
                 content: @Composable () -> Unit
-            ) = ColorCell(modifier, borderStroke, backgroundColor, foregroundColor, content)
+            ) = ColorCell(
+                modifier,
+                borderStroke,
+                contentAlignment,
+                cellPaddingValues,
+                backgroundColor,
+                foregroundColor,
+                content
+            )
         }
     }
 
@@ -109,19 +138,21 @@ class DataTableScope(
     fun TableRow(
         modifier: Modifier = Modifier,
         borderStroke: BorderStroke = this.borderStroke,
+        contentAlignment: Alignment = this.contentAlignment,
+        cellPaddingValues: PaddingValues = this.cellPaddingValues,
         content: @Composable TableRowScope.() -> Unit
     ) {
         columnScope.apply {
-            Row(
-                modifier
-                    .fillMaxWidth()
-                    .border(borderStroke)
-            ) {
+            Row(modifier.fillMaxWidth()) {
                 // Create the row scope
                 val tableRowScope = TableRowScope(
                     this@Row,
-                    this@DataTableScope
-                );
+                    this@DataTableScope,
+                ).also { tableRowScope ->
+                    tableRowScope.borderStroke = borderStroke
+                    tableRowScope.contentAlignment = contentAlignment
+                    tableRowScope.cellPaddingValues = cellPaddingValues
+                }
                 // Invoke content scoped
                 content.invoke(tableRowScope)
             }
@@ -132,27 +163,20 @@ class DataTableScope(
     fun ColorTableRow(
         modifier: Modifier = Modifier,
         borderStroke: BorderStroke = this.borderStroke,
+        contentAlignment: Alignment = this.contentAlignment,
+        cellPaddingValues: PaddingValues = this.cellPaddingValues,
         backgroundColor: Color,
         foregroundColor: Color,
         content: @Composable TableRowScope.() -> Unit
+    ) = TableRow(
+        modifier.background(backgroundColor),
+        borderStroke,
+        contentAlignment,
+        cellPaddingValues
     ) {
-        columnScope.apply {
-            Row(
-                modifier
-                    .fillMaxWidth()
-                    .border(borderStroke)
-                    .background(backgroundColor)
-            ) {
-                // Create the row scope
-                val tableRowScope = TableRowScope(
-                    this@Row,
-                    this@DataTableScope
-                );
-                CompositionLocalProvider(LocalContentColor provides foregroundColor) {
-                    // Invoke content scoped
-                    content.invoke(tableRowScope)
-                }
-            }
+        CompositionLocalProvider(LocalContentColor provides foregroundColor) {
+            // Invoke content scoped
+            content.invoke(this)
         }
     }
 
@@ -160,33 +184,60 @@ class DataTableScope(
     fun HeadingTableRow(
         modifier: Modifier = Modifier,
         borderStroke: BorderStroke = this.borderStroke,
+        contentAlignment: Alignment = Alignment.Center,
+        cellPaddingValues: PaddingValues = this.cellPaddingValues,
         backgroundColor: Color = MaterialTheme.colorScheme.onPrimary,
         foregroundColor: Color = MaterialTheme.colorScheme.background,
         content: @Composable TableRowScope.() -> Unit
-    ) = ColorTableRow(modifier, borderStroke, backgroundColor, foregroundColor, content)
+    ) = ColorTableRow(
+        modifier,
+        borderStroke,
+        contentAlignment,
+        cellPaddingValues,
+        backgroundColor,
+        foregroundColor,
+        content
+    )
 
 
     @Composable
     fun SubheadingTableRow(
         modifier: Modifier = Modifier,
         borderStroke: BorderStroke = this.borderStroke,
+        contentAlignment: Alignment = Alignment.Center,
+        cellPaddingValues: PaddingValues = this.cellPaddingValues,
         backgroundColor: Color = MaterialTheme.colorScheme.primary,
         foregroundColor: Color = MaterialTheme.colorScheme.onBackground,
         content: @Composable TableRowScope.() -> Unit
-    ) = ColorTableRow(modifier, borderStroke, backgroundColor, foregroundColor, content)
+    ) = ColorTableRow(
+        modifier,
+        borderStroke,
+        contentAlignment,
+        cellPaddingValues,
+        backgroundColor,
+        foregroundColor,
+        content
+    )
 }
 
 @Composable
 fun DataTable(
     modifier: Modifier = Modifier,
     borderStroke: BorderStroke = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
+    contentAlignment: Alignment = Alignment.Center,
+    cellPaddingValues: PaddingValues = PaddingValues(all = 0.dp),
     content: @Composable DataTableScope.() -> Unit
 ) {
     Column(modifier) {
         // Create this table scope
-        val dataTableScope = DataTableScope(this, borderStroke);
+        val dataTableScope = DataTableScope(
+            this,
+            borderStroke,
+            contentAlignment,
+            cellPaddingValues
+        )
         // Invoke content scoped
-        content.invoke(dataTableScope);
+        content.invoke(dataTableScope)
     }
 }
 
@@ -223,17 +274,6 @@ fun DataTablePreview_CustomBorders() {
                 Cell { Text(text = "Using custom borders!") }
             }
 
-            SubheadingTableRow(
-                borderStroke = BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.onPrimary
-                )
-            ) {
-                Cell { Text(text = "Apply") }
-                Cell { Text(text = "Only to") }
-                Cell { Text(text = "Row borders") }
-            }
-
             ColorTableRow(
                 backgroundColor = MaterialTheme.colorScheme.error,
                 foregroundColor = MaterialTheme.colorScheme.onError
@@ -268,9 +308,57 @@ fun DataTablePreview_CustomBorders() {
 
 
             TableRow {
-                Cell { Text(text = "Using") }
-                SubheadingCell { Text(text = "Jetpack") }
-                HeadingCell { Text(text = "Compose") }
+                Cell { Text(text = "No") }
+                SubheadingCell { Text(text = "Borders") }
+            }
+        }
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun DataTablePreview_WithAlignment() {
+    LeishmaniappTheme {
+        DataTable(
+            modifier = Modifier.padding(16.dp),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            HeadingTableRow {
+                Cell { Text(text = "Headings have Center alignment by default") }
+            }
+            TableRow {
+                Cell(contentAlignment = Alignment.CenterStart) { Text(text = "Left") }
+                Cell(contentAlignment = Alignment.Center) { Text(text = "Center") }
+                Cell(contentAlignment = Alignment.CenterEnd) { Text(text = "Right") }
+            }
+            SubheadingTableRow {
+                Cell { Text(text = "From") }
+                Cell { Text(text = "DataTable") }
+            }
+            TableRow {
+                Cell { Text(text = "Apply") }
+                SubheadingCell { Text(text = "To") }
+                HeadingCell { Text(text = "Row") }
+            }
+        }
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun DataTablePreview_WithPadding() {
+    LeishmaniappTheme {
+        DataTable(
+            modifier = Modifier.padding(16.dp),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            HeadingTableRow {
+                Cell { Text(text = "Cells can have Padding") }
+            }
+            TableRow(cellPaddingValues = PaddingValues(16.dp)) {
+                Cell { Text(text = "Lorem") }
+                Cell { Text(text = "Ipsum") }
+                Cell { Text(text = "Dolor") }
             }
         }
     }

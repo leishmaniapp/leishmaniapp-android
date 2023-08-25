@@ -56,22 +56,23 @@ class MockGenerator {
 
         fun mockSpecialistDiagnosticElement() =
             SpecialistDiagnosticElement(
-                name = "element",
-                amount = Random.nextInt()
+                name = "diagnostic.element",
+                amount = Random.nextInt(50)
             )
 
         fun mockModelDiagnosticElement() =
             ModelDiagnosticElement(
-                name = "element",
-                diagnosisModel = MockDisease.models.first(),
-                items = List(10) {
-                    Random.nextInt(100) to Random.nextInt(100)
+                name = "diagnostic.element",
+                diagnosisModel = MockDisease.models.random(),
+                items = List(Random.nextInt(10)) {
+                    Random.nextInt(10) to (Random.nextInt(10) + 10)
                 }
             )
 
         fun mockDiagnosis() =
             Diagnosis(
-                result = Random.nextBoolean(),
+                specialistResult = Random.nextBoolean(),
+                modelResult = Random.nextBoolean(),
                 date = faker.date().past(1, TimeUnit.DAYS).toInstant().toKotlinInstant()
                     .toLocalDateTime(
                         TimeZone.UTC

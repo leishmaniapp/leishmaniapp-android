@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="leishmaniasis_giemsa_disease_name">Leishmaniasis con tinción tipo Giemsa</string>
+    <string name="leishmaniasis_giemsa_parasite">Parásito</string>
+    <string name="leishmaniasis_giemsa_macrophage">Macrofago</string>
+</resources>
