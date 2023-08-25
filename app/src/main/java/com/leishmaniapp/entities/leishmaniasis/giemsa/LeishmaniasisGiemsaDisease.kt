@@ -9,10 +9,6 @@ import com.leishmaniapp.entities.Disease
 data object LeishmaniasisGiemsaDisease : Disease(
     id = "leishmaniasis.giemsa"
 ) {
-    override val displayName: String
-        @Composable
-        get() = stringResource(id = R.string.leishmaniasis_giemsa_disease_name)
-
     init {
         models.apply {
             add(DiagnosisModel(model = "macrophages", disease = this@LeishmaniasisGiemsaDisease))

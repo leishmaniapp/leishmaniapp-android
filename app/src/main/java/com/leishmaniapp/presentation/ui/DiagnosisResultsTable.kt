@@ -36,7 +36,8 @@ fun DiagnosisResultsTable(
     ) {
         // Disease
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.disease)) } }
-        TableRow { Cell { Text(text = diagnosis.diagnosticDisease.displayName) } }
+        // TODO: Provide some sort of translation provider
+        TableRow { Cell { Text(text = diagnosis.diagnosticDisease.id) } }
         // Date and Time
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.date_time)) } }
         TableRow { Cell { Text(text = diagnosis.date.toString()) } }

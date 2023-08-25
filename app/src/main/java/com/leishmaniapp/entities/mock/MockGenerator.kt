@@ -56,13 +56,13 @@ class MockGenerator {
 
         fun mockSpecialistDiagnosticElement() =
             SpecialistDiagnosticElement(
-                name = "diagnostic.element",
+                name = "diagnostic.mock.element",
                 amount = Random.nextInt(50)
             )
 
         fun mockModelDiagnosticElement() =
             ModelDiagnosticElement(
-                name = "diagnostic.element",
+                name = "diagnostic.mock.element",
                 diagnosisModel = MockDisease.models.random(),
                 items = List(Random.nextInt(10)) {
                     Random.nextInt(10) to (Random.nextInt(10) + 10)
