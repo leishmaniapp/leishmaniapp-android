@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">Leishmaniapp</string>
+    <string name="back_button">Regresar</string>
+    <string name="disease">Enfermedad</string>
+    <string name="send">Enviar</string>
+    <string name="unknown_disease">Enfermedad no Soportada</string>
+    <string name="start_diagnosis">Iniciar un diagnóstico</string>
+    <string name="date_time">Fecha y Hora</string>
+    <string name="patient">Paciente</string>
+    <string name="patient_id_document">Documento de Identificación</string>
+    <string name="number_of_samples">Número de muestas</string>
+    <string name="diagnosis_results">Resultados del análisis</string>
+    <string name="diagnosis_results_positive">Positivo</string>
+    <string name="diagnosis_results_negative">Negativo</string>
+    <string name="specialist">Especialista</string>
+    <string name="model">Modelo</string>
+    <string name="remarks">Observaciones</string>
+    <string name="search">Buscar</string>
+    <string name="diagnosis">Diagnóstico</string>
+    <string name="patient_diagnosis_history_screen_appbar_title">Historial de Diagnóstico</string>
+    <string name="patient_diagnosis_history_screen_missing">No hay diagnósticos previos</string>
 </resources>
