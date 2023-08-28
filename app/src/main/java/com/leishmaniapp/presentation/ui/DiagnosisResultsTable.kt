@@ -40,7 +40,7 @@ fun DiagnosisResultsTable(
         modifier = Modifier
             .clip(shape = RoundedCornerShape(6.dp))
             .border(
-                BorderStroke(1.dp, MaterialTheme.colorScheme.secondary),
+                BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 shape = RoundedCornerShape(6.dp)
             )
     ) {

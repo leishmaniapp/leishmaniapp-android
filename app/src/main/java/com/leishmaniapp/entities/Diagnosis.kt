@@ -1,10 +1,14 @@
 package com.leishmaniapp.entities
 
-import arrow.core.flatMap
 import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.Serializable
+import kotlinx.uuid.UUID
+import kotlinx.uuid.generateUUID
 import kotlin.reflect.KClass
 
+@Serializable
 data class Diagnosis(
+    val id: UUID = UUID.generateUUID(),
     val specialistResult: Boolean,
     val modelResult: Boolean,
     val date: LocalDateTime,

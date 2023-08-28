@@ -46,12 +46,19 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import com.leishmaniapp.presentation.ui.DiagnosisListTile
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
 
-/// TODO: Data is mocked, add the corresponding ViewModel
+/**
+ * @view B03
+ * TODO: Data is mocked, add the corresponding ViewModel
+ */
 @Composable
 fun PatientDiagnosisHistoryScreen(
     diagnosisList: List<Diagnosis> /// TODO: Remove, use viewModel instead
 ) {
-    LeishmaniappScaffold(title = stringResource(id = R.string.patient_diagnosis_history_screen_appbar_title)) {
+    LeishmaniappScaffold(
+        title = stringResource(id = R.string.patient_diagnosis_history_screen_appbar_title),
+        backButtonAction = {
+            /* TODO: Add navigation */
+        }) {
         Box {
             Column(
                 modifier = Modifier

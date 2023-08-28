@@ -30,7 +30,6 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 /**
  * @view B04
- * TODO: Parameters for view
  */
 @Composable
 fun PatientDiagnosisTableScreen(diagnosis: Diagnosis) {
@@ -59,8 +58,8 @@ fun PatientDiagnosisTableScreen(diagnosis: Diagnosis) {
 
                         )
                     Text(
-                        text = diagnosis.date.toString(),
-                        style = MaterialTheme.typography.bodyLarge
+                        text = diagnosis.id.toString(),
+                        style = MaterialTheme.typography.labelMedium
                     )
                 }
 
@@ -88,10 +87,8 @@ fun PatientDiagnosisTableScreen(diagnosis: Diagnosis) {
 @Preview(showBackground = true)
 fun PatientDiagnosisTableScreenPreview() {
     LeishmaniappTheme {
-        PatientDiagnosisTableScreen(
-            diagnosis = MockGenerator.mockDiagnosis().apply {
-                computeResults()
-            }
-        )
+        PatientDiagnosisTableScreen(diagnosis = MockGenerator.mockDiagnosis().apply {
+            computeResults()
+        })
     }
 }
