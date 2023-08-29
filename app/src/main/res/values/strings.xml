@@ -9,6 +9,9 @@
     <string name="patient">Paciente</string>
     <string name="patient_id_document">Documento de Identificación</string>
     <string name="number_of_samples">Número de muestas</string>
+    <string name="sample">Muestra</string>
+    <string name="processed">Procesada</string>
+    <string name="waiting">En curso</string>
     <string name="diagnosis_results">Resultados del análisis</string>
     <string name="diagnosis_results_positive">Positivo</string>
     <string name="diagnosis_results_negative">Negativo</string>
@@ -25,4 +28,11 @@
     <string name="remaining_images_alert_btn">Procesar en segundo plano</string>
     <string name="remaining_images_progress_title">Las imágenes aún están siendo procesadas</string>
     <string name="remaining_images_progress_icon">Sincronizando</string>
+    <string name="finish_diagnosis">Finalizar Diagnóstico</string>
+    <string name="continue_diagnosis">Continuar Diagnóstico</string>
+    <string name="diagnosis_image_grid_screen_header">Galería de Muestras</string>
+    <string name="order_by">Ordenar</string>
+    <string name="order_by_asc">Ascendente</string>
+    <string name="order_by_desc">Descendente</string>
+    <string name="filter_by">Filtrar por</string>
 </resources>

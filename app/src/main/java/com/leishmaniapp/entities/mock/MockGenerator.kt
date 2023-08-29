@@ -43,7 +43,7 @@ class MockGenerator {
             width = 1024,
             height = 1024,
             processed = processed,
-            sample = Random.nextInt(),
+            sample = Random.nextInt(150),
             diagnosticElements = listOf(
                 List(10) {
                     mockSpecialistDiagnosticElement()
@@ -69,7 +69,7 @@ class MockGenerator {
                 }
             )
 
-        fun mockDiagnosis() =
+        fun mockDiagnosis(completed: Boolean = false) =
             Diagnosis(
                 specialistResult = Random.nextBoolean(),
                 modelResult = Random.nextBoolean(),
@@ -83,7 +83,11 @@ class MockGenerator {
                 diagnosticDisease = MockDisease,
                 diagnosticImages = buildSet {
                     repeat(10) {
-                        add(mockImage())
+                        if (completed) {
+                            add(mockImage(true))
+                        } else {
+                            add(mockImage())
+                        }
                     }
                 }.toMutableSet()
             )

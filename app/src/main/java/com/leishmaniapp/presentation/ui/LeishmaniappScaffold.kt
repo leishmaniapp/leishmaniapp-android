@@ -25,6 +25,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 fun LeishmaniappScaffold(
     title: String = stringResource(id = R.string.app_name),
     /* TODO: Navigation controller as parameter */ backButtonAction: (() -> Unit)? = null,
+    bottomBar: @Composable () -> Unit = {},
     content: @Composable BoxScope.() -> Unit
 ) {
     Scaffold(
@@ -60,7 +61,8 @@ fun LeishmaniappScaffold(
                     actionIconContentColor = MaterialTheme.colorScheme.background,
                 )
             )
-        }
+        },
+        bottomBar = bottomBar
     ) { scaffoldPaddingValues ->
         Box(modifier = Modifier.padding(scaffoldPaddingValues)) {
             content.invoke(this)
