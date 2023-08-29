@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.RemoveRedEye
@@ -35,9 +38,17 @@ import com.leishmaniapp.presentation.ui.RemainingImagesAlert
 import com.leishmaniapp.presentation.ui.RemainingImagesProgress
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
+/**
+ * @view D01
+ * @view D02
+ * @view D03
+ * TODO: Data is mocked, add the corresponding ViewModel
+ */
 @Composable
 fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
-    LeishmaniappScaffold(title = stringResource(id = R.string.finish_diagnosis),
+    LeishmaniappScaffold(
+        title = stringResource(id = R.string.finish_diagnosis),
+        showHelp = true,
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(selected = false,
@@ -49,91 +60,88 @@ fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
                     enabled = diagnosis.completed,
                     onClick = { /*TODO*/ },
                     icon = { Icon(Icons.Filled.RemoveRedEye, contentDescription = null) },
-                    label = { Text(text = "Ver informe de diagnóstico") })
+                    label = { Text(text = stringResource(id = R.string.continue_to_report)) })
             }
         }) {
-        Column {
+        // Amount of elements inside a Column
+        val elementsInColumn = 3;
 
-            Text(
-                text = stringResource(id = R.string.diagnosis_image_grid_screen_header),
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 20.dp, bottom = 8.dp)
-            )
+        // Get by diagnostic elements types
+        val diagnosticElements = diagnosis.diagnosticImages.flatMap { image ->
+            image.diagnosticElements
+        }.groupBy { diagnosticElement -> diagnosticElement.name }
 
-            // Show alerts
-            if (!diagnosis.completed) {
-                Box(modifier = Modifier.padding(16.dp)) {
-                    if (!isBackground) {
-                        RemainingImagesAlert()
-                    } else {
-                        RemainingImagesProgress(
-                            done = diagnosis.diagnosticImages.count { image: Image -> image.processed },
-                            of = diagnosis.samples
-                        )
+        // Show grid of images
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(elementsInColumn),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item(span = { GridItemSpan(elementsInColumn) }) {
+                Column {
+                    Text(
+                        text = stringResource(id = R.string.diagnosis_image_grid_screen_header),
+                        style = MaterialTheme.typography.headlineMedium,
+                        modifier = Modifier.padding(vertical = 12.dp)
+                    )
+
+                    // Show alerts
+                    if (!diagnosis.completed) {
+                        Box(modifier = Modifier.padding(bottom = 12.dp)) {
+                            if (!isBackground) {
+                                RemainingImagesAlert()
+                            } else {
+                                RemainingImagesProgress(
+                                    done = diagnosis.diagnosticImages.count { image: Image -> image.processed },
+                                    of = diagnosis.samples
+                                )
+                            }
+                        }
                     }
-                }
-            }
 
-            // Get by diagnostic elements types
-            val diagnosticElements = diagnosis.diagnosticImages.flatMap { image ->
-                image.diagnosticElements
-            }.groupBy { diagnosticElement -> diagnosticElement.name }
-
-            // Ordering
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                Text(text = stringResource(id = R.string.order_by))
-                Row {
-                    FilterChip(modifier = Modifier.padding(4.dp),
-                        selected = true,
-                        onClick = { /*TODO*/ },
-                        label = {
-                            Text(text = stringResource(id = R.string.order_by_asc))
-                        })
-
-                    FilterChip(modifier = Modifier.padding(4.dp),
-                        selected = false,
-                        onClick = { /*TODO*/ },
-                        label = {
-                            Text(text = stringResource(id = R.string.order_by_desc))
-                        })
-                }
-            }
-
-            // Filtering
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                Text(text = stringResource(id = R.string.filter_by))
-                LazyRow {
-                    item {
+                    // Ordering
+                    Text(text = stringResource(id = R.string.order_by))
+                    Row {
                         FilterChip(modifier = Modifier.padding(4.dp),
                             selected = true,
                             onClick = { /*TODO*/ },
-                            label = { Text(text = "Todos") })
-                    }
+                            label = {
+                                Text(text = stringResource(id = R.string.order_by_asc))
+                            })
 
-                    items(diagnosticElements.keys.toList()) { diagnosticElement ->
                         FilterChip(modifier = Modifier.padding(4.dp),
                             selected = false,
                             onClick = { /*TODO*/ },
-                            label = { /*TODO: Use some sort of provider*/
-                                Text(text = diagnosticElement)
+                            label = {
+                                Text(text = stringResource(id = R.string.order_by_desc))
                             })
+                    }
+
+                    // Filtering
+                    Text(text = stringResource(id = R.string.filter_by))
+                    LazyRow {
+                        item {
+                            FilterChip(modifier = Modifier.padding(4.dp),
+                                selected = true,
+                                onClick = { /*TODO*/ },
+                                label = { Text(text = "Todos") })
+                        }
+
+                        items(diagnosticElements.keys.toList()) { diagnosticElement ->
+                            FilterChip(modifier = Modifier.padding(4.dp),
+                                selected = false,
+                                onClick = { /*TODO*/ },
+                                label = { /*TODO: Use some sort of provider*/
+                                    Text(text = diagnosticElement)
+                                })
+                        }
                     }
                 }
             }
 
-
-            // Show grid of images
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(diagnosis.diagnosticImages.toList()) { image ->
-                    DiagnosisImageGridItem(image = image)
-                }
+            items(diagnosis.diagnosticImages.toList()) { image ->
+                DiagnosisImageGridItem(image = image)
             }
         }
     }

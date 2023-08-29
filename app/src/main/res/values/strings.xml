@@ -30,6 +30,8 @@
     <string name="remaining_images_progress_icon">Sincronizando</string>
     <string name="finish_diagnosis">Finalizar Diagnóstico</string>
     <string name="continue_diagnosis">Continuar Diagnóstico</string>
+    <string name="continue_to_report">Ver informe de diagnóstico</string>
+    <string name="help">Ayuda</string>
     <string name="diagnosis_image_grid_screen_header">Galería de Muestras</string>
     <string name="order_by">Ordenar</string>
     <string name="order_by_asc">Ascendente</string>
