@@ -47,67 +47,6 @@ class MainActivity : ComponentActivity() {
 }
 @Composable
 fun Greeting(modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    Column(modifier = Modifier.fillMaxSize()) {
-        Spacer(modifier = Modifier.height(50.dp))
-
-        Text(
-            text = "LeishmaniApp",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(49.dp),
-            style = androidx.compose.ui.text.TextStyle(
-                fontSize = 34.sp,
-                //fontFamily = FontFamily(Font(R.font.)),
-                fontWeight = FontWeight(700),
-                color = Color(0xFFFFFFFF),
-                textAlign = TextAlign.Center,
-            )
-        )
-
-        Image(
-            painter = painterResource(R.drawable.image_pantalla_inicial),
-            contentDescription = "imagen de pantalla inicial",
-            modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(465.dp)
-        )
-
-        Text(
-            text = stringResource(id = R.string.description_app),
-            style = androidx.compose.ui.text.TextStyle(
-                fontSize = 20.sp,
-                fontWeight = FontWeight(500),
-                color = Color(0xFFFFFFFF)
-            ),
-            modifier = Modifier
-                .width(270.dp)
-                .height(74.dp)
-                .align(Alignment.CenterHorizontally)
-        )
-
-        Button(
-            onClick = {
-                context.startActivity(Intent(context, SignInActivity::class.java))
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = Purple41),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 86.dp)
-        ){
-            Text(
-                text = stringResource(id = R.string.button_comenzar),
-                style = androidx.compose.ui.text.TextStyle(
-                    fontSize = 20.sp,
-                    //fontFamily = FontFamily(Font(R.font.inter)),
-                    fontWeight = FontWeight(500),
-                    color = Color(0xFFFFFFFF),
-                    textAlign = TextAlign.Center,
-                )
-            )
-        }
-    }
 }
 
 @Preview(showBackground = true)

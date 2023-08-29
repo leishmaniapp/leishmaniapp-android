@@ -12,18 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Leishmaniapp"
         tools:targetApi="31">
-        <activity
-            android:name=".presentation.views.SignInActivity"
-            android:exported="false" />
-        <activity
-            android:name=".presentation.views.DiseasesMenuActivity"
-            android:exported="false" />
-        <activity
-            android:name=".presentation.views.MenuTypeDeseaseActivity"
-            android:exported="false" />
-        <activity
-            android:name=".presentation.views.earringsActivity"
-            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -1,9 +1,6 @@
 package com.leishmaniapp.presentation.views
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,32 +32,28 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.leishmaniapp.MainActivity
 import com.leishmaniapp.R
 import com.leishmaniapp.presentation.theme.LeishmaniappTheme
 import com.leishmaniapp.presentation.theme.Purple41
 
 
-class SignInActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent(){
-            val emailState = remember { mutableStateOf(TextFieldValue("")) }
-            val passwordState = remember { mutableStateOf(TextFieldValue("")) }
 
-            LeishmaniappTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        Spacer(modifier = Modifier.height(118.dp))
-                        InLabel()
-                        Spacer(modifier = Modifier.height(123.dp))
-                        emailTextField(emailState.value, onEmailValueChange = { emailState.value = it })
-                        Spacer(modifier = Modifier.height(46.dp))
-                        passwordTextField(passwordState.value, onPasswordValueChange = { passwordState.value = it })
-                        Spacer(modifier = Modifier.height(234.dp))
-                        continueB()
-                    }
-                }
+@Composable
+fun SignInActivity(){
+    val emailState = remember { mutableStateOf(TextFieldValue("")) }
+    val passwordState = remember { mutableStateOf(TextFieldValue("")) }
+
+    LeishmaniappTheme {
+        Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Spacer(modifier = Modifier.height(118.dp))
+                InLabel()
+                Spacer(modifier = Modifier.height(123.dp))
+                emailTextField(emailState.value, onEmailValueChange = { emailState.value = it })
+                Spacer(modifier = Modifier.height(46.dp))
+                passwordTextField(passwordState.value, onPasswordValueChange = { passwordState.value = it })
+                Spacer(modifier = Modifier.height(234.dp))
+                continueB(start = R.string.button_comenzar)
             }
         }
     }
@@ -131,12 +124,12 @@ fun passwordTextField(passwordValue: TextFieldValue, onPasswordValueChange: (Tex
 }
 
 @Composable
-fun continueB (){
+fun continueB (start : Int){
     val context = LocalContext.current
     Button(
         onClick = {
-            val intent = Intent(context, DiseasesMenuActivity::class.java)
-            context.startActivity(intent)
+            //val intent = Intent(context, DiseasesMenuActivity::class.java)
+            //context.startActivity(intent)
         },
         colors = ButtonDefaults.buttonColors(containerColor = Purple41),
         modifier = Modifier
@@ -144,7 +137,7 @@ fun continueB (){
             .padding(horizontal = 86.dp)
     ){
         Text(
-            text = stringResource(id = R.string.button_comenzar),
+            text = stringResource(id = start),
             style = TextStyle(
                 fontSize = 20.sp,
                 //fontFamily = FontFamily(Font(R.font.inter)),
@@ -156,8 +149,12 @@ fun continueB (){
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun signInPreview(){
-    InLabel()
+    LeishmaniappTheme {
+        Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
+            SignInActivity()
+        }
+    }
 }

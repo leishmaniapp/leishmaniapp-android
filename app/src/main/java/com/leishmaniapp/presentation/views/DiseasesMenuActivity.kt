@@ -53,35 +53,31 @@ import com.leishmaniapp.MainActivity
 import com.leishmaniapp.R
 import com.leishmaniapp.presentation.theme.LeishmaniappTheme
 
-class DiseasesMenuActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent(){
-            LeishmaniappTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {
-                    val context = LocalContext.current
+@Composable
+fun DiseasesMenuActivity(){
+    LeishmaniappTheme {
+        Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {
+            val context = LocalContext.current
 
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        leishmaniapNameBar()
-                        Spacer(modifier = Modifier.height(52.dp))
-                        diseaseLabel()
-                        Spacer(modifier = Modifier.height(26.dp))
-                        searchDisease()
-                        Spacer(modifier = Modifier.height(43.dp))
-                        pacientList(
-                            painter = painterResource(id = R.drawable.image_pantalla_inicial),
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                            stringResId = R.string.label_leishmaniasis,
-                            MenuTypeDeseaseActivity::class.java
-                        )
-                        pacientList(
-                            painter = painterResource(id = R.drawable.image_pantalla_inicial),
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                            stringResId = R.string.label_Malaria,
-                            MenuTypeDeseaseActivity::class.java
-                        )
-                    }
-                }
+            Column(modifier = Modifier.fillMaxSize()) {
+                leishmaniapNameBar()
+                Spacer(modifier = Modifier.height(52.dp))
+                diseaseLabel()
+                Spacer(modifier = Modifier.height(26.dp))
+                searchDisease()
+                Spacer(modifier = Modifier.height(43.dp))
+                pacientList(
+                    painter = painterResource(id = R.drawable.image_pantalla_inicial),
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    stringResId = R.string.label_leishmaniasis,
+                    /*MenuTypeDeseaseActivity::class.java*/
+                )
+                pacientList(
+                    painter = painterResource(id = R.drawable.image_pantalla_inicial),
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    stringResId = R.string.label_Malaria,
+                    /*MenuTypeDeseaseActivity::class.java*/
+                )
             }
         }
     }
@@ -153,7 +149,7 @@ fun searchDisease(){
             IconButton(onClick = { /*SE HACE LA FUNCION PARA HACER LA BUSQUEDA*/ }) {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = null
+                    contentDescription = "icono siguiente"
                 )
             }
         },
@@ -166,12 +162,12 @@ fun searchDisease(){
 }
 
 @Composable
-fun pacientList(painter: Painter, modifier: Modifier, stringResId: Int, menuTypeDeseaseActivity: Class<*>){
+fun pacientList(painter: Painter, modifier: Modifier, stringResId: Int /*menuTypeDeseaseActivity: Class<*>*/){
     val context = LocalContext.current
 
     Column(modifier = Modifier.clickable{
-        val intent = Intent(context, menuTypeDeseaseActivity)
-        context.startActivity(intent)
+        /*val intent = Intent(context, menuTypeDeseaseActivity)
+        context.startActivity(intent)*/
     }) {
         Row (
             modifier = Modifier.padding(29.dp),
@@ -224,10 +220,10 @@ fun diseaseName(stringResId: Int){
     )
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun menuDiseasesPreview(){
-    leishmaniapNameBar()
-    Spacer(modifier = Modifier.width(70.dp))
-    diseaseLabel()
+    LeishmaniappTheme {
+        DiseasesMenuActivity()
+    }
 }
