@@ -1,9 +1,7 @@
-package com.leishmaniapp.presentation.views
+package com.leishmaniapp.presentation.ui
 
-import android.os.Bundle
+
 import com.leishmaniapp.presentation.ui.*
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,33 +35,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBarColors
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.leishmaniapp.R
 import com.leishmaniapp.presentation.theme.LeishmaniappTheme
 import androidx.compose.material3.Text as Text
-import com.leishmaniapp.presentation.ui.AppNameHeader
 
 
-class PatientListActivity : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            LeishmaniappTheme {
-                previewPatientList()
-            }
-        }
-    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun PatientListScreen(/*listPatients: List<String>*/) {
-        // val context = LocalContext.current
-        val listPatients: List<String> = resources.getStringArray(R.array.patients).toList()
+        val listPatients: List<String> = stringArrayResource(R.array.patients).toList()
         var filteredPatients: List<String> = listPatients
         var query by remember {
             mutableStateOf("")
@@ -108,7 +96,8 @@ class PatientListActivity : ComponentActivity() {
                             .padding(5.dp)
                             .height(70.dp)
                             .width(300.dp)
-                            .clip(RoundedCornerShape(30.dp)),
+                            .clip(RoundedCornerShape(30.dp))
+                            ,
                         placeholder = {
                             Text(
                                 text = stringResource(R.string.search_patients),
@@ -182,5 +171,4 @@ class PatientListActivity : ComponentActivity() {
         }
 
     }
-}
 

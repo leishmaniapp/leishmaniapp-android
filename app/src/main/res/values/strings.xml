@@ -6,6 +6,7 @@
     <string name="patient_name">Nombre del paciente</string>
     <string name="type_of_id">Tipo de identificación</string>
     <string name="number_id">Número de identificación</string>
+    <string name="continue_button">Continuar</string>
 
     <string-array name="patients">
         <item>1003452123 </item>
