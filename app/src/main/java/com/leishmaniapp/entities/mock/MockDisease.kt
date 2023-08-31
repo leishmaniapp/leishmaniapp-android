@@ -3,12 +3,13 @@ package com.leishmaniapp.entities.mock
 import androidx.compose.runtime.Composable
 import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.Disease
+import kotlinx.serialization.Serializable
 
-object MockDisease : Disease(id = "mock.disease") {
-    init {
-        models.apply {
-            add(DiagnosisModel(model = "mock_1", disease = this@MockDisease))
-            add(DiagnosisModel(model = "mock_2", disease = this@MockDisease))
-        }
-    }
-}
+@Serializable
+object MockDisease : Disease(
+    id = "mock.disease", models =
+    setOf(
+        DiagnosisModel("mock.model_1"),
+        DiagnosisModel("mock.model_2"),
+    )
+)
