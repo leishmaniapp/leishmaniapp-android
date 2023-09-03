@@ -1,17 +1,26 @@
 package com.leishmaniapp.presentation.ui
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LeadingIconTab
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,6 +35,11 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
 fun ResultsTable(modelDiagnosticElement: ModelDiagnosticElement?, specialistDiagnosticElement: SpecialistDiagnosticElement?){
+    var progress by remember { mutableStateOf(0.1f) }
+    val animatedProgress = animateFloatAsState(
+        targetValue = progress,
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec, label = ""
+    ).value
     LeishmaniappScaffold {
         Column {
             // Spacer(modifier = Modifier.padding(10.dp))
@@ -38,6 +52,9 @@ fun ResultsTable(modelDiagnosticElement: ModelDiagnosticElement?, specialistDiag
                 DataTable(
                     contentAlignment = Alignment.CenterStart,
                     cellPaddingValues = PaddingValues(6.dp),
+                    modifier = Modifier.border(
+                        BorderStroke(1.dp, MaterialTheme.colorScheme.background)
+                    )
                 ) {
                     SubheadingTableRow {
                         Cell { Text(text = stringResource(id = R.string.characteristic),
@@ -54,7 +71,7 @@ fun ResultsTable(modelDiagnosticElement: ModelDiagnosticElement?, specialistDiag
                             if(modelDiagnosticElement?.amount != null){
                                 Text(text = modelDiagnosticElement.amount.toString())
                             }else{
-                                CircularProgressIndicator()
+                                CircularProgressIndicator(progress = animatedProgress)
                             }
                         }
                         Cell {
@@ -88,6 +105,8 @@ fun ResultsTable(modelDiagnosticElement: ModelDiagnosticElement?, specialistDiag
                     }
                 }
             }
+            Spacer(modifier = Modifier.padding(200.dp))
+            reusableButton(stringResource(id = R.string.see_imge))
         }
     }
 }
