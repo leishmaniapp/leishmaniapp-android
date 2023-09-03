@@ -1,10 +1,7 @@
 package com.leishmaniapp.presentation.views
 
-import android.content.Intent
-import android.os.Bundle
+
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,7 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SearchBar
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -51,16 +47,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leishmaniapp.MainActivity
 import com.leishmaniapp.R
-import com.leishmaniapp.presentation.theme.LeishmaniappTheme
+import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
+import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
 fun DiseasesMenuActivity(){
-    LeishmaniappTheme {
-        Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {
+    LeishmaniappScaffold {
             val context = LocalContext.current
 
             Column(modifier = Modifier.fillMaxSize()) {
-                leishmaniapNameBar()
                 Spacer(modifier = Modifier.height(52.dp))
                 diseaseLabel()
                 Spacer(modifier = Modifier.height(26.dp))
@@ -79,7 +74,6 @@ fun DiseasesMenuActivity(){
                     /*MenuTypeDeseaseActivity::class.java*/
                 )
             }
-        }
     }
 }
 

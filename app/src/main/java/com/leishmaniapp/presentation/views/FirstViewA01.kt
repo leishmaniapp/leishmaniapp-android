@@ -1,6 +1,5 @@
 package com.leishmaniapp.presentation.views
 
-import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Box
@@ -28,8 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leishmaniapp.R
-import com.leishmaniapp.presentation.theme.LeishmaniappTheme
-import com.leishmaniapp.presentation.theme.Purple41
+import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
+import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
 fun firstView(){
@@ -92,7 +91,7 @@ fun description(){
     )
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun GreetingPreview() {
     LeishmaniappTheme {

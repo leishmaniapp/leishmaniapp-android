@@ -19,7 +19,9 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,15 +34,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leishmaniapp.R
+import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import com.leishmaniapp.presentation.ui.theme.Purple41
+import com.leishmaniapp.presentation.ui.theme.md_theme_light_loading
 
 
 @Composable
 fun earringsActivity(){
-    LeishmaniappTheme {
+    LeishmaniappScaffold {
         Column(modifier = Modifier.fillMaxSize()) {
-            leishmaniapNameBar()
+            //leishmaniapNameBar()
             Spacer(modifier = Modifier.height(53.dp))
             textTypeUser()
             Spacer(modifier = Modifier.height(9.dp))
@@ -84,7 +88,6 @@ fun textTypeUser(){
         modifier = Modifier
             .width(147.dp)
             .height(18.dp)
-
     )
 }
 
@@ -119,9 +122,9 @@ fun element(id : String/*, date : Date*/, state : Boolean){
             )
             Spacer(modifier = Modifier.width(50.dp))
             if(state)
-                Icon(imageVector = Icons.Default.Check, contentDescription = null, tint = Color.Green)
+                Icon(imageVector = Icons.Default.Check, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
             else
-                Icon(imageVector = Icons.Default.Refresh, contentDescription = null, tint = Color.Cyan)
+                Icon(imageVector = Icons.Default.Refresh, contentDescription = null, tint = MaterialTheme.colorScheme.error)
 
         }
         Spacer(modifier = Modifier.height(10.dp))
@@ -169,12 +172,12 @@ fun sincronice(){
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
         ) {
-            Icon(Icons.Default.Refresh , contentDescription = null, tint = Purple41)
+            Icon(Icons.Default.Refresh , contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
         }
         Text(
             text = stringResource(id = R.string.label_synchronize),
             style = TextStyle(
-                color = Purple41,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 textAlign = TextAlign.Center,
             ),
             modifier = Modifier
@@ -185,7 +188,7 @@ fun sincronice(){
     }
 }
 
-@Preview(showSystemUi = true)
+@Preview
 @Composable
 fun earringsActivityPreview(){
     LeishmaniappTheme {

@@ -30,7 +30,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leishmaniapp.R
-import com.leishmaniapp.presentation.theme.LeishmaniappTheme
+import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
+import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
 fun menuTypeDiseases(){
@@ -41,10 +42,22 @@ fun menuTypeDiseases(){
                 Spacer(modifier = Modifier.height(59.dp))
                 titleMenu()
                 Column(modifier = Modifier.verticalScroll(scrollState)) {
-                    buttontype(painter = painterResource(id = R.drawable.image_comenzar_diagnostico), R.string.button_start_diagnosis)
-                    buttontype(painter = painterResource(id = R.drawable.image_pacientes), R.string.button_pacients)
-                    buttontype(painter = painterResource(id = R.drawable.image_pendientes), R.string.button_reminder)
-                    buttontype(painter = painterResource(id = R.drawable.image_importa_exporta), R.string.button_import_export)
+                    buttontype(
+                        painter = painterResource(id = R.drawable.image_comenzar_diagnostico),
+                        R.string.button_start_diagnosis
+                    )
+                    buttontype(
+                        painter = painterResource(id = R.drawable.image_pacientes),
+                        R.string.button_pacients
+                    )
+                    buttontype(
+                        painter = painterResource(id = R.drawable.image_pendientes),
+                        R.string.button_reminder
+                    )
+                    buttontype(
+                        painter = painterResource(id = R.drawable.image_importa_exporta),
+                        R.string.button_import_export
+                    )
                     Spacer(modifier = Modifier.height(30.dp))
                 }
             }
