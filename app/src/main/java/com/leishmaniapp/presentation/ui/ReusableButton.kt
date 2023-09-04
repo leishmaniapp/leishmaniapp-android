@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun reusableButton (titleButton:String /* metodo onclick*/){
+fun ReusableButton (titleButton:String /* metodo onclick*/){
     Button(
         onClick = {
 
@@ -32,7 +32,7 @@ fun reusableButton (titleButton:String /* metodo onclick*/){
                 fontSize = 20.sp,
                 //fontFamily = FontFamily(Font(R.font.inter)),
                 fontWeight = FontWeight(500),
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 textAlign = TextAlign.Center,
             )
         )
@@ -42,5 +42,5 @@ fun reusableButton (titleButton:String /* metodo onclick*/){
 @Preview
 @Composable
 fun reusableButtonPreview(){
-    reusableButton(titleButton = "hola")
+    ReusableButton(titleButton = "hola")
 }

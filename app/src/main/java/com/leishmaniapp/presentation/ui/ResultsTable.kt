@@ -2,6 +2,7 @@ package com.leishmaniapp.presentation.ui
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -40,14 +41,7 @@ fun ResultsTable(modelDiagnosticElement: ModelDiagnosticElement?, specialistDiag
         targetValue = progress,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec, label = ""
     ).value
-    LeishmaniappScaffold {
         Column {
-            // Spacer(modifier = Modifier.padding(10.dp))
-            Row {
-                Text(text = stringResource(R.string.number_of_image), modifier = Modifier.padding(10.dp, 10.dp, 5.dp,5.dp),
-                    fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.scrim)
-            }
-            Spacer(modifier = Modifier.padding(10.dp))
             Column(modifier = Modifier.padding(1.dp)){
                 DataTable(
                     contentAlignment = Alignment.CenterStart,
@@ -56,7 +50,8 @@ fun ResultsTable(modelDiagnosticElement: ModelDiagnosticElement?, specialistDiag
                         BorderStroke(1.dp, MaterialTheme.colorScheme.background)
                     )
                 ) {
-                    SubheadingTableRow {
+                    SubheadingTableRow(
+                    ) {
                         Cell { Text(text = stringResource(id = R.string.characteristic),
                             fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.scrim
                         ) }
@@ -105,10 +100,7 @@ fun ResultsTable(modelDiagnosticElement: ModelDiagnosticElement?, specialistDiag
                     }
                 }
             }
-            Spacer(modifier = Modifier.padding(200.dp))
-            reusableButton(stringResource(id = R.string.see_imge))
         }
-    }
 }
 
 
