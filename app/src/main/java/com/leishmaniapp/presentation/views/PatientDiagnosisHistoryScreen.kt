@@ -59,109 +59,107 @@ fun PatientDiagnosisHistoryScreen(
         backButtonAction = {
             /* TODO: Add navigation */
         }) {
-        Box {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 0.dp, top = 20.dp)
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 0.dp, top = 20.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.patient),
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                /// TODO: Provide patient instead
+                text = "Camilo Moreno", style = MaterialTheme.typography.headlineMedium
+            )
+
+            var searchBarActive by remember {
+                mutableStateOf(false)
+            }
+
+            var searchQuery by remember {
+                mutableStateOf("")
+            }
+
+            SearchBar(
+                query = searchQuery,
+                onQueryChange = { searchQuery = it },
+                onSearch = {
+                    searchBarActive = false
+                    // TODO: Search action
+                },
+                active = searchBarActive,
+                onActiveChange = {
+                    searchBarActive = it
+                },
+                placeholder = {
+                    Text(text = stringResource(R.string.search))
+                },
+                leadingIcon = {
+                    Icon(
+                        Icons.Filled.Search,
+                        contentDescription = stringResource(R.string.search)
+                    )
+                }
             ) {
-                Text(
-                    text = stringResource(R.string.patient),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Text(
-                    /// TODO: Provide patient instead
-                    text = "Camilo Moreno", style = MaterialTheme.typography.headlineMedium
-                )
+            }
 
-                var searchBarActive by remember {
-                    mutableStateOf(false)
-                }
+            // Open diagnosis list
+            diagnosisList.apply {
+                if (isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                    ) {
+                        items(this@apply) { diagnosis ->
+                            DiagnosisListTile(modifier = Modifier.clickable {
+                                /*TODO: On diagnosis click*/
+                            }, diagnosis)
+                            HorizontalDivider()
+                        }
 
-                var searchQuery by remember {
-                    mutableStateOf("")
-                }
-
-                SearchBar(
-                    query = searchQuery,
-                    onQueryChange = { searchQuery = it },
-                    onSearch = {
-                        searchBarActive = false
-                        // TODO: Search action
-                    },
-                    active = searchBarActive,
-                    onActiveChange = {
-                        searchBarActive = it
-                    },
-                    placeholder = {
-                        Text(text = stringResource(R.string.search))
-                    },
-                    leadingIcon = {
+                        item {
+                            // Bottom List padding
+                            Box(modifier = Modifier.height(100.dp))
+                        }
+                    }
+                } else /* There are no element available */ {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth()
+                            .padding(horizontal = 62.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Icon(
-                            Icons.Filled.Search,
-                            contentDescription = stringResource(R.string.search)
+                            Icons.Filled.AssignmentLate,
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .size(40.dp),
+                            contentDescription = stringResource(
+                                R.string.patient_diagnosis_history_screen_missing
+                            ),
+                        )
+                        Text(
+                            text = stringResource(R.string.patient_diagnosis_history_screen_missing),
+                            style = MaterialTheme.typography.titleLarge,
+                            textAlign = TextAlign.Center
                         )
                     }
-                ) {
-                }
-
-                // Open diagnosis list
-                diagnosisList.apply {
-                    if (isNotEmpty()) {
-                        LazyColumn(
-                            modifier = Modifier
-                                .padding(top = 16.dp)
-                                .fillMaxWidth()
-                                .fillMaxHeight()
-                        ) {
-                            items(this@apply) { diagnosis ->
-                                DiagnosisListTile(modifier = Modifier.clickable {
-                                    /*TODO: On diagnosis click*/
-                                }, diagnosis)
-                                HorizontalDivider()
-                            }
-
-                            item {
-                                // Bottom List padding
-                                Box(modifier = Modifier.height(100.dp))
-                            }
-                        }
-                    } else /* There are no element available */ {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .fillMaxWidth()
-                                .padding(horizontal = 62.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Icon(
-                                Icons.Filled.AssignmentLate,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .size(40.dp),
-                                contentDescription = stringResource(
-                                    R.string.patient_diagnosis_history_screen_missing
-                                ),
-                            )
-                            Text(
-                                text = stringResource(R.string.patient_diagnosis_history_screen_missing),
-                                style = MaterialTheme.typography.titleLarge,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
                 }
             }
+        }
 
-            Button(
-                onClick = { /*TODO: Start a diagnosis */ },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp)
-            ) {
-                Text(text = stringResource(R.string.start_diagnosis))
-            }
+        Button(
+            onClick = { /*TODO: Start a diagnosis */ },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+        ) {
+            Text(text = stringResource(R.string.start_diagnosis))
         }
     }
 }
