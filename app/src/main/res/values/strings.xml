@@ -19,4 +19,10 @@
     <string name="diagnosis">Diagnóstico</string>
     <string name="patient_diagnosis_history_screen_appbar_title">Historial de Diagnóstico</string>
     <string name="patient_diagnosis_history_screen_missing">No hay diagnósticos previos</string>
+    <string name="database">Base de Datos</string>
+    <string name="export_import">Exportar e Importar</string>
+    <string name="export_db">Exportar</string>
+    <string name="import_db">Importar</string>
+    <string name="select_file">Seleccionar archivo</string>
+    <string name="export_import_screen_alert">Tenga en cuenta que sólo se admiten archivos generados por la aplicación</string>
 </resources>
