@@ -1,6 +1,5 @@
 package com.leishmaniapp.presentation.views
 
-import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,20 +13,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AssignmentLate
-import androidx.compose.material.icons.filled.NoteAdd
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,10 +33,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Diagnosis
+import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.mock.MockGenerator
-import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import com.leishmaniapp.presentation.ui.DiagnosisListTile
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
+import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 /**
  * @view B03
@@ -52,6 +45,7 @@ import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
  */
 @Composable
 fun PatientDiagnosisHistoryScreen(
+    patient: Patient,
     diagnosisList: List<Diagnosis> /// TODO: Remove, use viewModel instead
 ) {
     LeishmaniappScaffold(
@@ -69,8 +63,7 @@ fun PatientDiagnosisHistoryScreen(
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
-                /// TODO: Provide patient instead
-                text = "Camilo Moreno", style = MaterialTheme.typography.headlineMedium
+                text = patient.name, style = MaterialTheme.typography.headlineMedium
             )
 
             var searchBarActive by remember {
@@ -168,9 +161,11 @@ fun PatientDiagnosisHistoryScreen(
 @Preview(showBackground = true)
 fun PatientDiagnosisHistoryScreenPreview() {
     LeishmaniappTheme {
-        PatientDiagnosisHistoryScreen(diagnosisList = List(10) {
-            MockGenerator.mockDiagnosis()
-        })
+        PatientDiagnosisHistoryScreen(
+            patient = MockGenerator.mockPatient(),
+            diagnosisList = List(10) {
+                MockGenerator.mockDiagnosis()
+            })
     }
 }
 
@@ -178,6 +173,9 @@ fun PatientDiagnosisHistoryScreenPreview() {
 @Preview(showBackground = true)
 fun PatientDiagnosisHistoryScreenPreview_isEmpty() {
     LeishmaniappTheme {
-        PatientDiagnosisHistoryScreen(diagnosisList = listOf())
+        PatientDiagnosisHistoryScreen(
+            patient = MockGenerator.mockPatient(),
+            diagnosisList = listOf()
+        )
     }
 }

@@ -24,6 +24,10 @@
     <string name="email">Correo electrónico:</string>
     <string name="password">Contraseña</string>
 
+    <string name="awaiting_diagnosis_screen_appbar_title">Diagnósticos Pendientes</string>
+    <string name="awaiting">Diagnósticos Pendientes</string>
+    <string name="no_awaiting_diagnoses">No hay diagnósticos pendientes</string>
+
     <string name="start_btn">Comenzar</string>
     <string name="label_sign_in">Iniciar Sesión</string>
     <string name="label_diseases">Enfermedades</string>
