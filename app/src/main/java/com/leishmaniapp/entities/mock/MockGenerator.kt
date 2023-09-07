@@ -10,7 +10,6 @@ import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.Username
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toKotlinInstant
 import kotlinx.datetime.toLocalDateTime

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Leishmaniapp</string>
+    <string name="app_description">Herramienta de diagnóstico en enfermedades parasitarias</string>
 
     <string name="back_button">Regresar</string>
     <string name="disease">Enfermedad</string>
@@ -20,17 +21,17 @@
     <string name="diagnosis">Diagnóstico</string>
     <string name="patient_diagnosis_history_screen_appbar_title">Historial de Diagnóstico</string>
     <string name="patient_diagnosis_history_screen_missing">No hay diagnósticos previos</string>
+    <string name="email">Correo electrónico:</string>
+    <string name="password">Contraseña</string>
 
-    <string name="description_app">Herramienta de diagnóstico en enfermedades parasitarias</string>
-    <string name="button_comenzar">Comenzar</string>
-    <string name="label_sign_in">Iniciar sesión</string>
+    <string name="start_btn">Comenzar</string>
+    <string name="label_sign_in">Iniciar Sesión</string>
     <string name="label_diseases">Enfermedades</string>
     <string name="label_leishmaniasis">Leishmaniasis</string>
-    <string name="label_Malaria">Malaria</string>
+    <string name="label_malaria">Malaria</string>
     <string name="button_start_diagnosis">Comenzar diagnostico</string>
-    <string name="button_pacients">Pacientes</string>
+    <string name="button_patients">Pacientes</string>
     <string name="button_reminder">Pendientes</string>
-    <string name="button_import_export">Importa o exporta</string>
     <string name="label_synchronize">Sincronizar ahora</string>
 
     <string name="database">Base de Datos</string>
@@ -39,5 +40,4 @@
     <string name="import_db">Importar</string>
     <string name="select_file">Seleccionar archivo</string>
     <string name="export_import_screen_alert">Tenga en cuenta que sólo se admiten archivos generados por la aplicación</string>
->>>>>>> develop
 </resources>

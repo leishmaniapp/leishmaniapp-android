@@ -1,8 +1,5 @@
 package com.leishmaniapp.entities.leishmaniasis.giemsa
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
-import com.leishmaniapp.R
 import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.Disease
 
