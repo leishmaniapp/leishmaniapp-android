@@ -10,7 +10,6 @@ import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.Username
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toKotlinInstant
 import kotlinx.datetime.toLocalDateTime
@@ -69,7 +68,11 @@ class MockGenerator {
                 }
             )
 
-        fun mockDiagnosis() =
+        /**
+         * Generate random mock diagnosis
+         * @param isCompleted NULL for random image completion, else for completion status
+         */
+        fun mockDiagnosis(isCompleted: Boolean? = null) =
             Diagnosis(
                 specialistResult = Random.nextBoolean(),
                 modelResult = Random.nextBoolean(),
@@ -83,7 +86,11 @@ class MockGenerator {
                 diagnosticDisease = MockDisease,
                 diagnosticImages = buildSet {
                     repeat(10) {
-                        add(mockImage())
+                        if (isCompleted == null) {
+                            add(mockImage())
+                        } else {
+                            add(mockImage(processed = isCompleted))
+                        }
                     }
                 }.toMutableSet()
             )

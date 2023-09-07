@@ -1,8 +1,6 @@
 package com.leishmaniapp.presentation.views
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -18,6 +16,9 @@ import com.leishmaniapp.R
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
+/**
+ * @view F01
+ */
 @Composable
 fun ExportImportScreen() {
     LeishmaniappScaffold(title = stringResource(id = R.string.database)) {
@@ -38,7 +39,7 @@ fun ExportImportScreen() {
                     .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = { /* TODO: Export database btn */ }) {
                     Text(
                         text = String.format(
                             "%s %s",
@@ -47,7 +48,7 @@ fun ExportImportScreen() {
                         )
                     )
                 }
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = { /* TODO: Import database btn */ }) {
                     Text(
                         text = String.format(
                             "%s %s",

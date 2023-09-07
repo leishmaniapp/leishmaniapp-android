@@ -1,6 +1,5 @@
 package com.leishmaniapp.entities
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 /**
