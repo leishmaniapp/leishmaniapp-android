@@ -21,7 +21,6 @@
     <string name="patient_diagnosis_history_screen_appbar_title">Historial de Diagnóstico</string>
     <string name="patient_diagnosis_history_screen_missing">No hay diagnósticos previos</string>
 
-    <!-- TODO: Language checks and quality control -->
     <string name="description_app">Herramienta de diagnóstico en enfermedades parasitarias</string>
     <string name="button_comenzar">Comenzar</string>
     <string name="label_sign_in">Iniciar sesión</string>
@@ -33,4 +32,12 @@
     <string name="button_reminder">Pendientes</string>
     <string name="button_import_export">Importa o exporta</string>
     <string name="label_synchronize">Sincronizar ahora</string>
+
+    <string name="database">Base de Datos</string>
+    <string name="export_import">Exportar e Importar</string>
+    <string name="export_db">Exportar</string>
+    <string name="import_db">Importar</string>
+    <string name="select_file">Seleccionar archivo</string>
+    <string name="export_import_screen_alert">Tenga en cuenta que sólo se admiten archivos generados por la aplicación</string>
+>>>>>>> develop
 </resources>
