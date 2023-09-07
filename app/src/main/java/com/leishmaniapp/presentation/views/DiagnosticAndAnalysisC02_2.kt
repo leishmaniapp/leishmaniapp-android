@@ -32,26 +32,37 @@ import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 data class elementCoordinates(
+    val id: Int,
     val x: Int,
-    val y: Int
+    val y: Int,
+    var isPressed: Boolean
 )
+
 
 @Composable
 fun DiagnosticAndAnalysisC02_2 (){
     var showImageAndButton by remember { mutableStateOf(true) }
+    var isButtonPressed by remember { mutableStateOf(false) }
+
 
     val coordElements = listOf(
         elementCoordinates(
+            id = 1,
             x = 50,
-            y = 110
+            y = 110,
+            isPressed = false
         ),
         elementCoordinates(
+            id = 2,
             x = 70,
-            y = 30
+            y = 30,
+            isPressed = false
         ),
         elementCoordinates(
+            id = 3,
             x = 4,
-            y = 230
+            y = 230,
+            isPressed = false
         ),
 
     )
@@ -76,6 +87,7 @@ fun DiagnosticAndAnalysisC02_2 (){
                         elementLocatedButton(
                             xCoordinate = value.x.dp,
                             yCoordinate = value.y.dp,
+                            isButtonPressed = isButtonPressed,
                             onClick = {/* Acción al hacer clic */}
                         )
                     }
@@ -114,20 +126,30 @@ fun editOption(){
 fun elementLocatedButton(
     xCoordinate: Dp,
     yCoordinate: Dp,
+    isButtonPressed: Boolean,
     onClick: () -> Unit
 ){
+    val iconColor = if (isButtonPressed) {
+        MaterialTheme.colorScheme.error // Cambia el color cuando el botón está presionado
+    } else {
+        MaterialTheme.colorScheme.onPrimary // Color predeterminado
+    }
+
     IconButton(
-        onClick = { },
+        onClick = {
+            onClick()
+        },
         modifier = Modifier
-            .offset(x = xCoordinate, y = yCoordinate) // Establece las coordenadas x e y
+            .offset(x = xCoordinate, y = yCoordinate)
     ) {
         Icon(
             imageVector = Icons.Filled.Close,
             contentDescription = "marcación de elemento encontrado",
-            tint = MaterialTheme.colorScheme.onPrimary
+            tint = iconColor // Usa el color calculado
         )
     }
 }
+
 
 @Preview
 @Composable

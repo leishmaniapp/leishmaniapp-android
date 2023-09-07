@@ -11,16 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Send
-import androidx.compose.material.icons.outlined.CameraAlt
-import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -48,6 +41,7 @@ import com.leishmaniapp.R
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
+
 data class AcceptRejectBar(
     val title: String,
     val selectedIcon: ImageVector,
@@ -57,21 +51,28 @@ data class AcceptRejectBar(
 fun DiagnosticAndAnalysisC03_01 (){
     var showImageAndButton by remember { mutableStateOf(true) }
     var showUncheckButton by remember { mutableStateOf(false) }
+    var isButtonPressed by remember { mutableStateOf(false) }
+
 
     val coordElements = listOf(
         elementCoordinates(
+            id = 1,
             x = 50,
-            y = 110
+            y = 110,
+            isPressed = false
         ),
         elementCoordinates(
+            id = 2,
             x = 70,
-            y = 30
+            y = 30,
+            isPressed = false
         ),
         elementCoordinates(
+            id = 3,
             x = 4,
-            y = 230
+            y = 230,
+            isPressed = false
         ),
-
         )
 
     LeishmaniappScaffold{
@@ -90,11 +91,14 @@ fun DiagnosticAndAnalysisC03_01 (){
                     .align(Alignment.CenterHorizontally)
                 ){
                     imageTaken(painter = painterResource(id = R.drawable.image_example))
-                    for (value in coordElements) {
+                    coordElements.forEach { element ->
                         elementLocatedButton(
-                            xCoordinate = value.x.dp,
-                            yCoordinate = value.y.dp,
+                            xCoordinate = element.x.dp,
+                            yCoordinate = element.y.dp,
+                            isButtonPressed = element.isPressed,
                             onClick = {
+                                // Cambiar el estado del botón cuando se presione
+                                element.isPressed = !element.isPressed
                                 showUncheckButton = true
                             }
                         )
@@ -147,7 +151,8 @@ fun uncheckElement(){
             horizontalArrangement = Arrangement.Center
         ) {
             TextButton(
-                onClick = { /*TODO*/ }
+                onClick = {
+                }
             ) {
                 Text(text = "Si")
             }
@@ -157,7 +162,6 @@ fun uncheckElement(){
                 Text(text = "No")
             }
         }
-
     }
 }
 
