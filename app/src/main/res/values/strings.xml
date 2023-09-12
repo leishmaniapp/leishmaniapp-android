@@ -2,6 +2,10 @@
     <string name="app_name">Leishmaniapp</string>
     <string name="app_description">Herramienta de diagnóstico en enfermedades parasitarias</string>
 
+    <string name="accept">Aceptar</string>
+    <string name="discart">Descartar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="erase">Borrar</string>
     <string name="back_button">Regresar</string>
     <string name="disease">Enfermedad</string>
     <string name="send">Enviar</string>
@@ -64,5 +68,21 @@
     <string name="order_by_asc">Ascendente</string>
     <string name="order_by_desc">Descendente</string>
     <string name="priorize_by">Priorizar por</string>
+
+    <string name="action_repeat">Repetir</string>
+    <string name="action_analyze">Analizar</string>
+    <string name="action_next">Siguiente</string>
+    <string name="action_finish">Finalizar</string>
+
+    <string name="tab_image">Imagen</string>
+    <string name="tab_results">Resultados</string>
+    <string name="diagnostic_image">Imagen Diagnóstica</string>
+
+    <string name="goto_results">Ver los resultados</string>
+    <string name="goto_image">Ver la imagen</string>
+
+    <string name="edit_image">Editar Imagen</string>
+    <string name="diagnostic_element_mark">Elemento diagnóstico</string>
+    <string name="erase_element">¿Desea eliminar el elemento</string>
 
 </resources>

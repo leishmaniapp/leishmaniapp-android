@@ -14,9 +14,9 @@ data class Diagnosis(
     val date: LocalDateTime,
     val remarks: String,
     val specialist: Specialist,
-    val patientDiagnosed: Patient,
-    val diagnosticDisease: Disease,
-    val diagnosticImages: MutableSet<Image>,
+    val patient: Patient,
+    val disease: Disease,
+    val images: MutableSet<Image>,
 ) {
     var computedResults: Map<String, Map<KClass<out DiagnosticElement>, Int>> = mapOf()
 
@@ -25,14 +25,14 @@ data class Diagnosis(
      * @TODO Write tests for this function
      */
     val samples: Int
-        get() = diagnosticImages.size
+        get() = images.size
 
     /**
      * Checks if every image in the diagnosis has been processed
      * @TODO Write tests for this function
      */
     val completed: Boolean
-        get() = !diagnosticImages.any { !it.processed }
+        get() = !images.any { !it.processed }
 
     /**
      * Group [DiagnosticElement] in a map in which the key is a pair of class type
@@ -41,7 +41,7 @@ data class Diagnosis(
      * @TODO Write tests for this function
      */
     fun computeResults() {
-        computedResults = diagnosticImages.flatMap {
+        computedResults = images.flatMap {
             it.diagnosticElements
         }
             .groupBy { it.name }
