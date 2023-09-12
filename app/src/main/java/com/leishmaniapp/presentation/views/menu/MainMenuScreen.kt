@@ -1,4 +1,4 @@
-package com.leishmaniapp.presentation.views
+package com.leishmaniapp.presentation.views.menu
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

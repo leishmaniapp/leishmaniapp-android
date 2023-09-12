@@ -1,4 +1,4 @@
-package com.leishmaniapp.presentation.ui
+package com.leishmaniapp.presentation.views.diagnosis
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,6 +30,7 @@ import com.leishmaniapp.entities.Coordinates
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.entities.mock.MockGenerator
+import com.leishmaniapp.presentation.ui.DiagnosticImage
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 /**

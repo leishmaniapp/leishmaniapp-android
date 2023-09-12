@@ -85,4 +85,7 @@
     <string name="diagnostic_element_mark">Elemento diagnóstico</string>
     <string name="erase_element">¿Desea eliminar el elemento</string>
 
+    <string name="alert_not_processed">La imagen aún no ha sido procesada</string>
+    <string name="search_disease">Buscar enfermedad</string>
+
 </resources>

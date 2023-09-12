@@ -1,4 +1,4 @@
-package com.leishmaniapp.presentation.views
+package com.leishmaniapp.presentation.views.start
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -28,7 +28,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  * @view A01
  */
 @Composable
-fun GreetingsScreen() {
+fun GreetingsScreen(onContinue: () -> Unit) {
     LeishmaniappTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
             /* Image is shown in background */
@@ -66,9 +66,7 @@ fun GreetingsScreen() {
                     modifier = Modifier
                         .padding(vertical = 16.dp, horizontal = 64.dp)
                         .fillMaxWidth(),
-                    onClick = {
-                        /* TODO: Continue button */
-                    },
+                    onClick = onContinue,
                 ) {
                     Text(
                         text = stringResource(id = R.string.start_btn),
@@ -83,6 +81,8 @@ fun GreetingsScreen() {
 @Composable
 fun GreetingsScreenPreview() {
     LeishmaniappTheme {
-        GreetingsScreen()
+        GreetingsScreen {
+
+        }
     }
 }

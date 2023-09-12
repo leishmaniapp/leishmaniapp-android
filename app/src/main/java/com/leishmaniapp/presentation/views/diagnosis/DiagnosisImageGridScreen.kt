@@ -1,4 +1,4 @@
-package com.leishmaniapp.presentation.views
+package com.leishmaniapp.presentation.views.diagnosis
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

@@ -1,10 +1,11 @@
-package com.leishmaniapp.presentation.views
+package com.leishmaniapp.presentation.views.start
 
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -23,6 +24,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
+import com.leishmaniapp.entities.Disease
+import com.leishmaniapp.entities.leishmaniasis.giemsa.LeishmaniasisGiemsaDisease
+import com.leishmaniapp.entities.mock.MockDisease
 import com.leishmaniapp.presentation.ui.DiseaseItemList
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
@@ -32,7 +36,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  * @TODO Receive list of supported diseases dynamically
  */
 @Composable
-fun DiseasesMenuScreen() {
+fun DiseasesMenuScreen(onDiseaseSelection: (Disease) -> Unit) {
     LeishmaniappScaffold {
         Column(
             modifier = Modifier
@@ -56,7 +60,7 @@ fun DiseasesMenuScreen() {
                 },
                 active = active,
                 onActiveChange = { active = it },
-                placeholder = { Text(text = "Buscar enfermedad") },
+                placeholder = { Text(text = stringResource(id = R.string.search_disease)) },
                 leadingIcon = {
                     IconButton(onClick = { /* TODO: Prompt search */ }) {
                         Icon(
@@ -66,18 +70,28 @@ fun DiseasesMenuScreen() {
                 }) {}
 
             Spacer(modifier = Modifier.height(43.dp))
-            DiseaseItemList(
-                image = painterResource(id = R.drawable.greetings_screen_background),
-                label = stringResource(R.string.label_leishmaniasis),
-            ) {
-                /* TODO: Click on value */
-            }
 
-            DiseaseItemList(
-                image = painterResource(id = R.drawable.greetings_screen_background),
-                label = stringResource(R.string.label_malaria),
-            ) {
-                /* TODO: Click on value */
+            LazyColumn {
+
+                /* TODO: Dynamic allocation of diseases */
+
+                item {
+                    DiseaseItemList(
+                        image = painterResource(id = R.drawable.greetings_screen_background),
+                        label = LeishmaniasisGiemsaDisease.id, /*TODO: Fetch translation*/
+                    ) {
+                        onDiseaseSelection.invoke(LeishmaniasisGiemsaDisease)
+                    }
+                }
+
+                item {
+                    DiseaseItemList(
+                        image = painterResource(id = R.drawable.greetings_screen_background),
+                        label = MockDisease.id,
+                    ) {
+                        onDiseaseSelection.invoke(MockDisease)
+                    }
+                }
             }
         }
     }
@@ -87,6 +101,6 @@ fun DiseasesMenuScreen() {
 @Composable
 fun DiseasesMenuScreenPreview() {
     LeishmaniappTheme {
-        DiseasesMenuScreen()
+        DiseasesMenuScreen { _ -> }
     }
 }
