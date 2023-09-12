@@ -1,11 +1,12 @@
 package com.leishmaniapp.presentation.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Help
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +26,8 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 fun LeishmaniappScaffold(
     title: String = stringResource(id = R.string.app_name),
     /* TODO: Navigation controller as parameter */ backButtonAction: (() -> Unit)? = null,
+    bottomBar: @Composable () -> Unit = {},
+    showHelp: Boolean = false,
     content: @Composable BoxScope.() -> Unit
 ) {
     Scaffold(
@@ -58,9 +61,20 @@ fun LeishmaniappScaffold(
                     navigationIconContentColor = MaterialTheme.colorScheme.background,
                     titleContentColor = MaterialTheme.colorScheme.background,
                     actionIconContentColor = MaterialTheme.colorScheme.background,
-                )
+                ),
+                actions = {
+                    if (showHelp) {
+                        IconButton(onClick = { /*TODO: Show help*/ }) {
+                            Icon(
+                                Icons.Filled.Help,
+                                contentDescription = stringResource(R.string.help)
+                            )
+                        }
+                    }
+                }
             )
-        }
+        },
+        bottomBar = bottomBar
     ) { scaffoldPaddingValues ->
         Box(modifier = Modifier.padding(scaffoldPaddingValues)) {
             content.invoke(this)
@@ -69,7 +83,7 @@ fun LeishmaniappScaffold(
 }
 
 @Composable
-@Preview(heightDp = 200)
+@Preview(heightDp = 150)
 fun LeishmaniappScaffoldPreview() {
     LeishmaniappTheme {
         LeishmaniappScaffold {
@@ -79,11 +93,12 @@ fun LeishmaniappScaffoldPreview() {
 }
 
 @Composable
-@Preview(heightDp = 200)
-fun LeishmaniappScaffoldPreview_BackButton() {
+@Preview(heightDp = 150)
+fun LeishmaniappScaffoldPreview_BackButtonAndHelp() {
     LeishmaniappTheme {
         LeishmaniappScaffold(
-            title = "This one has a button",
+            title = "Back and Help",
+            showHelp = true,
             backButtonAction = {}
         ) {
             Text(text = "Hello world from LeishmaniappScaffold!")
@@ -93,9 +108,13 @@ fun LeishmaniappScaffoldPreview_BackButton() {
 
 @Composable
 @Preview(heightDp = 200)
-fun LeishmaniappScaffoldPreview_CustomTitle() {
+fun LeishmaniappScaffoldPreview_WithBottomBar() {
     LeishmaniappTheme {
-        LeishmaniappScaffold("This is an scaffold") {
+        LeishmaniappScaffold(bottomBar = {
+            BottomAppBar {
+                Text(text = "This is a BottomAppBar")
+            }
+        }) {
             Text(text = "Hello world from LeishmaniappScaffold!")
         }
     }

@@ -1,6 +1,5 @@
 package com.leishmaniapp.presentation.views
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,10 +56,6 @@ fun PatientDiagnosisTableScreen(diagnosis: Diagnosis) {
                         style = MaterialTheme.typography.headlineMedium,
 
                         )
-                    Text(
-                        text = diagnosis.id.toString(),
-                        style = MaterialTheme.typography.labelMedium
-                    )
                 }
 
                 TextButton(modifier = Modifier.align(Alignment.CenterEnd),

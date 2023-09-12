@@ -2,8 +2,8 @@ package com.leishmaniapp.entities
 
 import kotlinx.serialization.Serializable
 
+/**
+ * X, Y Coordinate system
+ */
 @Serializable
-sealed class DiagnosticElement(
-    open val name: String,
-    open val amount: Int
-)
+data class Coordinates(val x: Int, val y: Int)

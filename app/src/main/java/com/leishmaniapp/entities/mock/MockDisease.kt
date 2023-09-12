@@ -1,6 +1,5 @@
 package com.leishmaniapp.entities.mock
 
-import androidx.compose.runtime.Composable
 import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.Disease
 import kotlinx.serialization.Serializable

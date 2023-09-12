@@ -1,5 +1,6 @@
 package com.leishmaniapp.entities.mock
 
+import com.leishmaniapp.entities.Coordinates
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
@@ -10,12 +11,10 @@ import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.Username
-import kotlinx.datetime.LocalDateTime
+import io.bloco.faker.Faker
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toKotlinInstant
 import kotlinx.datetime.toLocalDateTime
-import net.datafaker.Faker
-import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
 class MockGenerator {
@@ -24,31 +23,31 @@ class MockGenerator {
         private val faker = Faker()
 
         fun mockSpecialist() = Specialist(
-            name = faker.name().fullName(),
-            username = Username(faker.name().username()),
+            name = faker.name.name(),
+            username = Username(faker.internet.userName()),
             password = Password("!")
         )
 
         fun mockPatient() = Patient(
-            name = faker.name().fullName(),
-            id = IdentificationDocument(faker.idNumber().peselNumber()),
+            name = faker.name.name(),
+            id = IdentificationDocument(faker.phoneNumber.phoneNumber()),
             documentType = DocumentType.CC
         )
 
         fun mockImage(processed: Boolean = Random.nextBoolean()) = Image(
-            date = faker.date().past(1, TimeUnit.DAYS).toInstant().toKotlinInstant()
+            date = faker.date.forward(1).toInstant().toKotlinInstant()
                 .toLocalDateTime(
                     TimeZone.UTC
                 ),
             width = 1024,
             height = 1024,
             processed = processed,
-            sample = Random.nextInt(),
+            sample = Random.nextInt(150),
             diagnosticElements = listOf(
-                List(10) {
+                List(2) {
                     mockSpecialistDiagnosticElement()
                 },
-                List(10) {
+                List(2) {
                     mockModelDiagnosticElement()
                 }
             ).flatten().toMutableList()
@@ -64,26 +63,41 @@ class MockGenerator {
             ModelDiagnosticElement(
                 name = "diagnostic.mock.element",
                 diagnosisModel = MockDisease.models.random(),
-                items = List(Random.nextInt(10)) {
-                    Random.nextInt(10) to (Random.nextInt(10) + 10)
-                }
+                coordinates = buildSet {
+                    repeat(Random.nextInt(10) + 1) {
+                        this.add(
+                            Coordinates(
+                                x = Random.nextInt(2250),
+                                y = Random.nextInt(2250)
+                            )
+                        )
+                    }
+                }.toMutableSet()
             )
 
-        fun mockDiagnosis() =
+        /**
+         * Generate random mock diagnosis
+         * @param isCompleted NULL for random image completion, else for completion status
+         */
+        fun mockDiagnosis(isCompleted: Boolean? = null) =
             Diagnosis(
                 specialistResult = Random.nextBoolean(),
                 modelResult = Random.nextBoolean(),
-                date = faker.date().past(1, TimeUnit.DAYS).toInstant().toKotlinInstant()
+                date = faker.date.forward(1).toInstant().toKotlinInstant()
                     .toLocalDateTime(
                         TimeZone.UTC
                     ),
-                remarks = faker.lorem().paragraph(),
+                remarks = faker.lorem.paragraph(),
                 specialist = mockSpecialist(),
-                patientDiagnosed = mockPatient(),
-                diagnosticDisease = MockDisease,
-                diagnosticImages = buildSet {
+                patient = mockPatient(),
+                disease = MockDisease,
+                images = buildSet {
                     repeat(10) {
-                        add(mockImage())
+                        if (isCompleted == null) {
+                            add(mockImage())
+                        } else {
+                            add(mockImage(processed = isCompleted))
+                        }
                     }
                 }.toMutableSet()
             )
