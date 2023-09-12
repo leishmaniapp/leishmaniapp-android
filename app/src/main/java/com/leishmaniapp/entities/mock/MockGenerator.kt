@@ -2,7 +2,6 @@ package com.leishmaniapp.entities.mock
 
 import com.leishmaniapp.entities.Coordinates
 import com.leishmaniapp.entities.Diagnosis
-import com.leishmaniapp.entities.DiagnosticElement
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
 import com.leishmaniapp.entities.Image
@@ -12,11 +11,11 @@ import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.Username
+import io.bloco.faker.Faker
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toKotlinInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlin.random.Random
-import io.bloco.faker.Faker
 
 class MockGenerator {
     companion object {
@@ -73,7 +72,7 @@ class MockGenerator {
                             )
                         )
                     }
-                }
+                }.toMutableSet()
             )
 
         /**

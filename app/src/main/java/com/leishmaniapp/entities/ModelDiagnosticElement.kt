@@ -6,7 +6,7 @@ package com.leishmaniapp.entities
 data class ModelDiagnosticElement(
     override val name: String,
     val diagnosisModel: DiagnosisModel,
-    val coordinates: Set<Coordinates>
+    val coordinates: MutableSet<Coordinates>
 ) : DiagnosticElement(name, amount = 0) {
     /**
      * Amount of items depends on list size
