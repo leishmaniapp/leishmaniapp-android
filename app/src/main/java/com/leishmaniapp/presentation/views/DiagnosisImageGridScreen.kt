@@ -65,7 +65,7 @@ fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
         val elementsInColumn = 3;
 
         // Get by diagnostic elements types
-        val diagnosticElements = diagnosis.diagnosticImages.flatMap { image ->
+        val diagnosticElements = diagnosis.images.flatMap { image ->
             image.diagnosticElements
         }.groupBy { diagnosticElement -> diagnosticElement.name }
 
@@ -91,7 +91,7 @@ fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
                                 RemainingImagesAlert()
                             } else {
                                 RemainingImagesProgress(
-                                    done = diagnosis.diagnosticImages.count { image: Image -> image.processed },
+                                    done = diagnosis.images.count { image: Image -> image.processed },
                                     of = diagnosis.samples
                                 )
                             }
@@ -119,13 +119,6 @@ fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
                     // Filtering
                     Text(text = stringResource(id = R.string.priorize_by))
                     LazyRow {
-                        item {
-                            FilterChip(modifier = Modifier.padding(4.dp),
-                                selected = true,
-                                onClick = { /*TODO*/ },
-                                label = { Text(text = "Todos") })
-                        }
-
                         items(diagnosticElements.keys.toList()) { diagnosticElement ->
                             FilterChip(modifier = Modifier.padding(4.dp),
                                 selected = false,
@@ -138,7 +131,7 @@ fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
                 }
             }
 
-            items(diagnosis.diagnosticImages.toList()) { image ->
+            items(diagnosis.images.toList()) { image ->
                 DiagnosisImageGridItem(image = image)
             }
         }

@@ -39,15 +39,15 @@ fun DiagnosisResultsTable(
         // Disease
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.disease)) } }
         // TODO: Provide some sort of translation provider
-        TableRow { Cell { Text(text = diagnosis.diagnosticDisease.id) } }
+        TableRow { Cell { Text(text = diagnosis.disease.id) } }
         // Date and Time
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.date_time)) } }
         TableRow { Cell { Text(text = diagnosis.date.toString()) } }
         // Patient
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.patient)) } }
-        TableRow { Cell { Text(text = diagnosis.patientDiagnosed.name) } }
+        TableRow { Cell { Text(text = diagnosis.patient.name) } }
         SubheadingTableRow { Cell { Text(text = stringResource(id = R.string.patient_id_document)) } }
-        TableRow { Cell { Text(text = diagnosis.patientDiagnosed.documentString) } }
+        TableRow { Cell { Text(text = diagnosis.patient.documentString) } }
         // Specialist
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.specialist)) } }
         TableRow { Cell { Text(text = diagnosis.specialist.name) } }

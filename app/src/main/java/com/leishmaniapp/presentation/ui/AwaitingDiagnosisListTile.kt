@@ -21,7 +21,7 @@ fun AwaitingDiagnosisListTile(diagnosis: Diagnosis, onClick: () -> Unit) {
             Text(
                 text = String.format(
                     "%s %s",
-                    diagnosis.patientDiagnosed.documentString,
+                    diagnosis.patient.documentString,
                     diagnosis.date.toString()
                 )
             )
