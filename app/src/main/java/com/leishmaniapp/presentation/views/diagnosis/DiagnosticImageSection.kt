@@ -1,11 +1,13 @@
-package com.leishmaniapp.presentation.ui
+package com.leishmaniapp.presentation.views.diagnosis
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -19,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.mock.MockGenerator
+import com.leishmaniapp.presentation.ui.DiagnosticImage
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
@@ -47,11 +50,23 @@ fun DiagnosticImageSection(
                     )
                     Text(text = stringResource(id = R.string.edit_image))
                 }
+            } else {
+                Row(modifier = Modifier.padding(16.dp)) {
+                    Icon(
+                        Icons.Filled.Error,
+                        contentDescription = stringResource(id = R.string.alert_not_processed),
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+
+                    Text(stringResource(id = R.string.alert_not_processed))
+                }
             }
         }
 
         DiagnosticImage(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .padding(16.dp),
             image = image,
             selectedElement = null
         ) {}

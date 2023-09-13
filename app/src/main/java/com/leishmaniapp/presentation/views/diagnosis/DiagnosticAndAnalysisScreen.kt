@@ -1,4 +1,4 @@
-package com.leishmaniapp.presentation.views
+package com.leishmaniapp.presentation.views.diagnosis
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,8 +28,6 @@ import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.DiagnosisActionBar
-import com.leishmaniapp.presentation.ui.DiagnosticImageEditSection
-import com.leishmaniapp.presentation.ui.DiagnosticImageSection
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import kotlinx.coroutines.launch
@@ -47,10 +45,13 @@ fun DiagnosticAndAnalysisScreen(diagnosis: Diagnosis, image: Image) {
     val pagerState = rememberPagerState(pageCount = { DiagnosticAndAnalysisPages.values().size })
 
     LeishmaniappScaffold(showHelp = true, bottomBar = {
-        DiagnosisActionBar(repeatAction = { /* TODO: On repeat action */ },
+        DiagnosisActionBar(
+            repeatAction = { /* TODO: On repeat action */ },
             analyzeAction = { /* TODO: On analyze action */ },
             nextAction = { /* TODO: On action next */ },
-            finishAction = { /* TODO: On finish action */ })
+            finishAction = { /* TODO: On finish action */ },
+            nextIsCamera = image.processed
+        )
     }) {
         Column {
             Row(

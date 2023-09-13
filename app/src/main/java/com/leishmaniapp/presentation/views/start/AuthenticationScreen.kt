@@ -1,4 +1,4 @@
-package com.leishmaniapp.presentation.views
+package com.leishmaniapp.presentation.views.start
 
 
 import androidx.compose.foundation.layout.Box
@@ -32,13 +32,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leishmaniapp.R
+import com.leishmaniapp.entities.Password
+import com.leishmaniapp.entities.Username
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 /**
  * @view A02
  */
 @Composable
-fun SignInScreen() {
+fun AuthenticationScreen(
+    onAuthenticate: (Username, Password) -> Unit
+) {
 
     var emailState by remember { mutableStateOf(TextFieldValue("")) }
     var passwordState by remember { mutableStateOf(TextFieldValue("")) }
@@ -95,11 +99,14 @@ fun SignInScreen() {
                         .weight(1f)
                         .fillMaxWidth(),
                 ) {
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 64.dp),
-                        onClick = { /* TODO: On button action */ }) {
+                    Button(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 64.dp),
+                        onClick = {
+                            onAuthenticate.invoke(
+                                Username(emailState.text), Password(passwordState.text)
+                            )
+                        }) {
                         Text(text = stringResource(id = R.string.label_sign_in))
                     }
                 }
@@ -110,8 +117,8 @@ fun SignInScreen() {
 
 @Preview
 @Composable
-fun SignInScreenPreview() {
+fun AuthenticationScreenPreview() {
     LeishmaniappTheme {
-        SignInScreen()
+        AuthenticationScreen { _, _ -> }
     }
 }
