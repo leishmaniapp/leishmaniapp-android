@@ -2,8 +2,6 @@ package com.leishmaniapp.entities
 
 import kotlinx.serialization.Serializable
 
-/**
- * X, Y Coordinate system in Pixels
- */
+@JvmInline
 @Serializable
-data class Coordinates(val x: Int, val y: Int)
+value class DiagnosticElementName(val value: String)

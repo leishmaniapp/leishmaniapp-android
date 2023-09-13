@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Image(
+    val sample: Int,
     val date: LocalDateTime,
     val width: Int,
     val height: Int,
     val processed: Boolean,
-    val sample: Int,
-    val diagnosticElements: MutableList<DiagnosticElement>
+    val elements: List<DiagnosticElement>
 )

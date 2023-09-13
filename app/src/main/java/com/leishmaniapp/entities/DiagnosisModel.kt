@@ -7,6 +7,4 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 @JvmInline
-value class DiagnosisModel(
-    val value: String
-)
+value class DiagnosisModel(val value: String)

@@ -6,4 +6,5 @@ import kotlinx.serialization.Serializable
 abstract class Disease(
     val id: String,
     val models: Set<DiagnosisModel>,
+    val diagnosticElements: Set<DiagnosticElementName>
 )

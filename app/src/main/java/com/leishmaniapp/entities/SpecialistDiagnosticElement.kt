@@ -5,6 +5,6 @@ package com.leishmaniapp.entities
  * Part of [DiagnosticElement] sealed class members
  */
 data class SpecialistDiagnosticElement(
-    override val name: String,
+    override val name: DiagnosticElementName,
     override val amount: Int
 ) : DiagnosticElement(name, amount);

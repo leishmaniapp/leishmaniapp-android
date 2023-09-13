@@ -84,5 +84,6 @@
     <string name="edit_image">Editar Imagen</string>
     <string name="diagnostic_element_mark">Elemento diagnóstico</string>
     <string name="erase_element">¿Desea eliminar el elemento</string>
+    <string name="no_remarks">Sin observaciones</string>
 
 </resources>

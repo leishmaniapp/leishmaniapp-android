@@ -5,8 +5,6 @@ import java.util.Locale
 
 @JvmInline
 @Serializable
-value class IdentificationDocument(
-    val value: String
-) {
+value class IdentificationDocument(val value: String) {
     override fun toString(): String = value.uppercase(Locale.getDefault())
 }

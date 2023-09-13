@@ -8,6 +8,4 @@ import kotlinx.serialization.Serializable
  */
 @JvmInline
 @Serializable
-value class Password(
-    val value: String
-)
+value class Password(val value: String)

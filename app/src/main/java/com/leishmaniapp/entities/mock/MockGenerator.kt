@@ -43,7 +43,7 @@ class MockGenerator {
             height = 1024,
             processed = processed,
             sample = Random.nextInt(150),
-            diagnosticElements = listOf(
+            elements = listOf(
                 List(2) {
                     mockSpecialistDiagnosticElement()
                 },
@@ -55,14 +55,14 @@ class MockGenerator {
 
         fun mockSpecialistDiagnosticElement() =
             SpecialistDiagnosticElement(
-                name = "diagnostic.mock.element",
+                name = MockDisease.diagnosticElements.random(),
                 amount = Random.nextInt(50)
             )
 
         fun mockModelDiagnosticElement() =
             ModelDiagnosticElement(
-                name = "diagnostic.mock.element",
-                diagnosisModel = MockDisease.models.random(),
+                name = MockDisease.diagnosticElements.random(),
+                model = MockDisease.models.random(),
                 coordinates = buildSet {
                     repeat(Random.nextInt(10) + 1) {
                         this.add(
@@ -91,16 +91,18 @@ class MockGenerator {
                 specialist = mockSpecialist(),
                 patient = mockPatient(),
                 disease = MockDisease,
-                images = buildSet {
-                    repeat(10) {
-                        if (isCompleted == null) {
-                            add(mockImage())
-                        } else {
-                            add(mockImage(processed = isCompleted))
-                        }
+                images = buildMap {
+                    repeat(10) { idx ->
+                        put(
+                            idx,
+                            if (isCompleted == null) {
+                                mockImage()
+                            } else {
+                                mockImage(processed = isCompleted)
+                            }
+                        )
                     }
-                }.toMutableSet()
+                }
             )
-
     }
 }
