@@ -90,8 +90,10 @@ fun DiagnosticAndAnalysisScreen(diagnosis: Diagnosis, image: Image) {
                     DiagnosticAndAnalysisPages.ImagePage -> {
                         if (editMode) {
                             DiagnosticImageEditSection(image = image) { result, diagnosticElements ->
-                                /* TODO: Apply diagnostic elements */
+                                // Get out of Edit Mode
                                 editMode = false
+
+                                /*TODO: Update the results*/
                             }
                         } else {
                             DiagnosticImageSection(image = image,

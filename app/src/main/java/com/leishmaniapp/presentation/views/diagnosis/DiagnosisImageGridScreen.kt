@@ -36,6 +36,8 @@ import com.leishmaniapp.presentation.ui.RemainingImagesAlert
 import com.leishmaniapp.presentation.ui.RemainingImagesProgress
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
+const val amountOfColumnsInGrid = 3
+
 /**
  * @view D01
  * @view D02
@@ -44,8 +46,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  */
 @Composable
 fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
-    LeishmaniappScaffold(
-        title = stringResource(id = R.string.finish_diagnosis),
+    LeishmaniappScaffold(title = stringResource(id = R.string.finish_diagnosis),
         showHelp = true,
         bottomBar = {
             NavigationBar {
@@ -61,22 +62,17 @@ fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
                     label = { Text(text = stringResource(id = R.string.continue_to_report)) })
             }
         }) {
-        // Amount of elements inside a Column
-        val elementsInColumn = 3;
-
         // Get by diagnostic elements types
-        val diagnosticElements = diagnosis.images.flatMap { image ->
-            image.diagnosticElements
-        }.groupBy { diagnosticElement -> diagnosticElement.name }
+        val diagnosticElements = diagnosis.disease.diagnosticElements
 
         // Show grid of images
         LazyVerticalGrid(
-            columns = GridCells.Fixed(elementsInColumn),
+            columns = GridCells.Fixed(amountOfColumnsInGrid),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item(span = { GridItemSpan(elementsInColumn) }) {
+            item(span = { GridItemSpan(amountOfColumnsInGrid) }) {
                 Column {
                     Text(
                         text = stringResource(id = R.string.diagnosis_image_grid_screen_header),
@@ -91,7 +87,7 @@ fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
                                 RemainingImagesAlert()
                             } else {
                                 RemainingImagesProgress(
-                                    done = diagnosis.images.count { image: Image -> image.processed },
+                                    done = diagnosis.images.values.count { image: Image -> image.processed },
                                     of = diagnosis.samples
                                 )
                             }
@@ -119,19 +115,19 @@ fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
                     // Filtering
                     Text(text = stringResource(id = R.string.priorize_by))
                     LazyRow {
-                        items(diagnosticElements.keys.toList()) { diagnosticElement ->
+                        items(diagnosticElements.toList()) { diagnosticElement ->
                             FilterChip(modifier = Modifier.padding(4.dp),
                                 selected = false,
                                 onClick = { /*TODO*/ },
                                 label = { /*TODO: Use some sort of provider*/
-                                    Text(text = diagnosticElement)
+                                    Text(text = diagnosticElement.value)
                                 })
                         }
                     }
                 }
             }
 
-            items(diagnosis.images.toList()) { image ->
+            items(diagnosis.images.toList()) { (_, image) ->
                 DiagnosisImageGridItem(image = image)
             }
         }

@@ -7,4 +7,4 @@ package com.leishmaniapp.entities
 data class SpecialistDiagnosticElement(
     override val name: DiagnosticElementName,
     override val amount: Int
-) : DiagnosticElement(name, amount);
+) : DiagnosticElement(name, amount)

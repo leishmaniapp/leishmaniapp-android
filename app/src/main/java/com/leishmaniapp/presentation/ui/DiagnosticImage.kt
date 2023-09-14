@@ -1,17 +1,25 @@
 package com.leishmaniapp.presentation.ui
 
+import android.annotation.SuppressLint
+import android.graphics.ColorSpace.Model
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -25,51 +33,67 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Coordinates
+import com.leishmaniapp.entities.DiagnosticElementName
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ModelDiagnosticElement
+import com.leishmaniapp.entities.mock.MockDisease
 import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
-const val coordinatesOffset: Int = 50
+/// Radius at which the element will be 
+const val coordinatesSelectionRadius: Int = 100
+const val outerCircleAlpha: Float = 0.2f
 
-fun calculateIconPositionPx(
-    coordinates: Coordinates, iconSize: Size, canvasSize: Size, pictureSize: Int
-): Pair<Float, Float> {
-    val iconOffset = (iconSize.width / 2f) to (iconSize.height / 2f)
-    return ((coordinates.x * canvasSize.width) / pictureSize) - (iconOffset.first) to ((coordinates.y * canvasSize.height) / pictureSize) - (iconOffset.second)
-}
+/// Picture size in px, replace with dynamic value
+const val pictureSize: Int = 2250
 
-fun fromPositionToCoordinates(xOffset: Float, yOffset: Float, canvasSize: Size, pictureSize: Int) =
+/**
+ * Image's real coordinates do not match on-screen coordinates due to canvas being
+ * smaller depending on the size of the devices thus coordinates need to be transformed
+ */
+fun transformCoordinatesFromRealToCanvas(
+    realCoordinates: Coordinates, realSize: Int, canvasSize: Size
+): Coordinates = Coordinates(
+    x = (realCoordinates.x * (canvasSize.width / realSize)).toInt(),
+    y = (realCoordinates.y * (canvasSize.height / realSize)).toInt()
+)
+
+/**
+ * Canvas coordinates like taps need to be transformed to image's real size
+ */
+fun transformCoordinatesFromCanvasToReal(
+    canvasCoordinates: Coordinates, realSize: Int, canvasSize: Size
+): Coordinates = Coordinates(
+    x = (canvasCoordinates.x * (realSize / canvasSize.width)).toInt(),
+    y = (canvasCoordinates.y * (realSize / canvasSize.height)).toInt()
+)
+
+/**
+ * Calculate the Painter's center of mass offset
+ */
+fun calculatePainterCenterOfMass(coordinates: Coordinates, imageSize: Size): Coordinates =
     Coordinates(
-        x = ((xOffset * pictureSize) / canvasSize.width).toInt(),
-        y = ((yOffset * pictureSize) / canvasSize.height).toInt()
+        x = coordinates.x - (imageSize.width / 2f).toInt(),
+        y = coordinates.y - (imageSize.height / 2f).toInt()
     )
 
-fun Coordinates.equalsWithinBoundary(other: Coordinates, coordinateOffset: Int): Boolean {
-    return (((other.x >= x) && (x + coordinateOffset >= other.x)) ||
-            ((other.x <= x) && (x - coordinateOffset <= other.x))) &&
-            (((other.y >= y) && (y + coordinateOffset >= other.y)) ||
-                    ((other.y <= y) && (y - coordinateOffset <= other.y)))
-}
-
+/**
+ * Fetch user taps on Canvas
+ * @SuppressLint("UnrememberedMutableInteractionSource") is required so state is rebuild
+ * on each recomposition, otherwise the image coordinates won't be refreshed when a
+ * [ModelDiagnosticElement] is removed
+ */
+@SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
-fun Modifier.tapOrPress(
-    onCompleted: (x: Float, y: Float) -> Unit
-): Modifier {
-    val interactionSource = remember {
-        MutableInteractionSource()
-    }
-
-    return this.pointerInput(interactionSource) {
-        awaitEachGesture {
-            val down = awaitFirstDown().also { if (it.pressed != it.previousPressed) it.consume() }
-            val up = waitForUpOrCancellation()
-
-            if (up != null) {
-                if (up.pressed != up.previousPressed) up.consume()
-                onCompleted(down.position.x, down.position.y)
+fun Modifier.onCanvasClick(
+    onCompleted: (coordinates: Coordinates) -> Unit
+): Modifier = this.pointerInput( MutableInteractionSource() ) {
+    awaitEachGesture {
+        val tap = awaitFirstDown().apply { if (pressed != previousPressed) consume() }
+        waitForUpOrCancellation()?.apply { if (pressed != previousPressed) consume() }
+            ?.let {
+                onCompleted.invoke(Coordinates(tap.position.x.toInt(), tap.position.y.toInt()))
             }
-        }
     }
 }
 
@@ -77,76 +101,99 @@ fun Modifier.tapOrPress(
 fun DiagnosticImage(
     modifier: Modifier = Modifier,
     image: Image,
-    selectedElement: Pair<String, Coordinates>? = null,
-    onElementPressed: (Pair<String, Coordinates>) -> Unit
+    selectedElement: Pair<ModelDiagnosticElement, Coordinates>? = null,
+    onElementPressed: (Pair<ModelDiagnosticElement, Coordinates>?) -> Unit
 ) {
-    val elementCoordinates = image.diagnosticElements
-        .filterIsInstance<ModelDiagnosticElement>().map { it.name to it.coordinates }
-        .flatMap { (key, values) -> values.map { key to it } }
-
-    /*TODO: Remove hardcoded image size, use image properties instead*/
+    // Late initialization of canvas size when rendered
     var canvasSize: Size? = null
-    val pictureSize = 2250
-    val painter = rememberVectorPainter(Icons.Filled.Close)
 
-    Image(
-        modifier = modifier
-            .aspectRatio(1f)
-            .drawWithContent {
-                drawContent()
+    // Get the Icon to be painted
+    val iconPainter = rememberVectorPainter(Icons.Filled.Close)
+    val iconPainterSize = 24.dp
 
-                // Guard
-                if (!image.processed) {
-                    return@drawWithContent;
-                }
+    val elementsWithCoordinates =
+        image.elements
+            .filterIsInstance<ModelDiagnosticElement>()
+            .map { it to it.coordinates }
+            .flatMap { (key, values) -> values.map { key to it } }
 
-                // Calculate the icon size
-                val iconSize = Size(24.dp.toPx(), 24.dp.toPx())
-                // Store the canvas size
-                canvasSize = this.size
+    Image(modifier = modifier
+        .aspectRatio(1f)
+        .drawWithContent {
+            // Draw the image
+            drawContent()
+            // Guard (Do not draw if not processed
+            if (!image.processed) return@drawWithContent
+            // Store the canvas size
+            canvasSize = this.size
+            // Get the Painter size in Px
+            val painterSizePx = Size(iconPainterSize.toPx(), iconPainterSize.toPx())
 
-                with(painter) {
-                    elementCoordinates.forEach { element ->
-                        val (xPosition, yPosition) = calculateIconPositionPx(
-                            element.second,
-                            iconSize,
-                            this@drawWithContent.size,
-                            pictureSize
-                        )
+            // For each coordinate
+            elementsWithCoordinates.forEach { (element, coordinates) ->
+                // The coordinate must be included in the element coordinates
+                assert(coordinates in element.coordinates)
 
-                        translate(
-                            left = xPosition,
-                            top = yPosition,
-                        ) {
-                            draw(
-                                size = iconSize, colorFilter =
-                                if (element == selectedElement) {
-                                    ColorFilter.tint(color = Color.Magenta)
-                                } else {
-                                    null
+                // Calculate canvas position with painter center of mass
+                val canvasPosition = transformCoordinatesFromRealToCanvas(
+                    coordinates, pictureSize, canvasSize!!
+                )
+
+                // Draw a circle behind the (x)
+                drawCircle(
+                    alpha = outerCircleAlpha,
+                    color = Color.Black,
+                    // For some reason radius is multiplied by 2
+                    radius = (coordinatesSelectionRadius.toFloat() / 2f),
+                    center = canvasPosition.let {
+                        Offset(x = it.x.toFloat(), y = it.y.toFloat())
+                    }
+                )
+
+                // Draw an (x) on top of the DiagnosticElement
+                with(iconPainter) {
+                    // Calculate offset due to center of mass
+                    val painterPosition = calculatePainterCenterOfMass(
+                        canvasPosition, painterSizePx
+                    )
+                    // Draw in canvas position
+                    translate(
+                        left = painterPosition.x.toFloat(),
+                        top = painterPosition.y.toFloat()
+                    ) {
+                        draw(
+                            size = painterSizePx,
+                            colorFilter = ColorFilter.tint(
+                                if ((element to coordinates) == selectedElement) {
+                                    Color.Magenta // Item is selected
+                                } else { // Item is not selected
+                                    Color.Black
                                 }
                             )
-                        }
-                    }
-                }
-
-            }
-            .tapOrPress { x, y ->
-                // Calculate the coordinates and the element found
-                val coordinates = fromPositionToCoordinates(x, y, canvasSize!!, pictureSize)
-                val foundElement =
-                    elementCoordinates.filter {
-                        coordinates.equalsWithinBoundary(
-                            it.second,
-                            coordinatesOffset
                         )
                     }
-
-                // Invoke when pressed element
-                if (foundElement.isNotEmpty()) {
-                    onElementPressed.invoke(foundElement.first())
                 }
-            },
+            }
+        }
+        .onCanvasClick { tap ->
+            // Transform canvas coordinates to real coordinates
+            val tapToRealCoordinates = transformCoordinatesFromCanvasToReal(
+                tap, pictureSize, canvasSize!!
+            )
+
+            // Get the nearest element
+            val tappedElement = elementsWithCoordinates.minByOrNull { (_, coordinates) ->
+                coordinates distanceTo tapToRealCoordinates
+            }
+
+            // Invoke with callback with null or value
+            onElementPressed.invoke(
+                tappedElement?.let { (element, coordinates) ->
+                    if (coordinates distanceTo tapToRealCoordinates <= coordinatesSelectionRadius)
+                        (element to coordinates) else null
+                }
+            )
+        },
         painter = painterResource(id = R.drawable.image_example),
         contentDescription = stringResource(id = R.string.diagnostic_image),
         contentScale = ContentScale.Crop
@@ -154,23 +201,43 @@ fun DiagnosticImage(
 }
 
 @Composable
-@Preview
+@Preview(showBackground = true)
 fun DiagnosticElementMarkPreview() {
     LeishmaniappTheme {
+        // Generate a mock image
+        val image = MockGenerator.mockImage(true).copy(
+            elements = setOf(
+                ModelDiagnosticElement(
+                    MockDisease.diagnosticElements.first(),
+                    MockDisease.models.first(),
+                    setOf(
+                        Coordinates(500, 500),
+                        Coordinates(200, 250),
+                        Coordinates(150, 1050),
+                        Coordinates(1000, 1500),
+                        Coordinates(2000, 1500),
+                    )
+                ),
+                ModelDiagnosticElement(
+                    MockDisease.diagnosticElements.last(),
+                    MockDisease.models.last(),
+                    setOf(
+                        Coordinates(550, 600),
+                        Coordinates(2200, 2000),
+                        Coordinates(450, 1903),
+                    )
+                )
+            )
+        )
 
-        val image = MockGenerator.mockImage(true)
-
-        val diagnosticElements = image.diagnosticElements
-            .filterIsInstance<ModelDiagnosticElement>()
-            .map { it.name to it.coordinates }
-            .flatMap { (key, values) -> values.map { key to it } }
-
-        val selectedElement = diagnosticElements.random()
-
-        DiagnosticImage(
-            image = image,
-            selectedElement = selectedElement
-        ) {
+        // Initialize with no selected element
+        var selectedElement by remember {
+            mutableStateOf<Pair<ModelDiagnosticElement, Coordinates>?>(null)
         }
+
+        // Create the diagnostic image
+        DiagnosticImage(
+            image = image, selectedElement = selectedElement
+        ) { tappedSelectedElement -> selectedElement = tappedSelectedElement }
     }
 }

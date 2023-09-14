@@ -43,14 +43,10 @@ class MockGenerator {
             height = 1024,
             processed = processed,
             sample = Random.nextInt(150),
-            elements = listOf(
-                List(2) {
-                    mockSpecialistDiagnosticElement()
-                },
-                List(2) {
-                    mockModelDiagnosticElement()
-                }
-            ).flatten().toMutableList()
+            elements = setOf(
+                mockSpecialistDiagnosticElement(),
+                mockModelDiagnosticElement(),
+            )
         )
 
         fun mockSpecialistDiagnosticElement() =
@@ -64,7 +60,7 @@ class MockGenerator {
                 name = MockDisease.diagnosticElements.random(),
                 model = MockDisease.models.random(),
                 coordinates = buildSet {
-                    repeat(Random.nextInt(10) + 1) {
+                    repeat(Random.nextInt(5) + 5) {
                         this.add(
                             Coordinates(
                                 x = Random.nextInt(2250),

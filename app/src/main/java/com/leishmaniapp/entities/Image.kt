@@ -10,5 +10,5 @@ data class Image(
     val width: Int,
     val height: Int,
     val processed: Boolean,
-    val elements: List<DiagnosticElement>
+    val elements: Set<DiagnosticElement>
 )

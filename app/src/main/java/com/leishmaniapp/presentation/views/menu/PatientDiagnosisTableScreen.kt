@@ -82,8 +82,6 @@ fun PatientDiagnosisTableScreen(diagnosis: Diagnosis) {
 @Preview(showBackground = true)
 fun PatientDiagnosisTableScreenPreview() {
     LeishmaniappTheme {
-        PatientDiagnosisTableScreen(diagnosis = MockGenerator.mockDiagnosis().apply {
-            computeResults()
-        })
+        PatientDiagnosisTableScreen(diagnosis = MockGenerator.mockDiagnosis())
     }
 }

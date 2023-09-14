@@ -9,11 +9,9 @@ import kotlinx.serialization.Serializable
 object MockDisease : Disease(
     id = "mock.disease",
     models = setOf(
-        DiagnosisModel("mock_model_1"),
-        DiagnosisModel("mock_model_2"),
+        DiagnosisModel("mock_model"),
     ),
     diagnosticElements = setOf(
-        DiagnosticElementName("mock_element_1"),
-        DiagnosticElementName("mock_element_2")
+        DiagnosticElementName("mock_element")
     )
 )

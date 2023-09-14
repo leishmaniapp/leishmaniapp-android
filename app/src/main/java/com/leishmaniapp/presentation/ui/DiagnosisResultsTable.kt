@@ -91,7 +91,7 @@ fun DiagnosisResultsTable(
 
         diagnosis.computedResults.forEach { (element, data) ->
             //TODO: Provide some sort of translation provider
-            HeadingTableRow { Cell { Text(text = element) } }
+            HeadingTableRow { Cell { Text(text = element.value) } }
             TableRow {
                 Cell {
                     Text(text = data[ModelDiagnosticElement::class].toString())
@@ -104,7 +104,13 @@ fun DiagnosisResultsTable(
 
         // Remarks
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.remarks)) } }
-        TableRow { Cell { Text(text = diagnosis.remarks) } }
+        TableRow {
+            Cell {
+                Text(
+                    text = diagnosis.remarks ?: stringResource(id = R.string.no_remarks)
+                )
+            }
+        }
     }
 }
 
@@ -113,9 +119,7 @@ fun DiagnosisResultsTable(
 fun DiagnosisResultsTablePreview() {
     LeishmaniappTheme {
         Box(modifier = Modifier.padding(16.dp)) {
-            DiagnosisResultsTable(MockGenerator.mockDiagnosis().apply {
-                computeResults()
-            })
+            DiagnosisResultsTable(MockGenerator.mockDiagnosis())
         }
     }
 }

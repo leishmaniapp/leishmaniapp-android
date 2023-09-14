@@ -88,5 +88,6 @@
 
     <string name="alert_not_processed">La imagen aún no ha sido procesada</string>
     <string name="search_disease">Buscar enfermedad</string>
+    <string name="no_selected_item">No hay un elemento seleccionado</string>
 
 </resources>
