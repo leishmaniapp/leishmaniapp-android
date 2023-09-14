@@ -40,9 +40,6 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 const val coordinatesSelectionRadius: Int = 100
 const val outerCircleAlpha: Float = 0.2f
 
-/// Picture size in px, replace with dynamic value
-const val pictureSize: Int = 2250
-
 /**
  * Image's real coordinates do not match on-screen coordinates due to canvas being
  * smaller depending on the size of the devices thus coordinates need to be transformed
@@ -83,7 +80,7 @@ fun calculatePainterCenterOfMass(coordinates: Coordinates, imageSize: Size): Coo
 @Composable
 fun Modifier.onCanvasClick(
     onCompleted: (coordinates: Coordinates) -> Unit
-): Modifier = this.pointerInput( MutableInteractionSource() ) {
+): Modifier = this.pointerInput(MutableInteractionSource()) {
     awaitEachGesture {
         val tap = awaitFirstDown().apply { if (pressed != previousPressed) consume() }
         waitForUpOrCancellation()?.apply { if (pressed != previousPressed) consume() }
@@ -132,7 +129,7 @@ fun DiagnosticImage(
 
                 // Calculate canvas position with painter center of mass
                 val canvasPosition = transformCoordinatesFromRealToCanvas(
-                    coordinates, pictureSize, canvasSize!!
+                    coordinates, image.size, canvasSize!!
                 )
 
                 // Draw a circle behind the (x)
@@ -174,7 +171,7 @@ fun DiagnosticImage(
         .onCanvasClick { tap ->
             // Transform canvas coordinates to real coordinates
             val tapToRealCoordinates = transformCoordinatesFromCanvasToReal(
-                tap, pictureSize, canvasSize!!
+                tap, image.size, canvasSize!!
             )
 
             // Get the nearest element

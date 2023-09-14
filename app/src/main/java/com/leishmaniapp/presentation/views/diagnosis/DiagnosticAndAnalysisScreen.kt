@@ -40,16 +40,20 @@ internal enum class DiagnosticAndAnalysisPages(
 }
 
 @Composable
-fun DiagnosticAndAnalysisScreen(diagnosis: Diagnosis, image: Image) {
+fun DiagnosticAndAnalysisScreen(
+    diagnosis: Diagnosis,
+    image: Image,
+    onImageChange: (Image) -> Unit
+) {
 
     val pagerState = rememberPagerState(pageCount = { DiagnosticAndAnalysisPages.values().size })
 
     LeishmaniappScaffold(showHelp = true, bottomBar = {
         DiagnosisActionBar(
-            repeatAction = { /* TODO: On repeat action */ },
-            analyzeAction = { /* TODO: On analyze action */ },
-            nextAction = { /* TODO: On action next */ },
-            finishAction = { /* TODO: On finish action */ },
+            repeatAction = { TODO("On repeat action") },
+            analyzeAction = { TODO("On analyze action") },
+            nextAction = { TODO("On action next") },
+            finishAction = { TODO("On finish action") },
             nextIsCamera = image.processed
         )
     }) {
@@ -89,11 +93,13 @@ fun DiagnosticAndAnalysisScreen(diagnosis: Diagnosis, image: Image) {
                 when (DiagnosticAndAnalysisPages.values()[page]) {
                     DiagnosticAndAnalysisPages.ImagePage -> {
                         if (editMode) {
-                            DiagnosticImageEditSection(image = image) { result, diagnosticElements ->
+                            DiagnosticImageEditSection(image = image) { result, image ->
                                 // Get out of Edit Mode
                                 editMode = false
-
-                                /*TODO: Update the results*/
+                                // Apply changes if image was changed
+                                if (result) {
+                                    onImageChange.invoke(image)
+                                }
                             }
                         } else {
                             DiagnosticImageSection(image = image,
@@ -123,7 +129,9 @@ fun DiagnosticAndAnalysisPreview_NotAnalyzed() {
         DiagnosticAndAnalysisScreen(
             diagnosis = MockGenerator.mockDiagnosis(),
             image = MockGenerator.mockImage(processed = false)
-        )
+        ) {
+
+        }
     }
 }
 
@@ -134,6 +142,8 @@ fun DiagnosticAndAnalysisPreview_Analyzed() {
         DiagnosticAndAnalysisScreen(
             diagnosis = MockGenerator.mockDiagnosis(),
             image = MockGenerator.mockImage(processed = true)
-        )
+        ) {
+
+        }
     }
 }

@@ -41,8 +41,6 @@ import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.DiagnosticImage
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
-fun Image.replaceModelDiagnosticElements() {}
-
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun DiagnosticImageEditSection(

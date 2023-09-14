@@ -35,17 +35,17 @@ class MockGenerator {
             documentType = DocumentType.CC
         )
 
-        fun mockImage(processed: Boolean = Random.nextBoolean()) = Image(
+        fun mockImage(processed: Boolean = Random.nextBoolean(), size: Int = 2250) = Image(
             date = faker.date.forward(1).toInstant().toKotlinInstant()
                 .toLocalDateTime(
                     TimeZone.UTC
                 ),
-            size = 2250,
+            size = size,
             processed = processed,
             sample = Random.nextInt(150),
             elements = setOf(
                 mockSpecialistDiagnosticElement(),
-                mockModelDiagnosticElement(),
+                mockModelDiagnosticElement(size),
             )
         )
 
@@ -55,7 +55,7 @@ class MockGenerator {
                 amount = Random.nextInt(50)
             )
 
-        fun mockModelDiagnosticElement() =
+        fun mockModelDiagnosticElement(imageSize: Int) =
             ModelDiagnosticElement(
                 name = MockDisease.elements.random(),
                 model = MockDisease.models.random(),
@@ -63,8 +63,8 @@ class MockGenerator {
                     repeat(Random.nextInt(5) + 5) {
                         this.add(
                             Coordinates(
-                                x = Random.nextInt(2250),
-                                y = Random.nextInt(2250)
+                                x = Random.nextInt(imageSize),
+                                y = Random.nextInt(imageSize)
                             )
                         )
                     }
