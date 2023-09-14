@@ -3,7 +3,7 @@ package com.leishmaniapp.entities
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class DiagnosticElement(
-    open val name: DiagnosticElementName,
-    open val amount: Int
-)
+sealed class DiagnosticElement {
+    abstract val name: DiagnosticElementName
+    abstract val amount: Int
+}

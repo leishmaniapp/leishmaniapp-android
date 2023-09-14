@@ -63,7 +63,7 @@ fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
             }
         }) {
         // Get by diagnostic elements types
-        val diagnosticElements = diagnosis.disease.diagnosticElements
+        val diagnosticElements = diagnosis.disease.elements
 
         // Show grid of images
         LazyVerticalGrid(

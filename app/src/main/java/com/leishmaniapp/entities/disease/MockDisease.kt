@@ -1,17 +1,19 @@
-package com.leishmaniapp.entities.mock
+package com.leishmaniapp.entities.disease
 
 import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.DiagnosticElementName
-import com.leishmaniapp.entities.Disease
 import kotlinx.serialization.Serializable
 
-@Serializable
-object MockDisease : Disease(
+@Serializable(with = MockDiseaseSerializer::class)
+data object MockDisease : Disease(
     id = "mock.disease",
     models = setOf(
         DiagnosisModel("mock_model"),
     ),
-    diagnosticElements = setOf(
+    elements = setOf(
         DiagnosticElementName("mock_element")
     )
 )
+
+object MockDiseaseSerializer :
+    DiseaseSerializer<MockDisease>("MockDisease")

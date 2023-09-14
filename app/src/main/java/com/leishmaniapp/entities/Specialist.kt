@@ -1,6 +1,8 @@
 package com.leishmaniapp.entities
 
+import kotlinx.serialization.Required
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * Specialist representation
@@ -10,5 +12,5 @@ import kotlinx.serialization.Serializable
 data class Specialist(
     val name: String,
     val username: Username,
-    val password: Password
+    @Transient val password: Password? = null
 )

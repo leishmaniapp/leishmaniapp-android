@@ -24,9 +24,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
-import com.leishmaniapp.entities.Disease
-import com.leishmaniapp.entities.leishmaniasis.giemsa.LeishmaniasisGiemsaDisease
-import com.leishmaniapp.entities.mock.MockDisease
+import com.leishmaniapp.entities.disease.Disease
+import com.leishmaniapp.entities.disease.LeishmaniasisGiemsaDisease
+import com.leishmaniapp.entities.disease.MockDisease
 import com.leishmaniapp.presentation.ui.DiseaseItemList
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme

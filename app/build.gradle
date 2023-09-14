@@ -98,11 +98,11 @@ dependencies {
     implementation 'androidx.navigation:navigation-compose:2.7.2'
 
     // Kotlinx extensions
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.8.22"
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-datetime:0.4.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
-    implementation 'app.softwork:kotlinx-uuid-core:0.0.21'
 
     // Functional programming with Arrow library
     implementation "io.arrow-kt:arrow-core:1.2.0"
@@ -110,4 +110,7 @@ dependencies {
 
     // Mock data generator
     debugImplementation 'io.bloco:faker:2.0.2'
+
+    // Security
+    implementation 'org.mindrot:jbcrypt:0.4'
 }

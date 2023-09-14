@@ -5,6 +5,7 @@ import kotlin.math.*
 
 /**
  * X, Y Coordinate system in Pixels
+ * @immutable Replace by using [Coordinates.copy]
  */
 @Serializable
 data class Coordinates(val x: Int, val y: Int) {

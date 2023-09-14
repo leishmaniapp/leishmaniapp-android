@@ -1,19 +1,21 @@
-package com.leishmaniapp.entities.leishmaniasis.giemsa
+package com.leishmaniapp.entities.disease
 
 import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.DiagnosticElementName
-import com.leishmaniapp.entities.Disease
 import kotlinx.serialization.Serializable
 
-@Serializable
+@Serializable(with = LeishmaniasisGiemsaDiseaseSerializer::class)
 data object LeishmaniasisGiemsaDisease : Disease(
     id = "leishmaniasis.giemsa",
     models = setOf(
         DiagnosisModel("macrophages"),
         DiagnosisModel("parasites"),
     ),
-    diagnosticElements = setOf(
+    elements = setOf(
         DiagnosticElementName("parasite"),
         DiagnosticElementName("macrophage")
     )
 )
+
+object LeishmaniasisGiemsaDiseaseSerializer :
+    DiseaseSerializer<LeishmaniasisGiemsaDisease>("LeishmaniasisGiemsaDisease")

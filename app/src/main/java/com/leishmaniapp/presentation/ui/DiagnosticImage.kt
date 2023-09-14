@@ -1,17 +1,14 @@
 package com.leishmaniapp.presentation.ui
 
 import android.annotation.SuppressLint
-import android.graphics.ColorSpace.Model
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,10 +30,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Coordinates
-import com.leishmaniapp.entities.DiagnosticElementName
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ModelDiagnosticElement
-import com.leishmaniapp.entities.mock.MockDisease
+import com.leishmaniapp.entities.disease.MockDisease
 import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
@@ -208,7 +204,7 @@ fun DiagnosticElementMarkPreview() {
         val image = MockGenerator.mockImage(true).copy(
             elements = setOf(
                 ModelDiagnosticElement(
-                    MockDisease.diagnosticElements.first(),
+                    MockDisease.elements.first(),
                     MockDisease.models.first(),
                     setOf(
                         Coordinates(500, 500),
@@ -219,7 +215,7 @@ fun DiagnosticElementMarkPreview() {
                     )
                 ),
                 ModelDiagnosticElement(
-                    MockDisease.diagnosticElements.last(),
+                    MockDisease.elements.last(),
                     MockDisease.models.last(),
                     setOf(
                         Coordinates(550, 600),

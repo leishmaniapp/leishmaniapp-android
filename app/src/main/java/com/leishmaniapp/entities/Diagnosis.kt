@@ -1,9 +1,18 @@
 package com.leishmaniapp.entities
 
+import com.leishmaniapp.entities.disease.Disease
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.uuid.UUID
-import kotlinx.uuid.generateUUID
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import java.util.UUID
 import kotlin.reflect.KClass
 
 /**
@@ -12,10 +21,10 @@ import kotlin.reflect.KClass
  */
 @Serializable
 data class Diagnosis(
-    val id: UUID = UUID.generateUUID(),
+    val id: @Serializable(UUIDSerializer::class) UUID = UUID.randomUUID(),
     val specialistResult: Boolean,
     val modelResult: Boolean,
-    val date: LocalDateTime,
+    val date: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC),
     val remarks: String?,
     val specialist: Specialist,
     val patient: Patient,
@@ -57,4 +66,13 @@ data class Diagnosis(
      */
     val completed: Boolean
         get() = !images.any { !it.value.processed }
+}
+
+/**
+ * Serializer for the [Diagnosis.id]
+ */
+object UUIDSerializer : KSerializer<UUID> {
+    override val descriptor = PrimitiveSerialDescriptor("UUID", PrimitiveKind.STRING)
+    override fun deserialize(decoder: Decoder): UUID = UUID.fromString(decoder.decodeString())
+    override fun serialize(encoder: Encoder, value: UUID) = encoder.encodeString(value.toString())
 }

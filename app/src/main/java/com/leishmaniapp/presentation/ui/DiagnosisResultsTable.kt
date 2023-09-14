@@ -47,7 +47,7 @@ fun DiagnosisResultsTable(
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.patient)) } }
         TableRow { Cell { Text(text = diagnosis.patient.name) } }
         SubheadingTableRow { Cell { Text(text = stringResource(id = R.string.patient_id_document)) } }
-        TableRow { Cell { Text(text = diagnosis.patient.documentString) } }
+        TableRow { Cell { Text(text = diagnosis.patient.document) } }
         // Specialist
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.specialist)) } }
         TableRow { Cell { Text(text = diagnosis.specialist.name) } }

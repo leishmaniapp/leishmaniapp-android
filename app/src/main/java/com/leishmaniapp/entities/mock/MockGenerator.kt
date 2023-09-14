@@ -11,6 +11,7 @@ import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.Username
+import com.leishmaniapp.entities.disease.MockDisease
 import io.bloco.faker.Faker
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toKotlinInstant
@@ -39,8 +40,7 @@ class MockGenerator {
                 .toLocalDateTime(
                     TimeZone.UTC
                 ),
-            width = 1024,
-            height = 1024,
+            size = 2250,
             processed = processed,
             sample = Random.nextInt(150),
             elements = setOf(
@@ -51,13 +51,13 @@ class MockGenerator {
 
         fun mockSpecialistDiagnosticElement() =
             SpecialistDiagnosticElement(
-                name = MockDisease.diagnosticElements.random(),
+                name = MockDisease.elements.random(),
                 amount = Random.nextInt(50)
             )
 
         fun mockModelDiagnosticElement() =
             ModelDiagnosticElement(
-                name = MockDisease.diagnosticElements.random(),
+                name = MockDisease.elements.random(),
                 model = MockDisease.models.random(),
                 coordinates = buildSet {
                     repeat(Random.nextInt(5) + 5) {
