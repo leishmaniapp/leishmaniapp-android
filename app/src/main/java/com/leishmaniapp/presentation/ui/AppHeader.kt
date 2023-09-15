@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leishmaniapp.R
-import com.leishmaniapp.presentation.theme.LeishmaniappTheme
+import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import androidx.compose.material3.Text as Text
 
 @Composable

@@ -43,132 +43,118 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.leishmaniapp.R
-import com.leishmaniapp.presentation.theme.LeishmaniappTheme
+import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import androidx.compose.material3.Text as Text
 
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PatientListScreen(/*listPatients: List<String>*/) {
+    val listPatients: List<String> = stringArrayResource(R.array.patients).toList()
+    var filteredPatients: List<String> = listPatients
+    var query by remember {
+        mutableStateOf("")
+    }
+    var onSearch: (String) -> Unit = {
+        println("query: $query")
+    }
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun PatientListScreen(/*listPatients: List<String>*/) {
-        val listPatients: List<String> = stringArrayResource(R.array.patients).toList()
-        var filteredPatients: List<String> = listPatients
-        var query by remember {
-            mutableStateOf("")
-        }
-        var onSearch: (String) -> Unit = {
-            println("query: $query")
-        }
+    var active by remember { mutableStateOf(false) }
 
-        var active by remember { mutableStateOf(false) }
-
-        Surface(
+    Surface(
+        modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
+    ) {
+        Column(
             modifier = Modifier
-                .fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+                .fillMaxSize()
+                .background(Color.White)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White)
+            AppNameHeader()
+            Text(
+                text = stringResource(R.string.title_patients),
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(20.dp, 20.dp, 0.dp, 5.dp)
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                AppNameHeader()
-                Text(
-                    text = stringResource(R.string.title_patients),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(20.dp, 20.dp, 0.dp, 5.dp)
-                )
-                Row(
-                    modifier =
-                    Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    SearchBar(
-                        query = query,
-                        onQueryChange = { query = it },
-                        onSearch = onSearch,
-                        active = active,
-                        onActiveChange = { active = it },
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .height(70.dp)
-                            .width(300.dp)
-                            .clip(RoundedCornerShape(30.dp))
-                            ,
-                        placeholder = {
-                            Text(
-                                text = stringResource(R.string.search_patients),
-                                color = Color.Gray
+                SearchBar(query = query,
+                    onQueryChange = { query = it },
+                    onSearch = onSearch,
+                    active = active,
+                    onActiveChange = { active = it },
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .height(70.dp)
+                        .width(300.dp)
+                        .clip(RoundedCornerShape(30.dp)),
+                    placeholder = {
+                        Text(
+                            text = stringResource(R.string.search_patients), color = Color.Gray
+                        )
+                    },
+                    leadingIcon = {
+                        IconButton(
+                            onClick = { onSearch(query) }, enabled = query.isNotEmpty()
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search, contentDescription = null
                             )
-                        },
-                        leadingIcon = {
-                            IconButton(
-                                onClick = { onSearch(query) },
-                                enabled = query.isNotEmpty()
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Search,
-                                    contentDescription = null
-                                )
-                            }
                         }
-                    ) {
-                        filteredPatients = if (query.isNotEmpty()) {
-                            listPatients.filter { it.contains(query, true) }
-                        } else {
-                            listPatients
-                        }
+                    }) {
+                    filteredPatients = if (query.isNotEmpty()) {
+                        listPatients.filter { it.contains(query, true) }
+                    } else {
+                        listPatients
                     }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    IconButton(
-                        onClick = { onSearch(query) },
-                        enabled = query.isNotEmpty()
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                IconButton(
+                    onClick = { onSearch(query) }, enabled = query.isNotEmpty()
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AddCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary,
+                        modifier = Modifier.size(35.dp)
+                    )
+                }
+            }
+            LazyColumn() {
+                items(filteredPatients) {
+                    Row(
+                        modifier = Modifier.padding(20.dp, 0.dp, 0.dp, 0.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = Icons.Default.AddCircle,
+                            imageVector = Icons.Default.AccountCircle,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.tertiary,
-                            modifier = Modifier
-                                .size(35.dp)
+                            tint = MaterialTheme.colorScheme.tertiary
+                        )
+                        Spacer(modifier = Modifier.padding(5.dp))
+                        Text(
+                            text = it,
+                            fontWeight = FontWeight.Light,
+                            modifier = Modifier.padding(15.dp)
                         )
                     }
                 }
-                LazyColumn() {
-                    items(filteredPatients) {
-                        Row(
-                            modifier= Modifier.padding(20.dp, 0.dp, 0.dp, 0.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.AccountCircle,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.tertiary
-                            )
-                            Spacer(modifier = Modifier.padding(5.dp))
-                            Text(
-                                text = it,
-                                fontWeight = FontWeight.Light,
-                                modifier = Modifier.padding(15.dp)
-                            )
-                        }
-                    }
 
-                }
             }
         }
     }
+}
 
 
-    @Preview
-    @Composable
-    fun previewPatientList() {
-        LeishmaniappTheme {
-            PatientListScreen()
-        }
-
+@Preview
+@Composable
+fun previewPatientList() {
+    LeishmaniappTheme {
+        PatientListScreen()
     }
 
+}

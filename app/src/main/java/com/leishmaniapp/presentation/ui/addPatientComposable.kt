@@ -39,14 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leishmaniapp.R
 
-
-
-class AddPatientActivity: ComponentActivity()  {
-
-
-}
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("ResourceType")
 @Composable
@@ -158,7 +150,6 @@ fun addPatientScreen() {
 
 
             Spacer(modifier = Modifier.padding(50.dp))
-            reusableButton(titleButton = "Continuar")
         }
     }
 }
