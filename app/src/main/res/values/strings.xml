@@ -1,4 +1,5 @@
 <resources>
+<<<<<<< HEAD
     <string name="app_name">LeishmaniApp</string>
     <string name="title_patients">Pacientes</string>
     <string name="search_patients">Buscar pacientes</string>
@@ -36,6 +37,15 @@
 
     </string-array>
 
+=======
+    <string name="app_name">Leishmaniapp</string>
+    <string name="app_description">Herramienta de diagnóstico en enfermedades parasitarias</string>
+
+    <string name="accept">Aceptar</string>
+    <string name="discart">Descartar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="erase">Borrar</string>
+>>>>>>> develop
     <string name="back_button">Regresar</string>
     <string name="disease">Enfermedad</string>
     <string name="send">Enviar</string>
@@ -45,6 +55,9 @@
     <string name="patient">Paciente</string>
     <string name="patient_id_document">Documento de Identificación</string>
     <string name="number_of_samples">Número de muestas</string>
+    <string name="sample">Muestra</string>
+    <string name="processed">Procesada</string>
+    <string name="waiting">En curso</string>
     <string name="diagnosis_results">Resultados del análisis</string>
     <string name="diagnosis_results_positive">Positivo</string>
     <string name="diagnosis_results_negative">Negativo</string>
@@ -55,4 +68,66 @@
     <string name="diagnosis">Diagnóstico</string>
     <string name="patient_diagnosis_history_screen_appbar_title">Historial de Diagnóstico</string>
     <string name="patient_diagnosis_history_screen_missing">No hay diagnósticos previos</string>
+
+    <string name="email">Correo electrónico:</string>
+    <string name="password">Contraseña</string>
+
+    <string name="awaiting_diagnosis_screen_appbar_title">Diagnósticos Pendientes</string>
+    <string name="awaiting">Diagnósticos Pendientes</string>
+    <string name="no_awaiting_diagnoses">No hay diagnósticos pendientes</string>
+
+    <string name="start_btn">Comenzar</string>
+    <string name="label_sign_in">Iniciar Sesión</string>
+    <string name="label_diseases">Enfermedades</string>
+    <string name="label_leishmaniasis">Leishmaniasis</string>
+    <string name="label_malaria">Malaria</string>
+    <string name="button_start_diagnosis">Comenzar diagnostico</string>
+    <string name="button_patients">Pacientes</string>
+    <string name="button_reminder">Pendientes</string>
+    <string name="label_synchronize">Sincronizar ahora</string>
+
+    <string name="database">Base de Datos</string>
+    <string name="export_import">Exportar e Importar</string>
+    <string name="export_db">Exportar</string>
+    <string name="import_db">Importar</string>
+    <string name="select_file">Seleccionar archivo</string>
+    <string name="export_import_screen_alert">Tenga en cuenta que sólo se admiten archivos generados por la aplicación</string>
+
+    <string name="remaining_images_alert_icon">Alerta de procesamiento</string>
+    <string name="remaining_images_alert_title">Algunas imágenes aún no han sido procesadas</string>
+    <string name="remaining_images_alert_content">No podrás consultar los resultados hasta que las imágenes sean procesadas</string>
+    <string name="remaining_images_alert_btn">Procesar en segundo plano</string>
+    <string name="remaining_images_progress_title">Las imágenes aún están siendo procesadas</string>
+    <string name="remaining_images_progress_icon">Sincronizando</string>
+    <string name="finish_diagnosis">Finalizar Diagnóstico</string>
+    <string name="continue_diagnosis">Continuar Diagnóstico</string>
+    <string name="continue_to_report">Ver informe de diagnóstico</string>
+    <string name="help">Ayuda</string>
+    <string name="diagnosis_image_grid_screen_header">Galería de Muestras</string>
+    <string name="order_by">Ordenar</string>
+    <string name="order_by_asc">Ascendente</string>
+    <string name="order_by_desc">Descendente</string>
+    <string name="priorize_by">Priorizar por</string>
+
+    <string name="action_repeat">Repetir</string>
+    <string name="action_analyze">Analizar</string>
+    <string name="action_next">Siguiente</string>
+    <string name="action_finish">Finalizar</string>
+
+    <string name="tab_image">Imagen</string>
+    <string name="tab_results">Resultados</string>
+    <string name="diagnostic_image">Imagen Diagnóstica</string>
+
+    <string name="goto_results">Ver los resultados</string>
+    <string name="goto_image">Ver la imagen</string>
+
+    <string name="edit_image">Editar Imagen</string>
+    <string name="diagnostic_element_mark">Elemento diagnóstico</string>
+    <string name="erase_element">¿Desea eliminar el elemento</string>
+    <string name="no_remarks">Sin observaciones</string>
+
+    <string name="alert_not_processed">La imagen aún no ha sido procesada</string>
+    <string name="search_disease">Buscar enfermedad</string>
+    <string name="no_selected_item">No hay un elemento seleccionado</string>
+
 </resources>

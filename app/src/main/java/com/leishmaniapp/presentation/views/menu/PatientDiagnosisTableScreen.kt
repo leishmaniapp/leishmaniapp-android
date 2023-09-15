@@ -1,6 +1,5 @@
-package com.leishmaniapp.presentation.views
+package com.leishmaniapp.presentation.views.menu
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,10 +56,6 @@ fun PatientDiagnosisTableScreen(diagnosis: Diagnosis) {
                         style = MaterialTheme.typography.headlineMedium,
 
                         )
-                    Text(
-                        text = diagnosis.id.toString(),
-                        style = MaterialTheme.typography.labelMedium
-                    )
                 }
 
                 TextButton(modifier = Modifier.align(Alignment.CenterEnd),
@@ -87,8 +82,6 @@ fun PatientDiagnosisTableScreen(diagnosis: Diagnosis) {
 @Preview(showBackground = true)
 fun PatientDiagnosisTableScreenPreview() {
     LeishmaniappTheme {
-        PatientDiagnosisTableScreen(diagnosis = MockGenerator.mockDiagnosis().apply {
-            computeResults()
-        })
+        PatientDiagnosisTableScreen(diagnosis = MockGenerator.mockDiagnosis())
     }
 }

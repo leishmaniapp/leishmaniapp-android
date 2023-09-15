@@ -1,5 +1,6 @@
 package com.leishmaniapp.entities.mock
 
+import com.leishmaniapp.entities.Coordinates
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
@@ -10,12 +11,11 @@ import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.Username
-import kotlinx.datetime.LocalDateTime
+import com.leishmaniapp.entities.disease.MockDisease
+import io.bloco.faker.Faker
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toKotlinInstant
 import kotlinx.datetime.toLocalDateTime
-import net.datafaker.Faker
-import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
 class MockGenerator {
@@ -24,69 +24,81 @@ class MockGenerator {
         private val faker = Faker()
 
         fun mockSpecialist() = Specialist(
-            name = faker.name().fullName(),
-            username = Username(faker.name().username()),
+            name = faker.name.name(),
+            username = Username(faker.internet.userName()),
             password = Password("!")
         )
 
         fun mockPatient() = Patient(
-            name = faker.name().fullName(),
-            id = IdentificationDocument(faker.idNumber().peselNumber()),
+            name = faker.name.name(),
+            id = IdentificationDocument(faker.phoneNumber.phoneNumber()),
             documentType = DocumentType.CC
         )
 
-        fun mockImage(processed: Boolean = Random.nextBoolean()) = Image(
-            date = faker.date().past(1, TimeUnit.DAYS).toInstant().toKotlinInstant()
+        fun mockImage(processed: Boolean = Random.nextBoolean(), size: Int = 2250) = Image(
+            date = faker.date.forward(1).toInstant().toKotlinInstant()
                 .toLocalDateTime(
                     TimeZone.UTC
                 ),
-            width = 1024,
-            height = 1024,
+            size = size,
             processed = processed,
-            sample = Random.nextInt(),
-            diagnosticElements = listOf(
-                List(10) {
-                    mockSpecialistDiagnosticElement()
-                },
-                List(10) {
-                    mockModelDiagnosticElement()
-                }
-            ).flatten().toMutableList()
+            sample = Random.nextInt(150),
+            elements = setOf(
+                mockSpecialistDiagnosticElement(),
+                mockModelDiagnosticElement(size),
+            )
         )
 
         fun mockSpecialistDiagnosticElement() =
             SpecialistDiagnosticElement(
-                name = "diagnostic.mock.element",
+                name = MockDisease.elements.random(),
                 amount = Random.nextInt(50)
             )
 
-        fun mockModelDiagnosticElement() =
+        fun mockModelDiagnosticElement(imageSize: Int) =
             ModelDiagnosticElement(
-                name = "diagnostic.mock.element",
-                diagnosisModel = MockDisease.models.random(),
-                items = List(Random.nextInt(10)) {
-                    Random.nextInt(10) to (Random.nextInt(10) + 10)
-                }
-            )
-
-        fun mockDiagnosis() =
-            Diagnosis(
-                specialistResult = Random.nextBoolean(),
-                modelResult = Random.nextBoolean(),
-                date = faker.date().past(1, TimeUnit.DAYS).toInstant().toKotlinInstant()
-                    .toLocalDateTime(
-                        TimeZone.UTC
-                    ),
-                remarks = faker.lorem().paragraph(),
-                specialist = mockSpecialist(),
-                patientDiagnosed = mockPatient(),
-                diagnosticDisease = MockDisease,
-                diagnosticImages = buildSet {
-                    repeat(10) {
-                        add(mockImage())
+                name = MockDisease.elements.random(),
+                model = MockDisease.models.random(),
+                coordinates = buildSet {
+                    repeat(Random.nextInt(5) + 5) {
+                        this.add(
+                            Coordinates(
+                                x = Random.nextInt(imageSize),
+                                y = Random.nextInt(imageSize)
+                            )
+                        )
                     }
                 }.toMutableSet()
             )
 
+        /**
+         * Generate random mock diagnosis
+         * @param isCompleted NULL for random image completion, else for completion status
+         */
+        fun mockDiagnosis(isCompleted: Boolean? = null) =
+            Diagnosis(
+                specialistResult = Random.nextBoolean(),
+                modelResult = Random.nextBoolean(),
+                date = faker.date.forward(1).toInstant().toKotlinInstant()
+                    .toLocalDateTime(
+                        TimeZone.UTC
+                    ),
+                remarks = faker.lorem.paragraph(),
+                specialist = mockSpecialist(),
+                patient = mockPatient(),
+                disease = MockDisease,
+                images = buildMap {
+                    repeat(10) { idx ->
+                        put(
+                            idx,
+                            if (isCompleted == null) {
+                                mockImage()
+                            } else {
+                                mockImage(processed = isCompleted)
+                            }
+                        )
+                    }
+                }
+            )
     }
 }
