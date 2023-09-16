@@ -1,51 +1,12 @@
 <resources>
-<<<<<<< HEAD
-    <string name="app_name">LeishmaniApp</string>
-    <string name="title_patients">Pacientes</string>
-    <string name="search_patients">Buscar pacientes</string>
-    <string name="add_patients">Agregar paciente</string>
-    <string name="patient_name">Nombre del paciente</string>
-    <string name="type_of_id">Tipo de identificación</string>
-    <string name="number_id">Número de identificación</string>
-    <string name="continue_button">Continuar</string>
-
-    <string-array name="patients">
-        <item>1003452123 </item>
-        <item>3192839012</item>
-        <item>1002344122</item>
-        <item>12938120934</item>
-        <item>1000383832</item>
-        <item>1004445788</item>
-        <item>1004455236</item>
-        <item>54342634</item>
-        <item>1002566231</item>
-        <item>12938120934</item>
-        <item>1000383832</item>
-        <item>1004445788</item>
-        <item>1004455236</item>
-        <item>54342634</item>
-        <item>1002566231</item>
-    </string-array>
-
-
-    <string-array name="typeOfId">
-        <item>TI</item>
-        <item>CC</item>
-        <item>CE</item>
-        <item>Pasaporte</item>
-
-
-    </string-array>
-
-=======
     <string name="app_name">Leishmaniapp</string>
     <string name="app_description">Herramienta de diagnóstico en enfermedades parasitarias</string>
 
     <string name="accept">Aceptar</string>
-    <string name="discart">Descartar</string>
+    <string name="dismiss">Descartar</string>
     <string name="cancel">Cancelar</string>
     <string name="erase">Borrar</string>
->>>>>>> develop
+
     <string name="back_button">Regresar</string>
     <string name="disease">Enfermedad</string>
     <string name="send">Enviar</string>
@@ -129,5 +90,21 @@
     <string name="alert_not_processed">La imagen aún no ha sido procesada</string>
     <string name="search_disease">Buscar enfermedad</string>
     <string name="no_selected_item">No hay un elemento seleccionado</string>
+
+    <string name="patients">Pacientes</string>
+    <string name="patient_list">Listado de Pacientes</string>
+    <string name="patient_list_empty">No hay pacientes que coincidan con el criterio de búsqueda</string>
+    <string name="patient_search">Buscar paciente</string>
+    <string name="patient_add">Añadir un Paciente</string>
+    <string name="patient_create">Crear Paciente</string>
+
+    <string name="patient_name">Nombre del paciente</string>
+    <string name="patient_name_field_placeholder">Ej. Carlos Sarmiento</string>
+
+    <string name="document_type">Tipo de documento</string>tient_name
+    <string name="document_type_field_placeholder">Seleccione uno</string>
+
+    <string name="document_id">Número de Identificación</string>
+    <string name="document_id_field_placeholder">Ej. 1003423789</string>
 
 </resources>

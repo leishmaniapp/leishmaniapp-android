@@ -54,8 +54,7 @@ fun PatientDiagnosisTableScreen(diagnosis: Diagnosis) {
                     Text(
                         text = stringResource(R.string.diagnosis),
                         style = MaterialTheme.typography.headlineMedium,
-
-                        )
+                    )
                 }
 
                 TextButton(modifier = Modifier.align(Alignment.CenterEnd),
