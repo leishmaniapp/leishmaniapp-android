@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -23,21 +24,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
+import com.leishmaniapp.entities.disease.Disease
+import com.leishmaniapp.entities.disease.MockDisease
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
 fun DiseaseItemList(
-    modifier: Modifier = Modifier, image: Painter, label: String, onClick: () -> Unit
+    modifier: Modifier = Modifier, disease: Disease, onClick: () -> Unit
 ) {
     Column(modifier = modifier.clickable { onClick.invoke() }) {
         ListItem(headlineContent = {
             Text(
-                text = label,
+                text = disease.displayName,
                 modifier = Modifier.padding(16.dp)
             )
         }, leadingContent = {
             Image(
-                painter = image,
+                painter = disease.painterResource,
                 contentDescription = null,
                 modifier = modifier
                     .size(65.dp)
@@ -46,7 +49,7 @@ fun DiseaseItemList(
             )
         }, trailingContent = {
             Icon(
-                Icons.Default.KeyboardArrowRight,
+                Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
             )
         })
@@ -61,11 +64,6 @@ fun DiseaseItemList(
 @Preview(showBackground = true)
 fun DiseaseItemListPreview() {
     LeishmaniappTheme {
-        DiseaseItemList(
-            image = painterResource(id = R.drawable.image_example),
-            label = stringResource(id = R.string.label_leishmaniasis)
-        ) {
-
-        }
+        DiseaseItemList(disease = MockDisease) {}
     }
 }

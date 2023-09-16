@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
@@ -22,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.leishmaniapp.R
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
+
 @Composable
 fun LeishmaniappScaffold(
     title: String = stringResource(id = R.string.app_name),
@@ -38,7 +40,7 @@ fun LeishmaniappScaffold(
                         IconButton(onClick = backButtonAction) {
                             Icon(
                                 Icons.Filled.ArrowBack,
-                                contentDescription = stringResource(R.string.back_button),
+                                contentDescription = stringResource(R.string.back),
                             )
                         }
                     }

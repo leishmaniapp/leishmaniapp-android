@@ -43,7 +43,7 @@ fun ExportImportScreen() {
                     Text(
                         text = String.format(
                             "%s %s",
-                            stringResource(id = R.string.export_db),
+                            stringResource(id = R.string.action_export),
                             stringResource(id = R.string.database)
                         )
                     )
@@ -52,7 +52,7 @@ fun ExportImportScreen() {
                     Text(
                         text = String.format(
                             "%s %s",
-                            stringResource(id = R.string.import_db),
+                            stringResource(id = R.string.action_import),
                             stringResource(id = R.string.database)
                         )
                     )

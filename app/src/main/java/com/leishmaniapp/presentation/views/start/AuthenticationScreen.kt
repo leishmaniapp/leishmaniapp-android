@@ -61,7 +61,7 @@ fun AuthenticationScreen(
                     contentAlignment = Alignment.BottomStart
                 ) {
                     Text(
-                        text = stringResource(id = R.string.label_sign_in),
+                        text = stringResource(id = R.string.sign_in),
                         textAlign = TextAlign.Start,
                         style = TextStyle(
                             fontSize = 30.sp,
@@ -107,7 +107,7 @@ fun AuthenticationScreen(
                                 Username(emailState.text), Password(passwordState.text)
                             )
                         }) {
-                        Text(text = stringResource(id = R.string.label_sign_in))
+                        Text(text = stringResource(id = R.string.sign_in))
                     }
                 }
             }

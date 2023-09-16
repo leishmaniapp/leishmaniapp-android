@@ -43,10 +43,14 @@ class MockGenerator {
             size = size,
             processed = processed,
             sample = Random.nextInt(150),
-            elements = setOf(
-                mockSpecialistDiagnosticElement(),
-                mockModelDiagnosticElement(size),
-            )
+            elements = if (processed) {
+                setOf(
+                    mockSpecialistDiagnosticElement(),
+                    mockModelDiagnosticElement(size)
+                )
+            } else {
+                setOf(mockSpecialistDiagnosticElement())
+            }
         )
 
         fun mockSpecialistDiagnosticElement() =
@@ -55,7 +59,7 @@ class MockGenerator {
                 amount = Random.nextInt(50)
             )
 
-        fun mockModelDiagnosticElement(imageSize: Int) =
+        fun mockModelDiagnosticElement(imageSize: Int = 2250) =
             ModelDiagnosticElement(
                 name = MockDisease.elements.random(),
                 model = MockDisease.models.random(),

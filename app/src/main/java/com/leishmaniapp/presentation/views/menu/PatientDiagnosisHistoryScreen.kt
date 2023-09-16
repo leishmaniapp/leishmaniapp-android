@@ -49,7 +49,7 @@ fun PatientDiagnosisHistoryScreen(
     diagnosisList: List<Diagnosis> /// TODO: Remove, use viewModel instead
 ) {
     LeishmaniappScaffold(
-        title = stringResource(id = R.string.patient_diagnosis_history_screen_appbar_title),
+        title = stringResource(id = R.string.diagnosis_history_title),
         backButtonAction = {
             /* TODO: Add navigation */
         }) {
@@ -133,11 +133,11 @@ fun PatientDiagnosisHistoryScreen(
                                 .padding(16.dp)
                                 .size(40.dp),
                             contentDescription = stringResource(
-                                R.string.patient_diagnosis_history_screen_missing
+                                R.string.no_previous_diagnosis
                             ),
                         )
                         Text(
-                            text = stringResource(R.string.patient_diagnosis_history_screen_missing),
+                            text = stringResource(R.string.no_previous_diagnosis),
                             style = MaterialTheme.typography.titleLarge,
                             textAlign = TextAlign.Center
                         )
