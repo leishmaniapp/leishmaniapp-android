@@ -8,6 +8,4 @@ import kotlinx.serialization.Serializable
  */
 @JvmInline
 @Serializable
-value class Username(
-    val value: String
-)
+value class Username(val value: String)
