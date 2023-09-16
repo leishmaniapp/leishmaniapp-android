@@ -1,7 +1,9 @@
 package com.leishmaniapp.entities
 
 import kotlinx.serialization.Serializable
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
  * X, Y Coordinate system in Pixels

@@ -2,6 +2,8 @@ package com.leishmaniapp.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val seed = Color(0xFF632269)
+
 val md_theme_light_primary = Color(0xFF88448C)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
 val md_theme_light_primaryContainer = Color(0xFFFFD6FB)
@@ -65,13 +67,3 @@ val md_theme_dark_surfaceTint = Color(0xFFFBABFC)
 val md_theme_dark_outlineVariant = Color(0xFF4D444C)
 val md_theme_dark_scrim = Color(0xFF000000)
 
-val seed = Color(0xFF632269)
-
-@Deprecated("Use MaterialTheme.colorScheme instead")
-val Purple40 = Color(0xFF6650a4)
-@Deprecated("Use MaterialTheme.colorScheme instead")
-val PurpleGrey40 = Color(0xFF625b71)
-@Deprecated("Use MaterialTheme.colorScheme instead")
-val Pink40 = Color(0xFF7D5260)
-@Deprecated("Use MaterialTheme.colorScheme instead")
-val Purple41 = Color(0xFF632269)

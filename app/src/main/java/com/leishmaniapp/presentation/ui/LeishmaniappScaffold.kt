@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.ArrowBack
 
 import androidx.compose.material.icons.filled.Help
@@ -39,7 +41,7 @@ fun LeishmaniappScaffold(
                     if (backButtonAction != null) {
                         IconButton(onClick = backButtonAction) {
                             Icon(
-                                Icons.Filled.ArrowBack,
+                                Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = stringResource(R.string.back),
                             )
                         }
@@ -68,7 +70,7 @@ fun LeishmaniappScaffold(
                     if (showHelp) {
                         IconButton(onClick = { /*TODO: Show help*/ }) {
                             Icon(
-                                Icons.Filled.Help,
+                                Icons.AutoMirrored.Filled.Help,
                                 contentDescription = stringResource(R.string.help)
                             )
                         }

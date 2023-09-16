@@ -8,9 +8,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import com.leishmaniapp.presentation.views.NavigationDestinations
-import com.leishmaniapp.presentation.views.start.GreetingsScreen
 import com.leishmaniapp.presentation.views.start.AuthenticationScreen
 import com.leishmaniapp.presentation.views.start.DiseasesMenuScreen
+import com.leishmaniapp.presentation.views.start.GreetingsScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

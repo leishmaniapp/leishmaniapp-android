@@ -58,7 +58,7 @@ fun AwaitingDiagnosesTable(
         LazyColumn {
             // Invoke the contents
             if (contents != null) {
-                contents.invoke(this);
+                contents.invoke(this)
             } else {
                 item {
                     ListItem(headlineContent = {

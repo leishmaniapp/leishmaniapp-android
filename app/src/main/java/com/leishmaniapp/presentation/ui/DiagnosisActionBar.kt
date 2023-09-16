@@ -1,6 +1,8 @@
 package com.leishmaniapp.presentation.ui
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Done
@@ -39,10 +41,10 @@ fun DiagnosisActionBar(
 
         NavigationBarItem(
             selected = false,
-            onClick = repeatAction,
+            onClick = analyzeAction,
             icon = {
                 Icon(
-                    Icons.Filled.Send,
+                    Icons.AutoMirrored.Filled.Send,
                     contentDescription = stringResource(id = R.string.action_analyze)
                 )
             }, label = {
@@ -51,13 +53,13 @@ fun DiagnosisActionBar(
 
         NavigationBarItem(
             selected = false,
-            onClick = repeatAction,
+            onClick = nextAction,
             icon = {
                 Icon(
                     if (nextIsCamera) {
                         Icons.Filled.CameraAlt
                     } else {
-                        Icons.Filled.ArrowForward
+                        Icons.AutoMirrored.Filled.ArrowForward
                     },
                     contentDescription = stringResource(id = R.string.action_next)
                 )
@@ -67,7 +69,7 @@ fun DiagnosisActionBar(
 
         NavigationBarItem(
             selected = false,
-            onClick = repeatAction,
+            onClick = finishAction,
             icon = {
                 Icon(
                     Icons.Filled.Done,

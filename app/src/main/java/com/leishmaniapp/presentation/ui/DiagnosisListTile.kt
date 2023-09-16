@@ -11,11 +11,13 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
 fun DiagnosisListTile(modifier: Modifier = Modifier, diagnosis: Diagnosis) {
-    ListItem(headlineContent = {
-        Text(diagnosis.date.toString())
-    }, supportingContent = {
-        Text(diagnosis.specialist.name)
-    })
+    ListItem(
+        modifier = modifier,
+        headlineContent = {
+            Text(diagnosis.date.toString())
+        }, supportingContent = {
+            Text(diagnosis.specialist.name)
+        })
 }
 
 @Composable

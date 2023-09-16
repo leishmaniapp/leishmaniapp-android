@@ -58,9 +58,9 @@ fun AwaitingDiagnosesScreen(
                     .weight(1f),
                 contents = if (awaitingDiagnoses.isEmpty()) null else {
                     {
-                        it.items(awaitingDiagnoses) {
+                        it.items(awaitingDiagnoses) { diagnosis ->
                             HorizontalDivider()
-                            AwaitingDiagnosisListTile(diagnosis = it) {
+                            AwaitingDiagnosisListTile(diagnosis = diagnosis) {
                                 /* TODO: On diagnosis click */
                             }
                         }

@@ -1,5 +1,6 @@
 package com.leishmaniapp.presentation.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Sync
@@ -16,7 +17,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 @Composable
 fun AwaitingDiagnosisListTile(diagnosis: Diagnosis, onClick: () -> Unit) {
     ListItem(
-        modifier = Modifier,
+        modifier = Modifier.clickable(onClick = onClick),
         headlineContent = {
             Text(
                 text = String.format(

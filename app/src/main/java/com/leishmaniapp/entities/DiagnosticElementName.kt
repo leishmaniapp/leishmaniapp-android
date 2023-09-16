@@ -8,7 +8,6 @@ import com.leishmaniapp.entities.disease.Disease
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.Transient
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -21,6 +20,13 @@ class DiagnosticElementName(
 ) {
     val displayName: String
         @Composable get() = stringResource(id = displayNameResource)
+
+    override fun toString(): String = value
+
+    override fun equals(other: Any?): Boolean =
+        (other is DiagnosticElementName) && (other.value == value)
+
+    override fun hashCode(): Int = value.hashCode()
 }
 
 /**
