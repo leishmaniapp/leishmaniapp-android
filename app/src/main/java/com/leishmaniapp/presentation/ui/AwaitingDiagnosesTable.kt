@@ -50,7 +50,7 @@ fun AwaitingDiagnosesTable(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = stringResource(id = R.string.awaiting),
+                text = stringResource(id = R.string.awaiting_diagnoses),
                 style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary)
             )
         }

@@ -1,5 +1,7 @@
 package com.leishmaniapp.entities.disease
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.painter.Painter
 import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.DiagnosticElementName
 import kotlinx.serialization.KSerializer
@@ -16,7 +18,13 @@ sealed class Disease(
     val id: String,
     val models: Set<DiagnosisModel>,
     val elements: Set<DiagnosticElementName>
-)
+) {
+    abstract val displayName: String
+        @Composable get
+
+    abstract val painterResource: Painter
+        @Composable get
+}
 
 object ParentDiseaseSerializer : KSerializer<Disease> {
     override val descriptor: SerialDescriptor =

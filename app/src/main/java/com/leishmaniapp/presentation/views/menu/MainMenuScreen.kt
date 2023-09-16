@@ -55,7 +55,7 @@ fun MainMenuScreen() {
                     MainMenuActionButton(
                         modifier = Modifier.padding(16.dp),
                         image = painterResource(id = R.drawable.start_diagnosis_menu_image),
-                        label = stringResource(id = R.string.button_start_diagnosis)
+                        label = stringResource(id = R.string.start_diagnosis)
                     ) {
                         /* TODO: On action click */
                     }
@@ -63,7 +63,7 @@ fun MainMenuScreen() {
                     MainMenuActionButton(
                         modifier = Modifier.padding(16.dp),
                         image = painterResource(id = R.drawable.patients_menu_image),
-                        label = stringResource(id = R.string.button_patients)
+                        label = stringResource(id = R.string.patients)
                     ) {
                         /* TODO: On action click */
                     }
@@ -71,7 +71,7 @@ fun MainMenuScreen() {
                     MainMenuActionButton(
                         modifier = Modifier.padding(16.dp),
                         image = painterResource(id = R.drawable.awaiting_menu_image),
-                        label = stringResource(id = R.string.button_reminder)
+                        label = stringResource(id = R.string.awaiting)
                     ) {
                         /* TODO: On action click */
                     }

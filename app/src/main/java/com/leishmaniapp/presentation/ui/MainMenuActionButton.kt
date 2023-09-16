@@ -65,7 +65,7 @@ fun MainMenuActionButtonPreview() {
     LeishmaniappTheme {
         MainMenuActionButton(
             image = painterResource(id = R.drawable.start_diagnosis_menu_image),
-            label = stringResource(id = R.string.button_start_diagnosis)
+            label = stringResource(id = R.string.start_diagnosis)
         ) {
             /* Here goes the onClick action */
         }

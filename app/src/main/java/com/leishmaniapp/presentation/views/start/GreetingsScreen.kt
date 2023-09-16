@@ -69,7 +69,7 @@ fun GreetingsScreen(onContinue: () -> Unit) {
                     onClick = onContinue,
                 ) {
                     Text(
-                        text = stringResource(id = R.string.start_btn),
+                        text = stringResource(id = R.string.start),
                     )
                 }
             }

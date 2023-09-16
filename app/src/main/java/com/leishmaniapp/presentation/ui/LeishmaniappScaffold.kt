@@ -40,7 +40,7 @@ fun LeishmaniappScaffold(
                         IconButton(onClick = backButtonAction) {
                             Icon(
                                 Icons.Filled.ArrowBack,
-                                contentDescription = stringResource(R.string.back_button),
+                                contentDescription = stringResource(R.string.back),
                             )
                         }
                     }

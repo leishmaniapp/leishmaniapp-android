@@ -32,7 +32,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  */
 @Composable
 fun PatientDiagnosisTableScreen(diagnosis: Diagnosis) {
-    LeishmaniappScaffold(title = stringResource(id = R.string.patient_diagnosis_history_screen_appbar_title),
+    LeishmaniappScaffold(title = stringResource(id = R.string.diagnosis_history_title),
         backButtonAction = {
             /*TODO: Back button action*/
         }) {

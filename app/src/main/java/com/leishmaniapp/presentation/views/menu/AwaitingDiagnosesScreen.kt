@@ -37,7 +37,7 @@ fun AwaitingDiagnosesScreen(
     specialist: Specialist, awaitingDiagnoses: List<Diagnosis>
 ) {
     LeishmaniappScaffold(
-        title = stringResource(id = R.string.awaiting_diagnosis_screen_appbar_title)
+        title = stringResource(id = R.string.awaiting_diagnoses)
     ) {
         Column(
             modifier = Modifier
@@ -84,7 +84,7 @@ fun AwaitingDiagnosesScreen(
                     )
                 }
                 Text(
-                    text = stringResource(id = R.string.label_synchronize), style = TextStyle(
+                    text = stringResource(id = R.string.synchronize), style = TextStyle(
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         textAlign = TextAlign.Center,
                     ), modifier = Modifier.align(Alignment.CenterHorizontally)

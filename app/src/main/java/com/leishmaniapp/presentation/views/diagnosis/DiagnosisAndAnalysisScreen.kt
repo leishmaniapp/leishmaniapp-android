@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -26,13 +27,16 @@ import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.Image
+import com.leishmaniapp.entities.ModelDiagnosticElement
+import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.DiagnosisActionBar
+import com.leishmaniapp.presentation.ui.DiagnosticImageResultsTable
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import kotlinx.coroutines.launch
 
-internal enum class DiagnosticAndAnalysisPages(
+internal enum class DiagnosisAndAnalysisPages(
     val title: @Composable () -> Unit,
 ) {
     ImagePage({ Text(text = stringResource(R.string.tab_image)) }),
@@ -40,13 +44,13 @@ internal enum class DiagnosticAndAnalysisPages(
 }
 
 @Composable
-fun DiagnosticAndAnalysisScreen(
+fun DiagnosisAndAnalysisScreen(
     diagnosis: Diagnosis,
     image: Image,
     onImageChange: (Image) -> Unit
 ) {
 
-    val pagerState = rememberPagerState(pageCount = { DiagnosticAndAnalysisPages.values().size })
+    val pagerState = rememberPagerState(pageCount = { DiagnosisAndAnalysisPages.values().size })
 
     LeishmaniappScaffold(showHelp = true, bottomBar = {
         DiagnosisActionBar(
@@ -74,7 +78,7 @@ fun DiagnosticAndAnalysisScreen(
 
             val coroutineScope = rememberCoroutineScope()
             TabRow(selectedTabIndex = pagerState.currentPage) {
-                DiagnosticAndAnalysisPages.values().forEachIndexed { index, item ->
+                DiagnosisAndAnalysisPages.values().forEachIndexed { index, item ->
                     Tab(
                         selected = (index == pagerState.currentPage), onClick = {
                             coroutineScope.launch {
@@ -90,8 +94,8 @@ fun DiagnosticAndAnalysisScreen(
             }
 
             HorizontalPager(state = pagerState) { page ->
-                when (DiagnosticAndAnalysisPages.values()[page]) {
-                    DiagnosticAndAnalysisPages.ImagePage -> {
+                when (DiagnosisAndAnalysisPages.values()[page]) {
+                    DiagnosisAndAnalysisPages.ImagePage -> {
                         if (editMode) {
                             DiagnosticImageEditSection(image = image) { result, image ->
                                 // Get out of Edit Mode
@@ -108,14 +112,58 @@ fun DiagnosticAndAnalysisScreen(
                                 }, onViewResultsClick = {
                                     coroutineScope.launch {
                                         pagerState.animateScrollToPage(
-                                            DiagnosticAndAnalysisPages.ResultsPage.ordinal
+                                            DiagnosisAndAnalysisPages.ResultsPage.ordinal
                                         )
                                     }
                                 })
                         }
                     }
 
-                    DiagnosticAndAnalysisPages.ResultsPage -> {}
+                    DiagnosisAndAnalysisPages.ResultsPage -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp)
+                        ) {
+                            // Show image number
+                            Text(
+                                text = "%s %d".format(
+                                    stringResource(id = R.string.image_number),
+                                    image.sample
+                                )
+                            )
+
+                            // Show results in a table
+                            DiagnosticImageResultsTable(
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                disease = diagnosis.disease,
+                                modelDiagnosticElements = image.elements.filterIsInstance<ModelDiagnosticElement>()
+                                    .let { if (it.isEmpty()) null else it.toSet() },
+                                specialistDiagnosticElements = image.elements.filterIsInstance<SpecialistDiagnosticElement>()
+                                    .let { if (it.isEmpty()) null else it.toSet() },
+                                onSpecialistEdit = { elementName, specialistDiagnosticElement ->
+                                    // Grab the old specialist diagnostic element
+                                    image.elements.firstOrNull { diagnosticElement ->
+                                        diagnosticElement is SpecialistDiagnosticElement &&
+                                                diagnosticElement.name == elementName
+                                    }   // If value is not null then apply
+                                        ?.let { previousDiagnosticElement ->
+                                            // Invoke the image change callback with new modified image
+                                            onImageChange.invoke(
+                                                image.copy(elements = image.elements.apply {
+                                                    // Remove the previous element
+                                                    minus(previousDiagnosticElement)
+                                                    // Add the new element if not null
+                                                    if (specialistDiagnosticElement != null) {
+                                                        plus(specialistDiagnosticElement)
+                                                    }
+                                                })
+                                            )
+                                        }
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -124,9 +172,9 @@ fun DiagnosticAndAnalysisScreen(
 
 @Composable
 @Preview
-fun DiagnosticAndAnalysisPreview_NotAnalyzed() {
+fun DiagnosisAndAnalysisPreview_NotAnalyzed() {
     LeishmaniappTheme {
-        DiagnosticAndAnalysisScreen(
+        DiagnosisAndAnalysisScreen(
             diagnosis = MockGenerator.mockDiagnosis(),
             image = MockGenerator.mockImage(processed = false)
         ) {
@@ -137,9 +185,9 @@ fun DiagnosticAndAnalysisPreview_NotAnalyzed() {
 
 @Composable
 @Preview
-fun DiagnosticAndAnalysisPreview_Analyzed() {
+fun DiagnosisAndAnalysisPreview_Analyzed() {
     LeishmaniappTheme {
-        DiagnosticAndAnalysisScreen(
+        DiagnosisAndAnalysisScreen(
             diagnosis = MockGenerator.mockDiagnosis(),
             image = MockGenerator.mockImage(processed = true)
         ) {

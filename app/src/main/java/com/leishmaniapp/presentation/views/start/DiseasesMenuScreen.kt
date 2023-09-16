@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -44,7 +45,7 @@ fun DiseasesMenuScreen(onDiseaseSelection: (Disease) -> Unit) {
                 .padding(bottom = 0.dp, top = 20.dp)
         ) {
             Text(
-                text = stringResource(id = R.string.label_diseases),
+                text = stringResource(id = R.string.diseases),
                 style = MaterialTheme.typography.headlineMedium
             )
 
@@ -72,24 +73,9 @@ fun DiseasesMenuScreen(onDiseaseSelection: (Disease) -> Unit) {
             Spacer(modifier = Modifier.height(43.dp))
 
             LazyColumn {
-
-                /* TODO: Dynamic allocation of diseases */
-
-                item {
-                    DiseaseItemList(
-                        image = painterResource(id = R.drawable.greetings_screen_background),
-                        label = LeishmaniasisGiemsaDisease.id, /*TODO: Fetch translation*/
-                    ) {
-                        onDiseaseSelection.invoke(LeishmaniasisGiemsaDisease)
-                    }
-                }
-
-                item {
-                    DiseaseItemList(
-                        image = painterResource(id = R.drawable.greetings_screen_background),
-                        label = MockDisease.id,
-                    ) {
-                        onDiseaseSelection.invoke(MockDisease)
+                items(Disease::class.sealedSubclasses.map { it.objectInstance!! }.toList()) { disease ->
+                    DiseaseItemList(disease = disease) {
+                        onDiseaseSelection.invoke(disease)
                     }
                 }
             }
