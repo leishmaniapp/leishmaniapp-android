@@ -13,7 +13,6 @@ import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.Username
 import com.leishmaniapp.entities.disease.Disease
 import com.leishmaniapp.entities.disease.LeishmaniasisGiemsaDisease
-import com.leishmaniapp.entities.mock.MockGenerator
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.Assert

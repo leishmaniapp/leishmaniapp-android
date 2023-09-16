@@ -14,12 +14,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
-fun ReusableTopBar(text: String){
+fun ReusableTopBar(text: String) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .background(MaterialTheme.colorScheme.primary),
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         Text(
             text = text,
             textAlign = TextAlign.Center,
@@ -33,8 +34,8 @@ fun ReusableTopBar(text: String){
 
 @Preview
 @Composable
-fun ReusableTopBar(){
+fun ReusableTopBar() {
     LeishmaniappTheme {
-       ReusableTopBar(text = "hola")
+        ReusableTopBar(text = "hola")
     }
 }

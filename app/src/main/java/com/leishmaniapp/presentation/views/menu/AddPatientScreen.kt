@@ -131,9 +131,11 @@ fun AddPatientScreen(backButtonAction: (() -> Unit)? = null, onCreatePatient: (P
             )
 
             Spacer(modifier = Modifier.weight(1f))
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(32.dp)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp)
+            ) {
                 Button(
                     modifier = Modifier
                         .padding(top = 16.dp)

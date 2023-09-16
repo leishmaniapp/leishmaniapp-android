@@ -70,7 +70,8 @@ fun DiseasesMenuScreen(onDiseaseSelection: (Disease) -> Unit) {
             Spacer(modifier = Modifier.height(43.dp))
 
             LazyColumn {
-                items(Disease::class.sealedSubclasses.map { it.objectInstance!! }.toList()) { disease ->
+                items(Disease::class.sealedSubclasses.map { it.objectInstance!! }
+                    .toList()) { disease ->
                     DiseaseItemList(disease = disease) {
                         onDiseaseSelection.invoke(disease)
                     }
