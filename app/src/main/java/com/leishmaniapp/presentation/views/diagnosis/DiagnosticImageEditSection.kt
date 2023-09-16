@@ -92,12 +92,12 @@ fun DiagnosticImageEditSection(
             }) {
                 Icon(
                     Icons.Filled.Close,
-                    contentDescription = stringResource(id = R.string.discart),
+                    contentDescription = stringResource(id = R.string.dismiss),
                     modifier = Modifier.padding(end = 8.dp),
                     tint = MaterialTheme.colorScheme.tertiary
                 )
                 Text(
-                    text = stringResource(id = R.string.discart),
+                    text = stringResource(id = R.string.dismiss),
                     color = MaterialTheme.colorScheme.tertiary
                 )
             }
