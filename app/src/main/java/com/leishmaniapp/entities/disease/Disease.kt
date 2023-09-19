@@ -21,7 +21,7 @@ sealed class Disease(
     val id: String,
     val models: Set<DiagnosisModel>,
     val elements: Set<DiagnosticElementName>
-): Parcelable {
+) : Parcelable {
     abstract val displayName: String
         @Composable get
 
@@ -57,6 +57,7 @@ abstract class DiseaseSerializer<T>(serialName: String) : KSerializer<T>
     override fun serialize(encoder: Encoder, value: T) =
         encoder.encodeSerializableValue(diseaseDelegatedSerializer, value as Disease)
 
+    @Suppress("UNCHECKED_CAST")
     override fun deserialize(decoder: Decoder): T =
         decoder.decodeSerializableValue(diseaseDelegatedSerializer) as T
 }

@@ -48,6 +48,9 @@
     <string name="priorize_by">Priorizar por</string>
     <string name="synchronize">Sincronizar</string>
 
+    <!-- Alerts -->
+    <string name="sure_exit">¿Está seguro que desea salir de la Aplicación?</string>
+
     <!-- Domain Specific -->
     <string name="diagnosis">Diagnóstico</string>
     <string name="disease">Enfermedad</string>

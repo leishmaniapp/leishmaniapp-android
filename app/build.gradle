@@ -99,6 +99,9 @@ dependencies {
     // Jetpack Compose Navigation
     implementation 'androidx.navigation:navigation-compose:2.7.2'
 
+    // Other Jetpack libraries
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+
     // Hilt
     implementation 'com.google.dagger:hilt-android:2.48'
     kapt "com.google.dagger:hilt-compiler:2.48"

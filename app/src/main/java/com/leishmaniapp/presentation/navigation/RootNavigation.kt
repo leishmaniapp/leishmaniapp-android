@@ -12,30 +12,32 @@ import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 fun RootNavigation(
     navigationController: NavHostController = rememberNavController(),
     applicationViewModel: ApplicationViewModel = viewModel()
-) = NavHost(
-    navController = navigationController,
-    startDestination = NavigationRoutes.StartRoute.route,
-    enterTransition = {
-        slideIntoContainer(
-            towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-        )
-    },
-    exitTransition = {
-        slideOutOfContainer(
-            towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-        )
-    },
-    popEnterTransition = {
-        slideIntoContainer(
-            towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-        )
-    },
-    popExitTransition = {
-        slideOutOfContainer(
-            towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-        )
-    }) {
+) {
+    NavHost(
+        navController = navigationController,
+        startDestination = NavigationRoutes.StartRoute.route,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+            )
+        }) {
 
-    this.startNavGraph(navigationController, applicationViewModel)
-    this.menuNavGraph(navigationController, applicationViewModel)
+        this.startNavGraph(navigationController, applicationViewModel)
+        this.menuNavGraph(navigationController, applicationViewModel)
+    }
 }
