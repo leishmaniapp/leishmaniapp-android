@@ -1,4 +1,4 @@
-package com.leishmaniapp.presentation.views.menu
+package com.leishmaniapp.presentation.views.patients
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,8 +43,7 @@ fun AddPatientScreen(backButtonAction: (() -> Unit)? = null, onCreatePatient: (P
     var documentTypeExpanded: Boolean by remember { mutableStateOf(false) }
 
     LeishmaniappScaffold(
-        title = stringResource(R.string.patients),
-        backButtonAction = backButtonAction
+        title = stringResource(R.string.patients), backButtonAction = backButtonAction
     ) {
         Column(
             modifier = Modifier
@@ -66,10 +65,9 @@ fun AddPatientScreen(backButtonAction: (() -> Unit)? = null, onCreatePatient: (P
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(inlinePadding.dp)
             )
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(inlinePadding.dp),
+            OutlinedTextField(modifier = Modifier
+                .fillMaxWidth()
+                .padding(inlinePadding.dp),
                 value = patientNameField,
                 onValueChange = { patientNameField = it },
                 placeholder = { Text(text = stringResource(id = R.string.patient_name_field_placeholder)) })
@@ -81,10 +79,9 @@ fun AddPatientScreen(backButtonAction: (() -> Unit)? = null, onCreatePatient: (P
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(inlinePadding.dp)
             )
-            ExposedDropdownMenuBox(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(inlinePadding.dp),
+            ExposedDropdownMenuBox(modifier = Modifier
+                .fillMaxWidth()
+                .padding(inlinePadding.dp),
                 expanded = documentTypeExpanded,
                 onExpandedChange = { documentTypeExpanded = !documentTypeExpanded }) {
 
@@ -99,16 +96,13 @@ fun AddPatientScreen(backButtonAction: (() -> Unit)? = null, onCreatePatient: (P
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = documentTypeExpanded) },
                 )
 
-                ExposedDropdownMenu(
-                    expanded = documentTypeExpanded,
+                ExposedDropdownMenu(expanded = documentTypeExpanded,
                     onDismissRequest = { documentTypeExpanded = false }) {
                     DocumentType.values().forEach { documentType ->
-                        DropdownMenuItem(
-                            text = { Text(text = documentType.name) },
-                            onClick = {
-                                documentTypeField = DocumentType.valueOf(documentType.name)
-                                documentTypeExpanded = false
-                            }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                        DropdownMenuItem(text = { Text(text = documentType.name) }, onClick = {
+                            documentTypeField = DocumentType.valueOf(documentType.name)
+                            documentTypeExpanded = false
+                        }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                         )
                     }
                 }
@@ -136,20 +130,18 @@ fun AddPatientScreen(backButtonAction: (() -> Unit)? = null, onCreatePatient: (P
                     .fillMaxWidth()
                     .padding(32.dp)
             ) {
-                Button(
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .align(Alignment.Center),
-                    onClick = {
-                        /* TODO: Check that fields are valid and show an alert */
-                        onCreatePatient.invoke(
-                            Patient(
-                                patientNameField,
-                                IdentificationDocument(documentIdField),
-                                documentTypeField!!
-                            )
+                Button(modifier = Modifier
+                    .padding(top = 16.dp)
+                    .align(Alignment.Center), onClick = {
+                    /* TODO: Check that fields are valid and show an alert */
+                    onCreatePatient.invoke(
+                        Patient(
+                            patientNameField,
+                            IdentificationDocument(documentIdField),
+                            documentTypeField!!
                         )
-                    }) {
+                    )
+                }) {
                     Text(text = stringResource(id = R.string.patient_create))
                 }
             }
@@ -162,8 +154,6 @@ fun AddPatientScreen(backButtonAction: (() -> Unit)? = null, onCreatePatient: (P
 @Composable
 fun AddPatientScreenPreview() {
     LeishmaniappTheme {
-        AddPatientScreen(
-            backButtonAction = {}
-        ) {}
+        AddPatientScreen(backButtonAction = {}) {}
     }
 }

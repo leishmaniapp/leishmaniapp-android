@@ -1,12 +1,14 @@
 package com.leishmaniapp.presentation.views.menu
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leishmaniapp.R
+import com.leishmaniapp.entities.disease.Disease
+import com.leishmaniapp.entities.disease.MockDisease
 import com.leishmaniapp.presentation.ui.MainMenuActionButton
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
@@ -28,63 +32,95 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  * @view A04
  */
 @Composable
-fun MainMenuScreen() {
+fun MainMenuScreen(
+    disease: Disease,
+    onStartDiagnosis: () -> Unit,
+    onPatientList: () -> Unit,
+    onAwaitingDiagnoses: () -> Unit,
+    onDatabase: () -> Unit
+) {
     LeishmaniappTheme {
         Scaffold(
             containerColor = Color.Black
         ) { scaffoldPaddingValues ->
-            val scrollState = rememberScrollState()
             Column(modifier = Modifier.padding(scaffoldPaddingValues)) {
 
-                Spacer(modifier = Modifier.height(32.dp))
-
-                Text(
-                    text = stringResource(id = R.string.app_name),
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 24.dp, horizontal = 16.dp),
-                    style = TextStyle(
-                        fontSize = 34.sp,
-                        fontWeight = FontWeight(700),
-                        color = Color.White,
+                        .background(MaterialTheme.colorScheme.primary),
+                ) {
+                    Text(
+                        text = disease.displayName,
                         textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
                     )
-                )
+                }
 
-                Column(modifier = Modifier.verticalScroll(scrollState)) {
-                    MainMenuActionButton(
-                        modifier = Modifier.padding(16.dp),
-                        image = painterResource(id = R.drawable.start_diagnosis_menu_image),
-                        label = stringResource(id = R.string.start_diagnosis)
-                    ) {
-                        /* TODO: On action click */
+                LazyColumn {
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
                     }
 
-                    MainMenuActionButton(
-                        modifier = Modifier.padding(16.dp),
-                        image = painterResource(id = R.drawable.patients_menu_image),
-                        label = stringResource(id = R.string.patients)
-                    ) {
-                        /* TODO: On action click */
+                    item {
+                        Text(
+                            text = stringResource(id = R.string.app_name),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 24.dp, horizontal = 16.dp),
+                            style = TextStyle(
+                                fontSize = 34.sp,
+                                fontWeight = FontWeight(700),
+                                color = Color.White,
+                                textAlign = TextAlign.Center,
+                            )
+                        )
                     }
 
-                    MainMenuActionButton(
-                        modifier = Modifier.padding(16.dp),
-                        image = painterResource(id = R.drawable.awaiting_menu_image),
-                        label = stringResource(id = R.string.awaiting)
-                    ) {
-                        /* TODO: On action click */
+                    item {
+                        MainMenuActionButton(
+                            modifier = Modifier.padding(16.dp),
+                            image = painterResource(id = R.drawable.start_diagnosis_menu_image),
+                            label = stringResource(id = R.string.start_diagnosis),
+                            onClick = onStartDiagnosis,
+                        )
                     }
 
-                    MainMenuActionButton(
-                        modifier = Modifier.padding(16.dp),
-                        image = painterResource(id = R.drawable.export_import_menu_image),
-                        label = stringResource(id = R.string.export_import)
-                    ) {
-                        /* TODO: On action click */
+                    item {
+                        MainMenuActionButton(
+                            modifier = Modifier.padding(16.dp),
+                            image = painterResource(id = R.drawable.patients_menu_image),
+                            label = stringResource(id = R.string.patients),
+                            onClick = onPatientList,
+                        )
                     }
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                    item {
+                        MainMenuActionButton(
+                            modifier = Modifier.padding(16.dp),
+                            image = painterResource(id = R.drawable.awaiting_menu_image),
+                            label = stringResource(id = R.string.awaiting),
+                            onClick = onAwaitingDiagnoses,
+                        )
+                    }
+
+                    item {
+                        MainMenuActionButton(
+                            modifier = Modifier.padding(16.dp),
+                            image = painterResource(id = R.drawable.export_import_menu_image),
+                            label = stringResource(id = R.string.export_import),
+                            onClick = onDatabase,
+                        )
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(32.dp))
+                    }
                 }
             }
         }
@@ -96,6 +132,12 @@ fun MainMenuScreen() {
 @Preview
 fun MainMenuScreenPreview() {
     LeishmaniappTheme {
-        MainMenuScreen()
+        MainMenuScreen(
+            disease = MockDisease,
+            onStartDiagnosis = {},
+            onPatientList = {},
+            onAwaitingDiagnoses = {},
+            onDatabase = {},
+        )
     }
 }

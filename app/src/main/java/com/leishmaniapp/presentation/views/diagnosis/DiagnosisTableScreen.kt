@@ -1,4 +1,4 @@
-package com.leishmaniapp.presentation.views.menu
+package com.leishmaniapp.presentation.views.diagnosis
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,11 +31,15 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  * @view B04
  */
 @Composable
-fun PatientDiagnosisTableScreen(diagnosis: Diagnosis) {
-    LeishmaniappScaffold(title = stringResource(id = R.string.diagnosis_history_title),
-        backButtonAction = {
-            /*TODO: Back button action*/
-        }) {
+fun DiagnosisTableScreen(
+    diagnosis: Diagnosis,
+    onBackButton: () -> Unit,
+    onShareDiagnosis: (Diagnosis) -> Unit
+) {
+    LeishmaniappScaffold(
+        title = stringResource(id = R.string.diagnosis_history_title),
+        backButtonAction = onBackButton
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxHeight()
@@ -58,7 +62,7 @@ fun PatientDiagnosisTableScreen(diagnosis: Diagnosis) {
                 }
 
                 TextButton(modifier = Modifier.align(Alignment.CenterEnd),
-                    onClick = { /* TODO: Export diagnostic to PDF */ }) {
+                    onClick = { onShareDiagnosis.invoke(diagnosis) }) {
                     Row {
                         Icon(
                             Icons.Filled.AttachEmail,
@@ -79,8 +83,11 @@ fun PatientDiagnosisTableScreen(diagnosis: Diagnosis) {
 
 @Composable
 @Preview(showBackground = true)
-fun PatientDiagnosisTableScreenPreview() {
+fun DiagnosisTableScreenPreview() {
     LeishmaniappTheme {
-        PatientDiagnosisTableScreen(diagnosis = MockGenerator.mockDiagnosis())
+        DiagnosisTableScreen(
+            diagnosis = MockGenerator.mockDiagnosis(),
+            onBackButton = {},
+            onShareDiagnosis = { _ -> })
     }
 }
