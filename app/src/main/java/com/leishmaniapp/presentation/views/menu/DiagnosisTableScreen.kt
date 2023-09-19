@@ -31,7 +31,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  * @view B04
  */
 @Composable
-fun PatientDiagnosisTableScreen(diagnosis: Diagnosis) {
+fun DiagnosisTableScreen(diagnosis: Diagnosis) {
     LeishmaniappScaffold(title = stringResource(id = R.string.diagnosis_history_title),
         backButtonAction = {
             /*TODO: Back button action*/
@@ -79,8 +79,8 @@ fun PatientDiagnosisTableScreen(diagnosis: Diagnosis) {
 
 @Composable
 @Preview(showBackground = true)
-fun PatientDiagnosisTableScreenPreview() {
+fun DiagnosisTableScreenPreview() {
     LeishmaniappTheme {
-        PatientDiagnosisTableScreen(diagnosis = MockGenerator.mockDiagnosis())
+        DiagnosisTableScreen(diagnosis = MockGenerator.mockDiagnosis())
     }
 }
