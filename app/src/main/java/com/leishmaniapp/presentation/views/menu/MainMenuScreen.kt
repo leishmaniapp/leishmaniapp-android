@@ -1,11 +1,14 @@
 package com.leishmaniapp.presentation.views.menu
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leishmaniapp.R
+import com.leishmaniapp.entities.disease.Disease
+import com.leishmaniapp.entities.disease.MockDisease
 import com.leishmaniapp.presentation.ui.MainMenuActionButton
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
@@ -28,6 +33,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  */
 @Composable
 fun MainMenuScreen(
+    disease: Disease,
     onStartDiagnosis: () -> Unit,
     onPatientList: () -> Unit,
     onAwaitingDiagnoses: () -> Unit,
@@ -37,11 +43,28 @@ fun MainMenuScreen(
         Scaffold(
             containerColor = Color.Black
         ) { scaffoldPaddingValues ->
-            Box(modifier = Modifier.padding(scaffoldPaddingValues)) {
+            Column(modifier = Modifier.padding(scaffoldPaddingValues)) {
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary),
+                ) {
+                    Text(
+                        text = disease.displayName,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    )
+                }
 
                 LazyColumn {
                     item {
-                        Spacer(modifier = Modifier.height(32.dp))
+                        Spacer(modifier = Modifier.height(24.dp))
                     }
 
                     item {
@@ -110,6 +133,7 @@ fun MainMenuScreen(
 fun MainMenuScreenPreview() {
     LeishmaniappTheme {
         MainMenuScreen(
+            disease = MockDisease,
             onStartDiagnosis = {},
             onPatientList = {},
             onAwaitingDiagnoses = {},

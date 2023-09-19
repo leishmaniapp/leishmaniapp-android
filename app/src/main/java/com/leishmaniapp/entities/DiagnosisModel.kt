@@ -1,5 +1,7 @@
 package com.leishmaniapp.entities
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
 /**
@@ -7,4 +9,5 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 @JvmInline
-value class DiagnosisModel(val value: String)
+@Parcelize
+value class DiagnosisModel(val value: String) : Parcelable

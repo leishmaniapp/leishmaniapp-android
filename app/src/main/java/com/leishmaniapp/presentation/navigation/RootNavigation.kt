@@ -8,8 +8,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 
-const val TAG = "RootNavigation";
-
 @Composable
 fun RootNavigation(
     navigationController: NavHostController = rememberNavController(),
@@ -19,11 +17,6 @@ fun RootNavigation(
     startDestination = NavigationRoutes.StartRoute.route
 ) {
 
-    this.startNavGraph(navigationController) { disease ->
-        Log.d(TAG, "Selected disease: $disease")
-        applicationViewModel.disease = disease
-        navigationController.navigateToMenu()
-    }
-
-    this.menuNavGraph(navigationController)
+    this.startNavGraph(navigationController, applicationViewModel)
+    this.menuNavGraph(navigationController, applicationViewModel)
 }

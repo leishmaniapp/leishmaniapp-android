@@ -1,18 +1,20 @@
 package com.leishmaniapp.presentation.navigation
 
+import android.util.Log
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.leishmaniapp.entities.disease.Disease
+import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 import com.leishmaniapp.presentation.views.start.AuthenticationScreen
 import com.leishmaniapp.presentation.views.start.DiseasesMenuScreen
 import com.leishmaniapp.presentation.views.start.GreetingsScreen
 
 fun NavGraphBuilder.startNavGraph(
     navController: NavHostController,
-    onDiseaseSelection: (Disease) -> Unit
+    applicationViewModel: ApplicationViewModel,
 ) {
     navigation(
         route = NavigationRoutes.StartRoute.route,
@@ -32,7 +34,9 @@ fun NavGraphBuilder.startNavGraph(
         composable(route = NavigationRoutes.StartRoute.DiseasesRoute.route) {
             DiseasesMenuScreen(onDiseaseSelection = { disease ->
                 // Select the disease and navigate to the main menu
-                onDiseaseSelection.invoke(disease)
+                Log.d("DiseasesMenuScreen", "Selected disease: $disease")
+                applicationViewModel.disease = disease
+                navController.navigateToMenu()
             })
         }
     }

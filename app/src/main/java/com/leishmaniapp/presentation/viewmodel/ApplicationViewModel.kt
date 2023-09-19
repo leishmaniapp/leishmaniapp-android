@@ -8,10 +8,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ApplicationViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle
+    val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
     /**
      * Currently selected disease
      */
-    var disease: Disease? = null;
+    var disease: Disease? = savedStateHandle["disease"]
+        set(value) {
+            // Store the saved state handle
+            this.savedStateHandle["disease"] = value
+            // Assign the field
+            field = value
+        }
 }

@@ -4,6 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 import com.leishmaniapp.presentation.views.menu.DatabaseScreen
 import com.leishmaniapp.presentation.views.menu.MainMenuScreen
 
@@ -13,7 +14,10 @@ fun NavHostController.navigateToMenu() {
     }
 }
 
-fun NavGraphBuilder.menuNavGraph(navController: NavHostController) {
+fun NavGraphBuilder.menuNavGraph(
+    navController: NavHostController,
+    applicationViewModel: ApplicationViewModel
+) {
     navigation(
         route = NavigationRoutes.MenuRoute.route,
         startDestination = NavigationRoutes.MenuRoute.MainMenuRoute.route
@@ -21,6 +25,7 @@ fun NavGraphBuilder.menuNavGraph(navController: NavHostController) {
         composable(NavigationRoutes.MenuRoute.MainMenuRoute.route) {
             // Show the main menu screen
             MainMenuScreen(
+                disease = applicationViewModel.disease!!,
                 onStartDiagnosis = { /*TODO*/ },
                 onPatientList = { /*TODO*/ },
                 onDatabase = { navController.navigateToDatabase() },
