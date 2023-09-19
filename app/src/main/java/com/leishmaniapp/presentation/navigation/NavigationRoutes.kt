@@ -12,6 +12,7 @@ sealed class NavigationRoutes(val route: String) {
 
     data object MenuRoute : NavigationRoutes("/menu") {
         data object MainMenuRoute : NavigationRoutes(this.route + "/main")
+        data object DatabaseRoute : NavigationRoutes(this.route + "/database")
     }
 
     data object PatientsRoute : NavigationRoutes("/patients")
