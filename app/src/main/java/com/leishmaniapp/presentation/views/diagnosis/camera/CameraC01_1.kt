@@ -14,8 +14,10 @@ import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.tooling.preview.Preview
 import com.leishmaniapp.R
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
+import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import java.io.File
 import java.util.concurrent.ExecutorService
 
@@ -111,5 +113,13 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
+    }
+
+    @Composable
+    @Preview
+    fun CameraC01_1Preview(){
+        LeishmaniappTheme {
+            CameraC01_1()
+        }
     }
 }
