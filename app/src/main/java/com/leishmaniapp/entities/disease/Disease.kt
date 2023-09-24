@@ -2,6 +2,9 @@ package com.leishmaniapp.entities.disease
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.DiagnosticElementName
 import kotlinx.serialization.KSerializer
@@ -12,6 +15,14 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+
+@Entity
+data class DiseaseRoom(
+    @PrimaryKey(autoGenerate = false)
+    val id: String,
+    val models: String,
+    val elements: String
+)
 
 @Serializable(with = ParentDiseaseSerializer::class)
 sealed class Disease(

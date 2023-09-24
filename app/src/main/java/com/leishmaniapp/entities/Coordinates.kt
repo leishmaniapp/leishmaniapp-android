@@ -1,5 +1,7 @@
 package com.leishmaniapp.entities
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 import kotlin.math.abs
 import kotlin.math.pow
@@ -16,3 +18,11 @@ data class Coordinates(val x: Int, val y: Int) {
                 abs(y - other.y).toFloat().pow(2f)
     )
 }
+
+@Entity
+data class CoordinatesRoom(
+    @PrimaryKey(autoGenerate = false)
+    val id: String,
+    val x: Int,
+    val y: Int,
+)

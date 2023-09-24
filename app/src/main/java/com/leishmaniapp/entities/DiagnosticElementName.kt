@@ -3,6 +3,9 @@ package com.leishmaniapp.entities
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.disease.Disease
 import kotlinx.serialization.KSerializer
@@ -13,10 +16,19 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-@Serializable(with = DiagnosticElementNameSerializer::class)
-class DiagnosticElementName(
+@Entity
+data class DiagnosticElementNameRoom(
+    @PrimaryKey(autoGenerate = false)
+    val id: String,
     val value: String,
-    @StringRes private val displayNameResource: Int = R.string.unknown_element
+)
+
+@Serializable(with = DiagnosticElementNameSerializer::class)
+data class DiagnosticElementName(
+    val value: String,
+    @StringRes private val displayNameResource: Int = R.string.unknown_element,
+    @ColumnInfo(name = "disease_id")
+    val diseaseId: String
 ) {
     val displayName: String
         @Composable get() = stringResource(id = displayNameResource)

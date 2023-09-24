@@ -1,5 +1,7 @@
 package com.leishmaniapp.entities
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 import java.util.Locale
 
@@ -14,3 +16,9 @@ class IdentificationDocument(value: String) {
 
     override fun hashCode(): Int = value.hashCode()
 }
+
+@Entity
+data class IdentificationDocumentRoom(
+    @PrimaryKey(autoGenerate = false)
+    val value: String
+)

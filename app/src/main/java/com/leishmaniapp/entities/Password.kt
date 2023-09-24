@@ -1,5 +1,7 @@
 package com.leishmaniapp.entities
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import org.mindrot.jbcrypt.BCrypt
 
 /**
@@ -9,6 +11,14 @@ import org.mindrot.jbcrypt.BCrypt
  * Password is automatically hashed with BCrypt
  * This class is NOT serializable
  */
+
+@Entity
+data class PasswordRoom(
+    @PrimaryKey(autoGenerate = false)
+    val value: String
+)
+
+
 class Password(value: String) {
     val value: String by lazy {
         BCrypt.hashpw(value, salt)

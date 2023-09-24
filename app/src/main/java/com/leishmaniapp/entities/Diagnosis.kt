@@ -1,5 +1,7 @@
 package com.leishmaniapp.entities
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.leishmaniapp.entities.disease.Disease
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -18,6 +20,22 @@ import kotlin.reflect.KClass
  * Class representing a Diagnosis
  * @immutable Replace by using [Diagnosis.copy]
  */
+
+@Entity
+data class DiagnosisRoom(
+    @PrimaryKey(autoGenerate = false)
+    val id: @Serializable(UUIDSerializer::class) UUID = UUID.randomUUID(),
+    val specialistResult: Boolean,
+    val modelResult: Boolean,
+    val date: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    val remarks: String?,
+    val specialist: String,
+    val patient: String,
+    val disease: String,
+    val images: String,
+)
+
+
 @Serializable
 data class Diagnosis(
     val id: @Serializable(UUIDSerializer::class) UUID = UUID.randomUUID(),

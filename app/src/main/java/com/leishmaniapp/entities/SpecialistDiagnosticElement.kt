@@ -1,5 +1,6 @@
 package com.leishmaniapp.entities
 
+import androidx.room.Entity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,3 +14,9 @@ data class SpecialistDiagnosticElement(
     override val name: DiagnosticElementName,
     override val amount: Int
 ) : DiagnosticElement()
+
+@Entity
+data class SpecialistDiagnosticElementRoom(
+    val name: String,
+    val amount: Int
+)

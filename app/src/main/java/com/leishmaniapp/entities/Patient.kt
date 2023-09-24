@@ -1,5 +1,7 @@
 package com.leishmaniapp.entities
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -31,6 +33,14 @@ data class Patient(
             .fold("") { str, byte -> str + "%02x".format(byte) }
     }
 }
+
+@Entity
+data class PatientRoom(
+    val name: String,
+    @PrimaryKey(autoGenerate = false)
+    val id: String,
+    val documentType: String
+)
 
 /**
  * Serialize patient into a Hash
