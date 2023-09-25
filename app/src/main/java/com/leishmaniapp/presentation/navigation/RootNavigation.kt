@@ -35,9 +35,12 @@ fun RootNavigation(
             slideOutOfContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
             )
-        }) {
+        })
+    {
 
         this.startNavGraph(navigationController, applicationViewModel)
         this.menuNavGraph(navigationController, applicationViewModel)
+      //  this.diagnosisNavGraph(navController = navigationController, applicationViewModel = applicationViewModel )
+       ///*TODO*/ this.diagnosisNavGraph(navController = navigationController, applicationViewModel = applicationViewModel)
     }
 }
