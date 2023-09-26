@@ -39,10 +39,10 @@ class MainActivity : ComponentActivity() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            Log.i("kilo", "Permission granted")
+            Log.i("Warning", "Permission granted")
             shouldShowCamera.value = true
         } else {
-            Log.i("kilo", "Permission denied")
+            Log.i("Warning", "Permission denied")
         }
     }
 
@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                         outputDirectory = outputDirectory,
                         executor = cameraExecutor,
                         onImageCaptured = ::handleImageCapture,
-                        onError = { Log.e("kilo", "View error:", it) }
+                        onError = { Log.e("Warning", "View error:", it) }
                     )
                 }
 
@@ -81,14 +81,14 @@ class MainActivity : ComponentActivity() {
                 this,
                 Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_GRANTED -> {
-                Log.i("kilo", "Permission previously granted")
+                Log.i("Warning", "Permission previously granted")
                 shouldShowCamera.value = true
             }
 
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.CAMERA
-            ) -> Log.i("kilo", "Show camera permissions dialog")
+            ) -> Log.i("Warning", "Show camera permissions dialog")
 
             else -> requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
@@ -103,8 +103,13 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun getOutputDirectory(): File {
-        val mediaDir = externalMediaDirs.firstOrNull()?.let {
+        /*val mediaDir = externalMediaDirs.firstOrNull()?.let {
             File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
+        }*/
+        val mediaDir = File(filesDir, "MyAppImages")
+
+        if (!mediaDir.exists()) {
+            mediaDir.mkdirs()
         }
 
         return if (mediaDir != null && mediaDir.exists()) mediaDir else filesDir
