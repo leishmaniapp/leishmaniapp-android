@@ -47,10 +47,10 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 @Composable
 fun PatientDiagnosisHistoryScreen(
     patient: Patient,
+    diagnosisList: List<Diagnosis>,
     onBackButton: (() -> Unit)? = null,
     onDiagnosisClick: (Diagnosis) -> Unit,
     onDiagnosisCreate: () -> Unit,
-    diagnosisList: List<Diagnosis>
 ) {
     var searchBarActive by remember {
         mutableStateOf(false)

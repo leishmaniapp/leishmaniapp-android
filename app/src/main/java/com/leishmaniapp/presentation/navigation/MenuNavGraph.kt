@@ -28,8 +28,8 @@ fun NavGraphBuilder.menuNavGraph(
                 disease = applicationViewModel.disease!!,
                 onStartDiagnosis = { /*TODO*/ },
                 onPatientList = { /*TODO*/ },
+                onAwaitingDiagnoses = { /*TODO*/ },
                 onDatabase = { navController.navigateToDatabase() },
-                onAwaitingDiagnoses = { /*TODO*/ }
             )
         }
 
