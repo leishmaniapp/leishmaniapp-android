@@ -11,9 +11,3 @@ import kotlinx.serialization.Serializable
 @JvmInline
 @Serializable
 value class Username(val value: String)
-
-@Entity
-data class UsernameRoom(
-    @PrimaryKey(autoGenerate = false)
-    val value: String
-)

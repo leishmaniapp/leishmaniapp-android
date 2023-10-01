@@ -1,5 +1,6 @@
 package com.leishmaniapp.entities.disease
 
+import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.room.ColumnInfo
@@ -7,6 +8,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.DiagnosticElementName
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -24,12 +26,13 @@ data class DiseaseRoom(
     val elements: String
 )
 
+@Parcelize
 @Serializable(with = ParentDiseaseSerializer::class)
 sealed class Disease(
     val id: String,
     val models: Set<DiagnosisModel>,
     val elements: Set<DiagnosticElementName>
-) {
+) : Parcelable {
     abstract val displayName: String
         @Composable get
 
@@ -65,6 +68,7 @@ abstract class DiseaseSerializer<T>(serialName: String) : KSerializer<T>
     override fun serialize(encoder: Encoder, value: T) =
         encoder.encodeSerializableValue(diseaseDelegatedSerializer, value as Disease)
 
+    @Suppress("UNCHECKED_CAST")
     override fun deserialize(decoder: Decoder): T =
         decoder.decodeSerializableValue(diseaseDelegatedSerializer) as T
 }

@@ -21,7 +21,7 @@ import kotlin.reflect.KClass
  * @immutable Replace by using [Diagnosis.copy]
  */
 
-@Entity
+@Deprecated("Room old Entity")
 data class DiagnosisRoom(
     @PrimaryKey(autoGenerate = false)
     val id: @Serializable(UUIDSerializer::class) UUID = UUID.randomUUID(),
@@ -36,9 +36,10 @@ data class DiagnosisRoom(
 )
 
 
+@Entity
 @Serializable
 data class Diagnosis(
-    val id: @Serializable(UUIDSerializer::class) UUID = UUID.randomUUID(),
+    @PrimaryKey val id: @Serializable(UUIDSerializer::class) UUID = UUID.randomUUID(),
     val specialistResult: Boolean,
     val modelResult: Boolean,
     val date: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC),

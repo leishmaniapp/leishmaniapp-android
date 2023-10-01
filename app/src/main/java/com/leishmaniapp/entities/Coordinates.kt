@@ -18,11 +18,3 @@ data class Coordinates(val x: Int, val y: Int) {
                 abs(y - other.y).toFloat().pow(2f)
     )
 }
-
-@Entity
-data class CoordinatesRoom(
-    @PrimaryKey(autoGenerate = false)
-    val id: String,
-    val x: Int,
-    val y: Int,
-)

@@ -1,5 +1,6 @@
 package com.leishmaniapp.entities
 
+import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -8,6 +9,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.disease.Disease
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -23,13 +25,12 @@ data class DiagnosticElementNameRoom(
     val value: String,
 )
 
+@Parcelize
 @Serializable(with = DiagnosticElementNameSerializer::class)
-data class DiagnosticElementName(
+class DiagnosticElementName(
     val value: String,
-    @StringRes private val displayNameResource: Int = R.string.unknown_element,
-    @ColumnInfo(name = "disease_id")
-    val diseaseId: String
-) {
+    @StringRes private val displayNameResource: Int = R.string.unknown_element
+) : Parcelable {
     val displayName: String
         @Composable get() = stringResource(id = displayNameResource)
 

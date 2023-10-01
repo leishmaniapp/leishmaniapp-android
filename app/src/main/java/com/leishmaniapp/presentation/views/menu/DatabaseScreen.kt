@@ -20,8 +20,11 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  * @view F01
  */
 @Composable
-fun ExportImportScreen() {
-    LeishmaniappScaffold(title = stringResource(id = R.string.database)) {
+fun DatabaseScreen(onExit: () -> Unit, onImport: () -> Unit, onExport: () -> Unit) {
+    LeishmaniappScaffold(
+        title = stringResource(id = R.string.database),
+        backButtonAction = onExit,
+    ) {
         Column(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
@@ -39,7 +42,7 @@ fun ExportImportScreen() {
                     .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Button(onClick = { /* TODO: Export database btn */ }) {
+                Button(onClick = onExport) {
                     Text(
                         text = String.format(
                             "%s %s",
@@ -48,7 +51,7 @@ fun ExportImportScreen() {
                         )
                     )
                 }
-                Button(onClick = { /* TODO: Import database btn */ }) {
+                Button(onClick = onImport) {
                     Text(
                         text = String.format(
                             "%s %s",
@@ -58,7 +61,6 @@ fun ExportImportScreen() {
                     )
                 }
             }
-
             Column(
                 modifier = Modifier
                     .padding(36.dp)
@@ -72,8 +74,8 @@ fun ExportImportScreen() {
 
 @Composable
 @Preview
-fun ExportImportScreenPreview() {
+fun DatabaseScreenPreview() {
     LeishmaniappTheme {
-        ExportImportScreen()
+        DatabaseScreen(onExit = {}, onImport = {}, onExport = {})
     }
 }
