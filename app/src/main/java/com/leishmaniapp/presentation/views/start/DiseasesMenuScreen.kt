@@ -27,7 +27,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  */
 @Composable
 fun DiseasesMenuScreen(
-    diseases: List<Disease> = Disease::class.sealedSubclasses.map { it.objectInstance!! }.toList(),
+    diseases: List<Disease> = Disease.diseases(),
     onDiseaseSelection: (Disease) -> Unit,
 ) {
     LeishmaniappScaffold {

@@ -40,6 +40,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
         freeCompilerArgs += [
@@ -68,6 +69,8 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
 
     // Android core dependencies
     implementation 'androidx.core:core-ktx:1.12.0'
@@ -108,7 +111,7 @@ dependencies {
 
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 
-    androidTestImplementation  'com.google.dagger:hilt-android-testing:2.48'
+    androidTestImplementation 'com.google.dagger:hilt-android-testing:2.48'
     kaptAndroidTest 'com.google.dagger:hilt-compiler:2.48'
 
     testImplementation 'com.google.dagger:hilt-android-testing:2.48'
@@ -136,11 +139,33 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:1.0.1"
     implementation "androidx.camera:camera-view:1.0.0-alpha27"
 
-    // Room
-    implementation "androidx.room:room-ktx:2.5.0"
-    kapt "androidx.room:room-compiler:2.5.0"
+    // Room Database
+    implementation "androidx.room:room-runtime:2.5.2"
+    implementation "androidx.room:room-ktx:2.5.2"
+    androidTestImplementation "androidx.room:room-testing:2.5.2"
+    ksp "androidx.room:room-compiler:2.5.2"
 }
 
 kapt {
     correctErrorTypes true
+}
+
+class RoomSchemaArgProvider implements CommandLineArgumentProvider {
+
+    @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
+    File schemaDir
+
+    RoomSchemaArgProvider(File schemaDir) {
+        this.schemaDir = schemaDir
+    }
+
+    @Override
+    Iterable<String> asArguments() {
+        return ["room.schemaLocation=${schemaDir.path}".toString()]
+    }
+}
+
+ksp {
+    arg(new RoomSchemaArgProvider(new File(projectDir, "schemas")))
 }

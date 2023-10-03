@@ -4,9 +4,6 @@ import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.disease.Disease
 import kotlinx.parcelize.Parcelize
@@ -17,13 +14,6 @@ import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-
-@Entity
-data class DiagnosticElementNameRoom(
-    @PrimaryKey(autoGenerate = false)
-    val id: String,
-    val value: String,
-)
 
 @Parcelize
 @Serializable(with = DiagnosticElementNameSerializer::class)
@@ -49,9 +39,6 @@ object DiagnosticElementNameSerializer : KSerializer<DiagnosticElementName> {
     override val descriptor =
         PrimitiveSerialDescriptor("DiagnosticElementName", PrimitiveKind.STRING)
 
-    /**
-     * @TODO Missing tests
-     */
     override fun deserialize(decoder: Decoder): DiagnosticElementName {
         val decodedDiagnosticElementName = decoder.decodeString()
         try {

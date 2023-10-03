@@ -1,6 +1,7 @@
 package com.leishmaniapp.entities
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.leishmaniapp.entities.disease.Disease
 import kotlinx.datetime.Clock
@@ -16,30 +17,55 @@ import kotlinx.serialization.encoding.Encoder
 import java.util.UUID
 import kotlin.reflect.KClass
 
-/**
- * Class representing a Diagnosis
- * @immutable Replace by using [Diagnosis.copy]
- */
-
-@Deprecated("Room old Entity")
+@Entity(
+    foreignKeys = [
+        ForeignKey(
+            entity = Specialist::class,
+            childColumns = ["specialistUsername"],
+            parentColumns = ["username"]
+        ),
+        ForeignKey(
+            entity = Patient::class,
+            childColumns = ["patientIdDocument", "patientIdType"],
+            parentColumns = ["id", "documentType"]
+        ),
+    ]
+)
 data class DiagnosisRoom(
-    @PrimaryKey(autoGenerate = false)
-    val id: @Serializable(UUIDSerializer::class) UUID = UUID.randomUUID(),
+    @PrimaryKey val id: @Serializable(UUIDSerializer::class) UUID = UUID.randomUUID(),
     val specialistResult: Boolean,
     val modelResult: Boolean,
     val date: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC),
     val remarks: String?,
-    val specialist: String,
-    val patient: String,
-    val disease: String,
-    val images: String,
-)
+    val specialistUsername: Username,
+    val patientIdDocument: IdentificationDocument,
+    val patientIdType: DocumentType,
+    val disease: Disease,
+    val images: Map<Int, Image>
+) {
+    companion object {
+        fun Diagnosis.asRoomEntity(): DiagnosisRoom = DiagnosisRoom(
+            id,
+            specialistResult,
+            modelResult,
+            date,
+            remarks,
+            specialist.username,
+            patient.id,
+            patient.documentType,
+            disease,
+            images
+        )
+    }
+}
 
-
-@Entity
+/**
+ * Class representing a Diagnosis
+ * @immutable Replace by using [Diagnosis.copy]
+ */
 @Serializable
 data class Diagnosis(
-    @PrimaryKey val id: @Serializable(UUIDSerializer::class) UUID = UUID.randomUUID(),
+    val id: @Serializable(UUIDSerializer::class) UUID = UUID.randomUUID(),
     val specialistResult: Boolean,
     val modelResult: Boolean,
     val date: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC),

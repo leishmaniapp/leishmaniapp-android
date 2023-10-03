@@ -4,19 +4,34 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.DiagnosisRoom
-import java.time.LocalDateTime
+import com.leishmaniapp.entities.DocumentType
+import com.leishmaniapp.entities.IdentificationDocument
+import com.leishmaniapp.entities.Patient
 
 @Dao
 interface DiagnosisDao {
     @Upsert
-    suspend fun upsetDiagnosis(diagnosis: DiagnosisRoom)
+    suspend fun upsertDiagnosis(diagnosis: DiagnosisRoom)
+
     @Delete
     suspend fun deleteDiagnosis(diagnosis: DiagnosisRoom)
-    @Query("SELECT * FROM diagnosisroom WHERE date = :searchDate")
-    suspend fun getDiagnosisByDate(searchDate: LocalDateTime): List<DiagnosisRoom>
 
-    @Query("SELECT * FROM diagnosisroom")
-    suspend fun getAllDiagnoses(): List<DiagnosisRoom>
+    @Query("SELECT * FROM DiagnosisRoom")
+    suspend fun allDiagnoses(): List<DiagnosisRoom>
+
+    @Query("SELECT * FROM DiagnosisRoom DR WHERE DR.patientIdDocument = :patientId AND DR.patientIdType = :documentType")
+    suspend fun diagnosesForPatientFields(
+        patientId: IdentificationDocument,
+        documentType: DocumentType
+    ): List<DiagnosisRoom>
+
+    suspend fun diagnosesForPatient(
+        patient: Patient
+    ): List<DiagnosisRoom> = diagnosesForPatientFields(
+        patient.id,
+        patient.documentType
+    )
+
+
 }

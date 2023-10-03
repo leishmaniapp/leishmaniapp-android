@@ -2,6 +2,7 @@ package com.leishmaniapp
 
 import com.leishmaniapp.entities.Coordinates
 import com.leishmaniapp.entities.Diagnosis
+import com.leishmaniapp.entities.DiagnosticElement
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
 import com.leishmaniapp.entities.Image
@@ -13,11 +14,11 @@ import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.Username
 import com.leishmaniapp.entities.disease.Disease
 import com.leishmaniapp.entities.disease.LeishmaniasisGiemsaDisease
+import com.leishmaniapp.entities.mock.MockGenerator
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.Assert
 import org.junit.Test
-import org.mindrot.jbcrypt.BCrypt
 
 class EntitiesSerializationTests {
     @Test
@@ -62,15 +63,30 @@ class EntitiesSerializationTests {
     }
 
     @Test
-    fun passwordAutomaticBcryptHash() {
-        val specialist = Specialist(
-            "John Doe",
-            Username("john_doe"),
-            Password("password")
-        )
+    fun diagnosticElementByTypeShouldSerialize() {
+        val specialistElement = MockGenerator.mockSpecialistDiagnosticElement()
+        val modelElement = MockGenerator.mockModelDiagnosticElement()
 
-        Assert.assertNotEquals(specialist.password!!.value, "password")
-        Assert.assertTrue(BCrypt.checkpw("password", specialist.password!!.value))
+        print(Json.encodeToString(modelElement))
+
+        Assert.assertEquals(
+            """
+            {"name":"mock.disease:mock_element","amount":${specialistElement.amount}}
+        """.trimIndent(), Json.encodeToString(specialistElement)
+        )
+    }
+
+    @Test
+    fun diagnosticElementNameByStringShouldReturnDiseaseDiagnosticElementName() {
+        // Serialize
+        val diagnosticElement = MockGenerator.mockModelDiagnosticElement()
+        val serializedValue = Json.encodeToString<DiagnosticElement>(diagnosticElement)
+
+        // Deserialize
+        Assert.assertEquals(
+            diagnosticElement.name,
+            Json.decodeFromString<DiagnosticElement>(serializedValue).name
+        )
     }
 
     @Test
@@ -185,5 +201,4 @@ class EntitiesSerializationTests {
 
         Assert.assertEquals(expectedJson, Json.encodeToString(diagnosis))
     }
-
 }

@@ -14,22 +14,3 @@ enum class DocumentType {
     CE,
     PASSPORT
 }
-
-class DocumentTypeConverter {
-    @TypeConverter
-    fun fromDocumentType(documentType: DocumentType): String {
-        return documentType.name
-    }
-
-    @TypeConverter
-    fun toDocumentType(documentTypeString: String): DocumentType {
-        return enumValueOf(documentTypeString)
-    }
-}
-
-@Entity
-@TypeConverters(DocumentTypeConverter::class)
-data class DocumentTypeRoom(
-    @PrimaryKey(autoGenerate = false)
-    val documentType: DocumentType
-)

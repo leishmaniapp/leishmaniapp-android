@@ -1,7 +1,8 @@
 package com.leishmaniapp.entities
 
-import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -13,16 +14,17 @@ import java.security.MessageDigest
 /**
  * Representation of a Patient
  */
-@Entity
+@Entity(primaryKeys = ["id", "documentType"])
 @Serializable(with = PatientSerializer::class)
 data class Patient(
     val name: String,
-    @Embedded val id: IdentificationDocument,
-    @Embedded val documentType: DocumentType
+    val id: IdentificationDocument,
+    val documentType: DocumentType
 ) {
     /**
      * Get the Patient document with DocumentType and ID concatenated
      */
+    @Ignore
     val document: String = "%s %s".format(documentType, id)
 
     /**
@@ -34,15 +36,6 @@ data class Patient(
             .fold("") { str, byte -> str + "%02x".format(byte) }
     }
 }
-
-// TODO: Remove
-//@Entity
-//data class PatientRoom(
-//    val name: String,
-//    @PrimaryKey(autoGenerate = false)
-//    val id: String,
-//    val documentType: String
-//)
 
 /**
  * Serialize patient into a Hash

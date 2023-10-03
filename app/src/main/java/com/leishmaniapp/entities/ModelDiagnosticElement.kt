@@ -20,10 +20,3 @@ data class ModelDiagnosticElement(
     override val amount: Int
         get() = coordinates.size
 }
-
-@Entity
-data class ModelDiagnosticElementRoom(
-    val name: String,
-    val model: String,
-    val coordinates: String
-)

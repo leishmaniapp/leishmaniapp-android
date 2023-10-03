@@ -1,8 +1,8 @@
 package com.leishmaniapp.entities
 
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
