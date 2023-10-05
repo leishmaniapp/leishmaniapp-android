@@ -1,8 +1,10 @@
 package com.leishmaniapp.entities
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -12,8 +14,9 @@ import kotlinx.serialization.Transient
  */
 @Entity
 @Serializable
+@Parcelize
 data class Specialist(
     val name: String,
     @PrimaryKey val username: Username,
     @Transient val password: Password? = null
-)
+): Parcelable

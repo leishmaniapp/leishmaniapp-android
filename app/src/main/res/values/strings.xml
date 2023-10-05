@@ -121,4 +121,9 @@
     <!-- Export / Import -->
     <string name="export_import_screen_alert">Tenga en cuenta que sólo se admiten archivos generados por la aplicación</string>
 
+    <!-- Camera -->
+    <string name="missing_camera_permission">Es necesario el permiso de la cámara para continuar el diagnóstico</string>
+    <string name="request_permission">Autorizar permisos</string>
+    <string name="cancel_camera">Cancel camera</string>
+
 </resources>

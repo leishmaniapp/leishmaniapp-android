@@ -1,7 +1,6 @@
-package com.leishmaniapp.presentation.views.diagnosis.camera
+package com.leishmaniapp.presentation.views.diagnosis
 
 import android.content.Context
-import android.graphics.DashPathEffect
 import android.net.Uri
 import android.util.Log
 import androidx.camera.core.CameraSelector
@@ -39,12 +38,12 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import com.leishmaniapp.R
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 import java.util.concurrent.Executor
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -52,17 +51,19 @@ import kotlin.math.sqrt
 
 
 @Composable
-fun CameraView(
-    outputDirectory: File,
+fun CameraScreen(
+    outputFile: File,
     executor: Executor,
     onImageCaptured: (Uri) -> Unit,
-    onError: (ImageCaptureException) -> Unit
+    onError: (ImageCaptureException) -> Unit,
+    onCancel: () -> Unit,
 ) {
-    // 1
+    // Camera properties
     val lensFacing = CameraSelector.LENS_FACING_BACK
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
+    /// Camera preview
     val preview = Preview.Builder().build()
     val previewView = remember { PreviewView(context) }
     val imageCapture: ImageCapture = remember { ImageCapture.Builder().build() }
@@ -71,7 +72,7 @@ fun CameraView(
         .build()
 
 
-    // 2
+    // Camera launch effect
     LaunchedEffect(lensFacing) {
         val cameraProvider = context.getCameraProvider()
         cameraProvider.unbindAll()
@@ -86,7 +87,7 @@ fun CameraView(
     }
 
 
-    // 3
+    // Camera canvas with drawings
     Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
         AndroidView(
             { previewView },
@@ -96,7 +97,6 @@ fun CameraView(
         Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
             val circlePath = Path().apply {
                 addOval(Rect(center, size.minDimension / 2))
-
             }
             clipPath(circlePath, clipOp = ClipOp.Difference) {
                 drawRect(SolidColor(Color.Black.copy(alpha = 0.8f)))
@@ -116,78 +116,77 @@ fun CameraView(
             }
         })
 
-        Icon(
-            imageVector = Icons.Filled.Close,
-            contentDescription = "Cancelar tomar foto",
-            tint = Color.White,
+        // Cancel action button
+        IconButton(
             modifier = Modifier
-                .size(50.dp)
-                .padding(8.dp)
-                .align(Alignment.TopStart)
-        )
+                .padding(16.dp)
+                .align(Alignment.TopStart),
+            onClick = onCancel
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Close,
+                contentDescription = stringResource(id = R.string.cancel_camera),
+                tint = Color.White,
+                modifier = Modifier
+                    .size(45.dp)
+            )
+        }
 
 
+        // Take photo
         IconButton(
             modifier = Modifier.padding(bottom = 20.dp),
             onClick = {
-                Log.i("Warning", "ON CLICK")
-                takePhoto(
-                    filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
+                onCameraTakePhoto(
+                    outputFile = outputFile,
                     imageCapture = imageCapture,
-                    outputDirectory = outputDirectory,
                     executor = executor,
                     onImageCaptured = onImageCaptured,
                     onError = onError
                 )
-            },
-            content = {
-                Icon(
-                    imageVector = Icons.Sharp.Lens,
-                    contentDescription = "Take picture",
-                    tint = Color.White,
-                    modifier = Modifier
-                        .size(500.dp)
-                        .padding(2.dp)
-                        .border(2.dp, Color.White, CircleShape)
-                )
-            }
-        )
+            }) {
+            Icon(
+                imageVector = Icons.Sharp.Lens,
+                contentDescription = "Take picture",
+                tint = Color.White,
+                modifier = Modifier
+                    .size(500.dp)
+                    .padding(2.dp)
+                    .border(2.dp, Color.White, CircleShape)
+            )
+        }
     }
 }
 
-private fun takePhoto(
-    filenameFormat: String,
+private fun onCameraTakePhoto(
+    outputFile: File,
     imageCapture: ImageCapture,
-    outputDirectory: File,
     executor: Executor,
     onImageCaptured: (Uri) -> Unit,
     onError: (ImageCaptureException) -> Unit
 ) {
+    // Create output options
+    val outputOptions = ImageCapture.OutputFileOptions.Builder(outputFile).build()
 
-    val photoFile = File(
-        outputDirectory,
-        SimpleDateFormat(filenameFormat, Locale.US).format(System.currentTimeMillis()) + ".jpg"
-    )
-
-    val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
-
-    imageCapture.takePicture(outputOptions, executor, object: ImageCapture.OnImageSavedCallback {
+    imageCapture.takePicture(outputOptions, executor, object : ImageCapture.OnImageSavedCallback {
         override fun onError(exception: ImageCaptureException) {
-            Log.e("Warning", "Take photo error:", exception)
             onError(exception)
+            Log.d("ImageFile", outputFile.toString())
         }
 
         override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-            val savedUri = Uri.fromFile(photoFile)
-            onImageCaptured(savedUri)
+            // Image capture callback with URI
+            onImageCaptured(Uri.fromFile(outputFile))
+            Log.d("ImageFile", outputFile.toString())
         }
     })
 }
 
-private suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspendCoroutine { continuation ->
-    ProcessCameraProvider.getInstance(this).also { cameraProvider ->
-        cameraProvider.addListener({
-            continuation.resume(cameraProvider.get())
-        }, ContextCompat.getMainExecutor(this))
+private suspend fun Context.getCameraProvider(): ProcessCameraProvider =
+    suspendCoroutine { continuation ->
+        ProcessCameraProvider.getInstance(this).also { cameraProvider ->
+            cameraProvider.addListener({
+                continuation.resume(cameraProvider.get())
+            }, ContextCompat.getMainExecutor(this))
+        }
     }
-}

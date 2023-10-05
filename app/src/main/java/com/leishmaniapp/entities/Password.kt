@@ -1,6 +1,8 @@
 package com.leishmaniapp.entities
 
+import android.os.Parcelable
 import androidx.room.TypeConverter
+import kotlinx.parcelize.Parcelize
 
 /**
  * Functional wrapper class around password
@@ -8,4 +10,5 @@ import androidx.room.TypeConverter
  *
  * This class is NOT serializable
  */
-data class Password(val value: String)
+@Parcelize
+data class Password(val value: String): Parcelable

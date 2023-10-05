@@ -1,6 +1,7 @@
 package com.leishmaniapp.entities
 
 import androidx.room.Entity
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -10,6 +11,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 @SerialName("specialist")
+@Parcelize
 data class SpecialistDiagnosticElement(
     override val name: DiagnosticElementName,
     override val amount: Int

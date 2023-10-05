@@ -1,8 +1,10 @@
 package com.leishmaniapp.entities
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -16,11 +18,12 @@ import java.security.MessageDigest
  */
 @Entity(primaryKeys = ["id", "documentType"])
 @Serializable(with = PatientSerializer::class)
+@Parcelize
 data class Patient(
     val name: String,
     val id: IdentificationDocument,
     val documentType: DocumentType
-) {
+): Parcelable {
     /**
      * Get the Patient document with DocumentType and ID concatenated
      */
