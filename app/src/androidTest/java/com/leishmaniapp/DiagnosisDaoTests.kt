@@ -5,6 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.DiagnosisRoom.Companion.asRoomEntity
+import com.leishmaniapp.entities.ImageRoom.Companion.asRoomEntity
 import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.persistance.database.ApplicationDatabase
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +41,6 @@ class DiagnosisDaoTests {
         val diagnoses = List(10) {
             MockGenerator.mockDiagnosis()
         }
-
 
         runBlocking(Dispatchers.IO) {
             diagnoses.forEach {
@@ -92,7 +92,29 @@ class DiagnosisDaoTests {
                 database.diagnosisDao().diagnosesForPatient(patient).toSet()
             )
         }
+    }
 
+    @Test
+    fun diagnosisWithImages() {
+        // Generate the diagnosis
+        val diagnosis = MockGenerator.mockDiagnosis().copy(images = List(10) {
+            MockGenerator.mockImage().copy(sample = it)
+        }.associateBy { it.sample })
 
+        runBlocking(Dispatchers.IO) {
+            // Insert every diagnosis
+            database.specialistDao().upsertSpecialist(diagnosis.specialist)
+            database.patientDao().upsertPatient(diagnosis.patient)
+            database.diagnosisDao().upsertDiagnosis(diagnosis.asRoomEntity())
+            diagnosis.images.forEach {
+                database.imageDao().upsertImage(it.value.asRoomEntity(diagnosis.id))
+            }
+
+            // Assert values
+            Assert.assertEquals(
+                diagnosis.images.values.map { it.asRoomEntity(diagnosis.id) }.toSet(),
+                database.diagnosisDao().imagesForDiagnosis(diagnosis.id).images.toSet()
+            )
+        }
     }
 }

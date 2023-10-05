@@ -46,7 +46,6 @@ data class DiagnosisRoom(
     val patientIdDocument: IdentificationDocument,
     val patientIdType: DocumentType,
     val disease: Disease,
-    val images: Map<Int, Image>
 ) {
     companion object {
         fun Diagnosis.asRoomEntity(): DiagnosisRoom = DiagnosisRoom(
@@ -58,8 +57,7 @@ data class DiagnosisRoom(
             specialist.username,
             patient.id,
             patient.documentType,
-            disease,
-            images
+            disease
         )
     }
 }

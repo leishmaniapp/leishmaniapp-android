@@ -1,6 +1,5 @@
 package com.leishmaniapp.entities
 
-import androidx.room.Entity
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -4,7 +4,6 @@ import androidx.room.TypeConverter
 import com.leishmaniapp.entities.DiagnosticElement
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
-import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.Username
 import com.leishmaniapp.entities.disease.Disease
@@ -60,12 +59,14 @@ class ApplicationRoomTypeConverters {
     fun jsonStringToDiagnosticElement(value: String): DiagnosticElement =
         Json.decodeFromString(value)
 
-    /* Map<Int, Image> */
+    /* Set<DiagnosticElement> */
     @TypeConverter
-    fun imagesToJsonString(images: Map<Int, Image>): String = Json.encodeToString(images)
+    fun diagnosticElementSetToJson(diagnosticElements: Set<DiagnosticElement>): String =
+        Json.encodeToString(diagnosticElements)
 
     @TypeConverter
-    fun jsonStringToImages(value: String): Map<Int, Image> = Json.decodeFromString(value)
+    fun jsonToDiagnosticElementSet(diagnosticElements: String): Set<DiagnosticElement> =
+        Json.decodeFromString(diagnosticElements)
 
     /* LocalDateTime */
     @TypeConverter

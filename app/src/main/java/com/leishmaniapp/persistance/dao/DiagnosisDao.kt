@@ -8,6 +8,8 @@ import com.leishmaniapp.entities.DiagnosisRoom
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
 import com.leishmaniapp.entities.Patient
+import com.leishmaniapp.persistance.relations.DiagnosisImages
+import java.util.UUID
 
 @Dao
 interface DiagnosisDao {
@@ -33,5 +35,6 @@ interface DiagnosisDao {
         patient.documentType
     )
 
-
+    @Query("SELECT * FROM DiagnosisRoom DR WHERE DR.id = :uuid")
+    suspend fun imagesForDiagnosis(uuid: UUID): DiagnosisImages
 }

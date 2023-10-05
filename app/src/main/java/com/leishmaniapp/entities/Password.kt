@@ -1,7 +1,6 @@
 package com.leishmaniapp.entities
 
 import android.os.Parcelable
-import androidx.room.TypeConverter
 import kotlinx.parcelize.Parcelize
 
 /**
