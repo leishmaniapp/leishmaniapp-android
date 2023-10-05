@@ -39,9 +39,6 @@ object DiagnosticElementNameSerializer : KSerializer<DiagnosticElementName> {
     override val descriptor =
         PrimitiveSerialDescriptor("DiagnosticElementName", PrimitiveKind.STRING)
 
-    /**
-     * @TODO Missing tests
-     */
     override fun deserialize(decoder: Decoder): DiagnosticElementName {
         val decodedDiagnosticElementName = decoder.decodeString()
         try {

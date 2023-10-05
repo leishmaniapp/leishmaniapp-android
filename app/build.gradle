@@ -40,6 +40,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
         freeCompilerArgs += [
@@ -68,6 +69,8 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
 
     // Android core dependencies
     implementation 'androidx.core:core-ktx:1.12.0'
@@ -78,7 +81,7 @@ dependencies {
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
     // TODO: Change to next stable release of material3 when possible
-    implementation 'androidx.compose.material3:material3-android:1.2.0-alpha07'
+    implementation 'androidx.compose.material3:material3-android:1.2.0-alpha08'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
     implementation 'androidx.activity:activity-compose:1.7.2'
     implementation platform('androidx.compose:compose-bom:2022.10.00')
@@ -97,7 +100,7 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
     // Jetpack Compose Navigation
-    implementation 'androidx.navigation:navigation-compose:2.7.2'
+    implementation 'androidx.navigation:navigation-compose:2.7.3'
 
     // Other Jetpack libraries
     implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -108,7 +111,7 @@ dependencies {
 
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 
-    androidTestImplementation  'com.google.dagger:hilt-android-testing:2.48'
+    androidTestImplementation 'com.google.dagger:hilt-android-testing:2.48'
     kaptAndroidTest 'com.google.dagger:hilt-compiler:2.48'
 
     testImplementation 'com.google.dagger:hilt-android-testing:2.48'
@@ -130,8 +133,39 @@ dependencies {
 
     // Security
     implementation 'org.mindrot:jbcrypt:0.4'
+
+    // CameraX
+    implementation "androidx.camera:camera-camera2:1.0.1"
+    implementation "androidx.camera:camera-lifecycle:1.0.1"
+    implementation "androidx.camera:camera-view:1.0.0-alpha27"
+
+    // Room Database
+    implementation "androidx.room:room-runtime:2.5.2"
+    implementation "androidx.room:room-ktx:2.5.2"
+    androidTestImplementation "androidx.room:room-testing:2.5.2"
+    ksp "androidx.room:room-compiler:2.5.2"
 }
 
 kapt {
     correctErrorTypes true
+}
+
+class RoomSchemaArgProvider implements CommandLineArgumentProvider {
+
+    @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
+    File schemaDir
+
+    RoomSchemaArgProvider(File schemaDir) {
+        this.schemaDir = schemaDir
+    }
+
+    @Override
+    Iterable<String> asArguments() {
+        return ["room.schemaLocation=${schemaDir.path}".toString()]
+    }
+}
+
+ksp {
+    arg(new RoomSchemaArgProvider(new File(projectDir, "schemas")))
 }

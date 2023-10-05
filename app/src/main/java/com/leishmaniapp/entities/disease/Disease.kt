@@ -27,6 +27,14 @@ sealed class Disease(
 
     abstract val painterResource: Painter
         @Composable get
+
+    companion object {
+        fun diseases(): List<Disease> =
+            Disease::class.sealedSubclasses.map { it.objectInstance!! }.toList()
+
+        fun where(id: String): Disease? =
+            Disease::class.sealedSubclasses.firstOrNull { it.objectInstance?.id == id }?.objectInstance
+    }
 }
 
 object ParentDiseaseSerializer : KSerializer<Disease> {

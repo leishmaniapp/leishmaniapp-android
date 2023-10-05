@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="LockedOrientationActivity">
 
+    <uses-feature android:name="android.hardware.camera.any" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
@@ -23,6 +26,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".presentation.activities.CameraActivity"
+            android:exported="true" />
 
     </application>
 </manifest>
