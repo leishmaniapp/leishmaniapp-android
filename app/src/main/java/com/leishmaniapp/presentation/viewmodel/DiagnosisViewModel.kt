@@ -1,24 +1,72 @@
 package com.leishmaniapp.presentation.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.leishmaniapp.entities.Diagnosis
+import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.Patient
-import com.leishmaniapp.entities.mock.MockGenerator
+import com.leishmaniapp.entities.Specialist
+import com.leishmaniapp.entities.disease.Disease
+import com.leishmaniapp.persistance.database.ApplicationDatabase
+import com.leishmaniapp.usecases.types.IDiagnosisSharing
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
-class DiagnosisViewModel @Inject constructor(): ViewModel() {
+class DiagnosisViewModel @Inject constructor(
+    val savedStateHandle: SavedStateHandle,
+    val applicationDatabase: ApplicationDatabase,
+    val diagnosisShare: IDiagnosisSharing,
+) : ViewModel() {
 
-    val diagnosis = MockGenerator.mockDiagnosis() /*TODO: ROOM*/
+    val currentDiagnosis = MutableStateFlow<Diagnosis?>(null)
+    val currentImage = MutableStateFlow<Image?>(null)
 
-    val diagnosis1 = MockGenerator.mockDiagnosis() /*TODO: ROOM*/
-    val diagnosis2 = MockGenerator.mockDiagnosis() /*TODO: ROOM*/
-    val diagnosis3 = MockGenerator.mockDiagnosis() /*TODO: ROOM*/
-    val diagnosis4 = MockGenerator.mockDiagnosis() /*TODO: ROOM*/
+    init {
+        // Read from bundle when activity is destroyed
+        savedStateHandle.get<Diagnosis?>("currentDiagnosis")?.let { savedDiagnosis ->
+            currentDiagnosis.value = savedDiagnosis
+        }
+        savedStateHandle.get<Image?>("currentImage")?.let { savedImage ->
+            currentImage.value = savedImage
+        }
+    }
 
-    val diagnosisList : List<Diagnosis> = listOf(diagnosis1, diagnosis2, diagnosis3, diagnosis4)
 
-    val actualImage = MockGenerator.mockImage()
+    fun diagnosesForPatient(patient: Patient): List<Diagnosis> {
+        val retrievalDiagnosis: MutableList<Diagnosis> = mutableListOf()
 
+        runBlocking {
+            val diagnosis = applicationDatabase.diagnosisDao().diagnosesForPatient(patient)
+
+            for (element in diagnosis) {
+                val elementSpecialist = applicationDatabase.specialistDao()
+                    .specialistByUsername(element.specialistUsername)
+                val elementPatient = applicationDatabase.patientDao()
+                    .patientById(element.patientIdDocument, element.patientIdType)
+                val elementImages = applicationDatabase.imageDao().allImagesForDiagnosis(element.id)
+
+                // Add diagnosis to return value
+                retrievalDiagnosis.add(
+                    element.asApplicationEntity(elementSpecialist!!,
+                        elementPatient!!,
+                        elementImages.map { it.asApplicationEntity() })
+                )
+            }
+
+        }
+
+        return retrievalDiagnosis.toList()
+    }
+
+    fun shareCurrentDiagnosis() {
+        TODO("Implementation of Diagnosis Sharing Module")
+    }
+
+    fun startNewDiagnosis(patient: Patient, specialist: Specialist, disease: Disease) {
+        // Create a new diagnosis
+        currentDiagnosis.value = Diagnosis(specialist, patient, disease)
+    }
 }

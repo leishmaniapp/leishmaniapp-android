@@ -19,4 +19,7 @@ interface ImageDao {
     @Query("SELECT * FROM ImageRoom IR WHERE IR.diagnosisUUID = :uuid AND IR.sample = :sample")
     suspend fun imageForDiagnosis(uuid: UUID, sample: Int): ImageRoom?
 
+    //TODO: Test this method
+    @Query("SELECT * FROM ImageRoom WHERE diagnosisUUID = :uuid")
+    suspend fun allImagesForDiagnosis(uuid: UUID): List<ImageRoom>
 }

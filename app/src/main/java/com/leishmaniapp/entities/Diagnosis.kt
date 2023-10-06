@@ -60,6 +60,23 @@ data class DiagnosisRoom(
             disease
         )
     }
+
+    fun asApplicationEntity(
+        specialist: Specialist,
+        patient: Patient,
+        images: List<Image>
+    ): Diagnosis =
+        Diagnosis(
+            id,
+            specialistResult,
+            modelResult,
+            date,
+            remarks,
+            specialist,
+            patient,
+            disease,
+            images.associateBy { it.sample }
+        )
 }
 
 /**
@@ -80,6 +97,22 @@ data class Diagnosis(
     val disease: Disease,
     val images: Map<Int, Image>,
 ) : Parcelable {
+
+    constructor(
+        specialist: Specialist,
+        patient: Patient,
+        disease: Disease
+    ) : this(
+        specialistResult = false,
+        modelResult = false,
+        remarks = null,
+        images = mapOf(),
+        patient = patient,
+        specialist = specialist,
+        disease = disease
+    )
+
+
     /**
      * Group [DiagnosticElement] in a map in which the key is the [DiagnosticElementName] and the
      * value is another map in which the key is the element type (either [ModelDiagnosticElement]

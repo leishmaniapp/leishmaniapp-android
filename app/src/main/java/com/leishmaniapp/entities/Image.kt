@@ -50,4 +50,6 @@ data class ImageRoom(
         fun Image.asRoomEntity(diagnosisUUID: UUID): ImageRoom =
             ImageRoom(diagnosisUUID, sample, date, size, processed, elements)
     }
+
+    fun asApplicationEntity() = Image(sample, date, size, processed, elements)
 }

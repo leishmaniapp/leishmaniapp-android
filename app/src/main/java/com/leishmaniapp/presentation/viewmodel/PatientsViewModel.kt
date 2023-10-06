@@ -1,21 +1,29 @@
 package com.leishmaniapp.presentation.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.leishmaniapp.entities.Patient
-import com.leishmaniapp.entities.mock.MockGenerator
+import com.leishmaniapp.persistance.database.ApplicationDatabase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
-class PatientsViewModel: ViewModel() {
-    /*lISTA DE PACIENTES MOCK*/
-    val patient1 = MockGenerator.mockPatient()
-    val patient2 = MockGenerator.mockPatient()
-    val patient3 = MockGenerator.mockPatient()
-    val patient4 = MockGenerator.mockPatient()
+@HiltViewModel
+class PatientsViewModel @Inject constructor(
+    val savedStateHandle: SavedStateHandle,
+    val applicationDatabase: ApplicationDatabase,
+) : ViewModel() {
 
-    /*TODO: pull to room dartabase*/
-    val patientSet : Set<Patient> = setOf(patient1, patient2, patient3, patient4)
+    val patients: Set<Patient> by lazy {
+        runBlocking {
+            applicationDatabase.patientDao().allPatients().toSet()
+        }
+    }
 
-
-
-
+    var currentPatient: Patient? = savedStateHandle["currentPatient"]
+        set(value) {
+            savedStateHandle["currentPatient"] = value
+            field = value
+        }
 }
 

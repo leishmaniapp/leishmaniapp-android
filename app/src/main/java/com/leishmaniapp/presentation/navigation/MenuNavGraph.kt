@@ -8,12 +8,6 @@ import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 import com.leishmaniapp.presentation.views.menu.DatabaseScreen
 import com.leishmaniapp.presentation.views.menu.MainMenuScreen
 
-fun NavHostController.navigateToMenu() {
-    this.navigate(NavigationRoutes.MenuRoute.MainMenuRoute.route) {
-        popUpTo(0) // Pop every other route
-    }
-}
-
 fun NavGraphBuilder.menuNavGraph(
     navController: NavHostController,
     applicationViewModel: ApplicationViewModel
@@ -27,7 +21,7 @@ fun NavGraphBuilder.menuNavGraph(
             MainMenuScreen(
                 disease = applicationViewModel.disease!!,
                 onStartDiagnosis = { /*TODO*/ },
-                onPatientList = { /*TODO*/ },
+                onPatientList = { navController.navigateToPatientsNavGraph() },
                 onAwaitingDiagnoses = { /*TODO*/ },
                 onDatabase = { navController.navigateToDatabase() },
             )
@@ -39,6 +33,12 @@ fun NavGraphBuilder.menuNavGraph(
                 onImport = { /*TODO*/ },
                 onExport = { /*TODO*/ })
         }
+    }
+}
+
+fun NavHostController.navigateToMenu() {
+    this.navigate(NavigationRoutes.MenuRoute.MainMenuRoute.route) {
+        popUpTo(0) // Pop every other route
     }
 }
 

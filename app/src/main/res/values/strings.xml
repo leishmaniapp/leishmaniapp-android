@@ -36,7 +36,7 @@
 
     <!-- General -->
     <string name="date_time">Fecha y Hora</string>
-    <string name="email">Correo electrónico:</string>
+    <string name="email">Correo electrónico</string>
     <string name="password">Contraseña</string>
     <string name="database">Base de Datos</string>
     <string name="export_import">Exportar e Importar</string>
@@ -120,6 +120,9 @@
 
     <!-- Export / Import -->
     <string name="export_import_screen_alert">Tenga en cuenta que sólo se admiten archivos generados por la aplicación</string>
+
+    <!-- Authentication -->
+    <string name="authentication_failure">Especialista no encontrado o credenciales incorrectas</string>
 
     <!-- Camera -->
     <string name="missing_camera_permission">Es necesario el permiso de la cámara para continuar el diagnóstico</string>
