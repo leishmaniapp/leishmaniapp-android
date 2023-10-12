@@ -3,6 +3,7 @@ package com.leishmaniapp.entities
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Ignore
+import com.leishmaniapp.entities.serialization.PatientSerializer
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.KSerializer
@@ -40,16 +41,4 @@ data class Patient(
             .digest(this.document.toByteArray())
             .fold("") { str, byte -> str + "%02x".format(byte) }
     }
-}
-
-/**
- * Serialize patient into a Hash
- */
-object PatientSerializer : KSerializer<Patient> {
-    override val descriptor = PrimitiveSerialDescriptor("Patient", PrimitiveKind.STRING)
-
-    override fun deserialize(decoder: Decoder): Patient =
-        TODO("Find Patient in memory. is that even possible?")
-
-    override fun serialize(encoder: Encoder, value: Patient) = encoder.encodeString(value.hash)
 }

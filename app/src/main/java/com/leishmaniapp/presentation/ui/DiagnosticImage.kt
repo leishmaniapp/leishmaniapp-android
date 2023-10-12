@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Coordinates
 import com.leishmaniapp.entities.Image
@@ -99,6 +100,9 @@ fun DiagnosticImage(
 ) {
     // Late initialization of canvas size when rendered
     var canvasSize: Size? = null
+
+    // Image painter
+    val imagePainter = rememberAsyncImagePainter(image.path)
 
     // Get the Icon to be painted
     val iconPainter = rememberVectorPainter(Icons.Filled.Close)
@@ -187,7 +191,11 @@ fun DiagnosticImage(
                 }
             )
         },
-        painter = painterResource(id = R.drawable.image_example),
+        painter = if (image.path == null) {
+            painterResource(id = R.drawable.image_example)
+        } else {
+            imagePainter
+        },
         contentDescription = stringResource(id = R.string.diagnostic_image),
         contentScale = ContentScale.Crop
     )

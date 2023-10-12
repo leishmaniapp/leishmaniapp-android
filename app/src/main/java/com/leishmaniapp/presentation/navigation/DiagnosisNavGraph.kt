@@ -7,6 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 import com.leishmaniapp.presentation.viewmodel.DiagnosisViewModel
@@ -30,20 +31,23 @@ fun NavGraphBuilder.diagnosisNavGraph(
             CameraView(diagnosis = diagnosis!!, onCanceled = {
                 //TODO!
             }, onPictureTake = { uri ->
-                Log.d("PICTURETAKEEE", uri.toString())
+                // Image Standardization
+                val imageStandardizationResult = diagnosisViewModel.standardizeImage(uri)
+                Log.d("ImageStandardization", "Got result = $imageStandardizationResult")
 
-                // TODO: Generate image
-                diagnosisViewModel.currentImage.value = MockGenerator.mockImage()
+                //TODO: What if image fails?
+
+                // Create Image Entity
+                val currentDiagnosis = diagnosisViewModel.currentDiagnosis.value!!
+                val newImage = Image(
+                    sample = currentDiagnosis.samples,
+                    size = imageStandardizationResult!!,
+                    path = uri
+                )
+
+                diagnosisViewModel.currentImage.value = newImage
                 navController.navigateToDiagnosisAndAnalysis()
             })
-        }
-
-        composable(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route) {
-            val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
-            DiagnosisTableScreen(
-                diagnosis = diagnosis!!,
-                onBackButton = { navController.popBackStack() },
-                onShareDiagnosis = { diagnosisViewModel.shareCurrentDiagnosis() })
         }
 
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
@@ -56,6 +60,14 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 onImageChange = { editedImage ->
                     diagnosisViewModel.currentImage.value = editedImage
                 })
+        }
+
+        composable(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route) {
+            val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
+            DiagnosisTableScreen(
+                diagnosis = diagnosis!!,
+                onBackButton = { navController.popBackStack() },
+                onShareDiagnosis = { diagnosisViewModel.shareCurrentDiagnosis() })
         }
 
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisImageGrid.route) {

@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.disease.Disease
+import com.leishmaniapp.entities.serialization.DiagnosticElementNameSerializer
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -30,27 +31,4 @@ class DiagnosticElementName(
         (other is DiagnosticElementName) && (other.value == value)
 
     override fun hashCode(): Int = value.hashCode()
-}
-
-/**
- * Serialize into value or deserialize using reflection on sealed class to get all the supported DiagnosticElements
- */
-object DiagnosticElementNameSerializer : KSerializer<DiagnosticElementName> {
-    override val descriptor =
-        PrimitiveSerialDescriptor("DiagnosticElementName", PrimitiveKind.STRING)
-
-    override fun deserialize(decoder: Decoder): DiagnosticElementName {
-        val decodedDiagnosticElementName = decoder.decodeString()
-        try {
-            return Disease::class.sealedSubclasses.flatMap { it.objectInstance!!.elements }
-                .first { diagnosticElementName ->
-                    diagnosticElementName.value == decodedDiagnosticElementName
-                }
-        } catch (_: Exception) {
-            throw SerializationException("DiagnosticElement(${decodedDiagnosticElementName}) does not exist or is not supported")
-        }
-    }
-
-    override fun serialize(encoder: Encoder, value: DiagnosticElementName) =
-        encoder.encodeString(value.value)
 }
