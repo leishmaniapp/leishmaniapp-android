@@ -1,5 +1,8 @@
 package com.leishmaniapp.presentation.navigation
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -7,6 +10,7 @@ import androidx.navigation.navigation
 import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 import com.leishmaniapp.presentation.viewmodel.DiagnosisViewModel
 import com.leishmaniapp.presentation.viewmodel.PatientsViewModel
+import com.leishmaniapp.presentation.views.patients.AddPatientScreen
 import com.leishmaniapp.presentation.views.patients.PatientDiagnosisHistoryScreen
 import com.leishmaniapp.presentation.views.patients.PatientListScreen
 
@@ -22,8 +26,11 @@ fun NavGraphBuilder.patientsNavGraph(
     ) {
 
         composable(NavigationRoutes.PatientsRoute.PatientList.route) {
-            PatientListScreen(patients = patientsViewModel.patients,
-                onAddPatient = { TODO("Create new patient") },
+            val patients = patientsViewModel.patients.collectAsStateWithLifecycle(initialValue = listOf())
+            PatientListScreen(patients = patients.value.toSet(),
+                onAddPatient = {
+                    navController.navigateToAddPatient()
+                },
                 onPatientClick = { patient ->
                     patientsViewModel.currentPatient = patient
                     navController.navigateToPatientDiagnosisHistory()
@@ -31,7 +38,10 @@ fun NavGraphBuilder.patientsNavGraph(
         }
 
         composable(NavigationRoutes.PatientsRoute.AddPatient.route) {
-//            AddPatientScreen(onCreatePatient = { patientsViewModel.patient1 })
+            AddPatientScreen(onCreatePatient = { patient ->
+                patientsViewModel.addNewPatient(patient)
+                navController.popBackStack()
+            })
         }
 
         composable(NavigationRoutes.PatientsRoute.PatientDiagnosisHistory.route) {
@@ -61,6 +71,10 @@ fun NavHostController.navigateToPatientsNavGraph() {
     this.navigate(NavigationRoutes.PatientsRoute.route)
 }
 
-internal fun NavHostController.navigateToPatientDiagnosisHistory() {
+private fun NavHostController.navigateToPatientDiagnosisHistory() {
     this.navigate(NavigationRoutes.PatientsRoute.PatientDiagnosisHistory.route)
+}
+
+private fun NavHostController.navigateToAddPatient() {
+    this.navigate(NavigationRoutes.PatientsRoute.AddPatient.route)
 }

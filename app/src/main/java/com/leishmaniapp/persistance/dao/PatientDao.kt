@@ -7,6 +7,7 @@ import androidx.room.Upsert
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
 import com.leishmaniapp.entities.Patient
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PatientDao {
@@ -23,4 +24,7 @@ interface PatientDao {
 
     @Query("SELECT * FROM Patient")
     suspend fun allPatients(): List<Patient>
+
+    @Query("SELECT * FROM Patient")
+    fun allPatientsFlow(): Flow<List<Patient>>
 }
