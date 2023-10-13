@@ -31,5 +31,10 @@
             android:name=".presentation.activities.CameraActivity"
             android:exported="true" />
 
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove"/>
+
     </application>
 </manifest>

@@ -144,6 +144,24 @@ dependencies {
     implementation "androidx.room:room-ktx:2.5.2"
     androidTestImplementation "androidx.room:room-testing:2.5.2"
     ksp "androidx.room:room-compiler:2.5.2"
+
+    // WorkManager
+    implementation ("androidx.work:work-runtime-ktx:2.8.1")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+
+    // Dagger-hilt
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("androidx.hilt:hilt-work:1.0.0")
+
+    // AWS
+    implementation ("com.amazonaws:aws-android-sdk-s3:2.16.12")
+    implementation ("com.amazonaws:aws-android-sdk-mobile-client:2.16.12")
+    implementation ("com.amazonaws:aws-android-sdk-core:2.73.0")
+
+
 }
 
 kapt {
