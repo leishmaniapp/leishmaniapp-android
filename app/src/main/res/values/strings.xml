@@ -49,6 +49,7 @@
     <string name="synchronize">Sincronizar</string>
 
     <!-- Alerts -->
+    <string name="camera_exit">Cancelando captura de muestra</string>
     <string name="sure_exit">¿Está seguro que desea salir de la Aplicación?</string>
 
     <!-- Domain Specific -->

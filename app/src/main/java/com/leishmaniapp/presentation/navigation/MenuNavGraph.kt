@@ -20,9 +20,9 @@ fun NavGraphBuilder.menuNavGraph(
             // Show the main menu screen
             MainMenuScreen(
                 disease = applicationViewModel.disease!!,
-                onStartDiagnosis = { /*TODO*/ },
+                onStartDiagnosis = { navController.navigateToInitializeDiagnosis() },
                 onPatientList = { navController.navigateToPatientsNavGraph() },
-                onAwaitingDiagnoses = { /*TODO*/ },
+                onAwaitingDiagnoses = { TODO("Missing navigation graph") },
                 onDatabase = { navController.navigateToDatabase() },
             )
         }
@@ -30,8 +30,8 @@ fun NavGraphBuilder.menuNavGraph(
         composable(NavigationRoutes.MenuRoute.DatabaseRoute.route) {
             DatabaseScreen(
                 onExit = { navController.popBackStack() },
-                onImport = { /*TODO*/ },
-                onExport = { /*TODO*/ })
+                onImport = { TODO("Import not supported yet") },
+                onExport = { TODO("Export not supported yet") })
         }
     }
 }

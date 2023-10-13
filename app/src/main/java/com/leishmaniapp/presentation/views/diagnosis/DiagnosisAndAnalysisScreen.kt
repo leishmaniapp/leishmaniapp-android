@@ -4,11 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -19,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -47,17 +50,21 @@ internal enum class DiagnosisAndAnalysisPages(
 fun DiagnosisAndAnalysisScreen(
     diagnosis: Diagnosis,
     image: Image,
-    onImageChange: (Image) -> Unit
+    onImageChange: (Image) -> Unit,
+    onRepeatAction: () -> Unit,
+    onAnalyzeAction: () -> Unit,
+    onNextAction: () -> Unit,
+    onFinishAction: () -> Unit
 ) {
 
     val pagerState = rememberPagerState(pageCount = { DiagnosisAndAnalysisPages.values().size })
 
     LeishmaniappScaffold(showHelp = true, bottomBar = {
         DiagnosisActionBar(
-            repeatAction = { TODO("On repeat action") },
-            analyzeAction = { TODO("On analyze action") },
-            nextAction = { TODO("On action next") },
-            finishAction = { TODO("On finish action") },
+            repeatAction = onRepeatAction,
+            analyzeAction = onAnalyzeAction,
+            nextAction = onNextAction,
+            finishAction = onFinishAction,
             nextIsCamera = image.processed
         )
     }) {
@@ -77,6 +84,7 @@ fun DiagnosisAndAnalysisScreen(
             }
 
             val coroutineScope = rememberCoroutineScope()
+            // TODO: Fix deprecation
             TabRow(selectedTabIndex = pagerState.currentPage) {
                 DiagnosisAndAnalysisPages.values().forEachIndexed { index, item ->
                     Tab(
@@ -123,7 +131,8 @@ fun DiagnosisAndAnalysisScreen(
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(16.dp)
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             // Show image number
                             Text(
@@ -133,35 +142,64 @@ fun DiagnosisAndAnalysisScreen(
                                 )
                             )
 
+                            // Get the diagnostic elements
+                            val modelDiagnosticElements =
+                                image.elements.filterIsInstance<ModelDiagnosticElement>()
+                                    .let { if (it.isEmpty()) null else it.toSet() }
+                            val specialistDiagnosticElements =
+                                image.elements.filterIsInstance<SpecialistDiagnosticElement>()
+                                    .let { if (it.isEmpty()) null else it.toSet() }
+
                             // Show results in a table
                             DiagnosticImageResultsTable(
                                 modifier = Modifier.padding(vertical = 8.dp),
                                 disease = diagnosis.disease,
-                                modelDiagnosticElements = image.elements.filterIsInstance<ModelDiagnosticElement>()
-                                    .let { if (it.isEmpty()) null else it.toSet() },
-                                specialistDiagnosticElements = image.elements.filterIsInstance<SpecialistDiagnosticElement>()
-                                    .let { if (it.isEmpty()) null else it.toSet() },
+                                modelDiagnosticElements = modelDiagnosticElements,
+                                specialistDiagnosticElements = specialistDiagnosticElements,
                                 onSpecialistEdit = { elementName, specialistDiagnosticElement ->
                                     // Grab the old specialist diagnostic element
-                                    image.elements.firstOrNull { diagnosticElement ->
-                                        diagnosticElement is SpecialistDiagnosticElement &&
-                                                diagnosticElement.name == elementName
-                                    }   // If value is not null then apply
-                                        ?.let { previousDiagnosticElement ->
-                                            // Invoke the image change callback with new modified image
-                                            onImageChange.invoke(
-                                                image.copy(elements = image.elements.apply {
-                                                    // Remove the previous element
-                                                    minus(previousDiagnosticElement)
-                                                    // Add the new element if not null
-                                                    if (specialistDiagnosticElement != null) {
-                                                        plus(specialistDiagnosticElement)
-                                                    }
-                                                })
+                                    val previousDiagnosticElement =
+                                        image.elements.firstOrNull { diagnosticElement ->
+                                            diagnosticElement is SpecialistDiagnosticElement &&
+                                                    diagnosticElement.name == elementName
+                                        }   // If value is not null then apply
+                                    if (previousDiagnosticElement != null) {
+                                        // Invoke the image change callback with new modified image
+                                        onImageChange.invoke(
+                                            image.copy(
+                                                elements = image.elements.minus(
+                                                    previousDiagnosticElement
+                                                ).let { oldSet ->
+                                                    if (specialistDiagnosticElement != null) oldSet.plus(
+                                                        specialistDiagnosticElement
+                                                    ) else oldSet
+                                                }
                                             )
-                                        }
+                                        )
+                                    } else if (specialistDiagnosticElement != null) {
+                                        onImageChange.invoke(
+                                            image.copy(
+                                                elements = image.elements.union(
+                                                    setOf(specialistDiagnosticElement)
+                                                )
+                                            )
+                                        )
+                                    }
                                 }
                             )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Button(
+                                modifier = Modifier
+                                    .padding(16.dp),
+                                onClick = {
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(
+                                            DiagnosisAndAnalysisPages.ImagePage.ordinal
+                                        )
+                                    }
+                                }) {
+                                Text(text = stringResource(id = R.string.goto_image))
+                            }
                         }
                     }
                 }
@@ -176,10 +214,13 @@ fun DiagnosisAndAnalysisPreview_NotAnalyzed() {
     LeishmaniappTheme {
         DiagnosisAndAnalysisScreen(
             diagnosis = MockGenerator.mockDiagnosis(),
-            image = MockGenerator.mockImage(processed = false)
-        ) {
-
-        }
+            image = MockGenerator.mockImage(processed = false),
+            onAnalyzeAction = {},
+            onFinishAction = {},
+            onNextAction = {},
+            onRepeatAction = {},
+            onImageChange = {}
+        )
     }
 }
 
@@ -189,9 +230,12 @@ fun DiagnosisAndAnalysisPreview_Analyzed() {
     LeishmaniappTheme {
         DiagnosisAndAnalysisScreen(
             diagnosis = MockGenerator.mockDiagnosis(),
-            image = MockGenerator.mockImage(processed = true)
-        ) {
-
-        }
+            image = MockGenerator.mockImage(processed = true),
+            onAnalyzeAction = {},
+            onFinishAction = {},
+            onNextAction = {},
+            onRepeatAction = {},
+            onImageChange = {}
+        )
     }
 }

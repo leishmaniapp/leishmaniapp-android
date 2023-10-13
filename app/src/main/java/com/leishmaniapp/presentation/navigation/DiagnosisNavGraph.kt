@@ -1,14 +1,16 @@
 package com.leishmaniapp.presentation.navigation
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.leishmaniapp.R
 import com.leishmaniapp.entities.Image
-import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 import com.leishmaniapp.presentation.viewmodel.DiagnosisViewModel
 import com.leishmaniapp.presentation.views.diagnosis.CameraView
@@ -26,10 +28,15 @@ fun NavGraphBuilder.diagnosisNavGraph(
         startDestination = NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route
     ) {
 
+        // Camera
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route) {
+            val context = LocalContext.current
             val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
             CameraView(diagnosis = diagnosis!!, onCanceled = {
-                //TODO!
+                // Show toast
+                Toast.makeText(context, R.string.camera_exit, Toast.LENGTH_SHORT).show()
+                // Return to previous
+                navController.popBackStack()
             }, onPictureTake = { uri ->
                 // Image Standardization
                 val imageStandardizationResult = diagnosisViewModel.standardizeImage(uri)
@@ -50,6 +57,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
             })
         }
 
+        // Sample processing
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
             val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
             val image by diagnosisViewModel.currentImage.collectAsState()
@@ -59,6 +67,12 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 image = image!!,
                 onImageChange = { editedImage ->
                     diagnosisViewModel.currentImage.value = editedImage
+                },
+                onAnalyzeAction = {},
+                onFinishAction = {},
+                onNextAction = {},
+                onRepeatAction = {
+                    navController.navigateToRepeatPictureTake()
                 })
         }
 
@@ -102,13 +116,23 @@ fun NavHostController.navigateToDiagnosisHistory() {
 }
 
 fun NavHostController.navigateToStartDiagnosis() {
-    this.navigate(NavigationRoutes.DiagnosisRoute.route) {
-        popUpTo(0)
+    this.navigate(NavigationRoutes.DiagnosisRoute.route)
+}
+
+private fun NavHostController.navigateToDiagnosisAndAnalysis() {
+    this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
+        popUpTo(NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route) {
+            inclusive = true
+        }
     }
 }
 
-internal fun NavHostController.navigateToDiagnosisAndAnalysis() {
-    this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route)
+private fun NavHostController.navigateToRepeatPictureTake() {
+    this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route) {
+        popUpTo(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
+            inclusive = true
+        }
+    }
 }
 
 

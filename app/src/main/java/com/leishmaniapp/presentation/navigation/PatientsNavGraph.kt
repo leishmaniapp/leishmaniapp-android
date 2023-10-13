@@ -25,6 +25,26 @@ fun NavGraphBuilder.patientsNavGraph(
         startDestination = NavigationRoutes.PatientsRoute.PatientList.route
     ) {
 
+        composable(NavigationRoutes.PatientsRoute.InitializeDiagnosis.route) {
+            val patients = patientsViewModel.patients.collectAsStateWithLifecycle(initialValue = listOf())
+            PatientListScreen(patients = patients.value.toSet(),
+                onAddPatient = {
+                    navController.navigateToAddPatient()
+                },
+                onPatientClick = { patient ->
+                    // Set current patient
+                    patientsViewModel.currentPatient = patient
+                    // Create the new diagnosis
+                    diagnosisViewModel.startNewDiagnosis(
+                        patientsViewModel.currentPatient!!,
+                        applicationViewModel.specialist!!,
+                        applicationViewModel.disease!!
+                    )
+                    // Navigate to diagnosis nav graph
+                    navController.navigateToStartDiagnosis()
+                })
+        }
+
         composable(NavigationRoutes.PatientsRoute.PatientList.route) {
             val patients = patientsViewModel.patients.collectAsStateWithLifecycle(initialValue = listOf())
             PatientListScreen(patients = patients.value.toSet(),
@@ -69,6 +89,10 @@ fun NavGraphBuilder.patientsNavGraph(
 
 fun NavHostController.navigateToPatientsNavGraph() {
     this.navigate(NavigationRoutes.PatientsRoute.route)
+}
+
+fun NavHostController.navigateToInitializeDiagnosis() {
+    this.navigate(NavigationRoutes.PatientsRoute.InitializeDiagnosis.route)
 }
 
 private fun NavHostController.navigateToPatientDiagnosisHistory() {
