@@ -149,5 +149,5 @@ data class Diagnosis(
      * @TODO Write tests for this function
      */
     val completed: Boolean
-        get() = !images.any { !it.value.processed }
+        get() = images.values.all { it.processed == ImageAnalysisStatus.Analyzed }
 }

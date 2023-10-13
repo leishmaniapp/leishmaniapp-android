@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -20,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Image
+import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.DiagnosticImage
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
@@ -41,17 +43,8 @@ fun DiagnosticImageSection(
             modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (image.processed) {
-                TextButton(modifier = Modifier.padding(8.dp), onClick = onImageEdit) {
-                    Icon(
-                        Icons.Filled.Edit,
-                        contentDescription = stringResource(id = R.string.edit_image),
-                        modifier = Modifier.padding(end = 8.dp),
-                    )
-                    Text(text = stringResource(id = R.string.edit_image))
-                }
-            } else {
-                Row(modifier = Modifier.padding(16.dp)) {
+            when(image.processed) {
+                ImageAnalysisStatus.NotAnalyzed -> Row(modifier = Modifier.padding(16.dp)) {
                     Icon(
                         Icons.Filled.Error,
                         contentDescription = stringResource(id = R.string.alert_not_processed),
@@ -59,6 +52,23 @@ fun DiagnosticImageSection(
                     )
 
                     Text(stringResource(id = R.string.alert_not_processed))
+                }
+                ImageAnalysisStatus.Analyzing -> Row(modifier = Modifier.padding(16.dp)) {
+                    Icon(
+                        Icons.Filled.Sync,
+                        contentDescription = stringResource(id = R.string.alert_being_processed),
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+
+                    Text(stringResource(id = R.string.alert_being_processed))
+                }
+                ImageAnalysisStatus.Analyzed ->TextButton(modifier = Modifier.padding(8.dp), onClick = onImageEdit) {
+                    Icon(
+                        Icons.Filled.Edit,
+                        contentDescription = stringResource(id = R.string.edit_image),
+                        modifier = Modifier.padding(end = 8.dp),
+                    )
+                    Text(text = stringResource(id = R.string.edit_image))
                 }
             }
         }
@@ -84,7 +94,18 @@ fun DiagnosticImageSection(
 fun DiagnosticImageSectionPreview_NotProcessed() {
     LeishmaniappTheme {
         DiagnosticImageSection(
-            image = MockGenerator.mockImage(false),
+            image = MockGenerator.mockImage(ImageAnalysisStatus.NotAnalyzed),
+            onImageEdit = {}
+        ) {}
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun DiagnosticImageSectionPreview_Processing() {
+    LeishmaniappTheme {
+        DiagnosticImageSection(
+            image = MockGenerator.mockImage(ImageAnalysisStatus.Analyzing),
             onImageEdit = {}
         ) {}
     }
@@ -95,7 +116,7 @@ fun DiagnosticImageSectionPreview_NotProcessed() {
 fun DiagnosticImageSectionPreview_Processed() {
     LeishmaniappTheme {
         DiagnosticImageSection(
-            image = MockGenerator.mockImage(true),
+            image = MockGenerator.mockImage(ImageAnalysisStatus.Analyzed),
             onImageEdit = {}
         ) {}
     }

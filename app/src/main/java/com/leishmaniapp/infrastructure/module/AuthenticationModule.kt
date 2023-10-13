@@ -1,6 +1,6 @@
 package com.leishmaniapp.infrastructure.module
 
-import com.leishmaniapp.infrastructure.MockAuthenticationProvider
+import com.leishmaniapp.infrastructure.mock.MockAuthenticationProvider
 import com.leishmaniapp.usecases.IAuthenticationProvider
 import dagger.Module
 import dagger.Provides

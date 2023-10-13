@@ -1,4 +1,4 @@
-package com.leishmaniapp.infrastructure
+package com.leishmaniapp.infrastructure.mock
 
 import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.Specialist

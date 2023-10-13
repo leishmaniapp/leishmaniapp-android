@@ -26,7 +26,7 @@ data class Image(
     @TypeParceler<LocalDateTime, LocalDateTimeTypeParceler> val date: LocalDateTime = Clock.System.now()
         .toLocalDateTime(TimeZone.UTC),
     val size: Int,
-    val processed: Boolean = false,
+    val processed: ImageAnalysisStatus = ImageAnalysisStatus.NotAnalyzed,
     val elements: Set<DiagnosticElement> = setOf(),
     @Transient val path: Uri? = null,
 ) : Parcelable
@@ -41,7 +41,7 @@ data class ImageRoom(
     val sample: Int,
     val date: LocalDateTime,
     val size: Int,
-    val processed: Boolean,
+    val processed: ImageAnalysisStatus = ImageAnalysisStatus.NotAnalyzed,
     val elements: Set<DiagnosticElement>,
     val path: Uri?
 ) {

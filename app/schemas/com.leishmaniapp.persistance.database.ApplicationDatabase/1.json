@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f70268c5be3bb52c183173cb0e792a0b",
+    "identityHash": "58d4b7727b246a3292474dd6cab687ad",
     "entities": [
       {
         "tableName": "Specialist",
@@ -164,7 +164,7 @@
       },
       {
         "tableName": "ImageRoom",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`diagnosisUUID` TEXT NOT NULL, `sample` INTEGER NOT NULL, `date` TEXT NOT NULL, `size` INTEGER NOT NULL, `processed` INTEGER NOT NULL, `elements` TEXT NOT NULL, `path` TEXT, PRIMARY KEY(`diagnosisUUID`, `sample`), FOREIGN KEY(`diagnosisUUID`) REFERENCES `DiagnosisRoom`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`diagnosisUUID` TEXT NOT NULL, `sample` INTEGER NOT NULL, `date` TEXT NOT NULL, `size` INTEGER NOT NULL, `processed` TEXT NOT NULL, `elements` TEXT NOT NULL, `path` TEXT, PRIMARY KEY(`diagnosisUUID`, `sample`), FOREIGN KEY(`diagnosisUUID`) REFERENCES `DiagnosisRoom`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "diagnosisUUID",
@@ -193,7 +193,7 @@
           {
             "fieldPath": "processed",
             "columnName": "processed",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -235,7 +235,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f70268c5be3bb52c183173cb0e792a0b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '58d4b7727b246a3292474dd6cab687ad')"
     ]
   }
 }

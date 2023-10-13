@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.Image
+import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.mock.MockGenerator
@@ -65,7 +66,7 @@ fun DiagnosisAndAnalysisScreen(
             analyzeAction = onAnalyzeAction,
             nextAction = onNextAction,
             finishAction = onFinishAction,
-            nextIsCamera = image.processed
+            nextIsCamera = image.processed != ImageAnalysisStatus.NotAnalyzed
         )
     }) {
         Column {
@@ -214,7 +215,7 @@ fun DiagnosisAndAnalysisPreview_NotAnalyzed() {
     LeishmaniappTheme {
         DiagnosisAndAnalysisScreen(
             diagnosis = MockGenerator.mockDiagnosis(),
-            image = MockGenerator.mockImage(processed = false),
+            image = MockGenerator.mockImage(processed = ImageAnalysisStatus.NotAnalyzed),
             onAnalyzeAction = {},
             onFinishAction = {},
             onNextAction = {},
@@ -230,7 +231,7 @@ fun DiagnosisAndAnalysisPreview_Analyzed() {
     LeishmaniappTheme {
         DiagnosisAndAnalysisScreen(
             diagnosis = MockGenerator.mockDiagnosis(),
-            image = MockGenerator.mockImage(processed = true),
+            image = MockGenerator.mockImage(processed = ImageAnalysisStatus.Analyzed),
             onAnalyzeAction = {},
             onFinishAction = {},
             onNextAction = {},

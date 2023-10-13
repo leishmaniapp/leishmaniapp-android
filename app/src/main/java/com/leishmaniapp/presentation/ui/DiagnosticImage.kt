@@ -32,6 +32,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Coordinates
 import com.leishmaniapp.entities.Image
+import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.entities.disease.MockDisease
 import com.leishmaniapp.entities.mock.MockGenerator
@@ -120,7 +121,7 @@ fun DiagnosticImage(
             // Draw the image
             drawContent()
             // Guard (Do not draw if not processed
-            if (!image.processed) return@drawWithContent
+            if (image.processed != ImageAnalysisStatus.Analyzed) return@drawWithContent
             // Store the canvas size
             canvasSize = this.size
             // Get the Painter size in Px
@@ -206,7 +207,7 @@ fun DiagnosticImage(
 fun DiagnosticElementMarkPreview() {
     LeishmaniappTheme {
         // Generate a mock image
-        val image = MockGenerator.mockImage(true).copy(
+        val image = MockGenerator.mockImage(ImageAnalysisStatus.Analyzed).copy(
             elements = setOf(
                 ModelDiagnosticElement(
                     MockDisease.elements.first(),
