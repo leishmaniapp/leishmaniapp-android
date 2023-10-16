@@ -10,14 +10,12 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Duration
 
-import com.leishmaniapp.background.CustomWorker
-
 @AndroidEntryPoint
 class WorkerManager : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val workRequest = OneTimeWorkRequestBuilder<CustomWorker>()
+        val workRequest = OneTimeWorkRequestBuilder<ImageProcessingWorker>()
             .setInitialDelay(Duration.ofSeconds(5))
             .setBackoffCriteria(
                 backoffPolicy = BackoffPolicy.LINEAR,

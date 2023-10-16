@@ -150,7 +150,6 @@ dependencies {
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-
     // Dagger-hilt
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
@@ -160,8 +159,6 @@ dependencies {
     implementation ("com.amazonaws:aws-android-sdk-s3:2.16.12")
     implementation ("com.amazonaws:aws-android-sdk-mobile-client:2.16.12")
     implementation ("com.amazonaws:aws-android-sdk-core:2.73.0")
-
-
 }
 
 kapt {

@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
-import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
@@ -14,11 +13,9 @@ import com.leishmaniapp.background.infrastructure.DemoApi
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.io.File
-import java.lang.Exception
-import java.net.UnknownHostException
 
 @HiltWorker
-class CustomWorker @AssistedInject constructor (
+class ImageProcessingWorker @AssistedInject constructor (
     @Assisted private val api : DemoApi,
     @Assisted context: Context,
     @Assisted workerParameters: WorkerParameters

@@ -8,7 +8,6 @@ import androidx.work.Configuration
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
-import com.leishmaniapp.background.CustomWorker
 import com.leishmaniapp.background.infrastructure.DemoApi
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -31,5 +30,5 @@ class CustomWorkerFactory @Inject constructor(private val api: DemoApi) : Worker
         appContext: Context,
         workerClassName: String,
         workerParameters: WorkerParameters
-    ): ListenableWorker = CustomWorker(api, appContext, workerParameters)
+    ): ListenableWorker = ImageProcessingWorker(api, appContext, workerParameters)
 }
