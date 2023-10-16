@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Coordinates
 import com.leishmaniapp.entities.Image
+import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.DiagnosticImage
@@ -209,7 +210,7 @@ fun DiagnosticImageEditSection(
 fun DiagnosticImageEditSectionPreview() {
     LeishmaniappTheme {
         DiagnosticImageEditSection(
-            image = MockGenerator.mockImage(true),
+            image = MockGenerator.mockImage(ImageAnalysisStatus.Analyzed),
         ) { _, _ -> }
     }
 }

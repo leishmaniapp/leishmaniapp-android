@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.leishmaniapp.entities.disease.Disease
+import com.leishmaniapp.entities.serialization.UUIDSerializer
 import com.leishmaniapp.usecases.types.LocalDateTimeTypeParceler
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -148,14 +149,5 @@ data class Diagnosis(
      * @TODO Write tests for this function
      */
     val completed: Boolean
-        get() = !images.any { !it.value.processed }
-}
-
-/**
- * Serializer for the [Diagnosis.id]
- */
-object UUIDSerializer : KSerializer<UUID> {
-    override val descriptor = PrimitiveSerialDescriptor("UUID", PrimitiveKind.STRING)
-    override fun deserialize(decoder: Decoder): UUID = UUID.fromString(decoder.decodeString())
-    override fun serialize(encoder: Encoder, value: UUID) = encoder.encodeString(value.toString())
+        get() = images.values.all { it.processed == ImageAnalysisStatus.Analyzed }
 }

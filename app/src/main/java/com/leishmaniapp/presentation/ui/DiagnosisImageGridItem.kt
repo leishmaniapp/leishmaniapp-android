@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Card
@@ -23,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Image
+import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
@@ -42,13 +44,19 @@ fun DiagnosisImageGridItem(image: Image) {
             )
 
             Box(modifier = Modifier.padding(8.dp)) {
-                if (image.processed) {
-                    Icon(
+                when (image.processed) {
+                    ImageAnalysisStatus.NotAnalyzed -> Icon(
+                        Icons.Filled.Block, contentDescription = stringResource(
+                            id = R.string.not_analyzed
+                        )
+                    )
+
+                    ImageAnalysisStatus.Analyzed -> Icon(
                         Icons.Filled.Done,
                         contentDescription = stringResource(id = R.string.processed)
                     )
-                } else {
-                    Icon(
+
+                    ImageAnalysisStatus.Analyzing -> Icon(
                         Icons.Filled.Sync,
                         contentDescription = stringResource(id = R.string.waiting)
                     )
@@ -62,7 +70,9 @@ fun DiagnosisImageGridItem(image: Image) {
 @Preview
 fun DiagnosisImageGridItemPreview_Done() {
     LeishmaniappTheme {
-        DiagnosisImageGridItem(image = MockGenerator.mockImage().copy(processed = true))
+        DiagnosisImageGridItem(
+            image = MockGenerator.mockImage().copy(processed = ImageAnalysisStatus.Analyzed)
+        )
     }
 }
 
@@ -70,6 +80,18 @@ fun DiagnosisImageGridItemPreview_Done() {
 @Preview
 fun DiagnosisImageGridItemPreview_Loading() {
     LeishmaniappTheme {
-        DiagnosisImageGridItem(image = MockGenerator.mockImage().copy(processed = false))
+        DiagnosisImageGridItem(
+            image = MockGenerator.mockImage().copy(processed = ImageAnalysisStatus.Analyzing)
+        )
+    }
+}
+
+@Composable
+@Preview
+fun DiagnosisImageGridItemPreview_None() {
+    LeishmaniappTheme {
+        DiagnosisImageGridItem(
+            image = MockGenerator.mockImage().copy(processed = ImageAnalysisStatus.NotAnalyzed)
+        )
     }
 }

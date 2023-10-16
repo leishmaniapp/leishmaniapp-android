@@ -13,6 +13,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -88,10 +89,10 @@ fun CameraScreen(
 
 
     // Camera canvas with drawings
-    Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
         AndroidView(
             { previewView },
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
@@ -135,7 +136,9 @@ fun CameraScreen(
 
         // Take photo
         IconButton(
-            modifier = Modifier.padding(bottom = 20.dp),
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.BottomCenter),
             onClick = {
                 onCameraTakePhoto(
                     outputFile = outputFile,
@@ -149,10 +152,7 @@ fun CameraScreen(
                 imageVector = Icons.Sharp.Lens,
                 contentDescription = "Take picture",
                 tint = Color.White,
-                modifier = Modifier
-                    .size(500.dp)
-                    .padding(2.dp)
-                    .border(2.dp, Color.White, CircleShape)
+                modifier = Modifier.size(80.dp)
             )
         }
     }

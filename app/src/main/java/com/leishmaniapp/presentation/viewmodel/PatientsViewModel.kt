@@ -1,10 +1,12 @@
 package com.leishmaniapp.presentation.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.persistance.database.ApplicationDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -14,16 +16,16 @@ class PatientsViewModel @Inject constructor(
     val applicationDatabase: ApplicationDatabase,
 ) : ViewModel() {
 
-    val patients: Set<Patient> by lazy {
-        runBlocking {
-            applicationDatabase.patientDao().allPatients().toSet()
-        }
-    }
-
+    val patients: Flow<List<Patient>> = applicationDatabase.patientDao().allPatientsFlow()
     var currentPatient: Patient? = savedStateHandle["currentPatient"]
         set(value) {
             savedStateHandle["currentPatient"] = value
             field = value
         }
-}
 
+    fun addNewPatient(patient: Patient) {
+        runBlocking {
+            applicationDatabase.patientDao().upsertPatient(patient)
+        }
+    }
+}
