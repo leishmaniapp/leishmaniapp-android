@@ -8,12 +8,6 @@ import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 import com.leishmaniapp.presentation.views.menu.DatabaseScreen
 import com.leishmaniapp.presentation.views.menu.MainMenuScreen
 
-fun NavHostController.navigateToMenu() {
-    this.navigate(NavigationRoutes.MenuRoute.MainMenuRoute.route) {
-        popUpTo(0) // Pop every other route
-    }
-}
-
 fun NavGraphBuilder.menuNavGraph(
     navController: NavHostController,
     applicationViewModel: ApplicationViewModel
@@ -26,9 +20,9 @@ fun NavGraphBuilder.menuNavGraph(
             // Show the main menu screen
             MainMenuScreen(
                 disease = applicationViewModel.disease!!,
-                onStartDiagnosis = { /*TODO*/ },
-                onPatientList = { /*TODO*/ },
-                onAwaitingDiagnoses = { /*TODO*/ },
+                onStartDiagnosis = { navController.navigateToInitializeDiagnosis() },
+                onPatientList = { navController.navigateToPatientsNavGraph() },
+                onAwaitingDiagnoses = { TODO("Missing navigation graph") },
                 onDatabase = { navController.navigateToDatabase() },
             )
         }
@@ -36,9 +30,15 @@ fun NavGraphBuilder.menuNavGraph(
         composable(NavigationRoutes.MenuRoute.DatabaseRoute.route) {
             DatabaseScreen(
                 onExit = { navController.popBackStack() },
-                onImport = { /*TODO*/ },
-                onExport = { /*TODO*/ })
+                onImport = { TODO("Import not supported yet") },
+                onExport = { TODO("Export not supported yet") })
         }
+    }
+}
+
+fun NavHostController.navigateToMenu() {
+    this.navigate(NavigationRoutes.MenuRoute.MainMenuRoute.route) {
+        popUpTo(0) // Pop every other route
     }
 }
 

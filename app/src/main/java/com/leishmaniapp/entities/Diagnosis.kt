@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.leishmaniapp.entities.disease.Disease
+import com.leishmaniapp.entities.serialization.UUIDSerializer
 import com.leishmaniapp.usecases.types.LocalDateTimeTypeParceler
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -60,6 +61,23 @@ data class DiagnosisRoom(
             disease
         )
     }
+
+    fun asApplicationEntity(
+        specialist: Specialist,
+        patient: Patient,
+        images: List<Image>
+    ): Diagnosis =
+        Diagnosis(
+            id,
+            specialistResult,
+            modelResult,
+            date,
+            remarks,
+            specialist,
+            patient,
+            disease,
+            images.associateBy { it.sample }
+        )
 }
 
 /**
@@ -80,6 +98,22 @@ data class Diagnosis(
     val disease: Disease,
     val images: Map<Int, Image>,
 ) : Parcelable {
+
+    constructor(
+        specialist: Specialist,
+        patient: Patient,
+        disease: Disease
+    ) : this(
+        specialistResult = false,
+        modelResult = false,
+        remarks = null,
+        images = mapOf(),
+        patient = patient,
+        specialist = specialist,
+        disease = disease
+    )
+
+
     /**
      * Group [DiagnosticElement] in a map in which the key is the [DiagnosticElementName] and the
      * value is another map in which the key is the element type (either [ModelDiagnosticElement]
@@ -115,14 +149,5 @@ data class Diagnosis(
      * @TODO Write tests for this function
      */
     val completed: Boolean
-        get() = !images.any { !it.value.processed }
-}
-
-/**
- * Serializer for the [Diagnosis.id]
- */
-object UUIDSerializer : KSerializer<UUID> {
-    override val descriptor = PrimitiveSerialDescriptor("UUID", PrimitiveKind.STRING)
-    override fun deserialize(decoder: Decoder): UUID = UUID.fromString(decoder.decodeString())
-    override fun serialize(encoder: Encoder, value: UUID) = encoder.encodeString(value.toString())
+        get() = images.values.all { it.processed == ImageAnalysisStatus.Analyzed }
 }

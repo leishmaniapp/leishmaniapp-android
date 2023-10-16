@@ -1,5 +1,6 @@
 package com.leishmaniapp.persistance.database
 
+import android.net.Uri
 import androidx.room.TypeConverter
 import com.leishmaniapp.entities.DiagnosticElement
 import com.leishmaniapp.entities.DocumentType
@@ -51,14 +52,6 @@ class ApplicationRoomTypeConverters {
     @TypeConverter
     fun stringToDisease(id: String): Disease? = Disease.where(id);
 
-    /* DiagnosticElement */
-    @TypeConverter
-    fun diagnosticElementToJsonString(element: DiagnosticElement) = Json.encodeToString(element)
-
-    @TypeConverter
-    fun jsonStringToDiagnosticElement(value: String): DiagnosticElement =
-        Json.decodeFromString(value)
-
     /* Set<DiagnosticElement> */
     @TypeConverter
     fun diagnosticElementSetToJson(diagnosticElements: Set<DiagnosticElement>): String =
@@ -81,4 +74,11 @@ class ApplicationRoomTypeConverters {
 
     @TypeConverter
     fun stringToUuid(value: String): UUID = UUID.fromString(value)
+
+    /* Uri */
+    @TypeConverter
+    fun uriToString(uri: Uri): String = uri.path!!
+
+    @TypeConverter
+    fun stringToUri(value: String): Uri = Uri.parse(value)
 }

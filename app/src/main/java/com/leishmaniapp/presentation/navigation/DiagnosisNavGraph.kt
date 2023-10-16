@@ -1,74 +1,136 @@
 package com.leishmaniapp.presentation.navigation
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.leishmaniapp.R
+import com.leishmaniapp.entities.Image
 import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 import com.leishmaniapp.presentation.viewmodel.DiagnosisViewModel
+import com.leishmaniapp.presentation.views.diagnosis.CameraView
 import com.leishmaniapp.presentation.views.diagnosis.DiagnosisAndAnalysisScreen
-import com.leishmaniapp.presentation.views.diagnosis.DiagnosisImageGridScreen
 import com.leishmaniapp.presentation.views.diagnosis.DiagnosisTableScreen
-import com.leishmaniapp.presentation.views.diagnosis.DiagnosticImageEditSection
-import com.leishmaniapp.presentation.views.diagnosis.DiagnosticImageSection
 
-@Composable
+
 fun NavGraphBuilder.diagnosisNavGraph(
     navController: NavHostController,
-    applicationViewModel: ApplicationViewModel
+    applicationViewModel: ApplicationViewModel,
+    diagnosisViewModel: DiagnosisViewModel,
 ) {
-    //TODO: in startDestination change to camerax screen
-    val diagnosisViewModel: DiagnosisViewModel = hiltViewModel()
-    val image = diagnosisViewModel.actualImage
-    val onCompletedImageEdit = false
     navigation(
         route = NavigationRoutes.DiagnosisRoute.route,
-        startDestination = NavigationRoutes.DiagnosisRoute.DiagnosisTable.route
+        startDestination = NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route
     ) {
 
-        //TODO: camerax composable
+        // Camera
+        composable(NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route) {
+            val context = LocalContext.current
+            val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
+            CameraView(diagnosis = diagnosis!!, onCanceled = {
+                // Show toast
+                Toast.makeText(context, R.string.camera_exit, Toast.LENGTH_SHORT).show()
+                // Return to previous
+                navController.popBackStack()
+            }, onPictureTake = { uri ->
+                // Image Standardization
+                val imageStandardizationResult = diagnosisViewModel.standardizeImage(uri)
+                Log.d("ImageStandardization", "Got result = $imageStandardizationResult")
 
-        composable(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route) {
+                //TODO: What if image fails?
 
-            DiagnosisTableScreen(
-                diagnosis = diagnosisViewModel.diagnosis,
-                onBackButton = { navController.popBackStack() },
-                onShareDiagnosis = {/*TODO*/ })
+                // Create Image Entity
+                val currentDiagnosis = diagnosisViewModel.currentDiagnosis.value!!
+                val newImage = Image(
+                    sample = currentDiagnosis.samples,
+                    size = imageStandardizationResult!!,
+                    path = uri
+                )
+
+                diagnosisViewModel.currentImage.value = newImage
+                navController.navigateToDiagnosisAndAnalysis()
+            })
         }
 
+        // Sample processing
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
+            val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
+            val image by diagnosisViewModel.currentImage.collectAsState()
 
             DiagnosisAndAnalysisScreen(
-                diagnosis = diagnosisViewModel.diagnosis,
-                image = diagnosisViewModel.actualImage,
-                onImageChange = {/*TODO*/ })
-        }
-
-        composable(NavigationRoutes.DiagnosisRoute.DiagnosisImageGrid.route) {
-
-            DiagnosisImageGridScreen(
-                diagnosis = diagnosisViewModel.diagnosis,
-                isBackground = false
-            )
-        }
-
-        composable(NavigationRoutes.DiagnosisRoute.DiagnosticImageEdit.route) {
-            DiagnosticImageEditSection(
-                modifier = Modifier,
-                image = image,
-                onCompleted = { image, onCompletedImageEit ->
-                    /*TODO*/
+                diagnosis = diagnosis!!,
+                image = image!!,
+                onImageChange = { editedImage ->
+                    diagnosisViewModel.currentImage.value = editedImage
+                },
+                onAnalyzeAction = {},
+                onFinishAction = {},
+                onNextAction = {},
+                onRepeatAction = {
+                    navController.navigateToRepeatPictureTake()
                 })
         }
 
+        composable(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route) {
+            val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
+            DiagnosisTableScreen(
+                diagnosis = diagnosis!!,
+                onBackButton = { navController.popBackStack() },
+                onShareDiagnosis = { diagnosisViewModel.shareCurrentDiagnosis() })
+        }
+
+        composable(NavigationRoutes.DiagnosisRoute.DiagnosisImageGrid.route) {
+// TODO
+//            DiagnosisImageGridScreen(
+//                diagnosis = diagnosisViewModel.diagnosis,
+//                isBackground = false
+//            )
+        }
+
+        composable(NavigationRoutes.DiagnosisRoute.DiagnosticImageEdit.route) {
+// TODO
+//            DiagnosticImageEditSection(
+//                modifier = Modifier,
+//                image = image,
+//                onCompleted = { image, onCompletedImageEit ->
+//                    /*TODO*/
+//                })
+        }
+
         composable(NavigationRoutes.DiagnosisRoute.DiagnosticImageSection.route) {
-            DiagnosticImageSection(image = image, onImageEdit = { /*TODO*/ }) {
+// TODO
+//            DiagnosticImageSection(image = image, onImageEdit = { /*TODO*/ }) {
+//
+//            }
+        }
+    }
+}
 
-            }
+fun NavHostController.navigateToDiagnosisHistory() {
+    this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route)
+}
 
+fun NavHostController.navigateToStartDiagnosis() {
+    this.navigate(NavigationRoutes.DiagnosisRoute.route)
+}
+
+private fun NavHostController.navigateToDiagnosisAndAnalysis() {
+    this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
+        popUpTo(NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route) {
+            inclusive = true
+        }
+    }
+}
+
+private fun NavHostController.navigateToRepeatPictureTake() {
+    this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route) {
+        popUpTo(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
+            inclusive = true
         }
     }
 }

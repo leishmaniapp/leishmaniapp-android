@@ -3,6 +3,7 @@ package com.leishmaniapp
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.persistance.database.ApplicationDatabase
 import kotlinx.coroutines.Dispatchers
@@ -100,6 +101,37 @@ class SpecialistDaoTests {
 
             // Check specialists
             Assert.assertEquals(specialists, database.specialistDao().allSpecialists())
+        }
+    }
+
+    @Test
+    fun specialistByCredentialsShouldReturnSpecialistOrNull() {
+        // Generate specialist
+        val specialists = List(10) { MockGenerator.mockSpecialist() }
+        // Grab one
+        val selected = specialists.random()
+
+        runBlocking(Dispatchers.IO) {
+
+            // Insert all specialists
+            specialists.forEach {
+                database.specialistDao().upsertSpecialist(it)
+            }
+
+            // Check specialists
+            Assert.assertEquals(
+                selected,
+                database.specialistDao()
+                    .specialistByCredentials(selected.username, selected.password!!)
+            )
+
+            // Check non existent specialist
+            Assert.assertNull(
+                database.specialistDao().specialistByCredentials(
+                    selected.username,
+                    Password("NON_VALID_PASSWORD")
+                )
+            )
         }
     }
 

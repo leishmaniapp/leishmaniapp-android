@@ -1,6 +1,7 @@
 package com.leishmaniapp.entities
 
 import android.os.Parcelable
+import com.leishmaniapp.entities.serialization.UsernameSerializer
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -17,11 +18,3 @@ import kotlinx.serialization.encoding.Encoder
 @Serializable(with = UsernameSerializer::class)
 @Parcelize
 data class Username(val value: String): Parcelable
-
-object UsernameSerializer : KSerializer<Username> {
-    override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("Username", PrimitiveKind.STRING)
-
-    override fun deserialize(decoder: Decoder): Username = Username(decoder.decodeString())
-    override fun serialize(encoder: Encoder, value: Username) = encoder.encodeString(value.value)
-}

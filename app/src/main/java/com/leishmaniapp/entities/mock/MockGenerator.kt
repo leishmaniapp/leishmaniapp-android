@@ -5,6 +5,7 @@ import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
 import com.leishmaniapp.entities.Image
+import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.Patient
@@ -35,7 +36,10 @@ class MockGenerator {
             documentType = DocumentType.CC
         )
 
-        fun mockImage(processed: Boolean = Random.nextBoolean(), size: Int = 2250) = Image(
+        fun mockImage(
+            processed: ImageAnalysisStatus = ImageAnalysisStatus.values().random(),
+            size: Int = 2250
+        ) = Image(
             date = faker.date.forward(1).toInstant().toKotlinInstant()
                 .toLocalDateTime(
                     TimeZone.UTC
@@ -43,7 +47,7 @@ class MockGenerator {
             size = size,
             processed = processed,
             sample = Random.nextInt(150),
-            elements = if (processed) {
+            elements = if (processed == ImageAnalysisStatus.Analyzed) {
                 setOf(
                     mockSpecialistDiagnosticElement(),
                     mockModelDiagnosticElement(size)
@@ -98,7 +102,7 @@ class MockGenerator {
                             if (isCompleted == null) {
                                 mockImage()
                             } else {
-                                mockImage(processed = isCompleted)
+                                mockImage(processed = ImageAnalysisStatus.Analyzed)
                             }
                         )
                     }

@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.Image
+import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.DiagnosisImageGridItem
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
@@ -46,7 +47,8 @@ const val amountOfColumnsInGrid = 3
  */
 @Composable
 fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
-    LeishmaniappScaffold(title = stringResource(id = R.string.finish_diagnosis),
+    LeishmaniappScaffold(
+        title = stringResource(id = R.string.finish_diagnosis),
         showHelp = true,
         bottomBar = {
             NavigationBar {
@@ -87,7 +89,7 @@ fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
                                 RemainingImagesAlert()
                             } else {
                                 RemainingImagesProgress(
-                                    done = diagnosis.images.values.count { image: Image -> image.processed },
+                                    done = diagnosis.images.values.count { image: Image -> image.processed == ImageAnalysisStatus.Analyzed },
                                     of = diagnosis.samples
                                 )
                             }
