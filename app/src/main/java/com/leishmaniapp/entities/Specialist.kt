@@ -12,10 +12,10 @@ import kotlinx.serialization.Transient
  * Algebraic product type with Username and Password which are inlined
  */
 @Entity
-@Serializable
 @Parcelize
+@Serializable
 data class Specialist(
     val name: String,
     @PrimaryKey val username: Username,
-    @Transient val password: Password? = null
-): Parcelable
+    @Transient val password: Password = Password("")
+) : Parcelable

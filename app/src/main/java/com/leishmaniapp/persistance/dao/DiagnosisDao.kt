@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.leishmaniapp.entities.DiagnosisRoom
+import com.leishmaniapp.persistance.entities.DiagnosisRoom
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
 import com.leishmaniapp.entities.Patient
@@ -37,4 +37,8 @@ interface DiagnosisDao {
 
     @Query("SELECT * FROM DiagnosisRoom DR WHERE DR.id = :uuid")
     suspend fun imagesForDiagnosis(uuid: UUID): DiagnosisImages
+
+    //TODO: Test this method
+    @Query("SELECT * FROM DiagnosisRoom DR WHERE DR.id = :uuid")
+    suspend fun diagnosisForId(uuid: UUID): DiagnosisRoom?
 }

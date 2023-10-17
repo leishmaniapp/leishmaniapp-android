@@ -2,9 +2,9 @@ package com.leishmaniapp.infrastructure.module
 
 import android.content.Context
 import androidx.room.Room
-import com.leishmaniapp.entities.DiagnosisRoom.Companion.asRoomEntity
-import com.leishmaniapp.entities.ImageRoom.Companion.asRoomEntity
-import com.leishmaniapp.entities.mock.MockGenerator
+import com.leishmaniapp.persistance.entities.DiagnosisRoom.Companion.asRoomEntity
+import com.leishmaniapp.persistance.entities.ImageRoom.Companion.asRoomEntity
+import com.leishmaniapp.utils.MockGenerator
 import com.leishmaniapp.persistance.database.ApplicationDatabase
 import dagger.Module
 import dagger.Provides
@@ -23,8 +23,8 @@ object ApplicationDatabaseModule {
         val database =
             Room.databaseBuilder(context, ApplicationDatabase::class.java, "database").build()
 
+        // TODO: Create database if no diagnosis are found
         runBlocking {
-            // Create database if no diagnosis are found
             if (database.diagnosisDao().allDiagnoses().isEmpty()) {
 
                 List(10) {

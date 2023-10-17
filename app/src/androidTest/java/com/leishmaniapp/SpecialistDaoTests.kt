@@ -4,7 +4,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.leishmaniapp.entities.Password
-import com.leishmaniapp.entities.mock.MockGenerator
+import com.leishmaniapp.utils.MockGenerator
 import com.leishmaniapp.persistance.database.ApplicationDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking

@@ -30,7 +30,7 @@ import com.leishmaniapp.R
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ImageAnalysisStatus
-import com.leishmaniapp.entities.mock.MockGenerator
+import com.leishmaniapp.utils.MockGenerator
 import com.leishmaniapp.presentation.ui.DiagnosisImageGridItem
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.RemainingImagesAlert

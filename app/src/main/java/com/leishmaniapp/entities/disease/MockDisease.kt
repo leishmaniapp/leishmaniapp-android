@@ -7,7 +7,7 @@ import androidx.compose.ui.res.stringResource
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.DiagnosticElementName
-import com.leishmaniapp.entities.serialization.DiseaseSerializer
+import com.leishmaniapp.usecases.serialization.DiseaseSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(with = MockDiseaseSerializer::class)

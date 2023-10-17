@@ -4,9 +4,9 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.leishmaniapp.entities.Diagnosis
-import com.leishmaniapp.entities.DiagnosisRoom.Companion.asRoomEntity
-import com.leishmaniapp.entities.ImageRoom.Companion.asRoomEntity
-import com.leishmaniapp.entities.mock.MockGenerator
+import com.leishmaniapp.persistance.entities.DiagnosisRoom.Companion.asRoomEntity
+import com.leishmaniapp.persistance.entities.ImageRoom.Companion.asRoomEntity
+import com.leishmaniapp.utils.MockGenerator
 import com.leishmaniapp.persistance.database.ApplicationDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking

@@ -3,23 +3,18 @@ package com.leishmaniapp.entities
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Ignore
-import com.leishmaniapp.entities.serialization.PatientSerializer
+import com.leishmaniapp.usecases.serialization.PatientSerializer
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 import java.security.MessageDigest
 
 /**
  * Representation of a Patient
  */
-@Entity(primaryKeys = ["id", "documentType"])
-@Serializable(with = PatientSerializer::class)
 @Parcelize
+@Serializable(with = PatientSerializer::class)
+@Entity(primaryKeys = ["id", "documentType"])
 data class Patient(
     val name: String,
     val id: IdentificationDocument,

@@ -33,7 +33,7 @@ import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
-import com.leishmaniapp.entities.mock.MockGenerator
+import com.leishmaniapp.utils.MockGenerator
 import com.leishmaniapp.presentation.ui.DiagnosisActionBar
 import com.leishmaniapp.presentation.ui.DiagnosticImageResultsTable
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold

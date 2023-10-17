@@ -1,6 +1,6 @@
 package com.leishmaniapp.entities
 
-import com.leishmaniapp.entities.serialization.DiagnosticElementNameSerializer
+import com.leishmaniapp.usecases.serialization.DiagnosticElementNameSerializer
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

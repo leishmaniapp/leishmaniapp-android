@@ -68,7 +68,9 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 onImageChange = { editedImage ->
                     diagnosisViewModel.currentImage.value = editedImage
                 },
-                onAnalyzeAction = {},
+                onAnalyzeAction = {
+                    diagnosisViewModel.analyzeImage()
+                },
                 onFinishAction = {},
                 onNextAction = {},
                 onRepeatAction = {

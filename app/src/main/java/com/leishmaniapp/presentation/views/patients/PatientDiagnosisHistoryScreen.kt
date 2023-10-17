@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.Patient
-import com.leishmaniapp.entities.mock.MockGenerator
+import com.leishmaniapp.utils.MockGenerator
 import com.leishmaniapp.presentation.ui.DiagnosisListTile
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme

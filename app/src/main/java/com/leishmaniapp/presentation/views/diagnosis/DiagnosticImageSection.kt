@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ImageAnalysisStatus
-import com.leishmaniapp.entities.mock.MockGenerator
+import com.leishmaniapp.utils.MockGenerator
 import com.leishmaniapp.presentation.ui.DiagnosticImage
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 

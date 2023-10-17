@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-leishmaniappandroid-dev-22821-authRole",
+      "UnauthRoleArn": "arn:aws:iam::458787618751:role/amplify-leishmaniappandroid-dev-22821-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::458787618751:role/amplify-leishmaniappandroid-dev-22821-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-leishmaniappandroid-dev-22821-deployment",
+      "UnauthRoleName": "amplify-leishmaniappandroid-dev-22821-unauthRole",
+      "StackName": "amplify-leishmaniappandroid-dev-22821",
+      "StackId": "arn:aws:cloudformation:us-east-1:458787618751:stack/amplify-leishmaniappandroid-dev-22821/c1431890-6cbe-11ee-aaf6-0ea0c8ca89ad",
+      "AmplifyAppId": "d3qferdpfvsrv7"
+    },
+    "categories": {
+      "auth": {
+        "leishmaniappandroideccd86c2": {}
+      }
+    }
+  }
+}

@@ -1,20 +1,16 @@
 package com.leishmaniapp
 
-import com.leishmaniapp.entities.Coordinates
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.DiagnosticElement
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
-import com.leishmaniapp.entities.Image
-import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
-import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.Username
 import com.leishmaniapp.entities.disease.Disease
 import com.leishmaniapp.entities.disease.LeishmaniasisGiemsaDisease
-import com.leishmaniapp.entities.mock.MockGenerator
+import com.leishmaniapp.utils.MockGenerator
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.Assert
@@ -107,26 +103,6 @@ class EntitiesSerializationTests {
                 DocumentType.CC
             ),
             disease = LeishmaniasisGiemsaDisease,
-            images = mapOf(
-                1 to Image(
-                    sample = 1,
-                    size = 2250,
-                    processed = true,
-                    elements = setOf(
-                        SpecialistDiagnosticElement(
-                            LeishmaniasisGiemsaDisease.elements.first(),
-                            10
-                        ),
-                        ModelDiagnosticElement(
-                            LeishmaniasisGiemsaDisease.elements.first(),
-                            LeishmaniasisGiemsaDisease.models.first(),
-                            coordinates = setOf(
-                                Coordinates(10, 10)
-                            )
-                        )
-                    )
-                )
-            )
         )
 
         val expectedJson = """
@@ -141,61 +117,7 @@ class EntitiesSerializationTests {
                 "username": "${diagnosis.specialist.username.value}"
               },
               "patient": "${diagnosis.patient.hash}",
-              "disease": "${diagnosis.disease.id}",
-              "images": {
-                "1": {
-                  "sample": ${diagnosis.images[1]!!.sample},
-                  "date": "${diagnosis.images[1]!!.date}",
-                  "size": ${diagnosis.images[1]!!.size},
-                  "processed": ${diagnosis.images[1]!!.processed},
-                  "elements": [
-                    {
-                      "type": "${
-            when (diagnosis.images[1]!!.elements.elementAt(0)) {
-                is SpecialistDiagnosticElement -> "specialist"
-                is ModelDiagnosticElement -> "model"
-            }
-        }",
-                      "name": "${
-            diagnosis.images[1]!!.elements.filterIsInstance<SpecialistDiagnosticElement>()
-                .first().name.value
-        }",
-                      "amount": ${
-            diagnosis.images[1]!!.elements.filterIsInstance<SpecialistDiagnosticElement>()
-                .first().amount
-        }
-                   },
-                    {
-                      "type": "${
-            when (diagnosis.images[1]!!.elements.elementAt(1)) {
-                is SpecialistDiagnosticElement -> "specialist"
-                is ModelDiagnosticElement -> "model"
-            }
-        }",
-                      "name": "${
-            diagnosis.images[1]!!.elements.filterIsInstance<ModelDiagnosticElement>()
-                .first().name.value
-        }",
-                      "model": "${
-            diagnosis.images[1]!!.elements.filterIsInstance<ModelDiagnosticElement>()
-                .first().model.value
-        }",
-                      "coordinates": [
-                        {
-                          "x": ${
-            diagnosis.images[1]!!.elements.filterIsInstance<ModelDiagnosticElement>()
-                .first().coordinates.first().x
-        },
-                          "y": ${
-            diagnosis.images[1]!!.elements.filterIsInstance<ModelDiagnosticElement>()
-                .first().coordinates.first().y
-        }
-                        }
-                      ]
-                    }
-                  ]
-                }
-              }
+              "disease": "${diagnosis.disease.id}"
             }
         """.replace("\n", "").replace("\t", "").replace(" ", "")
 

@@ -6,6 +6,7 @@ plugins {
     id 'com.google.dagger.hilt.android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 ext {
@@ -36,6 +37,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildscript {
+        dependencies {
+            classpath("com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1")
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -51,6 +59,7 @@ android {
 
     buildFeatures {
         compose true
+        buildConfig true
     }
 
     composeOptions {
@@ -130,10 +139,6 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
 
-    // Functional programming with Arrow library
-    implementation "io.arrow-kt:arrow-core:1.2.0"
-    implementation "io.arrow-kt:arrow-fx-coroutines:1.2.0"
-
     // Mock data generator
     debugImplementation 'io.bloco:faker:2.0.2'
 
@@ -150,23 +155,17 @@ dependencies {
     ksp "androidx.room:room-compiler:2.5.2"
 
     // WorkManager
-    implementation ("androidx.work:work-runtime-ktx:2.8.1")
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation "androidx.hilt:hilt-work:1.0.0"
+    implementation "androidx.work:work-runtime-ktx:2.8.1"
 
-    // Dagger-hilt
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
-    implementation("androidx.hilt:hilt-work:1.0.0")
-
-    // AWS
-    implementation ("com.amazonaws:aws-android-sdk-s3:2.16.12")
-    implementation ("com.amazonaws:aws-android-sdk-mobile-client:2.16.12")
-    implementation ("com.amazonaws:aws-android-sdk-core:2.73.0")
+    // AWS Amplify
+    implementation 'com.amplifyframework:core-kotlin:2.14.0'
+    implementation 'com.amplifyframework:aws-auth-cognito:2.14.0'
+    //implementation 'com.amplifyframework:aws-storage-s3:2.14.0'
 
     // Coil
     implementation "io.coil-kt:coil:2.4.0"
-    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation "io.coil-kt:coil-compose:2.4.0"
 }
 
 kapt {

@@ -4,13 +4,15 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.leishmaniapp.entities.Diagnosis
+import com.leishmaniapp.persistance.entities.DiagnosisRoom.Companion.asRoomEntity
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.disease.Disease
 import com.leishmaniapp.persistance.database.ApplicationDatabase
+import com.leishmaniapp.usecases.IImageProcessing
 import com.leishmaniapp.usecases.IPictureStandardization
-import com.leishmaniapp.usecases.types.IDiagnosisSharing
+import com.leishmaniapp.usecases.IDiagnosisSharing
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
@@ -22,6 +24,7 @@ class DiagnosisViewModel @Inject constructor(
     val applicationDatabase: ApplicationDatabase,
     private val diagnosisShare: IDiagnosisSharing,
     private val pictureStandardization: IPictureStandardization,
+    private val imageProcessing: IImageProcessing,
 ) : ViewModel() {
 
     val currentDiagnosis = MutableStateFlow<Diagnosis?>(null)
@@ -71,6 +74,12 @@ class DiagnosisViewModel @Inject constructor(
     fun startNewDiagnosis(patient: Patient, specialist: Specialist, disease: Disease) {
         // Create a new diagnosis
         currentDiagnosis.value = Diagnosis(specialist, patient, disease)
+
+        // Store diagnosis in Room
+        runBlocking {
+            applicationDatabase.diagnosisDao()
+                .upsertDiagnosis(currentDiagnosis.value!!.asRoomEntity())
+        }
     }
 
     fun standardizeImage(uri: Uri): Int? {
@@ -78,5 +87,11 @@ class DiagnosisViewModel @Inject constructor(
             return pictureStandardization.scalePicture(uri)
         }
         return null
+    }
+
+    fun analyzeImage() {
+        runBlocking {
+            imageProcessing.processImage(currentDiagnosis.value!!, currentImage.value!!)
+        }
     }
 }

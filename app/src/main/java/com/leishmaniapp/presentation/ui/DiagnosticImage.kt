@@ -35,7 +35,7 @@ import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.entities.disease.MockDisease
-import com.leishmaniapp.entities.mock.MockGenerator
+import com.leishmaniapp.utils.MockGenerator
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 /// Radius at which the element will be 

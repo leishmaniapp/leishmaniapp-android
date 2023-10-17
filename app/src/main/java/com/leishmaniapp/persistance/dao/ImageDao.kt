@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.leishmaniapp.entities.ImageRoom
+import com.leishmaniapp.persistance.entities.ImageRoom
 import java.util.UUID
 
 @Dao

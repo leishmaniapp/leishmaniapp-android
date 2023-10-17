@@ -3,8 +3,8 @@ package com.leishmaniapp.persistance.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.leishmaniapp.entities.DiagnosisRoom
-import com.leishmaniapp.entities.ImageRoom
+import com.leishmaniapp.persistance.entities.DiagnosisRoom
+import com.leishmaniapp.persistance.entities.ImageRoom
 import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.persistance.dao.DiagnosisDao
