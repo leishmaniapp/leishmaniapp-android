@@ -14,6 +14,9 @@
     "categories": {
       "auth": {
         "leishmaniappandroideccd86c2": {}
+      },
+      "storage": {
+        "S3DiagnosticImages": {}
       }
     }
   }

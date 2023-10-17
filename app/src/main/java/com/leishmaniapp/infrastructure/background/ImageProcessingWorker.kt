@@ -65,11 +65,11 @@ class ImageProcessingWorker @AssistedInject constructor(
             Log.d("ImageProcessingWorker", "Image reference: $reference")
 
             // Upload image metadata
-            processingRequest.generatePayloadRequest(
-                payload = image.toProcessingPayload(
-                    diagnosisId, diagnosis.disease, reference
-                )
-            )
+//            processingRequest.generatePayloadRequest(
+//                payload = image.toProcessingPayload(
+//                    diagnosisId, diagnosis.disease, reference
+//                )
+//            )
 
             Result.success()
 

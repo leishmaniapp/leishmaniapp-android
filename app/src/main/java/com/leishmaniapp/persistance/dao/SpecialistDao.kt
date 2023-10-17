@@ -16,6 +16,9 @@ interface SpecialistDao {
     @Delete
     suspend fun deleteSpecialist(specialist: Specialist)
 
+    @Query("DELETE FROM Specialist WHERE username = :username")
+    suspend fun deleteSpecialistWithUsername(username: Username)
+
     @Query("SELECT * FROM specialist")
     suspend fun allSpecialists(): List<Specialist>
 

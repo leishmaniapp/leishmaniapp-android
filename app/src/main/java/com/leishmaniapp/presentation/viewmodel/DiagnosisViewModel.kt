@@ -4,16 +4,20 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.leishmaniapp.entities.Diagnosis
-import com.leishmaniapp.persistance.entities.DiagnosisRoom.Companion.asRoomEntity
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.disease.Disease
 import com.leishmaniapp.persistance.database.ApplicationDatabase
+import com.leishmaniapp.persistance.entities.DiagnosisRoom.Companion.asRoomEntity
+import com.leishmaniapp.usecases.IDiagnosisSharing
 import com.leishmaniapp.usecases.IImageProcessing
 import com.leishmaniapp.usecases.IPictureStandardization
-import com.leishmaniapp.usecases.IDiagnosisSharing
+import com.leishmaniapp.usecases.IProcessingRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -25,6 +29,7 @@ class DiagnosisViewModel @Inject constructor(
     private val diagnosisShare: IDiagnosisSharing,
     private val pictureStandardization: IPictureStandardization,
     private val imageProcessing: IImageProcessing,
+    val processingRequest: IProcessingRequest,
 ) : ViewModel() {
 
     val currentDiagnosis = MutableStateFlow<Diagnosis?>(null)
@@ -90,8 +95,9 @@ class DiagnosisViewModel @Inject constructor(
     }
 
     fun analyzeImage() {
-        runBlocking {
-            imageProcessing.processImage(currentDiagnosis.value!!, currentImage.value!!)
+        CoroutineScope(Dispatchers.IO).async {
+            processingRequest.uploadImageToBucket(currentDiagnosis.value!!.id, currentImage.value!!)
+            //imageProcessing.processImage(currentDiagnosis.value!!, currentImage.value!!)
         }
     }
 }
