@@ -8,6 +8,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import com.amplifyframework.AmplifyException
+import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
+import com.amplifyframework.core.Amplify
+import com.amplifyframework.storage.s3.AWSS3StoragePlugin
 import com.leishmaniapp.presentation.navigation.RootNavigation
 import com.leishmaniapp.presentation.ui.WillPopScopeAlertDialog
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme

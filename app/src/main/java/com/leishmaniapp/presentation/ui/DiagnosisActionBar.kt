@@ -1,19 +1,24 @@
 package com.leishmaniapp.presentation.ui
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
+import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
@@ -23,6 +28,7 @@ fun DiagnosisActionBar(
     nextAction: () -> Unit,
     finishAction: () -> Unit,
     nextIsCamera: Boolean = false,
+    analysisStatus: ImageAnalysisStatus = ImageAnalysisStatus.NotAnalyzed,
 ) {
     NavigationBar {
         NavigationBarItem(
@@ -39,12 +45,20 @@ fun DiagnosisActionBar(
 
         NavigationBarItem(
             selected = false,
-            onClick = analyzeAction,
+            onClick = if (analysisStatus != ImageAnalysisStatus.Analyzing) {
+                analyzeAction
+            } else {
+                {}
+            },
             icon = {
-                Icon(
-                    Icons.AutoMirrored.Filled.Send,
-                    contentDescription = stringResource(id = R.string.action_analyze)
-                )
+                if (analysisStatus == ImageAnalysisStatus.Analyzing) {
+                    CircularProgressIndicator(modifier = Modifier.size(8.dp))
+                } else {
+                    Icon(
+                        Icons.AutoMirrored.Filled.Send,
+                        contentDescription = stringResource(id = R.string.action_analyze)
+                    )
+                }
             }, label = {
                 Text(text = stringResource(id = R.string.action_analyze))
             })

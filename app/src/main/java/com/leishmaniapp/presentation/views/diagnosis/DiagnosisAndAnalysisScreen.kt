@@ -54,6 +54,7 @@ fun DiagnosisAndAnalysisScreen(
     onImageChange: (Image) -> Unit,
     onRepeatAction: () -> Unit,
     onAnalyzeAction: () -> Unit,
+    analysisStatus: ImageAnalysisStatus,
     onNextAction: () -> Unit,
     onFinishAction: () -> Unit
 ) {
@@ -66,7 +67,8 @@ fun DiagnosisAndAnalysisScreen(
             analyzeAction = onAnalyzeAction,
             nextAction = onNextAction,
             finishAction = onFinishAction,
-            nextIsCamera = image.processed != ImageAnalysisStatus.NotAnalyzed
+            nextIsCamera = image.processed != ImageAnalysisStatus.NotAnalyzed,
+            analysisStatus
         )
     }) {
         Column {
@@ -220,7 +222,8 @@ fun DiagnosisAndAnalysisPreview_NotAnalyzed() {
             onFinishAction = {},
             onNextAction = {},
             onRepeatAction = {},
-            onImageChange = {}
+            onImageChange = {},
+            analysisStatus = ImageAnalysisStatus.NotAnalyzed
         )
     }
 }
@@ -236,7 +239,8 @@ fun DiagnosisAndAnalysisPreview_Analyzed() {
             onFinishAction = {},
             onNextAction = {},
             onRepeatAction = {},
-            onImageChange = {}
+            onImageChange = {},
+            analysisStatus = ImageAnalysisStatus.NotAnalyzed
         )
     }
 }

@@ -3,88 +3,94 @@ package com.leishmaniapp.infrastructure.cloud
 
 import android.content.Context
 import android.util.Log
-import aws.sdk.kotlin.services.s3.S3Client
-import aws.sdk.kotlin.services.s3.model.PutObjectRequest
-import aws.smithy.kotlin.runtime.content.asByteStream
-import com.amplifyframework.kotlin.core.Amplify
-import com.amplifyframework.storage.StorageException
+import arrow.core.Either
+import com.amplifyframework.core.Amplify
+import com.amplifyframework.storage.result.StorageUploadResult
+import com.amplifyframework.storage.s3.AWSS3StoragePlugin
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ImageProcessingPayload
+import com.leishmaniapp.persistance.entities.ImageRoom
+import com.leishmaniapp.persistance.entities.ImageRoom.Companion.asRoomEntity
 import com.leishmaniapp.usecases.IProcessingRequest
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import java.io.File
 import java.io.IOException
 import java.util.UUID
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class CloudProcessingRequest @Inject constructor(
     @ApplicationContext val context: Context
 ) : IProcessingRequest {
 
-    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-    override suspend fun uploadImageToBucket(diagnosisId: UUID, image: Image): String {
-        // Get the file
-        val fileToUpload = File(image.path!!.path!!)
+    companion object {
+        const val BASE_URL = "https://321xsmnj04.execute-api.us-east-1.amazonaws.com/debugging"
+        const val UPLOAD_PATH = "/diagnosis/analyze"
+    }
 
-        // Check if the file exists
-        if (!fileToUpload.exists() || !fileToUpload.canRead()) {
-            Log.e("CloudProcessingRequest", "ImagePath does not exist")
-            throw IOException(image.path.path!!)
-        }
+    private suspend fun uploadPhoto(image: ImageRoom): StorageUploadResult {
+        // Get the im
+        val file = File(image.path!!.path!!)
 
-        // Picture key
-        val pictureKey = String.format("%s/%s", diagnosisId, fileToUpload.name)
-        Log.d("CloudProcessingRequest", "Uploading picture `$pictureKey` from file `$fileToUpload`")
+        val filePath = "${image.diagnosisUUID}/${file.name}"
 
-        // Upload entity
-        try {
-            return withContext(Dispatchers.IO) {
-
-                S3Client.fromEnvironment().use { s3 ->
-                    val request = PutObjectRequest {
-                        bucket = "diagnostic-images-repository22821-dev"
-                        key = pictureKey
-                        body = fileToUpload.asByteStream()
-                    }
-
-                    s3.putObject(request).eTag!!
-                }
-
-//                val upload =
-//                    Amplify.Storage.uploadInputStream(
-//                        pictureKey,
-//                        fileToUpload.inputStream(),
-//                        options = StorageUploadInputStreamOptions.builder()
-//                            .accessLevel(StorageAccessLevel.PUBLIC)
-//                            .contentType("text/plain")
-//                            .build()
-//                    )
-//
-//                return@withContext withTimeout(15000) {
-//                    // Make the request
-//                    val result = upload.result()
-//                    Log.i("CloudProcessingRequest", "Uploaded image $result")
-//
-//                    // Return the key
-//                    return@withTimeout result.key
-//                }
-            }
-        } catch (e: StorageException) {
-            Log.e("CloudProcessingRequest", "Failed to store image: $pictureKey", e)
-            throw e;
-        } catch (e: TimeoutCancellationException) {
-            Log.e("CloudProcessingRequest", "Picture upload timed out", e)
-            throw e;
+        return suspendCoroutine { continuation ->
+            Amplify.Storage.uploadInputStream(
+                filePath,
+                file.inputStream(),
+                { result -> continuation.resume(result) },
+                { error -> throw error }
+            )
         }
     }
 
+    override suspend fun uploadImageToBucket(diagnosisId: UUID, image: Image): String {
+        val key = uploadPhoto(image.asRoomEntity(diagnosisId)).key
+        val fullPath = suspendCoroutine { continuation ->
+            Amplify.Storage.getUrl(key, { urlResult ->
+                continuation.resume(Either.Left(urlResult.url))
+            }, { ex ->
+                continuation.resume(Either.Right(ex))
+            })
+        }.fold({ it.path }, { e -> throw e })
+        val bucketName = "diagnostic-images-repository124316-dev"
+        return "s3://$bucketName$fullPath"
+    }
+
+    private val client = OkHttpClient()
+
     override suspend fun generatePayloadRequest(payload: ImageProcessingPayload) {
-        TODO("Not yet implemented")
+        val body = Json.encodeToString(payload)
+        val request = Request.Builder().url("$BASE_URL$UPLOAD_PATH").post(
+            body.toRequestBody("application/json".toMediaType())
+        ).build()
+
+        suspendCoroutine { continuation ->
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    continuation.resume(Either.Right(e))
+                }
+                override fun onResponse(call: Call, response: Response) {
+                    continuation.resume(Either.Left(response.code))
+                }
+            })
+        }.isRight { exception ->
+            throw exception
+        }
     }
 
 }

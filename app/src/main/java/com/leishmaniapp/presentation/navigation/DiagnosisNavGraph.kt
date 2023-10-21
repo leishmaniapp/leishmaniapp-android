@@ -1,16 +1,31 @@
 package com.leishmaniapp.presentation.navigation
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import androidx.work.Operation
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Image
+import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 import com.leishmaniapp.presentation.viewmodel.DiagnosisViewModel
 import com.leishmaniapp.presentation.views.diagnosis.CameraView
@@ -18,6 +33,7 @@ import com.leishmaniapp.presentation.views.diagnosis.DiagnosisAndAnalysisScreen
 import com.leishmaniapp.presentation.views.diagnosis.DiagnosisTableScreen
 
 
+@SuppressLint("RestrictedApi")
 fun NavGraphBuilder.diagnosisNavGraph(
     navController: NavHostController,
     applicationViewModel: ApplicationViewModel,
@@ -32,6 +48,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route) {
             val context = LocalContext.current
             val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
+
             CameraView(diagnosis = diagnosis!!, onCanceled = {
                 // Show toast
                 Toast.makeText(context, R.string.camera_exit, Toast.LENGTH_SHORT).show()
@@ -53,29 +70,49 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 )
 
                 diagnosisViewModel.currentImage.value = newImage
+                diagnosisViewModel.storeImageInDatabase()
                 navController.navigateToDiagnosisAndAnalysis()
             })
         }
 
         // Sample processing
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
+            val context = LocalContext.current
             val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
-            val image by diagnosisViewModel.currentImage.collectAsState()
+            val imageFlow by diagnosisViewModel.imageFlow.collectAsState(initial = null)
 
-            DiagnosisAndAnalysisScreen(
-                diagnosis = diagnosis!!,
-                image = image!!,
-                onImageChange = { editedImage ->
-                    diagnosisViewModel.currentImage.value = editedImage
-                },
-                onAnalyzeAction = {
-                    diagnosisViewModel.analyzeImage()
-                },
-                onFinishAction = {},
-                onNextAction = {},
-                onRepeatAction = {
-                    navController.navigateToRepeatPictureTake()
-                })
+            var analysisStateLiveData by remember { mutableStateOf<LiveData<Operation.State>?>(null) }
+            val analysisState: State<Operation.State?>? = analysisStateLiveData?.observeAsState()
+
+            if (imageFlow == null) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                DiagnosisAndAnalysisScreen(
+                    diagnosis = diagnosis!!,
+                    image = imageFlow!!.asApplicationEntity(),
+                    onImageChange = { editedImage ->
+                        diagnosisViewModel.currentImage.value = editedImage
+                    },
+                    onAnalyzeAction = {
+                        analysisStateLiveData = diagnosisViewModel.analyzeImage(context)
+                    },
+                    analysisStatus = when (analysisState?.value) {
+                        Operation.IN_PROGRESS -> ImageAnalysisStatus.Analyzing
+                        Operation.SUCCESS -> ImageAnalysisStatus.Analyzed
+                        else -> ImageAnalysisStatus.NotAnalyzed
+                    },
+                    onFinishAction = {},
+                    onNextAction = {},
+                    onRepeatAction = {
+                        navController.navigateToRepeatPictureTake()
+                    })
+            }
         }
 
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route) {

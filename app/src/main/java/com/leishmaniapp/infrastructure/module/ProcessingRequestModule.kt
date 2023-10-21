@@ -1,8 +1,6 @@
 package com.leishmaniapp.infrastructure.module
 
-import com.leishmaniapp.infrastructure.cloud.CloudImageProcessing
 import com.leishmaniapp.infrastructure.cloud.CloudProcessingRequest
-import com.leishmaniapp.usecases.IImageProcessing
 import com.leishmaniapp.usecases.IProcessingRequest
 import dagger.Binds
 import dagger.Module
@@ -16,8 +14,4 @@ abstract class ProcessingRequestModule {
     @Binds
     @Singleton
     abstract fun provideProcessingRequest(processingRequest: CloudProcessingRequest): IProcessingRequest
-
-    @Binds
-    @Singleton
-    abstract fun provideImageProcessing(imageProcessing: CloudImageProcessing): IImageProcessing
 }

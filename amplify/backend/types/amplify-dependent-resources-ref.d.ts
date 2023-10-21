@@ -1,6 +1,6 @@
 export type AmplifyDependentResourcesAttributes = {
   "auth": {
-    "leishmaniappandroideccd86c2": {
+    "leishmaniappc2f1cc78": {
       "AppClientID": "string",
       "AppClientIDWeb": "string",
       "IdentityPoolId": "string",
@@ -11,7 +11,7 @@ export type AmplifyDependentResourcesAttributes = {
     }
   },
   "storage": {
-    "S3DiagnosticImages": {
+    "s3diagnosisimages": {
       "BucketName": "string",
       "Region": "string"
     }

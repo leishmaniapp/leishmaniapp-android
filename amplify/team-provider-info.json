@@ -1,22 +1,22 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-leishmaniappandroid-dev-22821-authRole",
-      "UnauthRoleArn": "arn:aws:iam::458787618751:role/amplify-leishmaniappandroid-dev-22821-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::458787618751:role/amplify-leishmaniappandroid-dev-22821-authRole",
+      "AuthRoleName": "amplify-leishmaniapp-dev-124316-authRole",
+      "UnauthRoleArn": "arn:aws:iam::458787618751:role/amplify-leishmaniapp-dev-124316-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::458787618751:role/amplify-leishmaniapp-dev-124316-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-leishmaniappandroid-dev-22821-deployment",
-      "UnauthRoleName": "amplify-leishmaniappandroid-dev-22821-unauthRole",
-      "StackName": "amplify-leishmaniappandroid-dev-22821",
-      "StackId": "arn:aws:cloudformation:us-east-1:458787618751:stack/amplify-leishmaniappandroid-dev-22821/c1431890-6cbe-11ee-aaf6-0ea0c8ca89ad",
-      "AmplifyAppId": "d3qferdpfvsrv7"
+      "DeploymentBucketName": "amplify-leishmaniapp-dev-124316-deployment",
+      "UnauthRoleName": "amplify-leishmaniapp-dev-124316-unauthRole",
+      "StackName": "amplify-leishmaniapp-dev-124316",
+      "StackId": "arn:aws:cloudformation:us-east-1:458787618751:stack/amplify-leishmaniapp-dev-124316/2795c0d0-6f70-11ee-94da-0a5a39c1e0eb",
+      "AmplifyAppId": "d3bo883hbuidtu"
     },
     "categories": {
       "auth": {
-        "leishmaniappandroideccd86c2": {}
+        "leishmaniappc2f1cc78": {}
       },
       "storage": {
-        "S3DiagnosticImages": {}
+        "s3diagnosisimages": {}
       }
     }
   }

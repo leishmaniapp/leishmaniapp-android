@@ -1,16 +1,22 @@
 package com.leishmaniapp.infrastructure.cloud
 
 import android.util.Log
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
 import com.amplifyframework.auth.AuthException
-import com.amplifyframework.auth.cognito.exceptions.service.UserNotFoundException
-import com.amplifyframework.auth.exceptions.NotAuthorizedException
-import com.amplifyframework.kotlin.core.Amplify
+import com.amplifyframework.auth.AuthException.NotAuthorizedException
+import com.amplifyframework.auth.AuthException.UserNotFoundException
+import com.amplifyframework.auth.AuthSession
+import com.amplifyframework.core.Amplify
 import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.Username
 import com.leishmaniapp.persistance.database.ApplicationDatabase
 import com.leishmaniapp.usecases.IAuthenticationProvider
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class CloudAuthenticationProvider @Inject constructor(
     val applicationDatabase: ApplicationDatabase
@@ -18,22 +24,47 @@ class CloudAuthenticationProvider @Inject constructor(
     override suspend fun authenticateSpecialist(
         username: Username, password: Password
     ): Specialist? {
+
         try {
             // Fetch current session
-            val session = Amplify.Auth.fetchAuthSession()
+            val session = suspendCoroutine { continuation ->
+                Amplify.Auth.fetchAuthSession({ session ->
+                    continuation.resume(Either.Left(session))
+                }, { exception ->
+                    continuation.resume(Either.Right(exception))
+                })
+            }.fold({ it }, { throw it })
+
             if (session.isSignedIn) {
                 // Finish current session
-                Amplify.Auth.signOut()
+                suspendCoroutine { continuation ->
+                    Amplify.Auth.signOut({
+                        continuation.resume(Either.Left(Unit))
+                    }, { exception ->
+                        continuation.resume(Either.Right(exception))
+                    })
+                }.fold({}, { throw it })
             }
 
             // Sign in
-            val authResult = Amplify.Auth.signIn(username.value, password.value)
-            if (!authResult.isSignedIn) {
-                return null;
+            val authResult = suspendCoroutine { continuation ->
+                Amplify.Auth.signIn(username.value, password.value, { result ->
+                    continuation.resume(Either.Left(result))
+                }, { exception ->
+                    continuation.resume(Either.Right(exception))
+                })
+            }.fold({ it }, { throw it })
+
+            if (!authResult.isSignInComplete) {
+                return null
             }
 
             // Get current session
-            val nameAttribute = Amplify.Auth.fetchUserAttributes().first { attribute ->
+            val nameAttribute = suspendCoroutine { continuation ->
+                Amplify.Auth.fetchUserAttributes(
+                    { results -> continuation.resume(results) },
+                    { err -> throw err })
+            }.first { attribute ->
                 attribute.key.keyString == "name"
             }
 
@@ -48,7 +79,7 @@ class CloudAuthenticationProvider @Inject constructor(
             applicationDatabase.specialistDao().upsertSpecialist(specialist)
             return specialist
 
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
             when (ex) {
                 is UserNotFoundException, is NotAuthorizedException -> {
                     Log.e(
@@ -56,9 +87,6 @@ class CloudAuthenticationProvider @Inject constructor(
                         "User not found, credentials don't match",
                         ex
                     )
-
-                    // Delete it from local database
-                    applicationDatabase.specialistDao().deleteSpecialistWithUsername(username)
                 }
 
                 is AuthException -> {
@@ -74,6 +102,6 @@ class CloudAuthenticationProvider @Inject constructor(
         }
 
         // Specialist not found
-        return null;
+        return null
     }
 }

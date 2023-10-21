@@ -1,6 +1,6 @@
 {
   "auth": {
-    "leishmaniappandroideccd86c2": {
+    "leishmaniappc2f1cc78": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -26,7 +26,7 @@
     }
   },
   "storage": {
-    "S3DiagnosticImages": {
+    "s3diagnosisimages": {
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "S3"

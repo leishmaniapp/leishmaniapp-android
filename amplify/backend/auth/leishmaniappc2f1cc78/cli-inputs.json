@@ -1,10 +1,10 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "leishmaniappandroideccd86c2_identitypool_eccd86c2",
+    "identityPoolName": "leishmaniappc2f1cc78_identitypool_c2f1cc78",
     "allowUnauthenticatedIdentities": true,
-    "resourceNameTruncated": "leishmeccd86c2",
-    "userPoolName": "leishmaniappandroideccd86c2_userpool_eccd86c2",
+    "resourceNameTruncated": "leishmc2f1cc78",
+    "userPoolName": "leishmaniappc2f1cc78_userpool_c2f1cc78",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -31,10 +31,10 @@
     "userpoolClientReadAttributes": [
       "email"
     ],
-    "userpoolClientLambdaRole": "leishmeccd86c2_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "leishmc2f1cc78_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "eccd86c2",
-    "resourceName": "leishmaniappandroideccd86c2",
+    "sharedId": "c2f1cc78",
+    "resourceName": "leishmaniappc2f1cc78",
     "authSelections": "identityPoolAndUserPool",
     "useDefault": "default",
     "userPoolGroupList": [],
