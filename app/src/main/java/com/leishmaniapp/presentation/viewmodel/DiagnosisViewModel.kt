@@ -2,7 +2,6 @@ package com.leishmaniapp.presentation.viewmodel
 
 import android.content.Context
 import android.net.Uri
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
@@ -11,7 +10,6 @@ import androidx.work.Constraints
 import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.Operation
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.leishmaniapp.entities.Diagnosis
@@ -29,9 +27,11 @@ import com.leishmaniapp.usecases.IDiagnosisSharing
 import com.leishmaniapp.usecases.IPictureStandardization
 import com.leishmaniapp.usecases.IProcessingRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import java.time.Duration
 import java.util.UUID
 import javax.inject.Inject
@@ -41,17 +41,20 @@ class DiagnosisViewModel @Inject constructor(
     val savedStateHandle: SavedStateHandle,
     val applicationDatabase: ApplicationDatabase,
     private val diagnosisShare: IDiagnosisSharing,
-    private val pictureStandardization: IPictureStandardization
+    private val pictureStandardization: IPictureStandardization,
+    private val imageProcessingRequest: IProcessingRequest,
 ) : ViewModel() {
 
     val currentDiagnosis = MutableStateFlow<Diagnosis?>(null)
     val currentImage = MutableStateFlow<Image?>(null)
     val currentWorkerId = MutableStateFlow<UUID?>(null)
 
-    val imageFlow: Flow<ImageRoom?>
+    val imageFlow: Flow<ImageRoom?>?
         get() = runBlocking {
-            applicationDatabase.imageDao()
-                .imageForDiagnosisFlow(currentDiagnosis.value!!.id, currentImage.value!!.sample)
+            if (currentDiagnosis.value != null && currentImage.value != null)
+                applicationDatabase.imageDao()
+                    .imageForDiagnosisFlow(currentDiagnosis.value!!.id, currentImage.value!!.sample)
+            else null
         }
 
     init {
@@ -123,6 +126,31 @@ class DiagnosisViewModel @Inject constructor(
         }
     }
 
+    fun onRepeatImage(context: Context) {
+        // Cancel current request
+        if (currentWorkerId.value != null) {
+            WorkManager.getInstance(context)
+                .cancelWorkById(currentWorkerId.value!!)
+        }
+
+        // Erase image from database
+        runBlocking {
+            applicationDatabase.imageDao()
+                .deleteImage(currentImage.value!!.asRoomEntity(currentDiagnosis.value!!.id))
+        }
+
+        // Set current image to null
+        currentImage.value = null
+    }
+
+    fun updateImage(image: Image) {
+        runBlocking {
+            currentImage.value = image
+            applicationDatabase.imageDao()
+                .upsertImage(image.asRoomEntity(currentDiagnosis.value!!.id))
+        }
+    }
+
     suspend fun setImageAsDeferred() {
         applicationDatabase.imageDao().upsertImage(
             currentImage.value!!.copy(processed = ImageAnalysisStatus.Deferred)
@@ -130,33 +158,56 @@ class DiagnosisViewModel @Inject constructor(
         )
     }
 
-    suspend fun setImageAsNotAnalyzed() {
-        applicationDatabase.imageDao().upsertImage(
-            currentImage.value!!.copy(processed = ImageAnalysisStatus.NotAnalyzed)
-                .asRoomEntity(currentDiagnosis.value!!.id)
-        )
-    }
-
-    fun analyzeImage(context: Context): UUID {
+    suspend fun analyzeImage(context: Context) {
         // Obtain data to worker
         val data = Data.Builder().putString("diagnosis", currentDiagnosis.value!!.id.toString())
             .putInt("sample", currentImage.value!!.sample).build()
 
         // Build the worker
-        val worker = OneTimeWorkRequestBuilder<ImageProcessingWorker>()
-            .setConstraints(
-                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-            )
-            .setInputData(data)
-            .setBackoffCriteria(
-                backoffPolicy = BackoffPolicy.LINEAR,
-                duration = Duration.ofSeconds(15)
-            ).build()
+        val worker = OneTimeWorkRequestBuilder<ImageProcessingWorker>().setConstraints(
+            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+        ).setInputData(data).setBackoffCriteria(
+            backoffPolicy = BackoffPolicy.LINEAR, duration = Duration.ofSeconds(15)
+        ).build()
 
         // Prompt the worker
         WorkManager.getInstance(context).enqueue(worker)
 
         // Return the worker ID
-        return worker.id
+        currentWorkerId.value = worker.id
+
+        // Image is deferred because no internet connection is available
+        if (!imageProcessingRequest.checkIfInternetConnectionIsAvailable()) {
+            setImageAsDeferred()
+        }
+
+        val workerInfo = WorkManager.getInstance(context)
+            .getWorkInfoByIdLiveData(currentWorkerId.value!!)
+            .asFlow()
+
+        var coroutineWasExecuted = false;
+
+        try {
+            withTimeout(15_000) {
+                workerInfo.collect { info ->
+                    when (info.state) {
+                        // Resume execution
+                        WorkInfo.State.RUNNING,
+                        WorkInfo.State.SUCCEEDED,
+                        WorkInfo.State.FAILED ->
+                            coroutineWasExecuted = true
+
+                        // Continue waiting
+                        WorkInfo.State.BLOCKED,
+                        WorkInfo.State.CANCELLED,
+                        WorkInfo.State.ENQUEUED -> Unit
+                    }
+                }
+            }
+        } catch (e: TimeoutCancellationException) {
+            // Check if coroutine was resumed
+            if (!coroutineWasExecuted)
+                setImageAsDeferred()
+        }
     }
 }

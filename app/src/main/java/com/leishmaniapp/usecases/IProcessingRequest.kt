@@ -21,4 +21,9 @@ interface IProcessingRequest {
      * @throws Exception on failure
      */
     suspend fun generatePayloadRequest(payload: ImageProcessingPayload)
+
+    /**
+     * Check if internet connection is present
+     */
+    suspend fun checkIfInternetConnectionIsAvailable(): Boolean
 }

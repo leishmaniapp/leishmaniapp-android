@@ -2,6 +2,7 @@ package com.leishmaniapp.infrastructure.cloud
 
 
 import android.content.Context
+import android.net.ConnectivityManager
 import android.util.Log
 import arrow.core.Either
 import com.amplifyframework.core.Amplify
@@ -91,6 +92,12 @@ class CloudProcessingRequest @Inject constructor(
         }.isRight { exception ->
             throw exception
         }
+    }
+
+    override suspend fun checkIfInternetConnectionIsAvailable(): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetwork
+        return networkInfo != null
     }
 
 }

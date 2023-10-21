@@ -2,6 +2,7 @@ package com.leishmaniapp.presentation.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
@@ -35,8 +36,8 @@ import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.entities.disease.MockDisease
-import com.leishmaniapp.utils.MockGenerator
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.utils.MockGenerator
 
 /// Radius at which the element will be 
 const val coordinatesSelectionRadius: Int = 100
@@ -96,8 +97,9 @@ fun Modifier.onCanvasClick(
 fun DiagnosticImage(
     modifier: Modifier = Modifier,
     image: Image,
+    clickEnabled: Boolean = true,
     selectedElement: Pair<ModelDiagnosticElement, Coordinates>? = null,
-    onElementPressed: (Pair<ModelDiagnosticElement, Coordinates>?) -> Unit
+    onElementPressed: (Pair<ModelDiagnosticElement, Coordinates>?) -> Unit,
 ) {
     // Late initialization of canvas size when rendered
     var canvasSize: Size? = null
@@ -120,6 +122,7 @@ fun DiagnosticImage(
         .drawWithContent {
             // Draw the image
             drawContent()
+
             // Guard (Do not draw if not processed
             if (image.processed != ImageAnalysisStatus.Analyzed) return@drawWithContent
             // Store the canvas size
@@ -174,23 +177,25 @@ fun DiagnosticImage(
             }
         }
         .onCanvasClick { tap ->
-            // Transform canvas coordinates to real coordinates
-            val tapToRealCoordinates = transformCoordinatesFromCanvasToReal(
-                tap, image.size, canvasSize!!
-            )
+            if (clickEnabled) {
+                // Transform canvas coordinates to real coordinates
+                val tapToRealCoordinates = transformCoordinatesFromCanvasToReal(
+                    tap, image.size, canvasSize!!
+                )
 
-            // Get the nearest element
-            val tappedElement = elementsWithCoordinates.minByOrNull { (_, coordinates) ->
-                coordinates distanceTo tapToRealCoordinates
-            }
-
-            // Invoke with callback with null or value
-            onElementPressed.invoke(
-                tappedElement?.let { (element, coordinates) ->
-                    if (coordinates distanceTo tapToRealCoordinates <= coordinatesSelectionRadius)
-                        (element to coordinates) else null
+                // Get the nearest element
+                val tappedElement = elementsWithCoordinates.minByOrNull { (_, coordinates) ->
+                    coordinates distanceTo tapToRealCoordinates
                 }
-            )
+
+                // Invoke with callback with null or value
+                onElementPressed.invoke(
+                    tappedElement?.let { (element, coordinates) ->
+                        if (coordinates distanceTo tapToRealCoordinates <= coordinatesSelectionRadius)
+                            (element to coordinates) else null
+                    }
+                )
+            }
         },
         painter = if (image.path == null) {
             painterResource(id = R.drawable.image_example)
