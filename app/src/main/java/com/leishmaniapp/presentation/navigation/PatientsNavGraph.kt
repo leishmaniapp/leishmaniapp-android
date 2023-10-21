@@ -1,7 +1,5 @@
 package com.leishmaniapp.presentation.navigation
 
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -24,9 +22,9 @@ fun NavGraphBuilder.patientsNavGraph(
         route = NavigationRoutes.PatientsRoute.route,
         startDestination = NavigationRoutes.PatientsRoute.PatientList.route
     ) {
-
         composable(NavigationRoutes.PatientsRoute.InitializeDiagnosis.route) {
-            val patients = patientsViewModel.patients.collectAsStateWithLifecycle(initialValue = listOf())
+            val patients =
+                patientsViewModel.patients.collectAsStateWithLifecycle(initialValue = listOf())
             PatientListScreen(patients = patients.value.toSet(),
                 onAddPatient = {
                     navController.navigateToAddPatient()
@@ -46,7 +44,8 @@ fun NavGraphBuilder.patientsNavGraph(
         }
 
         composable(NavigationRoutes.PatientsRoute.PatientList.route) {
-            val patients = patientsViewModel.patients.collectAsStateWithLifecycle(initialValue = listOf())
+            val patients =
+                patientsViewModel.patients.collectAsStateWithLifecycle(initialValue = listOf())
             PatientListScreen(patients = patients.value.toSet(),
                 onAddPatient = {
                     navController.navigateToAddPatient()
@@ -81,7 +80,9 @@ fun NavGraphBuilder.patientsNavGraph(
                     // Navigate to diagnosis nav graph
                     navController.navigateToStartDiagnosis()
                 },
-                diagnosisList = diagnosisViewModel.diagnosesForPatient(patientsViewModel.currentPatient!!),
+                diagnosisList = diagnosisViewModel
+                    .diagnosesForPatient(patientsViewModel.currentPatient!!)
+                    .filter { it.finalized },
                 onBackButton = { navController.popBackStack() })
         }
     }

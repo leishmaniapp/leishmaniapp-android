@@ -56,7 +56,7 @@ fun DiagnosisImageGridItem(image: Image) {
                         contentDescription = stringResource(id = R.string.processed)
                     )
 
-                    ImageAnalysisStatus.Analyzing -> Icon(
+                    ImageAnalysisStatus.Analyzing, ImageAnalysisStatus.Deferred -> Icon(
                         Icons.Filled.Sync,
                         contentDescription = stringResource(id = R.string.waiting)
                     )

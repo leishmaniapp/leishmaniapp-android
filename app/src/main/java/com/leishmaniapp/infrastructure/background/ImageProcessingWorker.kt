@@ -12,6 +12,7 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.storage.result.StorageUploadResult
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.Image
+import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.ImageProcessingPayload.Companion.toProcessingPayload
 import com.leishmaniapp.persistance.database.ApplicationDatabase
 import com.leishmaniapp.persistance.entities.ImageRoom
@@ -38,6 +39,9 @@ class ImageProcessingWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
+
+        var image: ImageRoom? = null
+
         return try {
             Log.d("CustomWorker", "Initialized request")
 
@@ -52,24 +56,38 @@ class ImageProcessingWorker @AssistedInject constructor(
             val diagnosisUuid = UUID.fromString(diagnosisString!!)
 
             Log.i("CustomWorker", "Requested for diagnosis $diagnosisUuid and sample $imageSample")
-            val image =
-                applicationDatabase.imageDao().imageForDiagnosis(diagnosisUuid, imageSample)!!
-            val diagnosis = applicationDatabase.diagnosisDao().diagnosisForId(diagnosisUuid)!!
+
+            image = applicationDatabase.imageDao().imageForDiagnosis(diagnosisUuid, imageSample)
+            if (image == null) Result.failure()
+
+            val diagnosis = applicationDatabase.diagnosisDao().diagnosisForId(diagnosisUuid)
+            if (diagnosis == null) Result.failure()
 
             val result =
-                processingRequest.uploadImageToBucket(diagnosisUuid, image.asApplicationEntity())
+                processingRequest.uploadImageToBucket(diagnosisUuid, image!!.asApplicationEntity())
             Log.d("CustomWorker", result)
 
             // Generate the payload
             val payload = image.asApplicationEntity()
-                .toProcessingPayload(diagnosisUuid, diagnosis.disease, result)
+                .toProcessingPayload(diagnosisUuid, diagnosis!!.disease, result)
             processingRequest.generatePayloadRequest(payload)
             Log.d("CustomWorker", "Updated payload")
 
+            // Image uploaded correctly
+            applicationDatabase.imageDao()
+                .upsertImage(image.copy(processed = ImageAnalysisStatus.Analyzing))
+
+            // Set the result as success
             Result.success()
 
         } catch (e: Exception) {
             Log.e("CustomWorker", "Error: $e")
+
+            if (image != null) {
+                applicationDatabase.imageDao()
+                    .upsertImage(image.copy(processed = ImageAnalysisStatus.Deferred))
+            }
+
             Result.retry()
         }
     }

@@ -78,6 +78,7 @@
     <!-- Diagnosis and Analysis -->
     <string name="alert_not_processed">La imagen aún no ha sido procesada</string>
     <string name="alert_being_processed">La imagen está siendo procesada</string>
+    <string name="alert_deferred">Falló la conexión a internet. El análisis se realizará cuando se reestablezca la conexión</string>
     <string name="patient_id_document">Documento de Identificación</string>
     <string name="diagnosis_results_positive">Positivo</string>
     <string name="diagnosis_results_negative">Negativo</string>

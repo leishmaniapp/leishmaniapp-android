@@ -33,11 +33,13 @@ import java.util.UUID
         ),
     ]
 )
+
 data class DiagnosisRoom(
     @PrimaryKey val id: @Serializable(UUIDSerializer::class) UUID = UUID.randomUUID(),
     val specialistResult: Boolean,
     val modelResult: Boolean,
     val date: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    val finalized: Boolean,
     val remarks: String?,
     val specialistUsername: Username,
     val patientIdDocument: IdentificationDocument,
@@ -50,6 +52,7 @@ data class DiagnosisRoom(
             specialistResult,
             modelResult,
             date,
+            finalized,
             remarks,
             specialist.username,
             patient.id,
@@ -67,6 +70,7 @@ data class DiagnosisRoom(
             id,
             specialistResult,
             modelResult,
+            finalized,
             date,
             remarks,
             specialist,

@@ -26,6 +26,7 @@ data class Diagnosis(
     val id: @Serializable(UUIDSerializer::class) UUID = UUID.randomUUID(),
     val specialistResult: Boolean,
     val modelResult: Boolean,
+    val finalized: Boolean = false,
     @TypeParceler<LocalDateTime, LocalDateTimeTypeParceler>
     val date: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC),
     val remarks: String?,

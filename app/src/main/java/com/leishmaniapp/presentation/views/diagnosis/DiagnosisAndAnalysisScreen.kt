@@ -51,6 +51,7 @@ internal enum class DiagnosisAndAnalysisPages(
 fun DiagnosisAndAnalysisScreen(
     diagnosis: Diagnosis,
     image: Image,
+    analysisWasStarted: Boolean = false,
     onImageChange: (Image) -> Unit,
     onRepeatAction: () -> Unit,
     onAnalyzeAction: () -> Unit,
@@ -67,8 +68,8 @@ fun DiagnosisAndAnalysisScreen(
             analyzeAction = onAnalyzeAction,
             nextAction = onNextAction,
             finishAction = onFinishAction,
-            nextIsCamera = image.processed != ImageAnalysisStatus.NotAnalyzed,
-            analysisStatus
+            analysisStatus,
+            analysisShowAsLoading = analysisWasStarted
         )
     }) {
         Column {

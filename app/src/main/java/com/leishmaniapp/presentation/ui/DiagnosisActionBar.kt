@@ -27,8 +27,8 @@ fun DiagnosisActionBar(
     analyzeAction: () -> Unit,
     nextAction: () -> Unit,
     finishAction: () -> Unit,
-    nextIsCamera: Boolean = false,
     analysisStatus: ImageAnalysisStatus = ImageAnalysisStatus.NotAnalyzed,
+    analysisShowAsLoading: Boolean = false,
 ) {
     NavigationBar {
         NavigationBarItem(
@@ -44,15 +44,18 @@ fun DiagnosisActionBar(
             })
 
         NavigationBarItem(
+            enabled = analysisStatus == ImageAnalysisStatus.NotAnalyzed,
             selected = false,
-            onClick = if (analysisStatus != ImageAnalysisStatus.Analyzing) {
-                analyzeAction
-            } else {
+            onClick = if (analysisShowAsLoading
+                && analysisStatus == ImageAnalysisStatus.NotAnalyzed
+            ) {
                 {}
+            } else {
+                analyzeAction
             },
             icon = {
-                if (analysisStatus == ImageAnalysisStatus.Analyzing) {
-                    CircularProgressIndicator(modifier = Modifier.size(8.dp))
+                if (analysisShowAsLoading && analysisStatus == ImageAnalysisStatus.NotAnalyzed) {
+                    CircularProgressIndicator(modifier = Modifier.size(12.dp))
                 } else {
                     Icon(
                         Icons.AutoMirrored.Filled.Send,
@@ -68,7 +71,9 @@ fun DiagnosisActionBar(
             onClick = nextAction,
             icon = {
                 Icon(
-                    if (nextIsCamera) {
+                    if (analysisStatus == ImageAnalysisStatus.Deferred ||
+                        analysisStatus == ImageAnalysisStatus.Analyzed
+                    ) {
                         Icons.Filled.CameraAlt
                     } else {
                         Icons.AutoMirrored.Filled.ArrowForward
@@ -101,7 +106,7 @@ fun DiagnosisActionBarPreview_NextArrow() {
             repeatAction = {},
             analyzeAction = {},
             nextAction = {},
-            finishAction = {}, nextIsCamera = false
+            finishAction = {},
         )
     }
 }
@@ -114,7 +119,8 @@ fun DiagnosisActionBarPreview_NextCamera() {
             repeatAction = {},
             analyzeAction = {},
             nextAction = {},
-            finishAction = {}, nextIsCamera = true
+            finishAction = {},
+            analysisStatus = ImageAnalysisStatus.Analyzed
         )
     }
 }

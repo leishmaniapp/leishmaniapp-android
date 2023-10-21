@@ -5,15 +5,18 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Operation
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.Image
+import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.disease.Disease
@@ -30,6 +33,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import java.time.Duration
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,6 +46,8 @@ class DiagnosisViewModel @Inject constructor(
 
     val currentDiagnosis = MutableStateFlow<Diagnosis?>(null)
     val currentImage = MutableStateFlow<Image?>(null)
+    val currentWorkerId = MutableStateFlow<UUID?>(null)
+
     val imageFlow: Flow<ImageRoom?>
         get() = runBlocking {
             applicationDatabase.imageDao()
@@ -55,6 +61,9 @@ class DiagnosisViewModel @Inject constructor(
         }
         savedStateHandle.get<Image?>("currentImage")?.let { savedImage ->
             currentImage.value = savedImage
+        }
+        savedStateHandle.get<UUID?>("currentWorkerId")?.let { workerId ->
+            currentWorkerId.value = workerId
         }
     }
 
@@ -114,18 +123,40 @@ class DiagnosisViewModel @Inject constructor(
         }
     }
 
-    fun analyzeImage(context: Context): LiveData<Operation.State> {
+    suspend fun setImageAsDeferred() {
+        applicationDatabase.imageDao().upsertImage(
+            currentImage.value!!.copy(processed = ImageAnalysisStatus.Deferred)
+                .asRoomEntity(currentDiagnosis.value!!.id)
+        )
+    }
+
+    suspend fun setImageAsNotAnalyzed() {
+        applicationDatabase.imageDao().upsertImage(
+            currentImage.value!!.copy(processed = ImageAnalysisStatus.NotAnalyzed)
+                .asRoomEntity(currentDiagnosis.value!!.id)
+        )
+    }
+
+    fun analyzeImage(context: Context): UUID {
+        // Obtain data to worker
         val data = Data.Builder().putString("diagnosis", currentDiagnosis.value!!.id.toString())
             .putInt("sample", currentImage.value!!.sample).build()
 
+        // Build the worker
         val worker = OneTimeWorkRequestBuilder<ImageProcessingWorker>()
-            .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+            .setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+            )
             .setInputData(data)
             .setBackoffCriteria(
                 backoffPolicy = BackoffPolicy.LINEAR,
                 duration = Duration.ofSeconds(15)
             ).build()
 
-        return WorkManager.getInstance(context).enqueue(worker).state
+        // Prompt the worker
+        WorkManager.getInstance(context).enqueue(worker)
+
+        // Return the worker ID
+        return worker.id
     }
 }
