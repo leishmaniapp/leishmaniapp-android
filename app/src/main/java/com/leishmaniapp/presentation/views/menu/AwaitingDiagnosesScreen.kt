@@ -34,7 +34,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  */
 @Composable
 fun AwaitingDiagnosesScreen(
-    specialist: Specialist, awaitingDiagnoses: List<Diagnosis>
+    specialist: Specialist, awaitingDiagnoses: List<Diagnosis>,
 ) {
     LeishmaniappScaffold(
         title = stringResource(id = R.string.awaiting_diagnoses)

@@ -27,8 +27,8 @@ data class Diagnosis(
     val specialistResult: Boolean,
     val modelResult: Boolean,
     val finalized: Boolean = false,
-    @TypeParceler<LocalDateTime, LocalDateTimeTypeParceler>
-    val date: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    @TypeParceler<LocalDateTime, LocalDateTimeTypeParceler> val date: LocalDateTime = Clock.System.now()
+        .toLocalDateTime(TimeZone.UTC),
     val remarks: String?,
     val specialist: Specialist,
     val patient: Patient,
@@ -37,9 +37,7 @@ data class Diagnosis(
 ) : Parcelable {
 
     constructor(
-        specialist: Specialist,
-        patient: Patient,
-        disease: Disease
+        specialist: Specialist, patient: Patient, disease: Disease
     ) : this(
         specialistResult = false,
         modelResult = false,
@@ -61,9 +59,7 @@ data class Diagnosis(
     val computedResults: Map<DiagnosticElementName, Map<KClass<out DiagnosticElement>, Int>> by lazy {
         images.values.flatMap {
             it.elements
-        }
-            .groupBy { it.name }
-            .mapValues {
+        }.groupBy { it.name }.mapValues {
                 it.value.map { diagnosticElement ->
                     diagnosticElement::class to diagnosticElement.amount
                 }.groupingBy { elementPair ->
@@ -87,4 +83,7 @@ data class Diagnosis(
      */
     val completed: Boolean
         get() = images.values.all { it.processed == ImageAnalysisStatus.Analyzed }
+
+    fun appendImage(image: Image): Diagnosis =
+        this.copy(images = images.plus(image.sample to image))
 }

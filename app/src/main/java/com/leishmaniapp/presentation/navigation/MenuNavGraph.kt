@@ -42,6 +42,6 @@ fun NavHostController.navigateToMenu() {
     }
 }
 
-internal fun NavHostController.navigateToDatabase() {
+private fun NavHostController.navigateToDatabase() {
     this.navigate(NavigationRoutes.MenuRoute.DatabaseRoute.route)
 }

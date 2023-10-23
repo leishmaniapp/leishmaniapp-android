@@ -157,6 +157,7 @@ dependencies {
     // AWS
     implementation "com.amplifyframework:aws-storage-s3:1.31.3"
     implementation "com.amplifyframework:aws-auth-cognito:1.31.3"
+    implementation "com.amplifyframework:aws-api:1.31.3"
 
     // Arrow Functional Programming
     implementation "io.arrow-kt:arrow-core:1.2.0"
@@ -164,9 +165,6 @@ dependencies {
 
     // Jetpack Startup
     implementation "androidx.startup:startup-runtime:1.1.1"
-
-    // OkHttp
-    implementation "com.squareup.okhttp3:okhttp:4.11.0"
 }
 
 kapt {

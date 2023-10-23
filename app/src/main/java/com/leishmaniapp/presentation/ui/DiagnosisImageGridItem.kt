@@ -1,6 +1,5 @@
 package com.leishmaniapp.presentation.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -22,18 +21,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ImageAnalysisStatus
-import com.leishmaniapp.utils.MockGenerator
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.utils.MockGenerator
 
 @Composable
-fun DiagnosisImageGridItem(image: Image) {
+fun DiagnosisImageGridItem(modifier: Modifier = Modifier, image: Image) {
     Card(
-        modifier = Modifier.width(IntrinsicSize.Max),
+        modifier = modifier.width(IntrinsicSize.Max),
     ) {
-        Image(painter = painterResource(id = R.drawable.macrophage), contentDescription = null)
+        AsyncImage(
+            model = image.path,
+            contentDescription = null,
+            placeholder = painterResource(id = R.drawable.image_example)
+        )
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,

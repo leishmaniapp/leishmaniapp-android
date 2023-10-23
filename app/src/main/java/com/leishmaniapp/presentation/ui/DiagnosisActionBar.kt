@@ -55,7 +55,7 @@ fun DiagnosisActionBar(
             },
             icon = {
                 if (analysisShowAsLoading && analysisStatus == ImageAnalysisStatus.NotAnalyzed) {
-                    CircularProgressIndicator(modifier = Modifier.size(12.dp))
+                    CircularProgressIndicator(modifier = Modifier.size(16.dp))
                 } else {
                     Icon(
                         Icons.AutoMirrored.Filled.Send,

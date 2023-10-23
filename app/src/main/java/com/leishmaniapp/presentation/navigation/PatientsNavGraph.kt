@@ -1,5 +1,6 @@
 package com.leishmaniapp.presentation.navigation
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -23,6 +24,7 @@ fun NavGraphBuilder.patientsNavGraph(
         startDestination = NavigationRoutes.PatientsRoute.PatientList.route
     ) {
         composable(NavigationRoutes.PatientsRoute.InitializeDiagnosis.route) {
+            val context = LocalContext.current
             val patients =
                 patientsViewModel.patients.collectAsStateWithLifecycle(initialValue = listOf())
             PatientListScreen(patients = patients.value.toSet(),
@@ -34,6 +36,7 @@ fun NavGraphBuilder.patientsNavGraph(
                     patientsViewModel.currentPatient = patient
                     // Create the new diagnosis
                     diagnosisViewModel.startNewDiagnosis(
+                        context,
                         patientsViewModel.currentPatient!!,
                         applicationViewModel.specialist!!,
                         applicationViewModel.disease!!
@@ -64,6 +67,7 @@ fun NavGraphBuilder.patientsNavGraph(
         }
 
         composable(NavigationRoutes.PatientsRoute.PatientDiagnosisHistory.route) {
+            val context = LocalContext.current
             PatientDiagnosisHistoryScreen(patient = patientsViewModel.currentPatient!!,
                 onDiagnosisClick = { diagnosis ->
                     // Set the diagnosis
@@ -73,6 +77,7 @@ fun NavGraphBuilder.patientsNavGraph(
                 onDiagnosisCreate = {
                     // Create the new diagnosis
                     diagnosisViewModel.startNewDiagnosis(
+                        context,
                         patientsViewModel.currentPatient!!,
                         applicationViewModel.specialist!!,
                         applicationViewModel.disease!!
@@ -82,7 +87,7 @@ fun NavGraphBuilder.patientsNavGraph(
                 },
                 diagnosisList = diagnosisViewModel
                     .diagnosesForPatient(patientsViewModel.currentPatient!!)
-                    .filter { it.finalized },
+                    .filter { it.finalized && it.completed },
                 onBackButton = { navController.popBackStack() })
         }
     }

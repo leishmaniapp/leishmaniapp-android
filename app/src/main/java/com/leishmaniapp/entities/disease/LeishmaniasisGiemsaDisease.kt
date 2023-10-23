@@ -19,12 +19,12 @@ data object LeishmaniasisGiemsaDisease : Disease(
     ),
     elements = setOf(
         DiagnosticElementName(
-            "leishmaniasis.giemsa:parasite",
-            R.string.leishmaniasis_giemsa_disease_element_parasites
-        ),
-        DiagnosticElementName(
             "leishmaniasis.giemsa:macrophage",
             R.string.leishmaniasis_giemsa_disease_element_macrophages
+        ),
+        DiagnosticElementName(
+            "leishmaniasis.giemsa:parasite",
+            R.string.leishmaniasis_giemsa_disease_element_parasites
         )
     )
 ) {

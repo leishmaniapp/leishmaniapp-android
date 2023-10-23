@@ -1,5 +1,6 @@
 package com.leishmaniapp.presentation.views.diagnosis
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,12 +31,12 @@ import com.leishmaniapp.R
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ImageAnalysisStatus
-import com.leishmaniapp.utils.MockGenerator
 import com.leishmaniapp.presentation.ui.DiagnosisImageGridItem
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.RemainingImagesAlert
 import com.leishmaniapp.presentation.ui.RemainingImagesProgress
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.utils.MockGenerator
 
 const val amountOfColumnsInGrid = 3
 
@@ -43,27 +44,33 @@ const val amountOfColumnsInGrid = 3
  * @view D01
  * @view D02
  * @view D03
- * TODO: Data is mocked, add the corresponding ViewModel
  */
 @Composable
-fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
-    LeishmaniappScaffold(
-        title = stringResource(id = R.string.finish_diagnosis),
+fun DiagnosisImageGridScreen(
+    diagnosis: Diagnosis,
+    isBackground: Boolean,
+    allowReturn: Boolean = false,
+    onContinueDiagnosis: () -> Unit,
+    onFinishDiagnosis: () -> Unit,
+    onImageClick: (Image) -> Unit
+) {
+    LeishmaniappScaffold(title = stringResource(id = R.string.finish_diagnosis),
         showHelp = true,
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(selected = false,
-                    enabled = !diagnosis.completed && !isBackground,
-                    onClick = { /*TODO*/ },
+                    enabled = allowReturn,
+                    onClick = onContinueDiagnosis,
                     icon = { Icon(Icons.Filled.CameraAlt, contentDescription = null) },
                     label = { Text(text = stringResource(id = R.string.continue_diagnosis)) })
                 NavigationBarItem(selected = false,
                     enabled = diagnosis.completed,
-                    onClick = { /*TODO*/ },
+                    onClick = onFinishDiagnosis,
                     icon = { Icon(Icons.Filled.RemoveRedEye, contentDescription = null) },
                     label = { Text(text = stringResource(id = R.string.continue_to_report)) })
             }
         }) {
+
         // Get by diagnostic elements types
         val diagnosticElements = diagnosis.disease.elements
 
@@ -130,7 +137,9 @@ fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
             }
 
             items(diagnosis.images.toList()) { (_, image) ->
-                DiagnosisImageGridItem(image = image)
+                DiagnosisImageGridItem(image = image, modifier = Modifier.clickable {
+                    onImageClick.invoke(image)
+                })
             }
         }
     }
@@ -140,9 +149,11 @@ fun DiagnosisImageGridScreen(diagnosis: Diagnosis, isBackground: Boolean) {
 @Preview
 fun DiagnosisImageGridScreenPreview_Done() {
     LeishmaniappTheme {
-        DiagnosisImageGridScreen(
-            diagnosis = MockGenerator.mockDiagnosis(isCompleted = true), isBackground = false
-        )
+        DiagnosisImageGridScreen(diagnosis = MockGenerator.mockDiagnosis(isCompleted = true),
+            isBackground = false,
+            onContinueDiagnosis = { },
+            onFinishDiagnosis = {},
+            onImageClick = {})
     }
 }
 
@@ -150,9 +161,11 @@ fun DiagnosisImageGridScreenPreview_Done() {
 @Preview
 fun DiagnosisImageGridScreenPreview_Awaiting() {
     LeishmaniappTheme {
-        DiagnosisImageGridScreen(
-            diagnosis = MockGenerator.mockDiagnosis(), isBackground = false
-        )
+        DiagnosisImageGridScreen(diagnosis = MockGenerator.mockDiagnosis(),
+            isBackground = false,
+            onContinueDiagnosis = { },
+            onFinishDiagnosis = {},
+            onImageClick = {})
     }
 }
 
@@ -160,8 +173,10 @@ fun DiagnosisImageGridScreenPreview_Awaiting() {
 @Preview
 fun DiagnosisImageGridScreenPreview_AwaitingBackground() {
     LeishmaniappTheme {
-        DiagnosisImageGridScreen(
-            diagnosis = MockGenerator.mockDiagnosis(), isBackground = true
-        )
+        DiagnosisImageGridScreen(diagnosis = MockGenerator.mockDiagnosis(),
+            isBackground = true,
+            onContinueDiagnosis = { },
+            onFinishDiagnosis = {},
+            onImageClick = {})
     }
 }

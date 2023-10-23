@@ -14,10 +14,10 @@ import kotlinx.serialization.Serializable
 data object MockDisease : Disease(
     id = "mock.disease",
     models = setOf(
-        DiagnosisModel("mock.disease:mock_model"),
+        DiagnosisModel("mock.disease:mock"),
     ),
     elements = setOf(
-        DiagnosticElementName("mock.disease:mock_element", R.string.mock_disease_element_mock)
+        DiagnosticElementName("mock.disease:mock", R.string.mock_disease_element_mock)
     )
 ) {
     override val displayName: String

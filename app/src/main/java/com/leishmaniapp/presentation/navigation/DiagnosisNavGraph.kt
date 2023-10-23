@@ -27,8 +27,12 @@ import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 import com.leishmaniapp.presentation.viewmodel.DiagnosisViewModel
 import com.leishmaniapp.presentation.views.diagnosis.CameraView
 import com.leishmaniapp.presentation.views.diagnosis.DiagnosisAndAnalysisScreen
+import com.leishmaniapp.presentation.views.diagnosis.DiagnosisImageEditScreen
+import com.leishmaniapp.presentation.views.diagnosis.DiagnosisImageGridScreen
 import com.leishmaniapp.presentation.views.diagnosis.DiagnosisTableScreen
+import com.leishmaniapp.presentation.views.menu.AwaitingDiagnosesScreen
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 @SuppressLint("RestrictedApi")
@@ -67,7 +71,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
                     path = uri
                 )
 
-                diagnosisViewModel.currentImage.value = newImage
+                diagnosisViewModel.setCurrentImage(newImage)
                 diagnosisViewModel.storeImageInDatabase()
 
                 navController.navigateToDiagnosisAndAnalysis()
@@ -108,8 +112,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
                         CircularProgressIndicator()
                     }
                 } else {
-                    DiagnosisAndAnalysisScreen(
-                        analysisStatus = analysisState,
+                    DiagnosisAndAnalysisScreen(analysisStatus = analysisState,
                         diagnosis = diagnosis!!,
                         image = imageFlowState!!.asApplicationEntity(),
                         analysisWasStarted = analysisWasStarted,
@@ -124,13 +127,22 @@ fun NavGraphBuilder.diagnosisNavGraph(
                                 diagnosisViewModel.analyzeImage(context)
                             }
                         },
-                        onFinishAction = {},
+                        onFinishAction = {
+                            runBlocking {
+                                diagnosisViewModel.finishDiagnosisPictureTaking(context)
+                            }
+                            navController.navigateToImageGrid()
+                        },
                         onNextAction = {
                             Log.d("Diagnosis", "Continue to next image")
+                            runBlocking {
+                                diagnosisViewModel.continueDiagnosisNextImage(context)
+                            }
+                            navController.navigateToPictureTake()
                         },
                         onRepeatAction = {
-                            diagnosisViewModel.onRepeatImage(context)
-                            navController.navigateToRepeatPictureTake()
+                            diagnosisViewModel.discardAndRepeatCurrentImage(context)
+                            navController.navigateToPictureTake()
                         })
 
 
@@ -144,28 +156,76 @@ fun NavGraphBuilder.diagnosisNavGraph(
 
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route) {
             val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
-            DiagnosisTableScreen(
-                diagnosis = diagnosis!!,
+            DiagnosisTableScreen(diagnosis = diagnosis!!,
                 onBackButton = { navController.popBackStack() },
                 onShareDiagnosis = { diagnosisViewModel.shareCurrentDiagnosis() })
         }
 
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisImageGrid.route) {
-// TODO
-//            DiagnosisImageGridScreen(
-//                diagnosis = diagnosisViewModel.diagnosis,
-//                isBackground = false
-//            )
+
+            val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
+            val imagesForDiagnosis = diagnosisViewModel.imagesForDiagnosisFlow
+
+            if (imagesForDiagnosis == null) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                val imagesForDiagnosisState by imagesForDiagnosis.collectAsState(initial = null)
+
+                if (imagesForDiagnosisState == null) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    val images = imagesForDiagnosisState!!.map { it.asApplicationEntity() }
+                        .associateBy { it.sample }
+
+                    DiagnosisImageGridScreen(diagnosis = diagnosis!!.copy(images = images),
+                        allowReturn = diagnosisViewModel.isNewDiagnosis && !diagnosis!!.finalized,
+                        isBackground = !diagnosis!!.completed && !diagnosis!!.finalized,
+                        onContinueDiagnosis = {
+                            if (!diagnosis!!.finalized) {
+                                navController.navigateToPictureTake()
+                            }
+                        },
+                        onFinishDiagnosis = {
+                            if (diagnosis!!.completed) {
+                                // TODO: Finish diagnosis
+                            }
+                        },
+                        onImageClick = { image ->
+                            diagnosisViewModel.setCurrentImage(image)
+                            navController.navigateToEditImage()
+                        })
+                }
+            }
         }
 
         composable(NavigationRoutes.DiagnosisRoute.DiagnosticImageEdit.route) {
-// TODO
-//            DiagnosticImageEditSection(
-//                modifier = Modifier,
-//                image = image,
-//                onCompleted = { image, onCompletedImageEit ->
-//                    /*TODO*/
-//                })
+
+            val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
+            val image by diagnosisViewModel.currentImage.collectAsState()
+
+            DiagnosisImageEditScreen(
+                diagnosis = diagnosis!!,
+                image = image!!,
+                onImageChange = { editedImage ->
+                    Log.d("ImageUpdate", "Updated image with content: $editedImage")
+                    diagnosisViewModel.updateImage(editedImage)
+                },
+                onExit = {
+                    navController.popBackStack()
+                    diagnosisViewModel.setCurrentImage(null)
+                })
         }
 
         composable(NavigationRoutes.DiagnosisRoute.DiagnosticImageSection.route) {
@@ -173,6 +233,14 @@ fun NavGraphBuilder.diagnosisNavGraph(
 //            DiagnosticImageSection(image = image, onImageEdit = { /*TODO*/ }) {
 //
 //            }
+        }
+
+        composable(NavigationRoutes.DiagnosisRoute.AwaitingDiagnosis.route) {
+            AwaitingDiagnosesScreen(
+                specialist = applicationViewModel.specialist!!,
+                awaitingDiagnoses = runBlocking {
+                    diagnosisViewModel.getAwaitingDiagnosis(applicationViewModel.specialist!!)
+                })
         }
     }
 }
@@ -185,6 +253,10 @@ fun NavHostController.navigateToStartDiagnosis() {
     this.navigate(NavigationRoutes.DiagnosisRoute.route)
 }
 
+fun NavHostController.navigateToAwaitingDiagnosis() {
+    this.navigate(NavigationRoutes.DiagnosisRoute.AwaitingDiagnosis.route)
+}
+
 private fun NavHostController.navigateToDiagnosisAndAnalysis() {
     this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
         popUpTo(NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route) {
@@ -193,7 +265,7 @@ private fun NavHostController.navigateToDiagnosisAndAnalysis() {
     }
 }
 
-private fun NavHostController.navigateToRepeatPictureTake() {
+private fun NavHostController.navigateToPictureTake() {
     this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route) {
         popUpTo(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
             inclusive = true
@@ -201,4 +273,14 @@ private fun NavHostController.navigateToRepeatPictureTake() {
     }
 }
 
+private fun NavHostController.navigateToImageGrid() {
+    this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosisImageGrid.route) {
+        popUpTo(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
+            inclusive = true
+        }
+    }
+}
 
+private fun NavHostController.navigateToEditImage() {
+    this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosticImageEdit.route)
+}

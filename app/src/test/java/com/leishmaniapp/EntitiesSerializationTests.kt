@@ -1,9 +1,13 @@
 package com.leishmaniapp
 
+import com.leishmaniapp.entities.Coordinates
 import com.leishmaniapp.entities.Diagnosis
+import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.DiagnosticElement
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
+import com.leishmaniapp.entities.ImageProcessingResponse
+import com.leishmaniapp.entities.ImageQueryResponse
 import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
@@ -122,5 +126,120 @@ class EntitiesSerializationTests {
         """.replace("\n", "").replace("\t", "").replace(" ", "")
 
         Assert.assertEquals(expectedJson, Json.encodeToString(diagnosis))
+    }
+
+    @Test
+    fun imageProcessingResponseJsonSerialization() {
+        val json = """
+            {
+                "sample": 0,
+                "analysis": {
+                    "leishmaniasis.giemsa:macrophages": [
+                     {
+                      "x": 1067,
+                      "y": 712
+                     }
+                    ]
+                }
+            }
+        """.replace("\n", "").replace("\t", "").replace(" ", "")
+
+        val model = ImageProcessingResponse(
+            0, mapOf(
+                DiagnosisModel("leishmaniasis.giemsa:macrophages") to listOf(
+                    Coordinates(1067, 712)
+                )
+            )
+        )
+
+        val encodedModel = Json.encodeToString(model).trimIndent()
+        val decodedModel = Json.decodeFromString<ImageProcessingResponse>(json)
+
+        Assert.assertEquals(json, encodedModel)
+        Assert.assertEquals(model, decodedModel)
+    }
+
+    @Test
+    fun imageProcessingResponseJsonSerializationFromList() {
+        val json = """
+            [{
+                "sample": 0,
+                "analysis": {
+                    "leishmaniasis.giemsa:macrophages": [
+                     {
+                      "x": 1067,
+                      "y": 712
+                     }
+                    ]
+                }
+            }]
+        """.replace("\n", "").replace("\t", "").replace(" ", "")
+
+        val model = listOf(
+            ImageProcessingResponse(
+                0, mapOf(
+                    DiagnosisModel("leishmaniasis.giemsa:macrophages") to listOf(
+                        Coordinates(1067, 712)
+                    )
+                )
+            )
+        )
+
+        val encodedModel = Json.encodeToString(model).trimIndent()
+        val decodedModel = Json.decodeFromString<List<ImageProcessingResponse>>(json)
+
+        Assert.assertEquals(json, encodedModel)
+        Assert.assertEquals(model, decodedModel)
+    }
+
+    @Test
+    fun imageQueryResponseJSONSerializationNoAnalysis() {
+        val json = """
+            {"processed": false}
+        """.replace("\n", "").replace("\t", "").replace(" ", "")
+
+        val model = ImageQueryResponse(processed = false)
+
+        val encodedModel = Json.encodeToString(model).trimIndent()
+        val decodedModel = Json.decodeFromString<ImageQueryResponse>(json)
+
+        Assert.assertEquals(json, encodedModel)
+        Assert.assertEquals(model, decodedModel)
+    }
+
+    @Test
+    fun imageQueryResponseJSONSerializationWithAnalysis() {
+        val json = """
+            {
+              "processed": true,
+              "analysis": {
+                "mock.disease:mock": [
+                  {
+                    "x": 1896,
+                    "y": 253
+                  },
+                  {
+                    "x": 1785,
+                    "y": 1092
+                  }
+                ]
+              }
+            }
+        """.replace("\n", "").replace("\t", "").replace(" ", "")
+
+        val model = ImageQueryResponse(
+            processed = true, mapOf(
+                DiagnosisModel("mock.disease:mock") to listOf(
+                    Coordinates(1896, 253),
+                    Coordinates(1785, 1092),
+                )
+            )
+        )
+
+        val encodedModel = Json.encodeToString(model).trimIndent()
+        val decodedModel = Json.decodeFromString<ImageQueryResponse>(json)
+
+        Assert.assertEquals(json, encodedModel)
+        Assert.assertEquals(model, decodedModel)
     }
 }

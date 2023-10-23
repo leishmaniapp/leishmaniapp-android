@@ -1,15 +1,10 @@
 package com.leishmaniapp.infrastructure.background
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
 import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.amplifyframework.core.Amplify
-import com.amplifyframework.storage.result.StorageUploadResult
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ImageAnalysisStatus
@@ -20,11 +15,7 @@ import com.leishmaniapp.usecases.IProcessingRequest
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.io.File
-import java.lang.Exception
 import java.util.UUID
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * @param workerParameters Requires [Diagnosis.id] as String (with key: "diagnosis")
@@ -63,13 +54,14 @@ class ImageProcessingWorker @AssistedInject constructor(
             val diagnosis = applicationDatabase.diagnosisDao().diagnosisForId(diagnosisUuid)
             if (diagnosis == null) Result.failure()
 
-            val result =
+            val (bucket, key) =
                 processingRequest.uploadImageToBucket(diagnosisUuid, image!!.asApplicationEntity())
-            Log.d("CustomWorker", result)
+            Log.d("CustomWorker", "Bucket=$bucket, Key=$key")
 
             // Generate the payload
             val payload = image.asApplicationEntity()
-                .toProcessingPayload(diagnosisUuid, diagnosis!!.disease, result)
+                .toProcessingPayload(diagnosisUuid, diagnosis!!.disease, bucket, key)
+
             processingRequest.generatePayloadRequest(payload)
             Log.d("CustomWorker", "Updated payload")
 
