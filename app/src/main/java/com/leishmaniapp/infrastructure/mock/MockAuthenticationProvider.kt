@@ -3,9 +3,9 @@ package com.leishmaniapp.infrastructure.mock
 import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.Username
-import com.leishmaniapp.utils.MockGenerator
 import com.leishmaniapp.persistance.database.ApplicationDatabase
 import com.leishmaniapp.usecases.IAuthenticationProvider
+import com.leishmaniapp.utils.MockGenerator
 import javax.inject.Inject
 
 class MockAuthenticationProvider @Inject constructor(

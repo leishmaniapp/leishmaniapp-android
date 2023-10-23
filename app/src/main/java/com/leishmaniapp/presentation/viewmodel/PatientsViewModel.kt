@@ -1,6 +1,5 @@
 package com.leishmaniapp.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.leishmaniapp.entities.Patient

@@ -318,8 +318,8 @@ class DiagnosisViewModel @Inject constructor(
             .getWorkInfoByIdLiveData(currentWorkerId.value!!)
             .asFlow()
 
-        var workerWasCalled = false;
-        var coroutineWasExecuted = false;
+        var workerWasCalled = false
+        var coroutineWasExecuted = false
 
         try {
             withTimeout(15_000) {
@@ -361,7 +361,7 @@ class DiagnosisViewModel @Inject constructor(
             updateImage(
                 applicationDatabase.imageDao()
                     .imageForDiagnosis(currentDiagnosis.value!!.id, currentImage.value!!.sample)
-                    !!.asApplicationEntity()
+                !!.asApplicationEntity()
             )
 
             // Make sure the image is stored

@@ -60,14 +60,14 @@ data class Diagnosis(
         images.values.flatMap {
             it.elements
         }.groupBy { it.name }.mapValues {
-                it.value.map { diagnosticElement ->
-                    diagnosticElement::class to diagnosticElement.amount
-                }.groupingBy { elementPair ->
-                    elementPair.first
-                }.aggregate { _, accumulator: Int?, element, _ ->
-                    accumulator?.plus(element.second) ?: element.second
-                }
+            it.value.map { diagnosticElement ->
+                diagnosticElement::class to diagnosticElement.amount
+            }.groupingBy { elementPair ->
+                elementPair.first
+            }.aggregate { _, accumulator: Int?, element, _ ->
+                accumulator?.plus(element.second) ?: element.second
             }
+        }
     }
 
     /**

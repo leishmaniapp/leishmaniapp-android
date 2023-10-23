@@ -63,9 +63,9 @@ fun RemainingImagesProgress(modifier: Modifier = Modifier, done: Int, of: Int) {
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     LinearProgressIndicator(
-                        progress = (done.toFloat() / of.toFloat()),
+                        progress = { (done.toFloat() / of.toFloat()) },
                         trackColor = MaterialTheme.colorScheme.background,
-                        strokeCap = StrokeCap.Round
+                        strokeCap = StrokeCap.Round,
                     )
                     Text(
                         text = String.format("(%d/%d)", done, of),

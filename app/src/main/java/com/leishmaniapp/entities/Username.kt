@@ -11,4 +11,4 @@ import kotlinx.serialization.Serializable
  */
 @Serializable(with = UsernameSerializer::class)
 @Parcelize
-data class Username(val value: String): Parcelable
+data class Username(val value: String) : Parcelable

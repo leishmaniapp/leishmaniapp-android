@@ -1,7 +1,7 @@
 package com.leishmaniapp.infrastructure.module
 
-import com.leishmaniapp.infrastructure.ApplicationPictureStandardization
 import com.leishmaniapp.infrastructure.ApplicationDiagnosisSharing
+import com.leishmaniapp.infrastructure.ApplicationPictureStandardization
 import com.leishmaniapp.usecases.IDiagnosisSharing
 import com.leishmaniapp.usecases.IPictureStandardization
 import dagger.Binds

@@ -19,8 +19,8 @@ import com.leishmaniapp.R
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
-import com.leishmaniapp.utils.MockGenerator
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.utils.MockGenerator
 
 @Composable
 fun DiagnosisResultsTable(

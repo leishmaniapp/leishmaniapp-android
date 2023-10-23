@@ -50,7 +50,7 @@ class ApplicationRoomTypeConverters {
     fun diseaseToString(disease: Disease): String = disease.id
 
     @TypeConverter
-    fun stringToDisease(id: String): Disease? = Disease.where(id);
+    fun stringToDisease(id: String): Disease? = Disease.where(id)
 
     /* Set<DiagnosticElement> */
     @TypeConverter

@@ -11,8 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.leishmaniapp.entities.Diagnosis
-import com.leishmaniapp.utils.MockGenerator
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.utils.MockGenerator
 
 @Composable
 fun AwaitingDiagnosisListTile(diagnosis: Diagnosis, onClick: () -> Unit) {

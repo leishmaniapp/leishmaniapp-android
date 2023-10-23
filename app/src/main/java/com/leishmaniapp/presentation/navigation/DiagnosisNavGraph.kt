@@ -85,7 +85,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
             val coroutineScope = rememberCoroutineScope()
             val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
 
-            val imageFlow = diagnosisViewModel.imageFlow;
+            val imageFlow = diagnosisViewModel.imageFlow
 
             var analysisWasStarted by remember {
                 mutableStateOf(false)

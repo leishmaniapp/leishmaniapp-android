@@ -36,7 +36,7 @@ fun NavGraphBuilder.startNavGraph(
         }
 
         composable(route = NavigationRoutes.StartRoute.AuthenticationRoute.route) {
-            val coroutineScope = rememberCoroutineScope();
+            val coroutineScope = rememberCoroutineScope()
             val context = LocalContext.current
 
             var authenticationInProgress by remember {

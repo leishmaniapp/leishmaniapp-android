@@ -2,12 +2,9 @@ package com.leishmaniapp.infrastructure.cloud
 
 import android.util.Log
 import arrow.core.Either
-import arrow.core.left
-import arrow.core.right
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthException.NotAuthorizedException
 import com.amplifyframework.auth.AuthException.UserNotFoundException
-import com.amplifyframework.auth.AuthSession
 import com.amplifyframework.core.Amplify
 import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.Specialist

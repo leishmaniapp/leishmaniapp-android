@@ -13,7 +13,7 @@ import kotlin.math.sqrt
  */
 @Serializable
 @Parcelize
-data class Coordinates(val x: Int, val y: Int): Parcelable {
+data class Coordinates(val x: Int, val y: Int) : Parcelable {
     infix fun distanceTo(other: Coordinates): Float = sqrt(
         abs(x - other.x).toFloat().pow(2f) +
                 abs(y - other.y).toFloat().pow(2f)

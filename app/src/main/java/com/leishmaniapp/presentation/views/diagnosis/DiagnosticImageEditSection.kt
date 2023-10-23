@@ -38,9 +38,9 @@ import com.leishmaniapp.entities.Coordinates
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.ModelDiagnosticElement
-import com.leishmaniapp.utils.MockGenerator
 import com.leishmaniapp.presentation.ui.DiagnosticImage
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.utils.MockGenerator
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
