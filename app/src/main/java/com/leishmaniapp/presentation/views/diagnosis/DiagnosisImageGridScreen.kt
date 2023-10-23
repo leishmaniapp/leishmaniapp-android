@@ -50,6 +50,7 @@ fun DiagnosisImageGridScreen(
     diagnosis: Diagnosis,
     isBackground: Boolean,
     allowReturn: Boolean = false,
+    onBackgroundProcessing: () -> Unit,
     onContinueDiagnosis: () -> Unit,
     onFinishDiagnosis: () -> Unit,
     onImageClick: (Image) -> Unit
@@ -93,7 +94,7 @@ fun DiagnosisImageGridScreen(
                     if (!diagnosis.completed) {
                         Box(modifier = Modifier.padding(bottom = 12.dp)) {
                             if (!isBackground) {
-                                RemainingImagesAlert()
+                                RemainingImagesAlert(onButtonClick = onBackgroundProcessing)
                             } else {
                                 RemainingImagesProgress(
                                     done = diagnosis.images.values.count { image: Image -> image.processed == ImageAnalysisStatus.Analyzed },
@@ -151,6 +152,7 @@ fun DiagnosisImageGridScreenPreview_Done() {
     LeishmaniappTheme {
         DiagnosisImageGridScreen(diagnosis = MockGenerator.mockDiagnosis(isCompleted = true),
             isBackground = false,
+            onBackgroundProcessing = {},
             onContinueDiagnosis = { },
             onFinishDiagnosis = {},
             onImageClick = {})
@@ -163,7 +165,8 @@ fun DiagnosisImageGridScreenPreview_Awaiting() {
     LeishmaniappTheme {
         DiagnosisImageGridScreen(diagnosis = MockGenerator.mockDiagnosis(),
             isBackground = false,
-            onContinueDiagnosis = { },
+            onBackgroundProcessing = {},
+            onContinueDiagnosis = {},
             onFinishDiagnosis = {},
             onImageClick = {})
     }
@@ -175,6 +178,7 @@ fun DiagnosisImageGridScreenPreview_AwaitingBackground() {
     LeishmaniappTheme {
         DiagnosisImageGridScreen(diagnosis = MockGenerator.mockDiagnosis(),
             isBackground = true,
+            onBackgroundProcessing = {},
             onContinueDiagnosis = { },
             onFinishDiagnosis = {},
             onImageClick = {})

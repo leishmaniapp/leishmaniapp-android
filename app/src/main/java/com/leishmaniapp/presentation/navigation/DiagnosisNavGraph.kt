@@ -3,18 +3,12 @@ package com.leishmaniapp.presentation.navigation
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -23,6 +17,7 @@ import androidx.navigation.navigation
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ImageAnalysisStatus
+import com.leishmaniapp.presentation.ui.LoadingScreen
 import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 import com.leishmaniapp.presentation.viewmodel.DiagnosisViewModel
 import com.leishmaniapp.presentation.views.diagnosis.CameraView
@@ -92,25 +87,13 @@ fun NavGraphBuilder.diagnosisNavGraph(
             }
 
             if (imageFlow == null) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CircularProgressIndicator()
-                }
+                LoadingScreen()
             } else {
                 val imageFlowState by imageFlow.collectAsState(initial = null)
                 val analysisState = imageFlowState?.processed ?: ImageAnalysisStatus.NotAnalyzed
 
                 if (imageFlowState == null) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        CircularProgressIndicator()
-                    }
+                    LoadingScreen()
                 } else {
                     DiagnosisAndAnalysisScreen(analysisStatus = analysisState,
                         diagnosis = diagnosis!!,
@@ -163,35 +146,27 @@ fun NavGraphBuilder.diagnosisNavGraph(
 
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisImageGrid.route) {
 
+            val context = LocalContext.current
             val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
             val imagesForDiagnosis = diagnosisViewModel.imagesForDiagnosisFlow
 
-            if (imagesForDiagnosis == null) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CircularProgressIndicator()
-                }
+            if (imagesForDiagnosis == null || diagnosis == null) {
+                LoadingScreen()
             } else {
                 val imagesForDiagnosisState by imagesForDiagnosis.collectAsState(initial = null)
 
                 if (imagesForDiagnosisState == null) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        CircularProgressIndicator()
-                    }
+                    LoadingScreen()
                 } else {
                     val images = imagesForDiagnosisState!!.map { it.asApplicationEntity() }
                         .associateBy { it.sample }
-
                     DiagnosisImageGridScreen(diagnosis = diagnosis!!.copy(images = images),
                         allowReturn = diagnosisViewModel.isNewDiagnosis && !diagnosis!!.finalized,
-                        isBackground = !diagnosis!!.completed && !diagnosis!!.finalized,
+                        isBackground = !diagnosis!!.completed && diagnosis!!.finalized && !diagnosisViewModel.isNewDiagnosis,
+                        onBackgroundProcessing = {
+                            diagnosisViewModel.sendDiagnosisToBackgroundProcessing(context)
+                            navController.exitDiagnosisReturnToMenu()
+                        },
                         onContinueDiagnosis = {
                             if (!diagnosis!!.finalized) {
                                 navController.navigateToPictureTake()
@@ -215,24 +190,21 @@ fun NavGraphBuilder.diagnosisNavGraph(
             val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
             val image by diagnosisViewModel.currentImage.collectAsState()
 
-            DiagnosisImageEditScreen(
-                diagnosis = diagnosis!!,
-                image = image!!,
-                onImageChange = { editedImage ->
-                    Log.d("ImageUpdate", "Updated image with content: $editedImage")
-                    diagnosisViewModel.updateImage(editedImage)
-                },
-                onExit = {
-                    navController.popBackStack()
-                    diagnosisViewModel.setCurrentImage(null)
-                })
-        }
-
-        composable(NavigationRoutes.DiagnosisRoute.DiagnosticImageSection.route) {
-// TODO
-//            DiagnosticImageSection(image = image, onImageEdit = { /*TODO*/ }) {
-//
-//            }
+            if (image == null || diagnosis == null) {
+                LoadingScreen()
+            } else {
+                DiagnosisImageEditScreen(
+                    diagnosis = diagnosis!!,
+                    image = image!!,
+                    onImageChange = { editedImage ->
+                        Log.d("ImageUpdate", "Updated image with content: $editedImage")
+                        diagnosisViewModel.updateImage(editedImage)
+                    },
+                    onExit = {
+                        diagnosisViewModel.setCurrentImage(null)
+                        navController.popBackStack()
+                    })
+            }
         }
 
         composable(NavigationRoutes.DiagnosisRoute.AwaitingDiagnosis.route) {
@@ -283,4 +255,12 @@ private fun NavHostController.navigateToImageGrid() {
 
 private fun NavHostController.navigateToEditImage() {
     this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosticImageEdit.route)
+}
+
+private fun NavHostController.exitDiagnosisReturnToMenu() {
+    this.navigate(NavigationRoutes.MenuRoute.MainMenuRoute.route) {
+        popUpTo(NavigationRoutes.MenuRoute.MainMenuRoute.route) {
+            inclusive = true
+        }
+    }
 }

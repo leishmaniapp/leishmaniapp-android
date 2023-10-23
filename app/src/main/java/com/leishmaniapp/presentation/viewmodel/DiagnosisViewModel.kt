@@ -221,14 +221,8 @@ class DiagnosisViewModel @Inject constructor(
         disease: Disease
     ) {
         // Create a new diagnosis
-        setCurrentDiagnosis(Diagnosis(specialist, patient, disease))
+        updateDiagnosis(Diagnosis(specialist, patient, disease))
         isNewDiagnosis = true
-
-        // Store diagnosis in Room
-        runBlocking {
-            applicationDatabase.diagnosisDao()
-                .upsertDiagnosis(currentDiagnosis.value!!.asRoomEntity())
-        }
 
         startDiagnosisResultsBackgroundWorker(context)
     }
@@ -280,6 +274,13 @@ class DiagnosisViewModel @Inject constructor(
             setCurrentImage(image)
             applicationDatabase.imageDao()
                 .upsertImage(image.asRoomEntity(currentDiagnosis.value!!.id))
+        }
+    }
+
+    fun updateDiagnosis(diagnosis: Diagnosis) {
+        runBlocking {
+            setCurrentDiagnosis(diagnosis)
+            applicationDatabase.diagnosisDao().upsertDiagnosis(diagnosis.asRoomEntity())
         }
     }
 
@@ -357,22 +358,14 @@ class DiagnosisViewModel @Inject constructor(
     suspend fun continueDiagnosisNextImage(context: Context) {
         stopImageResultsWorker(context)
         withContext(Dispatchers.IO) {
-
             updateImage(
                 applicationDatabase.imageDao()
                     .imageForDiagnosis(currentDiagnosis.value!!.id, currentImage.value!!.sample)
                 !!.asApplicationEntity()
             )
 
-            // Make sure the image is stored
-            applicationDatabase.imageDao()
-                .upsertImage(currentImage.value!!.asRoomEntity(currentDiagnosis.value!!.id))
-
             // Update the current diagnosis
-            setCurrentDiagnosis(currentDiagnosis.value!!.appendImage(currentImage.value!!))
-            // Update the diagnosis in the database
-            applicationDatabase.diagnosisDao()
-                .upsertDiagnosis(currentDiagnosis.value!!.asRoomEntity())
+            updateDiagnosis(currentDiagnosis.value!!.appendImage(currentImage.value!!))
         }
 
         // Set current image to null
@@ -425,6 +418,14 @@ class DiagnosisViewModel @Inject constructor(
 
             diagnosisRoom.asApplicationEntity(specialist, patient, images)
         }
+    }
+
+    fun sendDiagnosisToBackgroundProcessing(context: Context) {
+        stopImageResultsWorker(context)
+        stopDiagnosisResultsBackgroundWorker(context)
+
+        setCurrentDiagnosis(null)
+        setCurrentImage(null)
     }
 
     suspend fun finalizeDiagnosis(context: Context) {

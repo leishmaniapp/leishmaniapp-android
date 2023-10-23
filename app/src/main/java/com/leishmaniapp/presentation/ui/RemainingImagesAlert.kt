@@ -28,7 +28,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  * @mockup D02_2
  */
 @Composable
-fun RemainingImagesAlert(modifier: Modifier = Modifier) {
+fun RemainingImagesAlert(modifier: Modifier = Modifier, onButtonClick: () -> Unit) {
     Card(modifier) {
         Box(modifier = Modifier.padding(24.dp)) {
             Column {
@@ -56,7 +56,7 @@ fun RemainingImagesAlert(modifier: Modifier = Modifier) {
 
                 Spacer(modifier = Modifier.padding(vertical = 4.dp))
 
-                Button(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = onButtonClick, modifier = Modifier.fillMaxWidth()) {
                     Text(text = stringResource(id = R.string.remaining_images_alert_btn))
                 }
             }
@@ -68,6 +68,8 @@ fun RemainingImagesAlert(modifier: Modifier = Modifier) {
 @Preview
 fun RemainingImagesAlertPreview() {
     LeishmaniappTheme {
-        RemainingImagesAlert()
+        RemainingImagesAlert {
+            
+        }
     }
 }
