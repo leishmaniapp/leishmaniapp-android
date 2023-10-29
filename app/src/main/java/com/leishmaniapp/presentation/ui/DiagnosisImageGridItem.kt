@@ -1,6 +1,5 @@
 package com.leishmaniapp.presentation.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Card
@@ -21,17 +21,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Image
-import com.leishmaniapp.entities.mock.MockGenerator
+import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.utils.MockGenerator
 
 @Composable
-fun DiagnosisImageGridItem(image: Image) {
+fun DiagnosisImageGridItem(modifier: Modifier = Modifier, image: Image) {
     Card(
-        modifier = Modifier.width(IntrinsicSize.Max),
+        modifier = modifier.width(IntrinsicSize.Max),
     ) {
-        Image(painter = painterResource(id = R.drawable.macrophage), contentDescription = null)
+        AsyncImage(
+            model = image.path,
+            contentDescription = null,
+            placeholder = painterResource(id = R.drawable.image_example)
+        )
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -42,13 +48,19 @@ fun DiagnosisImageGridItem(image: Image) {
             )
 
             Box(modifier = Modifier.padding(8.dp)) {
-                if (image.processed) {
-                    Icon(
+                when (image.processed) {
+                    ImageAnalysisStatus.NotAnalyzed -> Icon(
+                        Icons.Filled.Block, contentDescription = stringResource(
+                            id = R.string.not_analyzed
+                        )
+                    )
+
+                    ImageAnalysisStatus.Analyzed -> Icon(
                         Icons.Filled.Done,
                         contentDescription = stringResource(id = R.string.processed)
                     )
-                } else {
-                    Icon(
+
+                    ImageAnalysisStatus.Analyzing, ImageAnalysisStatus.Deferred -> Icon(
                         Icons.Filled.Sync,
                         contentDescription = stringResource(id = R.string.waiting)
                     )
@@ -62,7 +74,9 @@ fun DiagnosisImageGridItem(image: Image) {
 @Preview
 fun DiagnosisImageGridItemPreview_Done() {
     LeishmaniappTheme {
-        DiagnosisImageGridItem(image = MockGenerator.mockImage().copy(processed = true))
+        DiagnosisImageGridItem(
+            image = MockGenerator.mockImage().copy(processed = ImageAnalysisStatus.Analyzed)
+        )
     }
 }
 
@@ -70,6 +84,18 @@ fun DiagnosisImageGridItemPreview_Done() {
 @Preview
 fun DiagnosisImageGridItemPreview_Loading() {
     LeishmaniappTheme {
-        DiagnosisImageGridItem(image = MockGenerator.mockImage().copy(processed = false))
+        DiagnosisImageGridItem(
+            image = MockGenerator.mockImage().copy(processed = ImageAnalysisStatus.Analyzing)
+        )
+    }
+}
+
+@Composable
+@Preview
+fun DiagnosisImageGridItemPreview_None() {
+    LeishmaniappTheme {
+        DiagnosisImageGridItem(
+            image = MockGenerator.mockImage().copy(processed = ImageAnalysisStatus.NotAnalyzed)
+        )
     }
 }

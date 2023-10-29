@@ -28,13 +28,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Coordinates
 import com.leishmaniapp.entities.Image
+import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.entities.disease.MockDisease
-import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.utils.MockGenerator
 
 /// Radius at which the element will be 
 const val coordinatesSelectionRadius: Int = 100
@@ -94,11 +96,15 @@ fun Modifier.onCanvasClick(
 fun DiagnosticImage(
     modifier: Modifier = Modifier,
     image: Image,
+    clickEnabled: Boolean = true,
     selectedElement: Pair<ModelDiagnosticElement, Coordinates>? = null,
-    onElementPressed: (Pair<ModelDiagnosticElement, Coordinates>?) -> Unit
+    onElementPressed: (Pair<ModelDiagnosticElement, Coordinates>?) -> Unit,
 ) {
     // Late initialization of canvas size when rendered
     var canvasSize: Size? = null
+
+    // Image painter
+    val imagePainter = rememberAsyncImagePainter(image.path)
 
     // Get the Icon to be painted
     val iconPainter = rememberVectorPainter(Icons.Filled.Close)
@@ -115,8 +121,9 @@ fun DiagnosticImage(
         .drawWithContent {
             // Draw the image
             drawContent()
+
             // Guard (Do not draw if not processed
-            if (!image.processed) return@drawWithContent
+            if (image.processed != ImageAnalysisStatus.Analyzed) return@drawWithContent
             // Store the canvas size
             canvasSize = this.size
             // Get the Painter size in Px
@@ -169,25 +176,31 @@ fun DiagnosticImage(
             }
         }
         .onCanvasClick { tap ->
-            // Transform canvas coordinates to real coordinates
-            val tapToRealCoordinates = transformCoordinatesFromCanvasToReal(
-                tap, image.size, canvasSize!!
-            )
+            if (clickEnabled) {
+                // Transform canvas coordinates to real coordinates
+                val tapToRealCoordinates = transformCoordinatesFromCanvasToReal(
+                    tap, image.size, canvasSize!!
+                )
 
-            // Get the nearest element
-            val tappedElement = elementsWithCoordinates.minByOrNull { (_, coordinates) ->
-                coordinates distanceTo tapToRealCoordinates
-            }
-
-            // Invoke with callback with null or value
-            onElementPressed.invoke(
-                tappedElement?.let { (element, coordinates) ->
-                    if (coordinates distanceTo tapToRealCoordinates <= coordinatesSelectionRadius)
-                        (element to coordinates) else null
+                // Get the nearest element
+                val tappedElement = elementsWithCoordinates.minByOrNull { (_, coordinates) ->
+                    coordinates distanceTo tapToRealCoordinates
                 }
-            )
+
+                // Invoke with callback with null or value
+                onElementPressed.invoke(
+                    tappedElement?.let { (element, coordinates) ->
+                        if (coordinates distanceTo tapToRealCoordinates <= coordinatesSelectionRadius)
+                            (element to coordinates) else null
+                    }
+                )
+            }
         },
-        painter = painterResource(id = R.drawable.image_example),
+        painter = if (image.path == null) {
+            painterResource(id = R.drawable.image_example)
+        } else {
+            imagePainter
+        },
         contentDescription = stringResource(id = R.string.diagnostic_image),
         contentScale = ContentScale.Crop
     )
@@ -198,7 +211,7 @@ fun DiagnosticImage(
 fun DiagnosticElementMarkPreview() {
     LeishmaniappTheme {
         // Generate a mock image
-        val image = MockGenerator.mockImage(true).copy(
+        val image = MockGenerator.mockImage(ImageAnalysisStatus.Analyzed).copy(
             elements = setOf(
                 ModelDiagnosticElement(
                     MockDisease.elements.first(),

@@ -19,8 +19,8 @@ import com.leishmaniapp.R
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
-import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.utils.MockGenerator
 
 @Composable
 fun DiagnosisResultsTable(
@@ -38,8 +38,7 @@ fun DiagnosisResultsTable(
     ) {
         // Disease
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.disease)) } }
-        // TODO: Provide some sort of translation provider
-        TableRow { Cell { Text(text = diagnosis.disease.id) } }
+        TableRow { Cell { Text(text = diagnosis.disease.displayName) } }
         // Date and Time
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.date_time)) } }
         TableRow { Cell { Text(text = diagnosis.date.toString()) } }

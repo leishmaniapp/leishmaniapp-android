@@ -1,5 +1,6 @@
 package com.leishmaniapp.entities
 
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -8,6 +9,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 @SerialName("model")
+@Parcelize
 data class ModelDiagnosticElement(
     override val name: DiagnosticElementName,
     val model: DiagnosisModel,

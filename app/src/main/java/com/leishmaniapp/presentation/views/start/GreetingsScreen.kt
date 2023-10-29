@@ -66,7 +66,7 @@ fun GreetingsScreen(onContinue: () -> Unit) {
                     modifier = Modifier
                         .padding(vertical = 16.dp, horizontal = 64.dp)
                         .fillMaxWidth(),
-                    onClick = onContinue,
+                    onClick = onContinue
                 ) {
                     Text(
                         text = stringResource(id = R.string.start),

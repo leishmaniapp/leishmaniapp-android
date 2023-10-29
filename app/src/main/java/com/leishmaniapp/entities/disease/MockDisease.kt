@@ -7,16 +7,17 @@ import androidx.compose.ui.res.stringResource
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.DiagnosticElementName
+import com.leishmaniapp.usecases.serialization.DiseaseSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(with = MockDiseaseSerializer::class)
 data object MockDisease : Disease(
     id = "mock.disease",
     models = setOf(
-        DiagnosisModel("mock.disease:mock_model"),
+        DiagnosisModel("mock.disease:mock"),
     ),
     elements = setOf(
-        DiagnosticElementName("mock.disease:mock_element", R.string.mock_disease_element_mock)
+        DiagnosticElementName("mock.disease:mock", R.string.mock_disease_element_mock)
     )
 ) {
     override val displayName: String

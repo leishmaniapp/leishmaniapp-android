@@ -36,7 +36,7 @@
 
     <!-- General -->
     <string name="date_time">Fecha y Hora</string>
-    <string name="email">Correo electrónico:</string>
+    <string name="email">Correo electrónico</string>
     <string name="password">Contraseña</string>
     <string name="database">Base de Datos</string>
     <string name="export_import">Exportar e Importar</string>
@@ -47,6 +47,10 @@
     <string name="order_by_desc">Descendente</string>
     <string name="priorize_by">Priorizar por</string>
     <string name="synchronize">Sincronizar</string>
+
+    <!-- Alerts -->
+    <string name="camera_exit">Cancelando captura de muestra</string>
+    <string name="sure_exit">¿Está seguro que desea salir de la Aplicación?</string>
 
     <!-- Domain Specific -->
     <string name="diagnosis">Diagnóstico</string>
@@ -62,6 +66,7 @@
     <string name="number_of_samples">Número de muestas</string>
     <string name="image_number">Imagen #</string>
     <string name="processed">Procesada</string>
+    <string name="not_analyzed">No analizada</string>
     <string name="diagnosis_results">Resultados del análisis</string>
     <string name="start_diagnosis">Iniciar un diagnóstico</string>
     <string name="diagnostic_image">Imagen Diagnóstica</string>
@@ -72,10 +77,13 @@
 
     <!-- Diagnosis and Analysis -->
     <string name="alert_not_processed">La imagen aún no ha sido procesada</string>
+    <string name="alert_being_processed">La imagen está siendo procesada</string>
+    <string name="alert_deferred">Falló la conexión a internet. El análisis se realizará cuando se reestablezca la conexión</string>
     <string name="patient_id_document">Documento de Identificación</string>
     <string name="diagnosis_results_positive">Positivo</string>
     <string name="diagnosis_results_negative">Negativo</string>
     <string name="diagnosis_history_title">Historial de Diagnóstico</string>
+    <string name="diagnosis_list_search_no_coincidence">No hay diagnósticos que cumplan con el criterio de búsqueda</string>
     <string name="no_previous_diagnosis">No hay diagnósticos previos</string>
     <string name="goto_results">Ver los resultados</string>
     <string name="goto_image">Ver la imagen</string>
@@ -99,10 +107,12 @@
     <!-- Awaiting diagnoses -->
     <string name="awaiting_diagnoses">Diagnósticos Pendientes</string>
     <string name="no_awaiting_diagnoses">No hay diagnósticos pendientes</string>
+    <string name="alert_background_processing">Las imaǵenes serán procesadas en segundo plano</string>
 
     <!-- Add patient and List patients -->
     <string name="patient_list">Listado de Pacientes</string>
-    <string name="patient_list_empty">No hay pacientes que coincidan con el criterio de búsqueda</string>
+    <string name="patient_list_empty">No hay pacientes registados</string>
+    <string name="patient_list_search_no_coincidence">No hay pacientes que coincidan con el criterio de búsqueda</string>
     <string name="patient_search">Buscar paciente</string>
     <string name="patient_add">Añadir un Paciente</string>
     <string name="patient_create">Crear Paciente</string>
@@ -115,5 +125,13 @@
 
     <!-- Export / Import -->
     <string name="export_import_screen_alert">Tenga en cuenta que sólo se admiten archivos generados por la aplicación</string>
+
+    <!-- Authentication -->
+    <string name="authentication_failure">Especialista no encontrado o credenciales incorrectas</string>
+
+    <!-- Camera -->
+    <string name="missing_camera_permission">Es necesario el permiso de la cámara para continuar el diagnóstico</string>
+    <string name="request_permission">Autorizar permisos</string>
+    <string name="cancel_camera">Cancel camera</string>
 
 </resources>

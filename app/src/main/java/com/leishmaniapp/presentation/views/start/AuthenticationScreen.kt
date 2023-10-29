@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -41,7 +43,8 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  */
 @Composable
 fun AuthenticationScreen(
-    onAuthenticate: (Username, Password) -> Unit
+    authenticationInProgress: Boolean = false,
+    onAuthenticate: (Username, Password) -> Unit,
 ) {
 
     var emailState by remember { mutableStateOf(TextFieldValue("")) }
@@ -99,15 +102,29 @@ fun AuthenticationScreen(
                         .weight(1f)
                         .fillMaxWidth(),
                 ) {
-                    Button(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 64.dp),
-                        onClick = {
-                            onAuthenticate.invoke(
-                                Username(emailState.text), Password(passwordState.text)
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 64.dp),
+                        onClick = if (!authenticationInProgress) {
+                            {
+                                // Attempt authentication
+                                onAuthenticate.invoke(
+                                    Username(emailState.text), Password(passwordState.text)
+                                )
+                            }
+                        } else {
+                            { /* Authentication is in progress, do nothing */ }
+                        }
+                    ) {
+                        if (!authenticationInProgress) {
+                            Text(text = stringResource(id = R.string.sign_in))
+                        } else {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.size(16.dp)
                             )
-                        }) {
-                        Text(text = stringResource(id = R.string.sign_in))
+                        }
                     }
                 }
             }
@@ -117,8 +134,16 @@ fun AuthenticationScreen(
 
 @Preview
 @Composable
-fun AuthenticationScreenPreview() {
+fun AuthenticationScreenPreview_NotInProgress() {
     LeishmaniappTheme {
-        AuthenticationScreen { _, _ -> }
+        AuthenticationScreen(authenticationInProgress = false) { _, _ -> }
+    }
+}
+
+@Preview
+@Composable
+fun AuthenticationScreenPreview_InProgress() {
+    LeishmaniappTheme {
+        AuthenticationScreen(authenticationInProgress = true) { _, _ -> }
     }
 }
