@@ -146,7 +146,7 @@ dependencies {
     androidTestImplementation "androidx.room:room-testing:2.6.0"
     ksp "androidx.room:room-compiler:2.6.0"
 
-    // WorkManager
+    // Jetpack WorkManager
     implementation "androidx.hilt:hilt-work:1.0.0"
     implementation "androidx.work:work-runtime-ktx:2.8.1"
 

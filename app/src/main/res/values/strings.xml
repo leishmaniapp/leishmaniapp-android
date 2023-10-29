@@ -107,6 +107,7 @@
     <!-- Awaiting diagnoses -->
     <string name="awaiting_diagnoses">Diagnósticos Pendientes</string>
     <string name="no_awaiting_diagnoses">No hay diagnósticos pendientes</string>
+    <string name="alert_background_processing">Las imaǵenes serán procesadas en segundo plano</string>
 
     <!-- Add patient and List patients -->
     <string name="patient_list">Listado de Pacientes</string>

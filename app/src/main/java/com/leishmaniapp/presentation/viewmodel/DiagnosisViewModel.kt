@@ -159,6 +159,16 @@ class DiagnosisViewModel @Inject constructor(
         TODO("Implementation of Diagnosis Sharing Module")
     }
 
+    fun startDiagnosisResultOneTimeWorker(context: Context) {
+        val workRequest =
+            OneTimeWorkRequestBuilder<DiagnosisResultsWorker>()
+                .setConstraints(
+                    Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+                ).build()
+
+        WorkManager.getInstance(context).enqueue(workRequest)
+    }
+
     fun startDiagnosisResultsBackgroundWorker(context: Context) {
         // Call the worker
         val workRequest =
@@ -426,6 +436,7 @@ class DiagnosisViewModel @Inject constructor(
 
         setCurrentDiagnosis(null)
         setCurrentImage(null)
+        isNewDiagnosis = false
     }
 
     suspend fun finalizeDiagnosis(context: Context) {

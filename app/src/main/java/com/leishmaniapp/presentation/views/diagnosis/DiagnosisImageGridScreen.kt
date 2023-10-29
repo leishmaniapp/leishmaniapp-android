@@ -51,17 +51,18 @@ fun DiagnosisImageGridScreen(
     isBackground: Boolean,
     allowReturn: Boolean = false,
     onBackgroundProcessing: () -> Unit,
-    onContinueDiagnosis: () -> Unit,
+    onGoBack: () -> Unit,
     onFinishDiagnosis: () -> Unit,
     onImageClick: (Image) -> Unit
 ) {
-    LeishmaniappScaffold(title = stringResource(id = R.string.finish_diagnosis),
+    LeishmaniappScaffold(
+        title = stringResource(id = R.string.finish_diagnosis),
         showHelp = true,
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(selected = false,
                     enabled = allowReturn,
-                    onClick = onContinueDiagnosis,
+                    onClick = onGoBack,
                     icon = { Icon(Icons.Filled.CameraAlt, contentDescription = null) },
                     label = { Text(text = stringResource(id = R.string.continue_diagnosis)) })
                 NavigationBarItem(selected = false,
@@ -70,7 +71,8 @@ fun DiagnosisImageGridScreen(
                     icon = { Icon(Icons.Filled.RemoveRedEye, contentDescription = null) },
                     label = { Text(text = stringResource(id = R.string.continue_to_report)) })
             }
-        }) {
+        }, backButtonAction = onGoBack
+    ) {
 
         // Get by diagnostic elements types
         val diagnosticElements = diagnosis.disease.elements
@@ -153,7 +155,7 @@ fun DiagnosisImageGridScreenPreview_Done() {
         DiagnosisImageGridScreen(diagnosis = MockGenerator.mockDiagnosis(isCompleted = true),
             isBackground = false,
             onBackgroundProcessing = {},
-            onContinueDiagnosis = { },
+            onGoBack = { },
             onFinishDiagnosis = {},
             onImageClick = {})
     }
@@ -166,7 +168,7 @@ fun DiagnosisImageGridScreenPreview_Awaiting() {
         DiagnosisImageGridScreen(diagnosis = MockGenerator.mockDiagnosis(),
             isBackground = false,
             onBackgroundProcessing = {},
-            onContinueDiagnosis = {},
+            onGoBack = {},
             onFinishDiagnosis = {},
             onImageClick = {})
     }
@@ -179,7 +181,7 @@ fun DiagnosisImageGridScreenPreview_AwaitingBackground() {
         DiagnosisImageGridScreen(diagnosis = MockGenerator.mockDiagnosis(),
             isBackground = true,
             onBackgroundProcessing = {},
-            onContinueDiagnosis = { },
+            onGoBack = { },
             onFinishDiagnosis = {},
             onImageClick = {})
     }

@@ -71,12 +71,12 @@ class DiagnosisResultsWorker @AssistedInject constructor(
                             diagnosis.id
                         }"
                     )
-                    Result.failure()
+                    continue
                 }
 
                 // Update the image values
                 val specialistElements =
-                    image?.elements?.filterIsInstance<SpecialistDiagnosticElement>() ?: setOf()
+                    image.elements.filterIsInstance<SpecialistDiagnosticElement>()
 
                 val disease = diagnosis.disease
                 val modelDiagnosticElements =
@@ -91,7 +91,7 @@ class DiagnosisResultsWorker @AssistedInject constructor(
                 val completeElements =
                     setOf(specialistElements, modelDiagnosticElements).flatten().toSet()
 
-                val updatedImage = image!!.copy(
+                val updatedImage = image.copy(
                     elements = completeElements,
                     processed = ImageAnalysisStatus.Analyzed
                 )

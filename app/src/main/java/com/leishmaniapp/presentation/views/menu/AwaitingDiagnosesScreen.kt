@@ -34,10 +34,15 @@ import com.leishmaniapp.utils.MockGenerator
  */
 @Composable
 fun AwaitingDiagnosesScreen(
-    specialist: Specialist, awaitingDiagnoses: List<Diagnosis>,
+    specialist: Specialist,
+    awaitingDiagnoses: List<Diagnosis>,
+    onDiagnosisClick: (Diagnosis) -> Unit,
+    onSync: () -> Unit,
+    onBackButton: () -> Unit
 ) {
     LeishmaniappScaffold(
-        title = stringResource(id = R.string.awaiting_diagnoses)
+        title = stringResource(id = R.string.awaiting_diagnoses),
+        backButtonAction = onBackButton
     ) {
         Column(
             modifier = Modifier
@@ -61,7 +66,7 @@ fun AwaitingDiagnosesScreen(
                         it.items(awaitingDiagnoses) { diagnosis ->
                             HorizontalDivider()
                             AwaitingDiagnosisListTile(diagnosis = diagnosis) {
-                                /* TODO: On diagnosis click */
+                                onDiagnosisClick.invoke(diagnosis)
                             }
                         }
                     }
@@ -74,7 +79,7 @@ fun AwaitingDiagnosesScreen(
                     .padding(32.dp)
             ) {
                 IconButton(
-                    onClick = { /* TODO: On sync button press */ },
+                    onClick = onSync,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Icon(
@@ -101,7 +106,7 @@ fun AwaitingDiagnosesScreenPreview() {
         AwaitingDiagnosesScreen(specialist = MockGenerator.mockSpecialist(),
             awaitingDiagnoses = List(4) {
                 MockGenerator.mockDiagnosis()
-            })
+            }, onBackButton = {}, onDiagnosisClick = {}, onSync = {})
     }
 }
 
@@ -111,7 +116,8 @@ fun AwaitingDiagnosesScreenPreview_Empty() {
     LeishmaniappTheme {
         AwaitingDiagnosesScreen(
             specialist = MockGenerator.mockSpecialist(),
-            awaitingDiagnoses = listOf()
+            awaitingDiagnoses = listOf(),
+            onBackButton = {}, onDiagnosisClick = {}, onSync = {}
         )
     }
 }
@@ -121,8 +127,10 @@ fun AwaitingDiagnosesScreenPreview_Empty() {
 fun AwaitingDiagnosesScreenPreview_Overflow() {
     LeishmaniappTheme {
         AwaitingDiagnosesScreen(specialist = MockGenerator.mockSpecialist(),
-            awaitingDiagnoses = List(32) {
-                MockGenerator.mockDiagnosis()
-            })
+            awaitingDiagnoses = List(32) { MockGenerator.mockDiagnosis() },
+            onBackButton = {},
+            onDiagnosisClick = {},
+            onSync = {}
+        )
     }
 }

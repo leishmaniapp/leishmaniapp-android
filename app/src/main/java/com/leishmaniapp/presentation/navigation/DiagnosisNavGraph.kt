@@ -140,7 +140,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route) {
             val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
             DiagnosisTableScreen(diagnosis = diagnosis!!,
-                onBackButton = { navController.popBackStack() },
+                onBackButton = { navController.navigateToMenu() },
                 onShareDiagnosis = { diagnosisViewModel.shareCurrentDiagnosis() })
         }
 
@@ -162,19 +162,24 @@ fun NavGraphBuilder.diagnosisNavGraph(
                         .associateBy { it.sample }
                     DiagnosisImageGridScreen(diagnosis = diagnosis!!.copy(images = images),
                         allowReturn = diagnosisViewModel.isNewDiagnosis && !diagnosis!!.finalized,
-                        isBackground = !diagnosis!!.completed && diagnosis!!.finalized && !diagnosisViewModel.isNewDiagnosis,
+                        isBackground = !diagnosisViewModel.isNewDiagnosis,
                         onBackgroundProcessing = {
                             diagnosisViewModel.sendDiagnosisToBackgroundProcessing(context)
                             navController.exitDiagnosisReturnToMenu()
                         },
-                        onContinueDiagnosis = {
-                            if (!diagnosis!!.finalized) {
+                        onGoBack = {
+                            if (!diagnosis!!.finalized && diagnosisViewModel.isNewDiagnosis) {
                                 navController.navigateToPictureTake()
+                            } else {
+                                navController.popBackStack()
                             }
                         },
                         onFinishDiagnosis = {
                             if (diagnosis!!.completed) {
-                                // TODO: Finish diagnosis
+                                runBlocking {
+                                    diagnosisViewModel.finalizeDiagnosis(context)
+                                    navController.navigateToDiagnosisHistory()
+                                }
                             }
                         },
                         onImageClick = { image ->
@@ -208,10 +213,23 @@ fun NavGraphBuilder.diagnosisNavGraph(
         }
 
         composable(NavigationRoutes.DiagnosisRoute.AwaitingDiagnosis.route) {
+            val context = LocalContext.current
             AwaitingDiagnosesScreen(
                 specialist = applicationViewModel.specialist!!,
                 awaitingDiagnoses = runBlocking {
                     diagnosisViewModel.getAwaitingDiagnosis(applicationViewModel.specialist!!)
+                }, onBackButton = {
+                    navController.popBackStack()
+                }, onDiagnosisClick = { diagnosis ->
+                    diagnosisViewModel.setCurrentDiagnosis(diagnosis)
+                    navController.navigateToImageGrid()
+                }, onSync = {
+                    diagnosisViewModel.startDiagnosisResultOneTimeWorker(context)
+                    Toast.makeText(
+                        context,
+                        R.string.alert_background_processing,
+                        Toast.LENGTH_LONG
+                    ).show()
                 })
         }
     }
