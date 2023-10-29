@@ -22,10 +22,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Diagnosis
-import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.DiagnosisResultsTable
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.utils.MockGenerator
 
 /**
  * @view B04

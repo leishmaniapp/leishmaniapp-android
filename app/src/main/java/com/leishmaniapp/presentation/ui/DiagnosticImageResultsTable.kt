@@ -31,8 +31,8 @@ import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.disease.Disease
 import com.leishmaniapp.entities.disease.MockDisease
-import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.utils.MockGenerator
 
 @Composable
 fun DiagnosticImageResultsTable(

@@ -1,17 +1,17 @@
 package com.leishmaniapp.infrastructure.module
 
-import com.leishmaniapp.infrastructure.mock.MockAuthenticationProvider
+import com.leishmaniapp.infrastructure.cloud.CloudAuthenticationProvider
 import com.leishmaniapp.usecases.IAuthenticationProvider
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AuthenticationModule {
+abstract class AuthenticationModule {
     @Singleton
-    @Provides
-    fun provideAuthenticationProvider(): IAuthenticationProvider = MockAuthenticationProvider()
+    @Binds
+    abstract fun provideAuthenticationProvider(authenticationProvider: CloudAuthenticationProvider): IAuthenticationProvider
 }

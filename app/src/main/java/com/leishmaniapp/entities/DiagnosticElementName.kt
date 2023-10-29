@@ -5,16 +5,9 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.leishmaniapp.R
-import com.leishmaniapp.entities.disease.Disease
-import com.leishmaniapp.entities.serialization.DiagnosticElementNameSerializer
+import com.leishmaniapp.usecases.serialization.DiagnosticElementNameSerializer
 import kotlinx.parcelize.Parcelize
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 
 @Parcelize
 @Serializable(with = DiagnosticElementNameSerializer::class)

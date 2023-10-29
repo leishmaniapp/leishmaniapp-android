@@ -33,40 +33,58 @@ import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
-import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.DiagnosisActionBar
 import com.leishmaniapp.presentation.ui.DiagnosticImageResultsTable
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.utils.MockGenerator
 import kotlinx.coroutines.launch
 
 internal enum class DiagnosisAndAnalysisPages(
     val title: @Composable () -> Unit,
 ) {
-    ImagePage({ Text(text = stringResource(R.string.tab_image)) }),
-    ResultsPage({ Text(text = stringResource(R.string.tab_results)) })
+    ImagePage({ Text(text = stringResource(R.string.tab_image)) }), ResultsPage({
+        Text(
+            text = stringResource(
+                R.string.tab_results
+            )
+        )
+    })
 }
 
 @Composable
 fun DiagnosisAndAnalysisScreen(
     diagnosis: Diagnosis,
     image: Image,
+    analysisWasStarted: Boolean = false,
     onImageChange: (Image) -> Unit,
     onRepeatAction: () -> Unit,
     onAnalyzeAction: () -> Unit,
+    analysisStatus: ImageAnalysisStatus,
     onNextAction: () -> Unit,
     onFinishAction: () -> Unit
 ) {
-
     val pagerState = rememberPagerState(pageCount = { DiagnosisAndAnalysisPages.values().size })
+    val coroutineScope = rememberCoroutineScope()
 
     LeishmaniappScaffold(showHelp = true, bottomBar = {
         DiagnosisActionBar(
             repeatAction = onRepeatAction,
             analyzeAction = onAnalyzeAction,
-            nextAction = onNextAction,
+            nextAction = {
+                when (image.processed) {
+                    ImageAnalysisStatus.NotAnalyzed, ImageAnalysisStatus.Analyzing -> coroutineScope.launch {
+                        pagerState.animateScrollToPage(
+                            DiagnosisAndAnalysisPages.ResultsPage.ordinal
+                        )
+                    }
+
+                    ImageAnalysisStatus.Deferred, ImageAnalysisStatus.Analyzed -> onNextAction.invoke()
+                }
+            },
             finishAction = onFinishAction,
-            nextIsCamera = image.processed != ImageAnalysisStatus.NotAnalyzed
+            analysisStatus,
+            analysisShowAsLoading = analysisWasStarted
         )
     }) {
         Column {
@@ -84,7 +102,6 @@ fun DiagnosisAndAnalysisScreen(
                 )
             }
 
-            val coroutineScope = rememberCoroutineScope()
             // TODO: Fix deprecation
             TabRow(selectedTabIndex = pagerState.currentPage) {
                 DiagnosisAndAnalysisPages.values().forEachIndexed { index, item ->
@@ -105,6 +122,7 @@ fun DiagnosisAndAnalysisScreen(
             HorizontalPager(state = pagerState) { page ->
                 when (DiagnosisAndAnalysisPages.values()[page]) {
                     DiagnosisAndAnalysisPages.ImagePage -> {
+
                         if (editMode) {
                             DiagnosticImageEditSection(image = image) { result, image ->
                                 // Get out of Edit Mode
@@ -115,17 +133,17 @@ fun DiagnosisAndAnalysisScreen(
                                 }
                             }
                         } else {
-                            DiagnosticImageSection(image = image,
-                                onImageEdit = {
-                                    editMode = true
-                                }, onViewResultsClick = {
-                                    coroutineScope.launch {
-                                        pagerState.animateScrollToPage(
-                                            DiagnosisAndAnalysisPages.ResultsPage.ordinal
-                                        )
-                                    }
-                                })
+                            DiagnosticImageSection(image = image, onImageEdit = {
+                                editMode = true
+                            }, onViewResultsClick = {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(
+                                        DiagnosisAndAnalysisPages.ResultsPage.ordinal
+                                    )
+                                }
+                            })
                         }
+
                     }
 
                     DiagnosisAndAnalysisPages.ResultsPage -> {
@@ -138,8 +156,7 @@ fun DiagnosisAndAnalysisScreen(
                             // Show image number
                             Text(
                                 text = "%s %d".format(
-                                    stringResource(id = R.string.image_number),
-                                    image.sample
+                                    stringResource(id = R.string.image_number), image.sample
                                 )
                             )
 
@@ -152,8 +169,7 @@ fun DiagnosisAndAnalysisScreen(
                                     .let { if (it.isEmpty()) null else it.toSet() }
 
                             // Show results in a table
-                            DiagnosticImageResultsTable(
-                                modifier = Modifier.padding(vertical = 8.dp),
+                            DiagnosticImageResultsTable(modifier = Modifier.padding(vertical = 8.dp),
                                 disease = diagnosis.disease,
                                 modelDiagnosticElements = modelDiagnosticElements,
                                 specialistDiagnosticElements = specialistDiagnosticElements,
@@ -161,21 +177,18 @@ fun DiagnosisAndAnalysisScreen(
                                     // Grab the old specialist diagnostic element
                                     val previousDiagnosticElement =
                                         image.elements.firstOrNull { diagnosticElement ->
-                                            diagnosticElement is SpecialistDiagnosticElement &&
-                                                    diagnosticElement.name == elementName
+                                            diagnosticElement is SpecialistDiagnosticElement && diagnosticElement.name == elementName
                                         }   // If value is not null then apply
                                     if (previousDiagnosticElement != null) {
                                         // Invoke the image change callback with new modified image
                                         onImageChange.invoke(
-                                            image.copy(
-                                                elements = image.elements.minus(
-                                                    previousDiagnosticElement
-                                                ).let { oldSet ->
-                                                    if (specialistDiagnosticElement != null) oldSet.plus(
-                                                        specialistDiagnosticElement
-                                                    ) else oldSet
-                                                }
-                                            )
+                                            image.copy(elements = image.elements.minus(
+                                                previousDiagnosticElement
+                                            ).let { oldSet ->
+                                                if (specialistDiagnosticElement != null) oldSet.plus(
+                                                    specialistDiagnosticElement
+                                                ) else oldSet
+                                            })
                                         )
                                     } else if (specialistDiagnosticElement != null) {
                                         onImageChange.invoke(
@@ -186,19 +199,15 @@ fun DiagnosisAndAnalysisScreen(
                                             )
                                         )
                                     }
-                                }
-                            )
+                                })
                             Spacer(modifier = Modifier.weight(1f))
-                            Button(
-                                modifier = Modifier
-                                    .padding(16.dp),
-                                onClick = {
-                                    coroutineScope.launch {
-                                        pagerState.animateScrollToPage(
-                                            DiagnosisAndAnalysisPages.ImagePage.ordinal
-                                        )
-                                    }
-                                }) {
+                            Button(modifier = Modifier.padding(16.dp), onClick = {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(
+                                        DiagnosisAndAnalysisPages.ImagePage.ordinal
+                                    )
+                                }
+                            }) {
                                 Text(text = stringResource(id = R.string.goto_image))
                             }
                         }
@@ -220,7 +229,8 @@ fun DiagnosisAndAnalysisPreview_NotAnalyzed() {
             onFinishAction = {},
             onNextAction = {},
             onRepeatAction = {},
-            onImageChange = {}
+            onImageChange = {},
+            analysisStatus = ImageAnalysisStatus.NotAnalyzed
         )
     }
 }
@@ -236,7 +246,8 @@ fun DiagnosisAndAnalysisPreview_Analyzed() {
             onFinishAction = {},
             onNextAction = {},
             onRepeatAction = {},
-            onImageChange = {}
+            onImageChange = {},
+            analysisStatus = ImageAnalysisStatus.NotAnalyzed
         )
     }
 }

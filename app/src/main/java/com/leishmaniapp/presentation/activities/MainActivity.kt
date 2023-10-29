@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 Log.d(this::class.simpleName, "WillPopScope: User is trying to exit")
-                willPopScope.value = true;
+                willPopScope.value = true
             }
         })
     }

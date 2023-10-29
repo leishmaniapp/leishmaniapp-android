@@ -4,7 +4,11 @@
     tools:ignore="LockedOrientationActivity">
 
     <uses-feature android:name="android.hardware.camera.any" />
+
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".MainApplication"
@@ -30,6 +34,21 @@
         <activity
             android:name=".presentation.activities.CameraActivity"
             android:exported="true" />
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+
+            <meta-data  android:name="com.leishmaniapp.infrastructure.initialization.CloudInitialization"
+                android:value="androidx.startup" />
+
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
 
     </application>
 </manifest>

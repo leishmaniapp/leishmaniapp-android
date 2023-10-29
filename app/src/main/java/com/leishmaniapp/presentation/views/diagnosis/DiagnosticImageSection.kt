@@ -22,9 +22,9 @@ import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ImageAnalysisStatus
-import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.DiagnosticImage
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.utils.MockGenerator
 
 @Composable
 fun DiagnosticImageSection(
@@ -43,7 +43,7 @@ fun DiagnosticImageSection(
             modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            when(image.processed) {
+            when (image.processed) {
                 ImageAnalysisStatus.NotAnalyzed -> Row(modifier = Modifier.padding(16.dp)) {
                     Icon(
                         Icons.Filled.Error,
@@ -53,16 +53,29 @@ fun DiagnosticImageSection(
 
                     Text(stringResource(id = R.string.alert_not_processed))
                 }
+
                 ImageAnalysisStatus.Analyzing -> Row(modifier = Modifier.padding(16.dp)) {
                     Icon(
                         Icons.Filled.Sync,
                         contentDescription = stringResource(id = R.string.alert_being_processed),
                         modifier = Modifier.padding(end = 8.dp)
                     )
-
                     Text(stringResource(id = R.string.alert_being_processed))
                 }
-                ImageAnalysisStatus.Analyzed ->TextButton(modifier = Modifier.padding(8.dp), onClick = onImageEdit) {
+
+                ImageAnalysisStatus.Deferred -> Row(modifier = Modifier.padding(16.dp)) {
+                    Icon(
+                        Icons.Filled.Error,
+                        contentDescription = stringResource(id = R.string.alert_deferred),
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(stringResource(id = R.string.alert_deferred))
+                }
+
+                ImageAnalysisStatus.Analyzed -> TextButton(
+                    modifier = Modifier.padding(8.dp),
+                    onClick = onImageEdit
+                ) {
                     Icon(
                         Icons.Filled.Edit,
                         contentDescription = stringResource(id = R.string.edit_image),
@@ -78,7 +91,8 @@ fun DiagnosticImageSection(
                 .weight(1f)
                 .padding(16.dp),
             image = image,
-            selectedElement = null
+            selectedElement = null,
+            clickEnabled = false
         ) {}
 
         Button(
@@ -117,6 +131,17 @@ fun DiagnosticImageSectionPreview_Processed() {
     LeishmaniappTheme {
         DiagnosticImageSection(
             image = MockGenerator.mockImage(ImageAnalysisStatus.Analyzed),
+            onImageEdit = {}
+        ) {}
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun DiagnosticImageSectionPreview_Deferred() {
+    LeishmaniappTheme {
+        DiagnosticImageSection(
+            image = MockGenerator.mockImage(ImageAnalysisStatus.Deferred),
             onImageEdit = {}
         ) {}
     }

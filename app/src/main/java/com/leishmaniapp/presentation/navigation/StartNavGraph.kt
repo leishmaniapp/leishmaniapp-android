@@ -2,7 +2,11 @@ package com.leishmaniapp.presentation.navigation
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -32,32 +36,39 @@ fun NavGraphBuilder.startNavGraph(
         }
 
         composable(route = NavigationRoutes.StartRoute.AuthenticationRoute.route) {
-            val coroutineScope = rememberCoroutineScope();
+            val coroutineScope = rememberCoroutineScope()
             val context = LocalContext.current
 
-            AuthenticationScreen(onAuthenticate = { username, password ->
+            var authenticationInProgress by remember {
+                mutableStateOf(false)
+            }
 
-                coroutineScope.launch {
-                    withContext(Dispatchers.IO) {
-                        // Authenticate specialist
-                        val authState = applicationViewModel.authenticate(username, password)
+            AuthenticationScreen(
+                authenticationInProgress,
+                onAuthenticate = { username, password ->
+                    authenticationInProgress = true
+                    coroutineScope.launch {
+                        withContext(Dispatchers.IO) {
+                            // Authenticate specialist
+                            val authState = applicationViewModel.authenticate(username, password)
 
-                        withContext(Dispatchers.Main) {
-                            // Navigate to next screen
-                            if (authState) {
-                                navController.navigateToDiseasesMenu()
-                            } else {
-                                // Show authentication failure toast
-                                Toast.makeText(
-                                    context,
-                                    R.string.authentication_failure,
-                                    Toast.LENGTH_LONG
-                                ).show()
+                            withContext(Dispatchers.Main) {
+                                authenticationInProgress = false
+                                // Navigate to next screen
+                                if (authState) {
+                                    navController.navigateToDiseasesMenu()
+                                } else {
+                                    // Show authentication failure toast
+                                    Toast.makeText(
+                                        context,
+                                        R.string.authentication_failure,
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                             }
                         }
                     }
-                }
-            })
+                })
         }
 
         composable(route = NavigationRoutes.StartRoute.DiseasesRoute.route) {

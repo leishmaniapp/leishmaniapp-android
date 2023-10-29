@@ -1,7 +1,6 @@
 package com.leishmaniapp.presentation.navigation
 
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -24,9 +23,10 @@ fun NavGraphBuilder.patientsNavGraph(
         route = NavigationRoutes.PatientsRoute.route,
         startDestination = NavigationRoutes.PatientsRoute.PatientList.route
     ) {
-
         composable(NavigationRoutes.PatientsRoute.InitializeDiagnosis.route) {
-            val patients = patientsViewModel.patients.collectAsStateWithLifecycle(initialValue = listOf())
+            val context = LocalContext.current
+            val patients =
+                patientsViewModel.patients.collectAsStateWithLifecycle(initialValue = listOf())
             PatientListScreen(patients = patients.value.toSet(),
                 onAddPatient = {
                     navController.navigateToAddPatient()
@@ -36,6 +36,7 @@ fun NavGraphBuilder.patientsNavGraph(
                     patientsViewModel.currentPatient = patient
                     // Create the new diagnosis
                     diagnosisViewModel.startNewDiagnosis(
+                        context,
                         patientsViewModel.currentPatient!!,
                         applicationViewModel.specialist!!,
                         applicationViewModel.disease!!
@@ -46,7 +47,8 @@ fun NavGraphBuilder.patientsNavGraph(
         }
 
         composable(NavigationRoutes.PatientsRoute.PatientList.route) {
-            val patients = patientsViewModel.patients.collectAsStateWithLifecycle(initialValue = listOf())
+            val patients =
+                patientsViewModel.patients.collectAsStateWithLifecycle(initialValue = listOf())
             PatientListScreen(patients = patients.value.toSet(),
                 onAddPatient = {
                     navController.navigateToAddPatient()
@@ -65,6 +67,7 @@ fun NavGraphBuilder.patientsNavGraph(
         }
 
         composable(NavigationRoutes.PatientsRoute.PatientDiagnosisHistory.route) {
+            val context = LocalContext.current
             PatientDiagnosisHistoryScreen(patient = patientsViewModel.currentPatient!!,
                 onDiagnosisClick = { diagnosis ->
                     // Set the diagnosis
@@ -74,6 +77,7 @@ fun NavGraphBuilder.patientsNavGraph(
                 onDiagnosisCreate = {
                     // Create the new diagnosis
                     diagnosisViewModel.startNewDiagnosis(
+                        context,
                         patientsViewModel.currentPatient!!,
                         applicationViewModel.specialist!!,
                         applicationViewModel.disease!!
@@ -81,7 +85,9 @@ fun NavGraphBuilder.patientsNavGraph(
                     // Navigate to diagnosis nav graph
                     navController.navigateToStartDiagnosis()
                 },
-                diagnosisList = diagnosisViewModel.diagnosesForPatient(patientsViewModel.currentPatient!!),
+                diagnosisList = diagnosisViewModel
+                    .diagnosesForPatient(patientsViewModel.currentPatient!!)
+                    .filter { it.finalized && it.completed },
                 onBackButton = { navController.popBackStack() })
         }
     }

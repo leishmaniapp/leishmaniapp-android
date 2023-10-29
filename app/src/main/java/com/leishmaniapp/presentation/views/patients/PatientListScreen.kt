@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.PersonalInjury
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,10 +38,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Patient
-import com.leishmaniapp.entities.mock.MockGenerator
 import com.leishmaniapp.presentation.ui.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.PatientListTile
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.utils.MockGenerator
 
 /**
  * @view
@@ -149,6 +150,13 @@ fun PatientListScreen(
                         style = MaterialTheme.typography.titleLarge,
                         textAlign = TextAlign.Center
                     )
+
+                    Button(
+                        modifier = Modifier.padding(21.dp),
+                        onClick = onAddPatient
+                    ) {
+                        Text(text = stringResource(id = R.string.patient_add))
+                    }
                 }
             }
         }

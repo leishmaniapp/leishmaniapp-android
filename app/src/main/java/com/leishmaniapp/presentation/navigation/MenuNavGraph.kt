@@ -22,7 +22,7 @@ fun NavGraphBuilder.menuNavGraph(
                 disease = applicationViewModel.disease!!,
                 onStartDiagnosis = { navController.navigateToInitializeDiagnosis() },
                 onPatientList = { navController.navigateToPatientsNavGraph() },
-                onAwaitingDiagnoses = { TODO("Missing navigation graph") },
+                onAwaitingDiagnoses = { navController.navigateToAwaitingDiagnosis() },
                 onDatabase = { navController.navigateToDatabase() },
             )
         }
@@ -42,6 +42,6 @@ fun NavHostController.navigateToMenu() {
     }
 }
 
-internal fun NavHostController.navigateToDatabase() {
+private fun NavHostController.navigateToDatabase() {
     this.navigate(NavigationRoutes.MenuRoute.DatabaseRoute.route)
 }

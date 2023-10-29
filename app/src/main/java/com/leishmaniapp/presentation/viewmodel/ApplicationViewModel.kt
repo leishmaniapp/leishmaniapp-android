@@ -49,6 +49,6 @@ class ApplicationViewModel @Inject constructor(
     suspend fun authenticate(username: Username, password: Password): Boolean {
         // Get the specialist
         specialist = authenticationProvider.authenticateSpecialist(username, password)
-        return specialist != null;
+        return specialist != null
     }
 }

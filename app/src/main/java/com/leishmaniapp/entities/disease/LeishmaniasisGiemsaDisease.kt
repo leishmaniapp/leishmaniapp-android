@@ -7,7 +7,7 @@ import androidx.compose.ui.res.stringResource
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.DiagnosticElementName
-import com.leishmaniapp.entities.serialization.DiseaseSerializer
+import com.leishmaniapp.usecases.serialization.DiseaseSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable(with = LeishmaniasisGiemsaDiseaseSerializer::class)
@@ -19,12 +19,12 @@ data object LeishmaniasisGiemsaDisease : Disease(
     ),
     elements = setOf(
         DiagnosticElementName(
-            "leishmaniasis.giemsa:parasite",
-            R.string.leishmaniasis_giemsa_disease_element_parasites
-        ),
-        DiagnosticElementName(
             "leishmaniasis.giemsa:macrophage",
             R.string.leishmaniasis_giemsa_disease_element_macrophages
+        ),
+        DiagnosticElementName(
+            "leishmaniasis.giemsa:parasite",
+            R.string.leishmaniasis_giemsa_disease_element_parasites
         )
     )
 ) {

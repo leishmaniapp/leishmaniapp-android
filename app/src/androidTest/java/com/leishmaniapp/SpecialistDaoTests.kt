@@ -4,8 +4,9 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.leishmaniapp.entities.Password
-import com.leishmaniapp.entities.mock.MockGenerator
+import com.leishmaniapp.entities.Username
 import com.leishmaniapp.persistance.database.ApplicationDatabase
+import com.leishmaniapp.utils.MockGenerator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -56,6 +57,39 @@ class SpecialistDaoTests {
             Assert.assertNull(
                 database.specialistDao().specialistByUsername(specialist.username)
             )
+        }
+    }
+
+    @Test
+    fun specialistCreateSearchAndDeleteWithCredentials() {
+        // Create mock specialist
+        val specialist = MockGenerator.mockSpecialist()
+
+        runBlocking(Dispatchers.IO) {
+            // Insert the specialist
+            database.specialistDao().upsertSpecialist(specialist)
+
+            // Search specialist in database
+            Assert.assertEquals(
+                specialist,
+                database.specialistDao().specialistByUsername(specialist.username)
+            )
+
+            // Erase the specialist
+            database.specialistDao().deleteSpecialistWithUsername(specialist.username)
+
+            // Should not exist
+            Assert.assertNull(
+                database.specialistDao().specialistByUsername(specialist.username)
+            )
+        }
+    }
+
+    @Test
+    fun deleteNonExistentSpecialistDoesNothing() {
+        runBlocking {
+            // Erase the specialist
+            database.specialistDao().deleteSpecialistWithUsername(Username("Does not exist!"))
         }
     }
 

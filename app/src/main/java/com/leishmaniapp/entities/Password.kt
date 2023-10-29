@@ -10,4 +10,4 @@ import kotlinx.parcelize.Parcelize
  * This class is NOT serializable
  */
 @Parcelize
-data class Password(val value: String): Parcelable
+data class Password(val value: String) : Parcelable
