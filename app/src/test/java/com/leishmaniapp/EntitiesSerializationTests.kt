@@ -71,7 +71,7 @@ class EntitiesSerializationTests {
 
         Assert.assertEquals(
             """
-            {"name":"mock.disease:mock_element","amount":${specialistElement.amount}}
+            {"name":"mock.disease:mock","amount":${specialistElement.amount}}
         """.trimIndent(), Json.encodeToString(specialistElement)
         )
     }

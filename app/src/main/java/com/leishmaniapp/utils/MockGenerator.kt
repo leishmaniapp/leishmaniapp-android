@@ -83,7 +83,7 @@ class MockGenerator {
          * Generate random mock diagnosis
          * @param isCompleted NULL for random image completion, else for completion status
          */
-        fun mockDiagnosis(isCompleted: Boolean? = null) =
+        fun mockDiagnosis(isCompleted: Boolean? = null, isFinished: Boolean = false) =
             Diagnosis(
                 specialistResult = Random.nextBoolean(),
                 modelResult = Random.nextBoolean(),
@@ -94,6 +94,7 @@ class MockGenerator {
                 remarks = faker.lorem.paragraph(),
                 specialist = mockSpecialist(),
                 patient = mockPatient(),
+                finalized = isFinished,
                 disease = MockDisease,
                 images = buildMap {
                     repeat(10) { idx ->

@@ -37,24 +37,20 @@ interface DiagnosisDao {
         patient.documentType
     )
 
-    //TODO: Test this method
     @Query("SELECT * FROM DiagnosisRoom DR WHERE DR.specialistUsername = :specialistUsername AND DR.finalized = 0")
     suspend fun diagnosesForSpecialistNotFinished(
         specialistUsername: Username
     ): List<DiagnosisRoom>
 
-    //TODO: Test this method
     @Query("SELECT * FROM DiagnosisRoom DR WHERE DR.analyzed = 0")
     suspend fun diagnosesNotFinishedAnalyzed(): List<DiagnosisRoom>
 
     @Query("SELECT * FROM DiagnosisRoom DR WHERE DR.id = :uuid")
     suspend fun imagesForDiagnosis(uuid: UUID): DiagnosisImages
 
-    //TODO: Test this method
     @Query("SELECT * FROM DiagnosisRoom DR WHERE DR.id = :uuid")
     suspend fun diagnosisForId(uuid: UUID): DiagnosisRoom?
 
-    //TODO: Test this method
     @Query("SELECT * FROM DiagnosisRoom DR WHERE DR.id = :uuid")
     fun diagnosisForIdFlow(uuid: UUID): Flow<DiagnosisRoom>
 }

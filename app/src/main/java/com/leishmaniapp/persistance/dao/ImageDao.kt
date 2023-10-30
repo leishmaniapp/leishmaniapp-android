@@ -24,18 +24,15 @@ interface ImageDao {
     @Query("SELECT * FROM ImageRoom IR WHERE IR.diagnosisUUID = :uuid AND IR.sample = :sample")
     fun imageForDiagnosisFlow(uuid: UUID, sample: Int): Flow<ImageRoom?>
 
-    //TODO: Test this method
     @Query("SELECT * FROM ImageRoom WHERE diagnosisUUID = :uuid")
     suspend fun allImagesForDiagnosis(uuid: UUID): List<ImageRoom>
 
-    //TODO: Test this method
     @Query("SELECT * FROM ImageRoom IR WHERE IR.diagnosisUUID = :uuid AND IR.processed = :status")
     suspend fun imagesForDiagnosisWithStatus(
         uuid: UUID,
         status: ImageAnalysisStatus
     ): List<ImageRoom>
 
-    //TODO: Test this method
     @Query("SELECT * FROM ImageRoom WHERE diagnosisUUID = :uuid")
     fun allImagesForDiagnosisFlow(uuid: UUID): Flow<List<ImageRoom>>
 }

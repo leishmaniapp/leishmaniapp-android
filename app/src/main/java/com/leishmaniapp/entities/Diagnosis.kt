@@ -72,14 +72,12 @@ data class Diagnosis(
 
     /**
      * Get the amount of images associated with the diagnosis
-     * @TODO Write tests for this function
      */
     val samples: Int
         get() = images.size
 
     /**
      * Checks if every image in the diagnosis has been processed
-     * @TODO Write tests for this function
      */
     val completed: Boolean
         get() = images.values.all { it.processed == ImageAnalysisStatus.Analyzed }
