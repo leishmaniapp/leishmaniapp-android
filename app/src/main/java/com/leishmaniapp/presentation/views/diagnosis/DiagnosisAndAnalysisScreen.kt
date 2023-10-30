@@ -62,7 +62,8 @@ fun DiagnosisAndAnalysisScreen(
     onAnalyzeAction: () -> Unit,
     analysisStatus: ImageAnalysisStatus,
     onNextAction: () -> Unit,
-    onFinishAction: () -> Unit
+    onFinishAction: () -> Unit,
+    onNextActionNotAnalyzed: (() -> Unit)? = null
 ) {
     val pagerState = rememberPagerState(pageCount = { DiagnosisAndAnalysisPages.values().size })
     val coroutineScope = rememberCoroutineScope()
@@ -77,6 +78,8 @@ fun DiagnosisAndAnalysisScreen(
                         pagerState.animateScrollToPage(
                             DiagnosisAndAnalysisPages.ResultsPage.ordinal
                         )
+
+                        onNextActionNotAnalyzed?.invoke()
                     }
 
                     ImageAnalysisStatus.Deferred, ImageAnalysisStatus.Analyzed -> onNextAction.invoke()
