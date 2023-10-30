@@ -138,9 +138,11 @@ fun NavGraphBuilder.diagnosisNavGraph(
 
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route) {
             val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
+            val context = LocalContext.current
+
             DiagnosisTableScreen(diagnosis = diagnosis!!,
                 onBackButton = { navController.navigateToMenu() },
-                onShareDiagnosis = { diagnosisViewModel.shareCurrentDiagnosis() })
+                onShareDiagnosis = { diagnosisViewModel.shareCurrentDiagnosis(context) })
         }
 
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisImageGrid.route) {
@@ -182,7 +184,6 @@ fun NavGraphBuilder.diagnosisNavGraph(
                         },
                         onFinishDiagnosis = {
                             runBlocking {
-                                diagnosisViewModel.finalizeDiagnosis(context)
                                 navController.navigateToRemarks()
                             }
                         },
@@ -237,12 +238,15 @@ fun NavGraphBuilder.diagnosisNavGraph(
         }
 
         composable(NavigationRoutes.DiagnosisRoute.DiagnosticRemarks.route) {
+            val context = LocalContext.current
             val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
+
             FinishDiagnosisScreen(diagnosis = diagnosis!!,
                 onGoBack = { navController.popBackStack() },
                 onDiagnosisFinish = { newDiagnosis ->
                     runBlocking {
                         diagnosisViewModel.updateDiagnosis(newDiagnosis)
+                        diagnosisViewModel.finalizeDiagnosis(context)
                         navController.navigateToDiagnosisHistory()
                     }
                 })
