@@ -136,6 +136,7 @@
 
     <string name="accept_and_finish">Aceptar cambios y finalizar</string>
     <string name="alert_unfinished_diagnosis">El diagnóstico aún no ha sido completado</string>
+    <string name="alert_taking_photo">Se está tomando la imágen</string>
 
 
 </resources>
