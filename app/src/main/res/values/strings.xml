@@ -134,4 +134,8 @@
     <string name="request_permission">Autorizar permisos</string>
     <string name="cancel_camera">Cancel camera</string>
 
+    <string name="accept_and_finish">Aceptar cambios y finalizar</string>
+    <string name="alert_unfinished_diagnosis">El diagnóstico aún no ha sido completado</string>
+
+
 </resources>

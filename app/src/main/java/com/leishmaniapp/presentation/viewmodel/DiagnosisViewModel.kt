@@ -24,6 +24,7 @@ import com.leishmaniapp.infrastructure.background.DiagnosisResultsWorker
 import com.leishmaniapp.infrastructure.background.ImageProcessingWorker
 import com.leishmaniapp.infrastructure.background.ImageResultsWorker
 import com.leishmaniapp.persistance.database.ApplicationDatabase
+import com.leishmaniapp.persistance.entities.DiagnosisRoom
 import com.leishmaniapp.persistance.entities.DiagnosisRoom.Companion.asRoomEntity
 import com.leishmaniapp.persistance.entities.ImageRoom
 import com.leishmaniapp.persistance.entities.ImageRoom.Companion.asRoomEntity
@@ -86,9 +87,15 @@ class DiagnosisViewModel @Inject constructor(
      */
     val imageFlow: Flow<ImageRoom?>?
         get() = runBlocking {
-            if (currentDiagnosis.value != null && currentImage.value != null)
-                applicationDatabase.imageDao()
-                    .imageForDiagnosisFlow(currentDiagnosis.value!!.id, currentImage.value!!.sample)
+            if (currentDiagnosis.value != null && currentImage.value != null) applicationDatabase.imageDao()
+                .imageForDiagnosisFlow(currentDiagnosis.value!!.id, currentImage.value!!.sample)
+            else null
+        }
+
+    val diagnosisFlow: Flow<DiagnosisRoom?>?
+        get() = runBlocking {
+            if (currentDiagnosis.value != null) applicationDatabase.diagnosisDao()
+                .diagnosisForIdFlow(currentDiagnosis.value!!.id)
             else null
         }
 
@@ -97,8 +104,8 @@ class DiagnosisViewModel @Inject constructor(
      */
     val imagesForDiagnosisFlow: Flow<List<ImageRoom>?>?
         get() = runBlocking {
-            if (currentDiagnosis.value != null)
-                applicationDatabase.imageDao().allImagesForDiagnosisFlow(
+            if (currentDiagnosis.value != null) applicationDatabase.imageDao()
+                .allImagesForDiagnosisFlow(
                     currentDiagnosis.value!!.id
                 )
             else null
@@ -160,11 +167,9 @@ class DiagnosisViewModel @Inject constructor(
     }
 
     fun startDiagnosisResultOneTimeWorker(context: Context) {
-        val workRequest =
-            OneTimeWorkRequestBuilder<DiagnosisResultsWorker>()
-                .setConstraints(
-                    Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-                ).build()
+        val workRequest = OneTimeWorkRequestBuilder<DiagnosisResultsWorker>().setConstraints(
+            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+        ).build()
 
         WorkManager.getInstance(context).enqueue(workRequest)
     }
@@ -177,12 +182,11 @@ class DiagnosisViewModel @Inject constructor(
             ).build()
 
         // Enqueue the request
-        WorkManager.getInstance(context)
-            .enqueueUniquePeriodicWork(
-                DiagnosisResultsWorker::class.simpleName!!,
-                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
-                workRequest
-            )
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            DiagnosisResultsWorker::class.simpleName!!,
+            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+            workRequest
+        )
     }
 
     fun stopDiagnosisResultsBackgroundWorker(context: Context) {
@@ -194,44 +198,36 @@ class DiagnosisViewModel @Inject constructor(
     fun startImageResultsWorker(context: Context, diagnosis: UUID, sample: Int) {
         // Call the worker
         val workRequest =
-            PeriodicWorkRequestBuilder<ImageResultsWorker>(Duration.ofSeconds(5))
-                .setInputData(
-                    Data.Builder()
-                        .putString("diagnosis", diagnosis.toString())
-                        .putInt("sample", sample)
-                        .build()
-                )
-                .setInitialDelay(Duration.ofSeconds(10))
-                .setConstraints(
-                    Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-                ).build()
+            PeriodicWorkRequestBuilder<ImageResultsWorker>(Duration.ofSeconds(5)).setInputData(
+                Data.Builder().putString("diagnosis", diagnosis.toString())
+                    .putInt("sample", sample).build()
+            ).setInitialDelay(Duration.ofSeconds(10)).setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+            ).build()
 
         // Enqueue the request
-        WorkManager.getInstance(context)
-            .enqueueUniquePeriodicWork(
-                ImageResultsWorker::class.simpleName!!,
-                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
-                workRequest
-            )
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            ImageResultsWorker::class.simpleName!!,
+            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+            workRequest
+        )
     }
 
     fun stopImageResultsWorker(context: Context) {
         // Cancel work manager
-        WorkManager.getInstance(context)
-            .cancelUniqueWork(ImageResultsWorker::class.simpleName!!)
+        WorkManager.getInstance(context).cancelUniqueWork(ImageResultsWorker::class.simpleName!!)
     }
 
     /**
      * Create a new diagnosis
      */
     fun startNewDiagnosis(
-        context: Context,
-        patient: Patient,
-        specialist: Specialist,
-        disease: Disease
+        context: Context, patient: Patient, specialist: Specialist, disease: Disease
     ) {
         // Create a new diagnosis
-        updateDiagnosis(Diagnosis(specialist, patient, disease))
+        runBlocking {
+            updateDiagnosis(Diagnosis(specialist, patient, disease))
+        }
         isNewDiagnosis = true
 
         startDiagnosisResultsBackgroundWorker(context)
@@ -264,8 +260,7 @@ class DiagnosisViewModel @Inject constructor(
         stopImageResultsWorker(context)
         // Cancel current request
         if (currentWorkerId.value != null) {
-            WorkManager.getInstance(context)
-                .cancelWorkById(currentWorkerId.value!!)
+            WorkManager.getInstance(context).cancelWorkById(currentWorkerId.value!!)
         }
 
         // Erase image from database
@@ -287,11 +282,9 @@ class DiagnosisViewModel @Inject constructor(
         }
     }
 
-    fun updateDiagnosis(diagnosis: Diagnosis) {
-        runBlocking {
-            setCurrentDiagnosis(diagnosis)
-            applicationDatabase.diagnosisDao().upsertDiagnosis(diagnosis.asRoomEntity())
-        }
+    suspend fun updateDiagnosis(diagnosis: Diagnosis) {
+        setCurrentDiagnosis(diagnosis)
+        applicationDatabase.diagnosisDao().upsertDiagnosis(diagnosis.asRoomEntity())
     }
 
     suspend fun setImageAsDeferred() {
@@ -325,9 +318,9 @@ class DiagnosisViewModel @Inject constructor(
             setImageAsDeferred()
         }
 
-        val workerInfo = WorkManager.getInstance(context)
-            .getWorkInfoByIdLiveData(currentWorkerId.value!!)
-            .asFlow()
+        val workerInfo =
+            WorkManager.getInstance(context).getWorkInfoByIdLiveData(currentWorkerId.value!!)
+                .asFlow()
 
         var workerWasCalled = false
         var coroutineWasExecuted = false
@@ -337,41 +330,34 @@ class DiagnosisViewModel @Inject constructor(
                 workerInfo.collect { info ->
                     when (info.state) {
                         // Resume execution
-                        WorkInfo.State.RUNNING,
-                        WorkInfo.State.FAILED ->
-                            coroutineWasExecuted = true
+                        WorkInfo.State.RUNNING, WorkInfo.State.FAILED -> coroutineWasExecuted = true
 
-                        WorkInfo.State.SUCCEEDED ->
-                            if (!workerWasCalled) {
-                                startImageResultsWorker(
-                                    context,
-                                    currentDiagnosis.value!!.id,
-                                    currentImage.value!!.sample
-                                )
-                                workerWasCalled = true
-                            }
+                        WorkInfo.State.SUCCEEDED -> if (!workerWasCalled) {
+                            startImageResultsWorker(
+                                context, currentDiagnosis.value!!.id, currentImage.value!!.sample
+                            )
+                            workerWasCalled = true
+                        }
 
                         // Continue waiting
-                        WorkInfo.State.BLOCKED,
-                        WorkInfo.State.CANCELLED,
-                        WorkInfo.State.ENQUEUED -> Unit
+                        WorkInfo.State.BLOCKED, WorkInfo.State.CANCELLED, WorkInfo.State.ENQUEUED -> Unit
                     }
                 }
             }
         } catch (e: TimeoutCancellationException) {
             // Check if coroutine was resumed
-            if (!coroutineWasExecuted)
-                setImageAsDeferred()
+            if (!coroutineWasExecuted) setImageAsDeferred()
         }
     }
 
     suspend fun continueDiagnosisNextImage(context: Context) {
         stopImageResultsWorker(context)
         withContext(Dispatchers.IO) {
+            // Take last photo and update it
             updateImage(
                 applicationDatabase.imageDao()
-                    .imageForDiagnosis(currentDiagnosis.value!!.id, currentImage.value!!.sample)
-                !!.asApplicationEntity()
+                    .imageForDiagnosis(currentDiagnosis.value!!.id, currentImage.value!!.sample)!!
+                    .asApplicationEntity()
             )
 
             // Update the current diagnosis
@@ -386,22 +372,23 @@ class DiagnosisViewModel @Inject constructor(
         stopImageResultsWorker(context)
         withContext(Dispatchers.IO) {
             // Delete image if not processed
-            if (currentImage.value!!.processed == ImageAnalysisStatus.NotAnalyzed) {
-                applicationDatabase.imageDao()
-                    .deleteImage(currentImage.value!!.asRoomEntity(currentDiagnosis.value!!.id))
-            } else {
-                // Make sure the image is stored
-                applicationDatabase.imageDao()
-                    .upsertImage(currentImage.value!!.asRoomEntity(currentDiagnosis.value!!.id))
+            val image = applicationDatabase.imageDao()
+                .imageForDiagnosis(currentDiagnosis.value!!.id, currentImage.value!!.sample)!!
 
-                // Update the current diagnosis
-                currentDiagnosis.value = currentDiagnosis.value!!.appendImage(currentImage.value!!)
-                savedStateHandle["currentDiagnosis"] = currentDiagnosis.value
+            if (image.processed == ImageAnalysisStatus.NotAnalyzed) {
+                applicationDatabase.imageDao().deleteImage(image)
+            } else {
+                // Take last photo and update it
+                updateImage(
+                    applicationDatabase.imageDao().imageForDiagnosis(
+                        currentDiagnosis.value!!.id,
+                        currentImage.value!!.sample
+                    )!!.asApplicationEntity()
+                )
             }
 
-            // Update the diagnosis in the database
-            applicationDatabase.diagnosisDao()
-                .upsertDiagnosis(currentDiagnosis.value!!.asRoomEntity())
+            // Update the current diagnosis
+            updateDiagnosis(currentDiagnosis.value!!.appendImage(currentImage.value!!))
         }
 
 

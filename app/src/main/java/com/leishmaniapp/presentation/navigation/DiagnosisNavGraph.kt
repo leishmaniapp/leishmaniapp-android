@@ -25,6 +25,7 @@ import com.leishmaniapp.presentation.views.diagnosis.DiagnosisAndAnalysisScreen
 import com.leishmaniapp.presentation.views.diagnosis.DiagnosisImageEditScreen
 import com.leishmaniapp.presentation.views.diagnosis.DiagnosisImageGridScreen
 import com.leishmaniapp.presentation.views.diagnosis.DiagnosisTableScreen
+import com.leishmaniapp.presentation.views.diagnosis.FinishDiagnosisScreen
 import com.leishmaniapp.presentation.views.menu.AwaitingDiagnosesScreen
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -55,8 +56,6 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 // Image Standardization
                 val imageStandardizationResult = diagnosisViewModel.standardizeImage(uri)
                 Log.d("ImageStandardization", "Got result = $imageStandardizationResult")
-
-                //TODO: What if image fails?
 
                 // Create Image Entity
                 val currentDiagnosis = diagnosisViewModel.currentDiagnosis.value!!
@@ -147,10 +146,11 @@ fun NavGraphBuilder.diagnosisNavGraph(
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisImageGrid.route) {
 
             val context = LocalContext.current
-            val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
+            val currentDiagnosis = diagnosisViewModel.currentDiagnosis.collectAsState()
+            val diagnosis = diagnosisViewModel.diagnosisFlow!!.collectAsState(initial = null)
             val imagesForDiagnosis = diagnosisViewModel.imagesForDiagnosisFlow
 
-            if (imagesForDiagnosis == null || diagnosis == null) {
+            if (imagesForDiagnosis == null || diagnosis.value == null) {
                 LoadingScreen()
             } else {
                 val imagesForDiagnosisState by imagesForDiagnosis.collectAsState(initial = null)
@@ -160,26 +160,30 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 } else {
                     val images = imagesForDiagnosisState!!.map { it.asApplicationEntity() }
                         .associateBy { it.sample }
-                    DiagnosisImageGridScreen(diagnosis = diagnosis!!.copy(images = images),
-                        allowReturn = diagnosisViewModel.isNewDiagnosis && !diagnosis!!.finalized,
+                    val diagnosisEntity = diagnosis.value!!.asApplicationEntity(
+                        applicationViewModel.specialist!!,
+                        currentDiagnosis.value!!.patient,
+                        images.values.toList()
+                    )
+                    DiagnosisImageGridScreen(diagnosis = diagnosisEntity,
+                        allowReturn = diagnosisViewModel.isNewDiagnosis &&
+                                !diagnosisEntity.finalized,
                         isBackground = !diagnosisViewModel.isNewDiagnosis,
                         onBackgroundProcessing = {
                             diagnosisViewModel.sendDiagnosisToBackgroundProcessing(context)
                             navController.exitDiagnosisReturnToMenu()
                         },
                         onGoBack = {
-                            if (!diagnosis!!.finalized && diagnosisViewModel.isNewDiagnosis) {
+                            if (!diagnosis.value!!.finalized && diagnosisViewModel.isNewDiagnosis) {
                                 navController.navigateToPictureTake()
                             } else {
                                 navController.popBackStack()
                             }
                         },
                         onFinishDiagnosis = {
-                            if (diagnosis!!.completed) {
-                                runBlocking {
-                                    diagnosisViewModel.finalizeDiagnosis(context)
-                                    navController.navigateToDiagnosisHistory()
-                                }
+                            runBlocking {
+                                diagnosisViewModel.finalizeDiagnosis(context)
+                                navController.navigateToRemarks()
                             }
                         },
                         onImageClick = { image ->
@@ -198,8 +202,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
             if (image == null || diagnosis == null) {
                 LoadingScreen()
             } else {
-                DiagnosisImageEditScreen(
-                    diagnosis = diagnosis!!,
+                DiagnosisImageEditScreen(diagnosis = diagnosis!!,
                     image = image!!,
                     onImageChange = { editedImage ->
                         Log.d("ImageUpdate", "Updated image with content: $editedImage")
@@ -214,22 +217,34 @@ fun NavGraphBuilder.diagnosisNavGraph(
 
         composable(NavigationRoutes.DiagnosisRoute.AwaitingDiagnosis.route) {
             val context = LocalContext.current
-            AwaitingDiagnosesScreen(
-                specialist = applicationViewModel.specialist!!,
+            AwaitingDiagnosesScreen(specialist = applicationViewModel.specialist!!,
                 awaitingDiagnoses = runBlocking {
                     diagnosisViewModel.getAwaitingDiagnosis(applicationViewModel.specialist!!)
-                }, onBackButton = {
+                },
+                onBackButton = {
                     navController.popBackStack()
-                }, onDiagnosisClick = { diagnosis ->
+                },
+                onDiagnosisClick = { diagnosis ->
                     diagnosisViewModel.setCurrentDiagnosis(diagnosis)
                     navController.navigateToImageGrid()
-                }, onSync = {
+                },
+                onSync = {
                     diagnosisViewModel.startDiagnosisResultOneTimeWorker(context)
                     Toast.makeText(
-                        context,
-                        R.string.alert_background_processing,
-                        Toast.LENGTH_LONG
+                        context, R.string.alert_background_processing, Toast.LENGTH_LONG
                     ).show()
+                })
+        }
+
+        composable(NavigationRoutes.DiagnosisRoute.DiagnosticRemarks.route) {
+            val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
+            FinishDiagnosisScreen(diagnosis = diagnosis!!,
+                onGoBack = { navController.popBackStack() },
+                onDiagnosisFinish = { newDiagnosis ->
+                    runBlocking {
+                        diagnosisViewModel.updateDiagnosis(newDiagnosis)
+                        navController.navigateToDiagnosisHistory()
+                    }
                 })
         }
     }
@@ -245,6 +260,10 @@ fun NavHostController.navigateToStartDiagnosis() {
 
 fun NavHostController.navigateToAwaitingDiagnosis() {
     this.navigate(NavigationRoutes.DiagnosisRoute.AwaitingDiagnosis.route)
+}
+
+private fun NavHostController.navigateToRemarks() {
+    this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosticRemarks.route)
 }
 
 private fun NavHostController.navigateToDiagnosisAndAnalysis() {
