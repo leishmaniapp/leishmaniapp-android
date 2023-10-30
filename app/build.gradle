@@ -165,6 +165,9 @@ dependencies {
 
     // Jetpack Startup
     implementation "androidx.startup:startup-runtime:1.1.1"
+
+    // PDF
+    implementation("com.itextpdf:itext7-core:8.0.1")
 }
 
 kapt {

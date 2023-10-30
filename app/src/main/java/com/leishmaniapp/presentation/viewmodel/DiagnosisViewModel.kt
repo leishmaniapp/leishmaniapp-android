@@ -1,7 +1,10 @@
 package com.leishmaniapp.presentation.viewmodel
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.util.Log
+import androidx.core.content.FileProvider
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
@@ -162,8 +165,20 @@ class DiagnosisViewModel @Inject constructor(
      * Share the current diagnosis as a PDF
      */
 
-    fun shareCurrentDiagnosis() {
-        TODO("Implementation of Diagnosis Sharing Module")
+    fun shareCurrentDiagnosis(context: Context) {
+        val file = runBlocking {
+            diagnosisShare.shareDiagnosisFile(currentDiagnosis.value!!)
+        }
+
+        Log.d("DiagnosisShare", "Stored in file: ${file.absolutePath}")
+
+        val uri = FileProvider.getUriForFile(context, "com.leishmaniapp", file)
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "application/pdf"
+            putExtra(Intent.EXTRA_STREAM, uri)
+        }
+
+        context.startActivity(Intent.createChooser(intent, "Share via"))
     }
 
     fun startDiagnosisResultOneTimeWorker(context: Context) {
@@ -430,9 +445,7 @@ class DiagnosisViewModel @Inject constructor(
         stopImageResultsWorker(context)
         stopDiagnosisResultsBackgroundWorker(context)
         withContext(Dispatchers.IO) {
-            applicationDatabase.diagnosisDao().upsertDiagnosis(
-                currentDiagnosis.value!!.copy(finalized = true).asRoomEntity()
-            )
+            updateDiagnosis(currentDiagnosis.value!!.copy(finalized = true))
         }
     }
 }
