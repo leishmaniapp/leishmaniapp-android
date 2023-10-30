@@ -51,6 +51,11 @@
     <!-- Alerts -->
     <string name="camera_exit">Cancelando captura de muestra</string>
     <string name="sure_exit">¿Está seguro que desea salir de la Aplicación?</string>
+    <string name="alert_not_analyzed">Esta imágen aún no ha sido analizada. Presione el botón de analizar para generar los resultados</string>
+    <string name="alert_sure_finish_diagnosis">¿Está seguro que desea finalizar el diagnóstico?</string>
+    <string name="alert_missing_result">Es necesario proveer un diagnóstico antes de continuar</string>
+    <string name="alert_discard_diagnosis">¿Está seguro que desea salir? Esta acción descartará el diagnóstico</string>
+    <string name="alert_background_diagnosis">¿Está seguro que desea procesar este diagnóstico en segundo plano? No podrá tomar más muestras una vez salgad e esta pantalla</string>
 
     <!-- Domain Specific -->
     <string name="diagnosis">Diagnóstico</string>

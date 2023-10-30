@@ -22,6 +22,7 @@ import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
+import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.disease.Disease
 import com.leishmaniapp.infrastructure.background.DiagnosisResultsWorker
 import com.leishmaniapp.infrastructure.background.ImageProcessingWorker
@@ -368,6 +369,16 @@ class DiagnosisViewModel @Inject constructor(
     suspend fun continueDiagnosisNextImage(context: Context) {
         stopImageResultsWorker(context)
         withContext(Dispatchers.IO) {
+            // Make sure specialist has provided his results
+            val diseaseElements = currentDiagnosis.value!!.disease.elements.toSet()
+            val currentDiagnosisElements =
+                currentImage.value!!.elements.filterIsInstance<SpecialistDiagnosticElement>()
+                    .map { it.name }.toSet()
+
+            if (diseaseElements != currentDiagnosisElements) {
+                throw IllegalStateException("Specialist is missing result")
+            }
+
             // Take last photo and update it
             updateImage(
                 applicationDatabase.imageDao()
@@ -447,5 +458,17 @@ class DiagnosisViewModel @Inject constructor(
         withContext(Dispatchers.IO) {
             updateDiagnosis(currentDiagnosis.value!!.copy(finalized = true))
         }
+    }
+
+    suspend fun discardDiagnosis(context: Context) {
+        stopImageResultsWorker(context)
+        stopDiagnosisResultsBackgroundWorker(context)
+        withContext(Dispatchers.IO) {
+            applicationDatabase.diagnosisDao()
+                .deleteDiagnosis(currentDiagnosis.value!!.asRoomEntity())
+        }
+
+        setCurrentDiagnosis(null)
+        setCurrentImage(null)
     }
 }
