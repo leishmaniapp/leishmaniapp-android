@@ -159,7 +159,7 @@ fun DiagnosisAndAnalysisScreen(
                             // Show image number
                             Text(
                                 text = "%s %d".format(
-                                    stringResource(id = R.string.image_number), image.sample
+                                    stringResource(id = R.string.image_number), (image.sample + 1)
                                 )
                             )
 
@@ -176,6 +176,7 @@ fun DiagnosisAndAnalysisScreen(
                                 disease = diagnosis.disease,
                                 modelDiagnosticElements = modelDiagnosticElements,
                                 specialistDiagnosticElements = specialistDiagnosticElements,
+                                modelFailIcon = image.processed == ImageAnalysisStatus.NotAnalyzed,
                                 onSpecialistEdit = { elementName, specialistDiagnosticElement ->
                                     // Grab the old specialist diagnostic element
                                     val previousDiagnosticElement =

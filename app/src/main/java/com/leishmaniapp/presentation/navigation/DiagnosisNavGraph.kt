@@ -68,10 +68,14 @@ fun NavGraphBuilder.diagnosisNavGraph(
                     }
                 }, confirmButton = {
                     TextButton(onClick = {
-                        navController.popBackStack()
+                        // Show toast
+                        navController.navigateToMenu()
+
+                        Toast.makeText(context, R.string.camera_exit, Toast.LENGTH_SHORT).show()
                         runBlocking {
                             diagnosisViewModel.discardDiagnosis(context)
                         }
+
                     }) {
                         Text(text = stringResource(id = R.string.accept))
                     }
@@ -82,29 +86,31 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 showAlert = true
             }
 
-            CameraView(diagnosis = diagnosis!!, onCanceled = {
-                // Show toast
-                Toast.makeText(context, R.string.camera_exit, Toast.LENGTH_SHORT).show()
-                // Return to previous
-                showAlert = true
-            }, onPictureTake = { uri ->
-                // Image Standardization
-                val imageStandardizationResult = diagnosisViewModel.standardizeImage(uri)
-                Log.d("ImageStandardization", "Got result = $imageStandardizationResult")
+            if (diagnosis == null) {
+                LoadingScreen()
+            } else {
+                CameraView(diagnosis = diagnosis!!, onCanceled = {
+                    // Return to previous
+                    showAlert = true
+                }, onPictureTake = { uri ->
+                    // Image Standardization
+                    val imageStandardizationResult = diagnosisViewModel.standardizeImage(uri)
+                    Log.d("ImageStandardization", "Got result = $imageStandardizationResult")
 
-                // Create Image Entity
-                val currentDiagnosis = diagnosisViewModel.currentDiagnosis.value!!
-                val newImage = Image(
-                    sample = currentDiagnosis.samples,
-                    size = imageStandardizationResult!!,
-                    path = uri
-                )
+                    // Create Image Entity
+                    val currentDiagnosis = diagnosisViewModel.currentDiagnosis.value!!
+                    val newImage = Image(
+                        sample = currentDiagnosis.samples,
+                        size = imageStandardizationResult!!,
+                        path = uri
+                    )
 
-                diagnosisViewModel.setCurrentImage(newImage)
-                diagnosisViewModel.storeImageInDatabase()
+                    diagnosisViewModel.setCurrentImage(newImage)
+                    diagnosisViewModel.storeImageInDatabase()
 
-                navController.navigateToDiagnosisAndAnalysis()
-            })
+                    navController.navigateToDiagnosisAndAnalysis()
+                })
+            }
         }
 
         // Sample processing
@@ -222,16 +228,21 @@ fun NavGraphBuilder.diagnosisNavGraph(
                             }
                         },
                         onFinishAction = {
-                            alertDialogState = "finish_sure"
+                            alertDialogState =
+                                if (diagnosisViewModel.canContinueDiagnosisNextImage()) {
+                                    "finish_sure"
+                                } else {
+                                    "missing_specialist_result"
+                                }
                         },
                         onNextAction = {
                             Log.d("Diagnosis", "Continue to next image")
-                            try {
+                            if (diagnosisViewModel.canContinueDiagnosisNextImage()) {
                                 runBlocking {
                                     diagnosisViewModel.continueDiagnosisNextImage(context)
                                 }
                                 navController.navigateToPictureTake()
-                            } catch (e: IllegalStateException) {
+                            } else {
                                 alertDialogState = "missing_specialist_result"
                             }
                         },
@@ -243,32 +254,23 @@ fun NavGraphBuilder.diagnosisNavGraph(
             }
         }
 
-        composable(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route) {
-            val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
-            val context = LocalContext.current
-
-            DiagnosisTableScreen(diagnosis = diagnosis!!,
-                onBackButton = { navController.navigateToMenu() },
-                onShareDiagnosis = { diagnosisViewModel.shareCurrentDiagnosis(context) })
-        }
-
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisImageGrid.route) {
 
             val context = LocalContext.current
             val currentDiagnosis = diagnosisViewModel.currentDiagnosis.collectAsState()
-            val diagnosis = diagnosisViewModel.diagnosisFlow!!.collectAsState(initial = null)
             val imagesForDiagnosis = diagnosisViewModel.imagesForDiagnosisFlow
 
             var alertDialogState by remember {
                 mutableStateOf("none")
             }
 
-            if (imagesForDiagnosis == null || diagnosis.value == null) {
+            if (imagesForDiagnosis == null || diagnosisViewModel.diagnosisFlow == null) {
                 LoadingScreen()
             } else {
+                val diagnosis = diagnosisViewModel.diagnosisFlow!!.collectAsState(initial = null)
                 val imagesForDiagnosisState by imagesForDiagnosis.collectAsState(initial = null)
 
-                if (imagesForDiagnosisState == null) {
+                if (imagesForDiagnosisState == null || diagnosis.value == null) {
                     LoadingScreen()
                 } else {
 
@@ -322,8 +324,10 @@ fun NavGraphBuilder.diagnosisNavGraph(
                             text = { Text(text = stringResource(id = R.string.alert_sure_finish_diagnosis)) })
                     }
 
-                    BackHandler {
-                        alertDialogState = "pop_scope"
+                    if (diagnosisViewModel.isNewDiagnosis) {
+                        BackHandler {
+                            alertDialogState = "pop_scope"
+                        }
                     }
 
                     DiagnosisImageGridScreen(diagnosis = diagnosisEntity,
@@ -334,7 +338,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
                             navController.exitDiagnosisReturnToMenu()
                         },
                         onGoBack = {
-                            if (!diagnosis.value!!.finalized && diagnosisViewModel.isNewDiagnosis) {
+                            if (diagnosisViewModel.isNewDiagnosis) {
                                 navController.navigateToPictureTake()
                             } else {
                                 navController.popBackStack()
@@ -373,7 +377,9 @@ fun NavGraphBuilder.diagnosisNavGraph(
         }
 
         composable(NavigationRoutes.DiagnosisRoute.AwaitingDiagnosis.route) {
+
             val context = LocalContext.current
+
             AwaitingDiagnosesScreen(specialist = applicationViewModel.specialist!!,
                 awaitingDiagnoses = runBlocking {
                     diagnosisViewModel.getAwaitingDiagnosis(applicationViewModel.specialist!!)
@@ -394,6 +400,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
         }
 
         composable(NavigationRoutes.DiagnosisRoute.DiagnosticRemarks.route) {
+
             val context = LocalContext.current
             val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
 
@@ -407,11 +414,32 @@ fun NavGraphBuilder.diagnosisNavGraph(
                     }
                 })
         }
+
+        composable(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route) {
+
+            val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
+            val context = LocalContext.current
+
+            BackHandler {
+                navController.navigateToMenu()
+            }
+
+            DiagnosisTableScreen(diagnosis = diagnosis!!,
+                onBackButton = { navController.navigateToMenu() },
+                onShareDiagnosis = { diagnosisViewModel.shareCurrentDiagnosis(context) })
+        }
     }
 }
 
 fun NavHostController.navigateToDiagnosisHistory() {
-    this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route)
+    this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route) {
+        popUpTo(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
+            inclusive = true
+        }
+        popUpTo(NavigationRoutes.PatientsRoute.PatientDiagnosisHistory.route) {
+            inclusive = true
+        }
+    }
 }
 
 fun NavHostController.navigateToStartDiagnosis() {

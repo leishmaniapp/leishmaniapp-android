@@ -366,16 +366,23 @@ class DiagnosisViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Check if specialist is able to continue to next image
+     */
+    fun canContinueDiagnosisNextImage(): Boolean {
+        // Make sure specialist has provided his results
+        val diseaseElements = currentDiagnosis.value!!.disease.elements.toSet()
+        val currentDiagnosisElements =
+            currentImage.value!!.elements.filterIsInstance<SpecialistDiagnosticElement>()
+                .map { it.name }.toSet()
+
+        return (diseaseElements == currentDiagnosisElements)
+    }
+
     suspend fun continueDiagnosisNextImage(context: Context) {
         stopImageResultsWorker(context)
         withContext(Dispatchers.IO) {
-            // Make sure specialist has provided his results
-            val diseaseElements = currentDiagnosis.value!!.disease.elements.toSet()
-            val currentDiagnosisElements =
-                currentImage.value!!.elements.filterIsInstance<SpecialistDiagnosticElement>()
-                    .map { it.name }.toSet()
-
-            if (diseaseElements != currentDiagnosisElements) {
+            if (!canContinueDiagnosisNextImage()) {
                 throw IllegalStateException("Specialist is missing result")
             }
 

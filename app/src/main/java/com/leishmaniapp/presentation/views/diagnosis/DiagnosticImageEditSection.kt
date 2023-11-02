@@ -132,7 +132,7 @@ fun DiagnosticImageEditSection(
 
             // Alert text (Are you sure you want to delete ... ?)
             Crossfade(
-                targetState = selectedElement?.first?.name?.value,
+                targetState = selectedElement?.first?.name?.displayName,
                 label = "animation:crossfade:diagnosticElementRemoveText"
             ) {
                 Text(

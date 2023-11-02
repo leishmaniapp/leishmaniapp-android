@@ -8,8 +8,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -29,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -49,6 +55,7 @@ fun AuthenticationScreen(
 
     var emailState by remember { mutableStateOf(TextFieldValue("")) }
     var passwordState by remember { mutableStateOf(TextFieldValue("")) }
+    var showPassword by remember { mutableStateOf(false) }
 
     LeishmaniappTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
@@ -78,7 +85,7 @@ fun AuthenticationScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         OutlinedTextField(
                             value = emailState,
-                            label = { Text(text = stringResource(id = R.string.email)) },
+                            label = { Text(text = stringResource(id = R.string.username)) },
                             onValueChange = { emailState = it },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Email,
@@ -89,10 +96,25 @@ fun AuthenticationScreen(
                             value = passwordState,
                             label = { Text(text = stringResource(id = R.string.password)) },
                             onValueChange = { passwordState = it },
-                            visualTransformation = PasswordVisualTransformation(),
+                            visualTransformation = if (showPassword) {
+                                VisualTransformation.None
+                            } else {
+                                PasswordVisualTransformation()
+                            },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Password,
-                            )
+                            ),
+                            trailingIcon = {
+                                if (showPassword) {
+                                    IconButton(onClick = { showPassword = false }) {
+                                        Icon(Icons.Default.VisibilityOff, contentDescription = null)
+                                    }
+                                } else {
+                                    IconButton(onClick = { showPassword = true }) {
+                                        Icon(Icons.Filled.Visibility, contentDescription = null)
+                                    }
+                                }
+                            }
                         )
                     }
                 }

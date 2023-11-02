@@ -36,7 +36,7 @@
 
     <!-- General -->
     <string name="date_time">Fecha y Hora</string>
-    <string name="email">Correo electrónico</string>
+    <string name="username">Usuario</string>
     <string name="password">Contraseña</string>
     <string name="database">Base de Datos</string>
     <string name="export_import">Exportar e Importar</string>
@@ -49,13 +49,14 @@
     <string name="synchronize">Sincronizar</string>
 
     <!-- Alerts -->
-    <string name="camera_exit">Cancelando captura de muestra</string>
+    <string name="camera_exit">Cancelando captura de campos</string>
     <string name="sure_exit">¿Está seguro que desea salir de la Aplicación?</string>
     <string name="alert_not_analyzed">Esta imágen aún no ha sido analizada. Presione el botón de analizar para generar los resultados</string>
     <string name="alert_sure_finish_diagnosis">¿Está seguro que desea finalizar el diagnóstico?</string>
     <string name="alert_missing_result">Es necesario proveer un diagnóstico antes de continuar</string>
     <string name="alert_discard_diagnosis">¿Está seguro que desea salir? Esta acción descartará el diagnóstico</string>
-    <string name="alert_background_diagnosis">¿Está seguro que desea procesar este diagnóstico en segundo plano? No podrá tomar más muestras una vez salgad e esta pantalla</string>
+    <string name="alert_background_diagnosis">¿Está seguro que desea procesar este diagnóstico en segundo plano? No podrá tomar más campos una vez salgad e esta pantalla</string>
+    <string name="alert_invalid_fields">Todos los campos deben ser válidos</string>
 
     <!-- Domain Specific -->
     <string name="diagnosis">Diagnóstico</string>
@@ -63,12 +64,12 @@
     <string name="specialist">Especialista</string>
     <string name="patient">Paciente</string>
     <string name="patients">Pacientes</string>
-    <string name="sample">Muestra</string>
+    <string name="sample">Campo</string>
     <string name="model">Modelo</string>
     <string name="remarks">Observaciones</string>
     <string name="no_remarks">Sin observaciones</string>
     <string name="characteristic">Caracteristica</string>
-    <string name="number_of_samples">Número de muestas</string>
+    <string name="number_of_samples">Número de campos</string>
     <string name="image_number">Imagen #</string>
     <string name="processed">Procesada</string>
     <string name="not_analyzed">No analizada</string>
@@ -98,7 +99,7 @@
     <string name="erase_element">¿Desea eliminar el elemento</string>
 
     <!-- Diagnostic images -->
-    <string name="diagnosis_image_grid_screen_header">Galería de Muestras</string>
+    <string name="diagnosis_image_grid_screen_header">Galería de Campos</string>
     <string name="remaining_images_alert_icon">Alerta de procesamiento</string>
     <string name="remaining_images_alert_title">Algunas imágenes aún no han sido procesadas</string>
     <string name="remaining_images_alert_content">No podrás consultar los resultados hasta que las imágenes sean procesadas</string>
@@ -142,6 +143,7 @@
     <string name="accept_and_finish">Aceptar cambios y finalizar</string>
     <string name="alert_unfinished_diagnosis">El diagnóstico aún no ha sido completado</string>
     <string name="alert_taking_photo">Se está tomando la imágen</string>
+    <string name="alert_import_success">Base de Datos importada correctamente</string>
 
 
 </resources>

@@ -136,36 +136,36 @@ fun DiagnosisImageGridScreen(
                         }
                     }
 
-                    // Ordering
-                    Text(text = stringResource(id = R.string.order_by))
-                    Row {
-                        FilterChip(modifier = Modifier.padding(4.dp),
-                            selected = true,
-                            onClick = { /*TODO*/ },
-                            label = {
-                                Text(text = stringResource(id = R.string.order_by_asc))
-                            })
-
-                        FilterChip(modifier = Modifier.padding(4.dp),
-                            selected = false,
-                            onClick = { /*TODO*/ },
-                            label = {
-                                Text(text = stringResource(id = R.string.order_by_desc))
-                            })
-                    }
-
-                    // Filtering
-                    Text(text = stringResource(id = R.string.priorize_by))
-                    LazyRow {
-                        items(diagnosticElements.toList()) { diagnosticElement ->
-                            FilterChip(modifier = Modifier.padding(4.dp),
-                                selected = false,
-                                onClick = { /*TODO*/ },
-                                label = { /*TODO: Use some sort of provider*/
-                                    Text(text = diagnosticElement.value)
-                                })
-                        }
-                    }
+//                    // Ordering
+//                    Text(text = stringResource(id = R.string.order_by))
+//                    Row {
+//                        FilterChip(modifier = Modifier.padding(4.dp),
+//                            selected = true,
+//                            onClick = { /*TODO*/ },
+//                            label = {
+//                                Text(text = stringResource(id = R.string.order_by_asc))
+//                            })
+//
+//                        FilterChip(modifier = Modifier.padding(4.dp),
+//                            selected = false,
+//                            onClick = { /*TODO*/ },
+//                            label = {
+//                                Text(text = stringResource(id = R.string.order_by_desc))
+//                            })
+//                    }
+//
+//                    // Filtering
+//                    Text(text = stringResource(id = R.string.priorize_by))
+//                    LazyRow {
+//                        items(diagnosticElements.toList()) { diagnosticElement ->
+//                            FilterChip(modifier = Modifier.padding(4.dp),
+//                                selected = false,
+//                                onClick = { /*TODO*/ },
+//                                label = {
+//                                    Text(text = diagnosticElement.displayName)
+//                                })
+//                        }
+//                    }
                 }
             }
 

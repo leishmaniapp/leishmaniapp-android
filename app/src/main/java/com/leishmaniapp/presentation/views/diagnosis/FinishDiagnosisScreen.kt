@@ -78,12 +78,10 @@ fun FinishDiagnosisScreen(
 
                 Row {
                     Button(modifier = Modifier.padding(8.dp),
-                        enabled = diagnosisResult,
                         onClick = { diagnosisResult = false }) {
                         Text(text = stringResource(id = R.string.diagnosis_results_negative))
                     }
                     Button(modifier = Modifier.padding(8.dp),
-                        enabled = !diagnosisResult,
                         onClick = { diagnosisResult = true }) {
                         Text(text = stringResource(id = R.string.diagnosis_results_positive))
                     }
@@ -127,7 +125,9 @@ fun FinishDiagnosisScreen(
                         onClick = {
                             onDiagnosisFinish.invoke(
                                 diagnosis.copy(
-                                    remarks = remarks, specialistResult = diagnosisResult
+                                    remarks = remarks.ifBlank {
+                                        null
+                                    }, specialistResult = diagnosisResult
                                 )
                             )
                         }

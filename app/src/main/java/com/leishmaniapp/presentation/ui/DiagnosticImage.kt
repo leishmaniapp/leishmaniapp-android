@@ -40,7 +40,7 @@ import com.leishmaniapp.utils.MockGenerator
 
 /// Radius at which the element will be 
 const val coordinatesSelectionRadius: Int = 100
-const val outerCircleAlpha: Float = 0.2f
+const val outerCircleAlpha: Float = 0.35f
 
 /**
  * Image's real coordinates do not match on-screen coordinates due to canvas being
@@ -142,7 +142,7 @@ fun DiagnosticImage(
                 // Draw a circle behind the (x)
                 drawCircle(
                     alpha = outerCircleAlpha,
-                    color = Color.Black,
+                    color = Color.Yellow,
                     // For some reason radius is multiplied by 2
                     radius = (coordinatesSelectionRadius.toFloat() / 2f),
                     center = canvasPosition.let {
