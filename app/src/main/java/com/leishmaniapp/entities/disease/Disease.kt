@@ -23,10 +23,10 @@ sealed class Disease(
         @Composable get
 
     companion object {
-        fun diseases(): List<Disease> =
-            Disease::class.sealedSubclasses.map { it.objectInstance!! }.toList()
+        fun diseases(): Set<Disease> =
+            Disease::class.sealedSubclasses.map { it.objectInstance!! }.toSet()
 
-        fun where(id: String): Disease? =
+        fun diseaseById(id: String): Disease? =
             Disease::class.sealedSubclasses.firstOrNull { it.objectInstance?.id == id }?.objectInstance
     }
 }

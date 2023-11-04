@@ -50,7 +50,14 @@ class ApplicationRoomTypeConverters {
     fun diseaseToString(disease: Disease): String = disease.id
 
     @TypeConverter
-    fun stringToDisease(id: String): Disease? = Disease.where(id)
+    fun stringToDisease(id: String): Disease? = Disease.diseaseById(id)
+
+    /* Set<Disease> */
+    @TypeConverter
+    fun diseasesSetToJson(diseases: Set<Disease>): String = Json.encodeToString(diseases)
+
+    @TypeConverter
+    fun jsonToDiseasesSet(diseasesJson: String): Set<Disease> = Json.decodeFromString(diseasesJson)
 
     /* Set<DiagnosticElement> */
     @TypeConverter

@@ -9,8 +9,10 @@ import com.amplifyframework.core.Amplify
 import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.Username
+import com.leishmaniapp.entities.disease.Disease
 import com.leishmaniapp.persistance.database.ApplicationDatabase
 import com.leishmaniapp.usecases.IAuthenticationProvider
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -57,19 +59,33 @@ class CloudAuthenticationProvider @Inject constructor(
             }
 
             // Get current session
-            val nameAttribute = suspendCoroutine { continuation ->
+            val attributes = suspendCoroutine { continuation ->
                 Amplify.Auth.fetchUserAttributes(
                     { results -> continuation.resume(results) },
                     { err -> throw err })
-            }.first { attribute ->
+            }
+
+            val nameAttribute = attributes.first { attribute ->
                 attribute.key.keyString == "name"
             }
+
+            val diseasesAttribute = attributes.first { attribute ->
+                attribute.key.keyString == "custom:diseases"
+            }
+
+            val diseases =
+                Json.decodeFromString<List<String>>(diseasesAttribute.value).map { diseaseId ->
+                    Disease.diseaseById(diseaseId)
+                }.filterNotNull().toSet()
+
+            Log.d("AllowedDiseasesForSpecialist", diseases.toString())
 
             // Create the specialist
             val specialist = Specialist(
                 username = username,
                 password = password,
-                name = nameAttribute.value
+                name = nameAttribute.value,
+                diseases = diseases
             )
 
             // Update the specialist in Database

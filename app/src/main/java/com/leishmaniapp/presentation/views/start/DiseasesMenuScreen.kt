@@ -27,7 +27,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  */
 @Composable
 fun DiseasesMenuScreen(
-    diseases: List<Disease> = Disease.diseases(),
+    diseases: Set<Disease> = Disease.diseases(),
     onDiseaseSelection: (Disease) -> Unit,
 ) {
     LeishmaniappScaffold {
@@ -44,7 +44,7 @@ fun DiseasesMenuScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             LazyColumn {
-                items(diseases) { disease ->
+                items(diseases.toList()) { disease ->
                     DiseaseItemList(disease = disease) {
                         onDiseaseSelection.invoke(disease)
                     }
@@ -59,7 +59,7 @@ fun DiseasesMenuScreen(
 fun DiseasesMenuScreenPreview() {
     LeishmaniappTheme {
         DiseasesMenuScreen(
-            diseases = listOf(
+            diseases = setOf(
                 LeishmaniasisGiemsaDisease,
                 MockDisease
             )
