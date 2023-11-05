@@ -8,7 +8,7 @@ import com.leishmaniapp.R
 import com.leishmaniapp.entities.ComputedResultsType
 import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.DiagnosticElementName
-import com.leishmaniapp.entities.SpecialistDiagnosticElement
+import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.usecases.serialization.DiseaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -43,8 +43,10 @@ data object LeishmaniasisGiemsaDisease : Disease(
      */
     override fun computeDiagnosisResult(computedResults: ComputedResultsType): Boolean {
         val results =
-            computedResults[this.elements.first { it.value == "leishmaniasis.giemsa:parasite" }]?.get(
-                SpecialistDiagnosticElement::class
+            computedResults[this.elements.first {
+                it.value == "leishmaniasis.giemsa:parasite"
+            }]?.get(
+                ModelDiagnosticElement::class
             )
 
         return (results != null && results > 0)

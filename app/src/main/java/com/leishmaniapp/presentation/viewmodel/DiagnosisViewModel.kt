@@ -413,7 +413,13 @@ class DiagnosisViewModel @Inject constructor(
     }
 
     suspend fun finishDiagnosisPictureTaking(context: Context) {
+
+        if (currentDiagnosis.value!!.samples == 0) {
+            throw IllegalStateException("Cannot finish diagnosis with no images")
+        }
+
         stopImageResultsWorker(context)
+
         withContext(Dispatchers.IO) {
             // Delete image if not processed
             val image = applicationDatabase.imageDao()
@@ -433,7 +439,6 @@ class DiagnosisViewModel @Inject constructor(
             // Update the current diagnosis
             updateDiagnosis(currentDiagnosis.value!!.appendImage(currentImage.value!!))
         }
-
 
         // Set current image to null
         setCurrentImage(null)
@@ -482,6 +487,10 @@ class DiagnosisViewModel @Inject constructor(
         stopImageResultsWorker(context)
         stopDiagnosisResultsBackgroundWorker(context)
         withContext(Dispatchers.IO) {
+            applicationDatabase.imageDao().allImagesForDiagnosis(currentDiagnosis.value!!.id)
+                .forEach { imageRoom ->
+                    applicationDatabase.imageDao().deleteImage(imageRoom)
+                }
             applicationDatabase.diagnosisDao()
                 .deleteDiagnosis(currentDiagnosis.value!!.asRoomEntity())
         }

@@ -52,6 +52,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
 
         // Camera
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route) {
+
             val context = LocalContext.current
             val diagnosis by diagnosisViewModel.currentDiagnosis.collectAsState()
 
@@ -59,18 +60,24 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 mutableStateOf(false)
             }
 
+            val onExitAction: () -> Unit = {
+                showAlert = true
+            }
+
+            val onCancelExitAction: () -> Unit = {
+                showAlert = false
+                navController.navigateToPictureTake()
+            }
+
             if (showAlert) {
-                AlertDialog(onDismissRequest = {
-                    showAlert = false
-                }, dismissButton = {
-                    TextButton(onClick = { showAlert = false }) {
+                AlertDialog(onDismissRequest = onCancelExitAction, dismissButton = {
+                    TextButton(onClick = onCancelExitAction) {
                         Text(text = stringResource(id = R.string.cancel))
                     }
                 }, confirmButton = {
                     TextButton(onClick = {
                         // Show toast
                         navController.navigateToMenu()
-
                         Toast.makeText(context, R.string.camera_exit, Toast.LENGTH_SHORT).show()
                         runBlocking {
                             diagnosisViewModel.discardDiagnosis(context)
@@ -79,37 +86,36 @@ fun NavGraphBuilder.diagnosisNavGraph(
                     }) {
                         Text(text = stringResource(id = R.string.accept))
                     }
-                }, text = { Text(text = stringResource(id = R.string.alert_discard_diagnosis)) })
+                }, text = {
+                    Text(text = stringResource(id = R.string.alert_discard_diagnosis))
+                })
             }
 
-            BackHandler {
-                showAlert = true
-            }
+            BackHandler(onBack = onExitAction)
 
             if (diagnosis == null) {
                 LoadingScreen()
             } else {
-                CameraView(diagnosis = diagnosis!!, onCanceled = {
-                    // Return to previous
-                    showAlert = true
-                }, onPictureTake = { uri ->
-                    // Image Standardization
-                    val imageStandardizationResult = diagnosisViewModel.standardizeImage(uri)
-                    Log.d("ImageStandardization", "Got result = $imageStandardizationResult")
+                CameraView(diagnosis = diagnosis!!,
+                    onCanceled = onExitAction,
+                    onPictureTake = { uri ->
+                        // Image Standardization
+                        val imageStandardizationResult = diagnosisViewModel.standardizeImage(uri)
+                        Log.d("ImageStandardization", "Got result = $imageStandardizationResult")
 
-                    // Create Image Entity
-                    val currentDiagnosis = diagnosisViewModel.currentDiagnosis.value!!
-                    val newImage = Image(
-                        sample = currentDiagnosis.samples,
-                        size = imageStandardizationResult!!,
-                        path = uri
-                    )
+                        // Create Image Entity
+                        val currentDiagnosis = diagnosisViewModel.currentDiagnosis.value!!
+                        val newImage = Image(
+                            sample = currentDiagnosis.samples,
+                            size = imageStandardizationResult!!,
+                            path = uri
+                        )
 
-                    diagnosisViewModel.setCurrentImage(newImage)
-                    diagnosisViewModel.storeImageInDatabase()
+                        diagnosisViewModel.setCurrentImage(newImage)
+                        diagnosisViewModel.storeImageInDatabase()
 
-                    navController.navigateToDiagnosisAndAnalysis()
-                })
+                        navController.navigateToDiagnosisAndAnalysis()
+                    })
             }
         }
 
@@ -192,12 +198,23 @@ fun NavGraphBuilder.diagnosisNavGraph(
                                     Text(text = stringResource(id = R.string.cancel))
                                 }
                             },
+
                             confirmButton = {
                                 TextButton(onClick = {
                                     runBlocking {
-                                        diagnosisViewModel.finishDiagnosisPictureTaking(context)
+                                        try {
+                                            diagnosisViewModel.finishDiagnosisPictureTaking(context)
+                                            navController.navigateToImageGrid()
+                                        } catch (e: IllegalStateException) {
+                                            navController.navigateToMenu()
+                                            diagnosisViewModel.discardDiagnosis(context)
+                                            Toast.makeText(
+                                                context,
+                                                R.string.alert_no_images,
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        }
                                     }
-                                    navController.navigateToImageGrid()
                                 }) {
                                     Text(text = stringResource(id = R.string.accept))
                                 }
@@ -209,17 +226,22 @@ fun NavGraphBuilder.diagnosisNavGraph(
                         alertDialogState = "pop_scope"
                     }
 
-                    DiagnosisAndAnalysisScreen(analysisStatus = analysisState,
+                    DiagnosisAndAnalysisScreen(
+
+                        analysisStatus = analysisState,
                         diagnosis = diagnosis!!,
                         image = imageFlowState!!.asApplicationEntity(),
                         analysisWasStarted = analysisWasStarted,
+
                         onImageChange = { editedImage ->
                             Log.d("ImageUpdate", "Updated image with content: $editedImage")
                             diagnosisViewModel.updateImage(editedImage)
                         },
+
                         onNextActionNotAnalyzed = {
                             alertDialogState = "not_analyzed"
                         },
+
                         onAnalyzeAction = {
                             // Start the diagnosis
                             analysisWasStarted = true
@@ -227,6 +249,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
                                 diagnosisViewModel.analyzeImage(context)
                             }
                         },
+
                         onFinishAction = {
                             alertDialogState =
                                 if (diagnosisViewModel.canContinueDiagnosisNextImage()) {
@@ -235,6 +258,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
                                     "missing_specialist_result"
                                 }
                         },
+
                         onNextAction = {
                             Log.d("Diagnosis", "Continue to next image")
                             if (diagnosisViewModel.canContinueDiagnosisNextImage()) {
@@ -246,6 +270,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
                                 alertDialogState = "missing_specialist_result"
                             }
                         },
+
                         onRepeatAction = {
                             diagnosisViewModel.discardAndRepeatCurrentImage(context)
                             navController.navigateToPictureTake()
@@ -262,6 +287,14 @@ fun NavGraphBuilder.diagnosisNavGraph(
 
             var alertDialogState by remember {
                 mutableStateOf("none")
+            }
+
+            val onExitAction: () -> Unit = {
+                if (diagnosisViewModel.isNewDiagnosis) {
+                    navController.navigateToPictureTake()
+                } else {
+                    navController.popBackStack()
+                }
             }
 
             if (imagesForDiagnosis == null || diagnosisViewModel.diagnosisFlow == null) {
@@ -324,11 +357,10 @@ fun NavGraphBuilder.diagnosisNavGraph(
                             text = { Text(text = stringResource(id = R.string.alert_sure_finish_diagnosis)) })
                     }
 
-                    if (diagnosisViewModel.isNewDiagnosis) {
-                        BackHandler {
-                            alertDialogState = "pop_scope"
-                        }
-                    }
+                    BackHandler(
+                        enabled = diagnosisViewModel.isNewDiagnosis,
+                        onBack = onExitAction
+                    )
 
                     DiagnosisImageGridScreen(diagnosis = diagnosisEntity,
                         allowReturn = diagnosisViewModel.isNewDiagnosis && !diagnosisEntity.finalized,
@@ -337,13 +369,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
                             diagnosisViewModel.sendDiagnosisToBackgroundProcessing(context)
                             navController.exitDiagnosisReturnToMenu()
                         },
-                        onGoBack = {
-                            if (diagnosisViewModel.isNewDiagnosis) {
-                                navController.navigateToPictureTake()
-                            } else {
-                                navController.popBackStack()
-                            }
-                        },
+                        onGoBack = onExitAction,
                         onFinishDiagnosis = {
                             alertDialogState = "finish_sure"
                         },
@@ -429,12 +455,10 @@ fun NavGraphBuilder.diagnosisNavGraph(
             if (diagnosis == null) {
                 LoadingScreen()
             } else {
-                DiagnosisTableScreen(diagnosis = diagnosis!!,
-                    onBackButton = {
-                        navController.navigateToMenu()
-                        diagnosisViewModel.restartState()
-                    },
-                    onShareDiagnosis = { diagnosisViewModel.shareCurrentDiagnosis(context) })
+                DiagnosisTableScreen(diagnosis = diagnosis!!, onBackButton = {
+                    navController.navigateToMenu()
+                    diagnosisViewModel.restartState()
+                }, onShareDiagnosis = { diagnosisViewModel.shareCurrentDiagnosis(context) })
             }
         }
     }
@@ -462,18 +486,12 @@ private fun NavHostController.navigateToRemarks() {
 
 private fun NavHostController.navigateToDiagnosisAndAnalysis() {
     this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
-        popUpTo(NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route) {
-            inclusive = true
-        }
+        popUpTo(NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route)
     }
 }
 
 private fun NavHostController.navigateToPictureTake() {
-    this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route) {
-        popUpTo(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
-            inclusive = true
-        }
-    }
+    this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route)
 }
 
 private fun NavHostController.navigateToImageGrid() {

@@ -8,7 +8,7 @@ import com.leishmaniapp.R
 import com.leishmaniapp.entities.ComputedResultsType
 import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.DiagnosticElementName
-import com.leishmaniapp.entities.SpecialistDiagnosticElement
+import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.usecases.serialization.DiseaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -33,7 +33,8 @@ data object MockDisease : Disease(
      */
     override fun computeDiagnosisResult(computedResults: ComputedResultsType): Boolean {
         val results =
-            computedResults[MockDisease.elements.first()]?.get(SpecialistDiagnosticElement::class)
+            computedResults[MockDisease.elements.first()]
+                ?.get(ModelDiagnosticElement::class)
         return (results != null && results > 10)
     }
 }

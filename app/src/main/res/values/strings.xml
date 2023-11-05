@@ -144,6 +144,7 @@
     <string name="alert_unfinished_diagnosis">El diagnóstico aún no ha sido completado</string>
     <string name="alert_taking_photo">Se está tomando la imágen</string>
     <string name="alert_import_success">Base de Datos importada correctamente</string>
+    <string name="alert_no_images">No puede concluir un diagnóstico sin imágenes</string>
 
 
 </resources>
