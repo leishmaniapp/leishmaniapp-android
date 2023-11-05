@@ -16,13 +16,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.RemoveRedEye
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,9 +62,7 @@ fun DiagnosisImageGridScreen(
     onImageClick: (Image) -> Unit
 ) {
     LeishmaniappScaffold(
-        title = stringResource(id = R.string.finish_diagnosis),
-        showHelp = true,
-        bottomBar = {
+        title = stringResource(id = R.string.finish_diagnosis), showHelp = true, bottomBar = {
             NavigationBar {
                 NavigationBarItem(selected = false,
                     enabled = allowReturn,
@@ -94,9 +98,35 @@ fun DiagnosisImageGridScreen(
 
                     // Show alerts
                     if (!diagnosis.completed) {
+
+                        var showAlert by remember {
+                            mutableStateOf(false)
+                        }
+
+                        if (showAlert) {
+                            AlertDialog(onDismissRequest = {
+                                showAlert = false
+                            },
+                                dismissButton = {
+                                    TextButton(onClick = { showAlert = false }) {
+                                        Text(text = stringResource(id = R.string.cancel))
+                                    }
+                                },
+                                confirmButton = {
+                                    TextButton(
+                                        onClick = onBackgroundProcessing
+                                    ) {
+                                        Text(text = stringResource(id = R.string.accept))
+                                    }
+                                },
+                                text = { Text(text = stringResource(id = R.string.alert_sure_finish_diagnosis)) })
+                        }
+
                         Box(modifier = Modifier.padding(bottom = 12.dp)) {
                             if (!isBackground) {
-                                RemainingImagesAlert(onButtonClick = onBackgroundProcessing)
+                                RemainingImagesAlert(onButtonClick = {
+                                    showAlert = true
+                                })
                             } else {
                                 RemainingImagesProgress(
                                     done = diagnosis.images.values.count { image: Image -> image.processed == ImageAnalysisStatus.Analyzed },
@@ -106,36 +136,36 @@ fun DiagnosisImageGridScreen(
                         }
                     }
 
-                    // Ordering
-                    Text(text = stringResource(id = R.string.order_by))
-                    Row {
-                        FilterChip(modifier = Modifier.padding(4.dp),
-                            selected = true,
-                            onClick = { /*TODO*/ },
-                            label = {
-                                Text(text = stringResource(id = R.string.order_by_asc))
-                            })
-
-                        FilterChip(modifier = Modifier.padding(4.dp),
-                            selected = false,
-                            onClick = { /*TODO*/ },
-                            label = {
-                                Text(text = stringResource(id = R.string.order_by_desc))
-                            })
-                    }
-
-                    // Filtering
-                    Text(text = stringResource(id = R.string.priorize_by))
-                    LazyRow {
-                        items(diagnosticElements.toList()) { diagnosticElement ->
-                            FilterChip(modifier = Modifier.padding(4.dp),
-                                selected = false,
-                                onClick = { /*TODO*/ },
-                                label = { /*TODO: Use some sort of provider*/
-                                    Text(text = diagnosticElement.value)
-                                })
-                        }
-                    }
+//                    // Ordering
+//                    Text(text = stringResource(id = R.string.order_by))
+//                    Row {
+//                        FilterChip(modifier = Modifier.padding(4.dp),
+//                            selected = true,
+//                            onClick = { /*TODO*/ },
+//                            label = {
+//                                Text(text = stringResource(id = R.string.order_by_asc))
+//                            })
+//
+//                        FilterChip(modifier = Modifier.padding(4.dp),
+//                            selected = false,
+//                            onClick = { /*TODO*/ },
+//                            label = {
+//                                Text(text = stringResource(id = R.string.order_by_desc))
+//                            })
+//                    }
+//
+//                    // Filtering
+//                    Text(text = stringResource(id = R.string.priorize_by))
+//                    LazyRow {
+//                        items(diagnosticElements.toList()) { diagnosticElement ->
+//                            FilterChip(modifier = Modifier.padding(4.dp),
+//                                selected = false,
+//                                onClick = { /*TODO*/ },
+//                                label = {
+//                                    Text(text = diagnosticElement.displayName)
+//                                })
+//                        }
+//                    }
                 }
             }
 

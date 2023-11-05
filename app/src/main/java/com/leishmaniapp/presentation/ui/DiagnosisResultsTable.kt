@@ -36,20 +36,25 @@ fun DiagnosisResultsTable(
                 shape = RoundedCornerShape(6.dp)
             )
     ) {
+        
         // Disease
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.disease)) } }
         TableRow { Cell { Text(text = diagnosis.disease.displayName) } }
+
         // Date and Time
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.date_time)) } }
         TableRow { Cell { Text(text = diagnosis.date.toString()) } }
+
         // Patient
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.patient)) } }
         TableRow { Cell { Text(text = diagnosis.patient.name) } }
         SubheadingTableRow { Cell { Text(text = stringResource(id = R.string.patient_id_document)) } }
         TableRow { Cell { Text(text = diagnosis.patient.document) } }
+
         // Specialist
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.specialist)) } }
         TableRow { Cell { Text(text = diagnosis.specialist.name) } }
+
         // Number of samples
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.number_of_samples)) } }
         TableRow { Cell { Text(text = diagnosis.samples.toString()) } }
@@ -89,8 +94,7 @@ fun DiagnosisResultsTable(
         }
 
         diagnosis.computedResults.forEach { (element, data) ->
-            //TODO: Provide some sort of translation provider
-            HeadingTableRow { Cell { Text(text = element.value) } }
+            HeadingTableRow { Cell { Text(text = element.displayName) } }
             TableRow {
                 Cell {
                     Text(text = data[ModelDiagnosticElement::class].toString())

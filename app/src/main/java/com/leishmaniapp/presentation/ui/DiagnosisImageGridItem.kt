@@ -44,7 +44,7 @@ fun DiagnosisImageGridItem(modifier: Modifier = Modifier, image: Image) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = String.format("#%d", image.sample), modifier = Modifier.padding(8.dp)
+                text = String.format("#%d", (image.sample + 1)), modifier = Modifier.padding(8.dp)
             )
 
             Box(modifier = Modifier.padding(8.dp)) {

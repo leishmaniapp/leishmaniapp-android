@@ -38,15 +38,16 @@ class MockGenerator {
 
         fun mockImage(
             processed: ImageAnalysisStatus = ImageAnalysisStatus.values().random(),
-            size: Int = 2250
+            size: Int = 2250,
+            sample: Int = Random.nextInt(150),
         ) = Image(
+            sample = sample,
             date = faker.date.forward(1).toInstant().toKotlinInstant()
                 .toLocalDateTime(
                     TimeZone.UTC
                 ),
             size = size,
             processed = processed,
-            sample = Random.nextInt(150),
             elements = if (processed == ImageAnalysisStatus.Analyzed) {
                 setOf(
                     mockSpecialistDiagnosticElement(),
@@ -83,7 +84,7 @@ class MockGenerator {
          * Generate random mock diagnosis
          * @param isCompleted NULL for random image completion, else for completion status
          */
-        fun mockDiagnosis(isCompleted: Boolean? = null) =
+        fun mockDiagnosis(isCompleted: Boolean? = null, isFinished: Boolean = false) =
             Diagnosis(
                 specialistResult = Random.nextBoolean(),
                 modelResult = Random.nextBoolean(),
@@ -94,6 +95,7 @@ class MockGenerator {
                 remarks = faker.lorem.paragraph(),
                 specialist = mockSpecialist(),
                 patient = mockPatient(),
+                finalized = isFinished,
                 disease = MockDisease,
                 images = buildMap {
                     repeat(10) { idx ->

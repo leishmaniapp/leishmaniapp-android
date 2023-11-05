@@ -3,6 +3,7 @@ package com.leishmaniapp.entities.disease
 import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
+import com.leishmaniapp.entities.ComputedResultsType
 import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.DiagnosticElementName
 import com.leishmaniapp.usecases.serialization.ParentDiseaseSerializer
@@ -23,10 +24,16 @@ sealed class Disease(
         @Composable get
 
     companion object {
-        fun diseases(): List<Disease> =
-            Disease::class.sealedSubclasses.map { it.objectInstance!! }.toList()
+        fun diseases(): Set<Disease> =
+            Disease::class.sealedSubclasses.map { it.objectInstance!! }.toSet()
 
-        fun where(id: String): Disease? =
+        fun diseaseById(id: String): Disease? =
             Disease::class.sealedSubclasses.firstOrNull { it.objectInstance?.id == id }?.objectInstance
     }
+
+    /**
+     * Result of the diagnosis Positive or Negative given the amount and type of elements
+     * found during the diagnosis
+     */
+    abstract fun computeDiagnosisResult(computedResults: ComputedResultsType): Boolean
 }

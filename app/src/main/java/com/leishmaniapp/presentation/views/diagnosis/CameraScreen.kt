@@ -3,6 +3,7 @@ package com.leishmaniapp.presentation.views.diagnosis
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -22,7 +23,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -42,6 +47,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.leishmaniapp.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.concurrent.Executor
 import kotlin.coroutines.resume
@@ -61,6 +69,7 @@ fun CameraScreen(
     val lensFacing = CameraSelector.LENS_FACING_BACK
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val coroutineScope = rememberCoroutineScope()
 
     /// Camera preview
     val preview = Preview.Builder().build()
@@ -70,6 +79,9 @@ fun CameraScreen(
         .requireLensFacing(lensFacing)
         .build()
 
+    var isTakingPhoto by remember {
+        mutableStateOf(false)
+    }
 
     // Camera launch effect
     LaunchedEffect(lensFacing) {
@@ -138,25 +150,37 @@ fun CameraScreen(
                 .padding(16.dp)
                 .align(Alignment.BottomCenter),
             onClick = {
-                onCameraTakePhoto(
-                    outputFile = outputFile,
-                    imageCapture = imageCapture,
-                    executor = executor,
-                    onImageCaptured = onImageCaptured,
-                    onError = onError
-                )
-            }) {
+                coroutineScope.launch {
+                    Toast.makeText(context, R.string.alert_taking_photo, Toast.LENGTH_SHORT).show()
+                    isTakingPhoto = true
+                    withContext(Dispatchers.IO) {
+                        onCameraTakePhoto(
+                            outputFile = outputFile,
+                            imageCapture = imageCapture,
+                            executor = executor,
+                            onImageCaptured = onImageCaptured,
+                            onError = onError
+                        )
+                    }
+                    isTakingPhoto = false
+                }
+            }, enabled = !isTakingPhoto
+        ) {
             Icon(
                 imageVector = Icons.Sharp.Lens,
                 contentDescription = "Take picture",
-                tint = Color.White,
+                tint = if (isTakingPhoto) {
+                    Color.Gray
+                } else {
+                    Color.White
+                },
                 modifier = Modifier.size(80.dp)
             )
         }
     }
 }
 
-private fun onCameraTakePhoto(
+private suspend fun onCameraTakePhoto(
     outputFile: File,
     imageCapture: ImageCapture,
     executor: Executor,
@@ -166,18 +190,25 @@ private fun onCameraTakePhoto(
     // Create output options
     val outputOptions = ImageCapture.OutputFileOptions.Builder(outputFile).build()
 
-    imageCapture.takePicture(outputOptions, executor, object : ImageCapture.OnImageSavedCallback {
-        override fun onError(exception: ImageCaptureException) {
-            onError(exception)
-            Log.d("ImageFile", outputFile.toString())
-        }
+    suspendCoroutine { continuation ->
+        imageCapture.takePicture(
+            outputOptions,
+            executor,
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onError(exception: ImageCaptureException) {
+                    onError(exception)
+                    continuation.resume(Unit)
+                    Log.d("ImageFile", outputFile.toString())
+                }
 
-        override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-            // Image capture callback with URI
-            onImageCaptured(Uri.fromFile(outputFile))
-            Log.d("ImageFile", outputFile.toString())
-        }
-    })
+                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                    // Image capture callback with URI
+                    onImageCaptured(Uri.fromFile(outputFile))
+                    continuation.resume(Unit)
+                    Log.d("ImageFile", outputFile.toString())
+                }
+            })
+    }
 }
 
 private suspend fun Context.getCameraProvider(): ProcessCameraProvider =

@@ -62,7 +62,8 @@ fun DiagnosisAndAnalysisScreen(
     onAnalyzeAction: () -> Unit,
     analysisStatus: ImageAnalysisStatus,
     onNextAction: () -> Unit,
-    onFinishAction: () -> Unit
+    onFinishAction: () -> Unit,
+    onNextActionNotAnalyzed: (() -> Unit)? = null
 ) {
     val pagerState = rememberPagerState(pageCount = { DiagnosisAndAnalysisPages.values().size })
     val coroutineScope = rememberCoroutineScope()
@@ -77,6 +78,8 @@ fun DiagnosisAndAnalysisScreen(
                         pagerState.animateScrollToPage(
                             DiagnosisAndAnalysisPages.ResultsPage.ordinal
                         )
+
+                        onNextActionNotAnalyzed?.invoke()
                     }
 
                     ImageAnalysisStatus.Deferred, ImageAnalysisStatus.Analyzed -> onNextAction.invoke()
@@ -156,7 +159,7 @@ fun DiagnosisAndAnalysisScreen(
                             // Show image number
                             Text(
                                 text = "%s %d".format(
-                                    stringResource(id = R.string.image_number), image.sample
+                                    stringResource(id = R.string.image_number), (image.sample + 1)
                                 )
                             )
 
@@ -173,6 +176,7 @@ fun DiagnosisAndAnalysisScreen(
                                 disease = diagnosis.disease,
                                 modelDiagnosticElements = modelDiagnosticElements,
                                 specialistDiagnosticElements = specialistDiagnosticElements,
+                                modelFailIcon = image.processed == ImageAnalysisStatus.NotAnalyzed,
                                 onSpecialistEdit = { elementName, specialistDiagnosticElement ->
                                     // Grab the old specialist diagnostic element
                                     val previousDiagnosticElement =

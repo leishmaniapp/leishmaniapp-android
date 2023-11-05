@@ -72,7 +72,9 @@ fun NavGraphBuilder.startNavGraph(
         }
 
         composable(route = NavigationRoutes.StartRoute.DiseasesRoute.route) {
-            DiseasesMenuScreen(onDiseaseSelection = { disease ->
+            DiseasesMenuScreen(
+                diseases = applicationViewModel.specialist!!.diseases,
+                onDiseaseSelection = { disease ->
                 // Select the disease and navigate to the main menu
                 Log.d("DiseasesMenuScreen", "Selected disease: $disease")
                 applicationViewModel.disease = disease

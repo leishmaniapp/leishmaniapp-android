@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -42,6 +44,10 @@ fun AddPatientScreen(backButtonAction: (() -> Unit)? = null, onCreatePatient: (P
     var documentTypeField: DocumentType? by remember { mutableStateOf(null) }
     var documentTypeExpanded: Boolean by remember { mutableStateOf(false) }
 
+    var invalidFields by remember {
+        mutableStateOf(false)
+    }
+
     LeishmaniappScaffold(
         title = stringResource(R.string.patients), backButtonAction = backButtonAction
     ) {
@@ -53,7 +59,7 @@ fun AddPatientScreen(backButtonAction: (() -> Unit)? = null, onCreatePatient: (P
         ) {
 
             Text(
-                text = stringResource(R.string.patient_name),
+                text = stringResource(R.string.patient_add),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = componentSeparatorHeight.dp)
             )
@@ -61,7 +67,7 @@ fun AddPatientScreen(backButtonAction: (() -> Unit)? = null, onCreatePatient: (P
             /* -- Patient name -- */
             Spacer(modifier = Modifier.height(componentSeparatorHeight.dp))
             Text(
-                text = stringResource(id = R.string.document_id),
+                text = stringResource(id = R.string.patient_name),
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(inlinePadding.dp)
             )
@@ -133,17 +139,35 @@ fun AddPatientScreen(backButtonAction: (() -> Unit)? = null, onCreatePatient: (P
                 Button(modifier = Modifier
                     .padding(top = 16.dp)
                     .align(Alignment.Center), onClick = {
-                    /* TODO: Check that fields are valid and show an alert */
-                    onCreatePatient.invoke(
-                        Patient(
-                            patientNameField,
-                            IdentificationDocument(documentIdField),
-                            documentTypeField!!
+
+                    if (patientNameField.isNotBlank()
+                        && documentIdField.isNotBlank()
+                        && documentTypeField != null
+                    ) {
+                        onCreatePatient.invoke(
+                            Patient(
+                                patientNameField,
+                                IdentificationDocument(documentIdField),
+                                documentTypeField!!
+                            )
                         )
-                    )
+                    } else {
+                        invalidFields = true
+                    }
                 }) {
                     Text(text = stringResource(id = R.string.patient_create))
                 }
+            }
+        }
+    }
+
+    if (invalidFields) {
+        AlertDialog(onDismissRequest = { invalidFields = false }) {
+            Card {
+                Text(
+                    modifier = Modifier.padding(16.dp),
+                    text = stringResource(id = R.string.alert_invalid_fields)
+                )
             }
         }
     }

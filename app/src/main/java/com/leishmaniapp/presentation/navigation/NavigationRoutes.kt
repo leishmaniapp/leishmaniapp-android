@@ -30,8 +30,8 @@ sealed class NavigationRoutes(val route: String) {
         data object DiagnosisImageGrid : NavigationRoutes(this.route + "/diagnosisImageGrid")
         data object DiagnosisTable : NavigationRoutes(this.route + "/diagnosistable")
         data object DiagnosticImageEdit : NavigationRoutes(this.route + "/diagnosticImageEdit")
-        data object DiagnosticImageSection : NavigationRoutes(this.route + "/diagnosticImageEdit")
         data object AwaitingDiagnosis : NavigationRoutes(this.route + "/awaiting")
+        data object DiagnosticRemarks : NavigationRoutes(this.route + "/remarks")
     }
 
 

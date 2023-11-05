@@ -6,11 +6,14 @@ import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.DiagnosticElement
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
+import com.leishmaniapp.entities.ImageAnalysisStatus
 import com.leishmaniapp.entities.ImageProcessingResponse
 import com.leishmaniapp.entities.ImageQueryResponse
+import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
+import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.Username
 import com.leishmaniapp.entities.disease.Disease
 import com.leishmaniapp.entities.disease.LeishmaniasisGiemsaDisease
@@ -71,7 +74,7 @@ class EntitiesSerializationTests {
 
         Assert.assertEquals(
             """
-            {"name":"mock.disease:mock_element","amount":${specialistElement.amount}}
+            {"name":"mock.disease:mock","amount":${specialistElement.amount}}
         """.trimIndent(), Json.encodeToString(specialistElement)
         )
     }
@@ -91,6 +94,32 @@ class EntitiesSerializationTests {
 
     @Test
     fun diagnosisJsonSerializationIncludesAllEntities() {
+
+        val images = List(2) { iterator ->
+            MockGenerator.mockImage(
+                sample = iterator,
+                size = 1944,
+                processed = ImageAnalysisStatus.Analyzed
+            ).copy(elements = setOf())
+        }.toMutableList()
+
+        images[0] = images[0].copy(
+            elements = setOf(
+                SpecialistDiagnosticElement(
+                    name = LeishmaniasisGiemsaDisease.elements.first(),
+                    amount = 10
+                ),
+                ModelDiagnosticElement(
+                    name = LeishmaniasisGiemsaDisease.elements.first(),
+                    model = LeishmaniasisGiemsaDisease.models.first(),
+                    coordinates = setOf(
+                        Coordinates(10, 20),
+                        Coordinates(30, 40),
+                    )
+                ),
+            )
+        )
+
         /*Strings cannot have spaces in order to trim spaces and newlines*/
         val diagnosis = Diagnosis(
             specialistResult = true,
@@ -107,6 +136,7 @@ class EntitiesSerializationTests {
                 DocumentType.CC
             ),
             disease = LeishmaniasisGiemsaDisease,
+            images = images.associateBy { it.sample }
         )
 
         val expectedJson = """
@@ -116,15 +146,17 @@ class EntitiesSerializationTests {
               "modelResult": ${diagnosis.modelResult},
               "date": "${diagnosis.date}",
               "remarks": "${diagnosis.remarks}",
-              "specialist": {
-                "name": "${diagnosis.specialist.name}",
-                "username": "${diagnosis.specialist.username.value}"
-              },
+              "specialist": "${diagnosis.specialist.username.value}",
               "patient": "${diagnosis.patient.hash}",
-              "disease": "${diagnosis.disease.id}"
+              "disease": "${diagnosis.disease.id}",
+              "images": {
+                "0": ${Json.encodeToString(images[0])},
+                "1": ${Json.encodeToString(images[1])}
+              }
             }
         """.replace("\n", "").replace("\t", "").replace(" ", "")
 
+        print(Json.encodeToString(diagnosis))
         Assert.assertEquals(expectedJson, Json.encodeToString(diagnosis))
     }
 
