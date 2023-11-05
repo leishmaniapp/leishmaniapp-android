@@ -31,7 +31,6 @@ class CloudProcessingRequest @Inject constructor(
     private suspend fun uploadPhoto(image: ImageRoom): StorageUploadResult {
         // Get the im
         val file = File(image.path!!.path!!)
-
         val filePath = "${image.diagnosisUUID}/${file.name}"
 
         return suspendCoroutine { continuation ->

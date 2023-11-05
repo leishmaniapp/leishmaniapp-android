@@ -25,6 +25,7 @@ import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.disease.Disease
 import com.leishmaniapp.infrastructure.background.DiagnosisResultsWorker
+import com.leishmaniapp.infrastructure.background.DiagnosisUploadWorker
 import com.leishmaniapp.infrastructure.background.ImageProcessingWorker
 import com.leishmaniapp.infrastructure.background.ImageResultsWorker
 import com.leishmaniapp.persistance.database.ApplicationDatabase
@@ -53,7 +54,7 @@ class DiagnosisViewModel @Inject constructor(
     val applicationDatabase: ApplicationDatabase,
     private val diagnosisShare: IDiagnosisSharing,
     private val pictureStandardization: IPictureStandardization,
-    private val imageProcessingRequest: IProcessingRequest,
+    private val imageProcessingRequest: IProcessingRequest
 ) : ViewModel() {
 
     /**
@@ -190,6 +191,16 @@ class DiagnosisViewModel @Inject constructor(
         WorkManager.getInstance(context).enqueue(workRequest)
     }
 
+    fun startDiagnosisUploadOneTimeWorker(context: Context, diagnosisId: UUID) {
+        val workRequest = OneTimeWorkRequestBuilder<DiagnosisUploadWorker>().setInputData(
+            Data.Builder().putString("diagnosis", diagnosisId.toString()).build()
+        ).setConstraints(
+            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+        ).build()
+
+        WorkManager.getInstance(context).enqueue(workRequest)
+    }
+
     fun startDiagnosisResultsBackgroundWorker(context: Context) {
         // Call the worker
         val workRequest =
@@ -215,8 +226,8 @@ class DiagnosisViewModel @Inject constructor(
         // Call the worker
         val workRequest =
             PeriodicWorkRequestBuilder<ImageResultsWorker>(Duration.ofSeconds(5)).setInputData(
-                Data.Builder().putString("diagnosis", diagnosis.toString())
-                    .putInt("sample", sample).build()
+                Data.Builder().putString("diagnosis", diagnosis.toString()).putInt("sample", sample)
+                    .build()
             ).setInitialDelay(Duration.ofSeconds(10)).setConstraints(
                 Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
             ).build()
@@ -414,8 +425,7 @@ class DiagnosisViewModel @Inject constructor(
                 // Take last photo and update it
                 updateImage(
                     applicationDatabase.imageDao().imageForDiagnosis(
-                        currentDiagnosis.value!!.id,
-                        currentImage.value!!.sample
+                        currentDiagnosis.value!!.id, currentImage.value!!.sample
                     )!!.asApplicationEntity()
                 )
             }
@@ -464,6 +474,7 @@ class DiagnosisViewModel @Inject constructor(
         stopDiagnosisResultsBackgroundWorker(context)
         withContext(Dispatchers.IO) {
             updateDiagnosis(currentDiagnosis.value!!.copy(finalized = true))
+            startDiagnosisUploadOneTimeWorker(context, currentDiagnosis.value!!.id)
         }
     }
 
@@ -477,5 +488,12 @@ class DiagnosisViewModel @Inject constructor(
 
         setCurrentDiagnosis(null)
         setCurrentImage(null)
+    }
+
+    fun restartState() {
+        isNewDiagnosis = false
+
+        setCurrentImage(null)
+        setCurrentDiagnosis(null)
     }
 }

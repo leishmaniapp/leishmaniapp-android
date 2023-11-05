@@ -10,11 +10,11 @@ class DiseaseCompanionLogicTests {
 
     @Test
     fun getAllDiseasesMustGiveAllObjectClasses() {
-        Assert.assertEquals(listOf(LeishmaniasisGiemsaDisease, MockDisease), Disease.diseases())
+        Assert.assertEquals(setOf(LeishmaniasisGiemsaDisease, MockDisease), Disease.diseases())
     }
 
     @Test
     fun getLeishmaniasisGiemsaDiseaseById() {
-        Assert.assertEquals(LeishmaniasisGiemsaDisease, Disease.where("leishmaniasis.giemsa"))
+        Assert.assertEquals(LeishmaniasisGiemsaDisease, Disease.diseaseById("leishmaniasis.giemsa"))
     }
 }

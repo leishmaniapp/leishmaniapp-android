@@ -14,7 +14,6 @@ import kotlinx.parcelize.TypeParceler
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.util.UUID
-import kotlin.reflect.KClass
 
 /**
  * Class representing a Diagnosis
@@ -26,14 +25,14 @@ data class Diagnosis(
     val id: @Serializable(UUIDSerializer::class) UUID = UUID.randomUUID(),
     val specialistResult: Boolean,
     val modelResult: Boolean,
-    val finalized: Boolean = false,
+    @Transient val finalized: Boolean = false,
     @TypeParceler<LocalDateTime, LocalDateTimeTypeParceler> val date: LocalDateTime = Clock.System.now()
         .toLocalDateTime(TimeZone.UTC),
     val remarks: String?,
     val specialist: Specialist,
     val patient: Patient,
     val disease: Disease,
-    @Transient val images: Map<Int, Image> = mapOf(),
+    val images: Map<Int, Image> = mapOf(),
 ) : Parcelable {
 
     constructor(
@@ -48,7 +47,6 @@ data class Diagnosis(
         disease = disease
     )
 
-
     /**
      * Group [DiagnosticElement] in a map in which the key is the [DiagnosticElementName] and the
      * value is another map in which the key is the element type (either [ModelDiagnosticElement]
@@ -56,7 +54,7 @@ data class Diagnosis(
      * @TODO Write tests for this function
      */
     @IgnoredOnParcel
-    val computedResults: Map<DiagnosticElementName, Map<KClass<out DiagnosticElement>, Int>> by lazy {
+    val computedResults: ComputedResultsType by lazy {
         images.values.flatMap {
             it.elements
         }.groupBy { it.name }.mapValues {
@@ -82,6 +80,16 @@ data class Diagnosis(
     val completed: Boolean
         get() = images.values.all { it.processed == ImageAnalysisStatus.Analyzed }
 
+    /**
+     * Return a new (copy) instance of [Diagnosis] with the image added to samples
+     */
     fun appendImage(image: Image): Diagnosis =
         this.copy(images = images.plus(image.sample to image))
+
+    /**
+     * Return a new (copy) instance of [Diagnosis] with the [modelResult] set correctly
+     * using [Disease.computeDiagnosisResult]
+     */
+    fun withModelResult() =
+        this.copy(modelResult = this.disease.computeDiagnosisResult(this.computedResults))
 }

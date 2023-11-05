@@ -5,8 +5,10 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.leishmaniapp.R
+import com.leishmaniapp.entities.ComputedResultsType
 import com.leishmaniapp.entities.DiagnosisModel
 import com.leishmaniapp.entities.DiagnosticElementName
+import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.usecases.serialization.DiseaseSerializer
 import kotlinx.serialization.Serializable
 
@@ -27,12 +29,27 @@ data object LeishmaniasisGiemsaDisease : Disease(
             R.string.leishmaniasis_giemsa_disease_element_parasites
         )
     )
+
+
 ) {
     override val displayName: String
         @Composable get() = stringResource(id = R.string.leishmaniasis_giemsa_disease)
 
     override val painterResource: Painter
         @Composable get() = painterResource(id = R.drawable.macrophage)
+
+    /**
+     * Returns true if any given parasite is found
+     */
+    override fun computeDiagnosisResult(computedResults: ComputedResultsType): Boolean {
+        val results =
+            computedResults[this.elements.first { it.value == "leishmaniasis.giemsa:parasite" }]?.get(
+                SpecialistDiagnosticElement::class
+            )
+
+        return (results != null && results > 0)
+    }
+
 }
 
 object LeishmaniasisGiemsaDiseaseSerializer :

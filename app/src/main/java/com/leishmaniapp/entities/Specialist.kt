@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.leishmaniapp.entities.disease.Disease
+import com.leishmaniapp.usecases.serialization.SpecialistSerializer
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -14,7 +15,7 @@ import kotlinx.serialization.Transient
  */
 @Entity
 @Parcelize
-@Serializable
+@Serializable(with = SpecialistSerializer::class)
 data class Specialist(
     val name: String,
     @PrimaryKey val username: Username,

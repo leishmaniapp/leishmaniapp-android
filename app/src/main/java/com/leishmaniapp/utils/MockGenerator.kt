@@ -38,15 +38,16 @@ class MockGenerator {
 
         fun mockImage(
             processed: ImageAnalysisStatus = ImageAnalysisStatus.values().random(),
-            size: Int = 2250
+            size: Int = 2250,
+            sample: Int = Random.nextInt(150),
         ) = Image(
+            sample = sample,
             date = faker.date.forward(1).toInstant().toKotlinInstant()
                 .toLocalDateTime(
                     TimeZone.UTC
                 ),
             size = size,
             processed = processed,
-            sample = Random.nextInt(150),
             elements = if (processed == ImageAnalysisStatus.Analyzed) {
                 setOf(
                     mockSpecialistDiagnosticElement(),

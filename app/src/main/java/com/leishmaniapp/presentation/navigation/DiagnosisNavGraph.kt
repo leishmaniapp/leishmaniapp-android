@@ -408,7 +408,8 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 onGoBack = { navController.popBackStack() },
                 onDiagnosisFinish = { newDiagnosis ->
                     runBlocking {
-                        diagnosisViewModel.updateDiagnosis(newDiagnosis)
+                        // Update the diagnosis with model results
+                        diagnosisViewModel.updateDiagnosis(newDiagnosis.withModelResult())
                         diagnosisViewModel.finalizeDiagnosis(context)
                         navController.navigateToDiagnosisHistory()
                     }
@@ -422,11 +423,19 @@ fun NavGraphBuilder.diagnosisNavGraph(
 
             BackHandler {
                 navController.navigateToMenu()
+                diagnosisViewModel.restartState()
             }
 
-            DiagnosisTableScreen(diagnosis = diagnosis!!,
-                onBackButton = { navController.navigateToMenu() },
-                onShareDiagnosis = { diagnosisViewModel.shareCurrentDiagnosis(context) })
+            if (diagnosis == null) {
+                LoadingScreen()
+            } else {
+                DiagnosisTableScreen(diagnosis = diagnosis!!,
+                    onBackButton = {
+                        navController.navigateToMenu()
+                        diagnosisViewModel.restartState()
+                    },
+                    onShareDiagnosis = { diagnosisViewModel.shareCurrentDiagnosis(context) })
+            }
         }
     }
 }
@@ -434,9 +443,6 @@ fun NavGraphBuilder.diagnosisNavGraph(
 fun NavHostController.navigateToDiagnosisHistory() {
     this.navigate(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route) {
         popUpTo(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
-            inclusive = true
-        }
-        popUpTo(NavigationRoutes.PatientsRoute.PatientDiagnosisHistory.route) {
             inclusive = true
         }
     }
