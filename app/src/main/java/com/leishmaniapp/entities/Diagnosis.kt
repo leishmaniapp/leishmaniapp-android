@@ -51,7 +51,6 @@ data class Diagnosis(
      * Group [DiagnosticElement] in a map in which the key is the [DiagnosticElementName] and the
      * value is another map in which the key is the element type (either [ModelDiagnosticElement]
      * or [SpecialistDiagnosticElement], and the value is the number of those elements found
-     * @TODO Write tests for this function
      */
     @IgnoredOnParcel
     val computedResults: ComputedResultsType by lazy {

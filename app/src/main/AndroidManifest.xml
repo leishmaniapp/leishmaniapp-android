@@ -10,8 +10,15 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"
+        tools:ignore="ScopedStorage" />
 
     <application
         android:name=".MainApplication"
@@ -45,13 +52,14 @@
             tools:node="merge">
 
             <meta-data
-                android:name="com.leishmaniapp.infrastructure.initialization.CloudInitialization"
-                android:value="androidx.startup" />
-
-            <meta-data
                 android:name="androidx.work.WorkManagerInitializer"
                 android:value="androidx.startup"
                 tools:node="remove" />
+
+            <meta-data
+                android:name="com.leishmaniapp.infrastructure.initialization.CloudModuleInitializer"
+                android:value="androidx.startup" />
+            
         </provider>
 
         <provider

@@ -17,10 +17,10 @@ import java.util.UUID
 
 @HiltWorker
 class ImageResultsWorker @AssistedInject constructor(
-    @ApplicationContext context: Context,
+    @Assisted context: Context,
     @Assisted val params: WorkerParameters,
-    @Assisted val cloudProcessingRequest: IProcessingRequest,
-    @Assisted val applicationDatabase: ApplicationDatabase,
+    val cloudProcessingRequest: IProcessingRequest,
+    val applicationDatabase: ApplicationDatabase,
 ) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
 

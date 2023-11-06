@@ -7,7 +7,7 @@
     <string name="unknown_disease">Enfermedad no Soportada</string>
     <string name="unknown_element">Elemento diagnóstico desconocido</string>
 
-    <string name="leishmaniasis_giemsa_disease">Leishmaniasis con tinción tipo Giemsa</string>
+    <string name="leishmaniasis_giemsa_disease">Leishmaniasis con tinción Giemsa</string>
     <string name="leishmaniasis_giemsa_disease_element_macrophages">Macrófagos</string>
     <string name="leishmaniasis_giemsa_disease_element_parasites">Parásitos</string>
 
