@@ -26,7 +26,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 @Composable
 fun LeishmaniappScaffold(
     title: String = stringResource(id = R.string.app_name),
-    /* TODO: Navigation controller as parameter */ backButtonAction: (() -> Unit)? = null,
+    backButtonAction: (() -> Unit)? = null,
     bottomBar: @Composable () -> Unit = {},
     showHelp: Boolean = false,
     content: @Composable BoxScope.() -> Unit

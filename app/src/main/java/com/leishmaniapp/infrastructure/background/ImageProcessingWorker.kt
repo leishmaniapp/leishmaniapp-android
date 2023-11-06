@@ -23,10 +23,10 @@ import java.util.UUID
  */
 @HiltWorker
 class ImageProcessingWorker @AssistedInject constructor(
-    @ApplicationContext context: Context,
+    @Assisted context: Context,
     @Assisted val workerParameters: WorkerParameters,
-    @Assisted val processingRequest: IProcessingRequest,
-    @Assisted val applicationDatabase: ApplicationDatabase
+    val processingRequest: IProcessingRequest,
+    val applicationDatabase: ApplicationDatabase
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {

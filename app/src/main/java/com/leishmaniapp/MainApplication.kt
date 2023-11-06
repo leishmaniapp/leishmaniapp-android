@@ -2,8 +2,8 @@ package com.leishmaniapp
 
 import android.app.Application
 import android.util.Log
+import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.leishmaniapp.infrastructure.background.DelegatedWorkerFactory
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -11,11 +11,11 @@ import javax.inject.Inject
 class MainApplication : Application(), Configuration.Provider {
 
     @Inject
-    lateinit var workerFactory: DelegatedWorkerFactory
+    lateinit var workerFactory: HiltWorkerFactory
 
     override fun getWorkManagerConfiguration(): Configuration =
         Configuration.Builder()
-            .setMinimumLoggingLevel(Log.DEBUG)
             .setWorkerFactory(workerFactory)
+            .setMinimumLoggingLevel(Log.DEBUG)
             .build()
 }

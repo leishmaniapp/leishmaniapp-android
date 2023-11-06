@@ -7,6 +7,7 @@ import com.leishmaniapp.entities.DiagnosticElement
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
 import com.leishmaniapp.entities.ImageAnalysisStatus
+import com.leishmaniapp.entities.ImageProcessingPayload.Companion.toProcessingPayload
 import com.leishmaniapp.entities.ImageProcessingResponse
 import com.leishmaniapp.entities.ImageQueryResponse
 import com.leishmaniapp.entities.ModelDiagnosticElement
@@ -17,11 +18,15 @@ import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.Username
 import com.leishmaniapp.entities.disease.Disease
 import com.leishmaniapp.entities.disease.LeishmaniasisGiemsaDisease
+import com.leishmaniapp.entities.disease.MockDisease
+import com.leishmaniapp.usecases.serialization.UUIDSerializer
 import com.leishmaniapp.utils.MockGenerator
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.Assert
 import org.junit.Test
+import java.util.UUID
 
 class EntitiesSerializationTests {
     @Test
@@ -52,7 +57,7 @@ class EntitiesSerializationTests {
     }
 
     @Test
-    fun specialistSerializationShouldNotSerializePassword() {
+    fun specialistSerializationShouldOnlySerializeUsername() {
         val specialist = Specialist(
             "John Doe",
             Username("john_doe"),
@@ -60,7 +65,7 @@ class EntitiesSerializationTests {
         )
 
         Assert.assertEquals(
-            """{"name":"${specialist.name}","username":"${specialist.username.value}"}""",
+            "\"${specialist.username.value}\"",
             Json.encodeToString(specialist)
         )
     }
@@ -89,6 +94,55 @@ class EntitiesSerializationTests {
         Assert.assertEquals(
             diagnosticElement.name,
             Json.decodeFromString<DiagnosticElement>(serializedValue).name
+        )
+    }
+
+    @Test
+    fun usernameSerialization() {
+        val username = Username("Username")
+
+        Assert.assertEquals(
+            "\"${username.value}\"",
+            Json.encodeToString(username)
+        )
+
+        Assert.assertEquals(
+            Json.decodeFromString<Username>("\"${username.value}\""),
+            username
+        )
+    }
+
+    @Test
+    fun specialistDeserializationThrowsException() {
+        Assert.assertThrows(SerializationException::class.java) {
+            Json.decodeFromString<Specialist>("\"john_doe\"")
+        }
+    }
+
+    @Test
+    fun patientDeserializationThrowsException() {
+        val patient = MockGenerator.mockPatient()
+        val patientString = Json.encodeToString(patient)
+
+        Assert.assertThrows(SerializationException::class.java) {
+            Json.decodeFromString<Patient>(patientString)
+        }
+    }
+
+    @Test
+    fun uuidSerializerTest() {
+
+        val uuid = UUID.randomUUID()
+        val uuidJson = Json.encodeToString(UUIDSerializer, uuid)
+
+        Assert.assertEquals(
+            uuidJson,
+            "\"${uuid.toString()}\""
+        )
+
+        Assert.assertEquals(
+            Json.decodeFromString<UUID>(UUIDSerializer, uuidJson),
+            uuid
         )
     }
 
@@ -156,7 +210,6 @@ class EntitiesSerializationTests {
             }
         """.replace("\n", "").replace("\t", "").replace(" ", "")
 
-        print(Json.encodeToString(diagnosis))
         Assert.assertEquals(expectedJson, Json.encodeToString(diagnosis))
     }
 
@@ -273,5 +326,36 @@ class EntitiesSerializationTests {
 
         Assert.assertEquals(json, encodedModel)
         Assert.assertEquals(model, decodedModel)
+    }
+
+    @Test
+    fun payloadJsonTesting() {
+
+        val image = MockGenerator.mockImage()
+        val imageProcessingPayload =
+            image.toProcessingPayload(UUID.randomUUID(), MockDisease, "bucket", "key")
+
+        val json = """
+        {
+            "id": "${imageProcessingPayload.id}",
+            "disease": "${imageProcessingPayload.disease}",
+            "reference": {
+                "bucket": "${imageProcessingPayload.reference.bucket}",
+                "key": "${imageProcessingPayload.reference.key}"
+            },
+            "date": "${imageProcessingPayload.date}",
+            "size": ${imageProcessingPayload.size},
+            "diagnosis": "${imageProcessingPayload.diagnosis}",
+            "sample": ${imageProcessingPayload.sample}
+        }
+        """.trimIndent()
+            .replace("\n", "")
+            .replace("\t", "")
+            .replace(" ", "")
+
+        Assert.assertEquals(
+            Json.encodeToString(imageProcessingPayload),
+            json,
+        )
     }
 }

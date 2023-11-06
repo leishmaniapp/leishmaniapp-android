@@ -15,6 +15,7 @@ interface IProcessingRequest {
      * Upload the image to cloud-based bucket, requires [Diagnosis.id] and [Image.sample] to create the path,
      * takes [Image.path] as the image to be uploaded
      * @throws Exception on failure
+     * @return [Pair] of bucket to path
      */
     suspend fun uploadImageToBucket(diagnosisId: UUID, image: Image): Pair<String, String>
 

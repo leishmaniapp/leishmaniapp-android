@@ -16,7 +16,7 @@ import java.util.UUID
 
 @HiltWorker
 class DiagnosisUploadWorker @AssistedInject constructor(
-    @ApplicationContext context: Context,
+    @Assisted context: Context,
     @Assisted val workerParameters: WorkerParameters,
     val applicationDatabase: ApplicationDatabase,
     val diagnosisUpload: IDiagnosisUpload
