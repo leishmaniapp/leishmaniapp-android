@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
                     })
             }
 
-            LeishmaniappTheme {
+            LeishmaniappTheme() {
                 RootNavigation(applicationViewModel = applicationViewModel)
             }
         }

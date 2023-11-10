@@ -40,7 +40,6 @@ class ApplicationDiagnosisSharing @Inject constructor() : IDiagnosisSharing {
             .ofPattern("dd/MM/yyyy - HH:mm", Locale.getDefault())
             .format(diagnosis.date.toJavaLocalDateTime())
 
-
         val titleStyle = Style()
             .setBackgroundColor(DeviceRgb(99, 34, 105))
             .setTextAlignment(TextAlignment.CENTER)
