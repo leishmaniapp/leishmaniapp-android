@@ -61,16 +61,20 @@ A continuación, se describe un tutorial de las funciones de la aplicación y su
 ***Pacientes*** :frowning_person: :frowning_man:
 1. Cuando se elige la opción de pacientes, la aplicación redirige a la lista de pacientes regitsrados en la aplicación.
    En la barra de búsqueda filtre el paciente que requiera por su número de cédula
-   Si desea agregar un nuevo paciente, presione el icono de __más__ junto a la barra de búsqueda 
+   Si desea agregar un nuevo paciente, presione el icono de __más__ junto a la barra de búsqueda
+
 
       _Si la lista de pacientes está vacía, le dará la opción de agregar un paciente_
+   
 ![lista pacientes](https://github.com/leishmaniapp/leishmaniapp-android/assets/70526846/43017a52-9394-4d46-880e-8f34a976aca2)
 
-2. Para agregar un paciente debe ingresar su nombre, tipo de documento de identidad y número de documento de identidad, luego presione en _crear paciente_
+3. Para agregar un paciente debe ingresar su nombre, tipo de documento de identidad y número de documento de identidad,
+ luego presione en _crear paciente_
+
 
    ![agregar paciente](https://github.com/leishmaniapp/leishmaniapp-android/assets/70526846/2e74a425-c497-48a0-9747-7ee2a58972c3)
 
-3. Para ver la lista de informes de diagnóstico asociados a un paciente, seleccionelo de la lista de pacientes. También podrá iniciar un diagnóstico desde allí
+4. Para ver la lista de informes de diagnóstico asociados a un paciente, seleccionelo de la lista de pacientes. También podrá iniciar un diagnóstico desde allí
    
    ![sin Diagnosticos](https://github.com/leishmaniapp/leishmaniapp-android/assets/70526846/a01f0934-2df4-4f00-8cc3-76b2250b2b13)
   
