@@ -1,8 +1,10 @@
 package com.leishmaniapp.presentation.views.diagnosis
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.view.ScaleGestureDetector
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -24,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -57,6 +60,7 @@ import kotlin.coroutines.suspendCoroutine
 import kotlin.math.sqrt
 
 
+@SuppressLint("ClickableViewAccessibility")
 @Composable
 fun CameraScreen(
     outputFile: File,
@@ -71,13 +75,13 @@ fun CameraScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val coroutineScope = rememberCoroutineScope()
 
-    /// Camera preview
+    // Camera preview
     val preview = Preview.Builder().build()
     val previewView = remember { PreviewView(context) }
     val imageCapture: ImageCapture = remember { ImageCapture.Builder().build() }
-    val cameraSelector = CameraSelector.Builder()
-        .requireLensFacing(lensFacing)
-        .build()
+
+    var zoomState by remember { mutableFloatStateOf(1f) } // Initial zoom ratio
+    val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
 
     var isTakingPhoto by remember {
         mutableStateOf(false)
@@ -86,15 +90,28 @@ fun CameraScreen(
     // Camera launch effect
     LaunchedEffect(lensFacing) {
         val cameraProvider = context.getCameraProvider()
-        cameraProvider.unbindAll()
-        cameraProvider.bindToLifecycle(
-            lifecycleOwner,
-            cameraSelector,
-            preview,
-            imageCapture
+        val camera = cameraProvider.bindToLifecycle(
+            lifecycleOwner, cameraSelector, preview, imageCapture
         )
 
         preview.setSurfaceProvider(previewView.surfaceProvider)
+
+        val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            override fun onScale(detector: ScaleGestureDetector): Boolean {
+                zoomState *= detector.scaleFactor
+                zoomState =
+                    zoomState.coerceIn(1f, camera.cameraInfo.zoomState.value?.maxZoomRatio ?: 1f)
+                camera.cameraControl.setZoomRatio(zoomState)
+                return true
+            }
+        }
+
+        val scaleGestureDetector = ScaleGestureDetector(context, listener)
+
+        previewView.setOnTouchListener { _, event ->
+            scaleGestureDetector.onTouchEvent(event)
+            return@setOnTouchListener true
+        }
     }
 
 
@@ -131,15 +148,13 @@ fun CameraScreen(
         IconButton(
             modifier = Modifier
                 .padding(16.dp)
-                .align(Alignment.TopStart),
-            onClick = onCancel
+                .align(Alignment.TopStart), onClick = onCancel
         ) {
             Icon(
                 imageVector = Icons.Filled.Close,
                 contentDescription = stringResource(id = R.string.cancel_camera),
                 tint = Color.White,
-                modifier = Modifier
-                    .size(45.dp)
+                modifier = Modifier.size(45.dp)
             )
         }
 
@@ -148,8 +163,7 @@ fun CameraScreen(
         IconButton(
             modifier = Modifier
                 .padding(16.dp)
-                .align(Alignment.BottomCenter),
-            onClick = {
+                .align(Alignment.BottomCenter), onClick = {
                 coroutineScope.launch {
                     Toast.makeText(context, R.string.alert_taking_photo, Toast.LENGTH_SHORT).show()
                     isTakingPhoto = true
@@ -191,8 +205,7 @@ private suspend fun onCameraTakePhoto(
     val outputOptions = ImageCapture.OutputFileOptions.Builder(outputFile).build()
 
     suspendCoroutine { continuation ->
-        imageCapture.takePicture(
-            outputOptions,
+        imageCapture.takePicture(outputOptions,
             executor,
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exception: ImageCaptureException) {

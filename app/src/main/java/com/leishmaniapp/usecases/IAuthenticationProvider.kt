@@ -7,7 +7,7 @@ import com.leishmaniapp.entities.Username
 /**
  * Authenticate [Specialist] into application
  */
-interface IAuthenticationProvider {
+fun interface IAuthenticationProvider {
     /**
      * Authenticate with credentials, returns [Specialist] or null
      */
