@@ -16,7 +16,7 @@ Leishmaniapp Android application API 27
 
 Bienvenido al manual de usuario de LeishmaniApp. Una aplicación de apoyo diagnóstico de la Leishmaniasis y otras enfermedades parasitarias.
 LeishmaniApp se compone de tres elementos principales que trabajan conjuntamente para conformar una herramienta de diagnóstico para especialistas
-como parte de un proyecto marco denominado "_inteligencia artificial para apoyo en el diagnóstico de leishmaniasis cutánea__".
+como parte de un proyecto marco denominado "_inteligencia artificial para apoyo en el diagnóstico de leishmaniasis cutánea_".
 LeishmaniApp cuenta con un modelo de detección de mácrofagos alojado en una arquitectura de procesamiento en nube AWS, al cual se conecta a
 una aplicación móvil que permite al usuario tomar desde el dispositivo imágenes de microscopía para ser analizadas.
 La aplicación también cuenta con un módulo de gestión de pacientes a quienes se le realicen análisis y con un módulo de exportación e importación
@@ -27,14 +27,30 @@ El stack tecnológico usado en este proyecto es
 ***Aplicación***
 * Android versión 8.1 API 27
 * Jetpack Compose
-* SQLite3 (Room)
+* Jetpack Room (SQLite3)
+* Jetpack Startup
+* Jetpack LiveData
+* Jetpack ViewModel
+* Jetpack WorkManager
+* Jetpack Navigation
+* Jetpack Hilt
+* Jetpack CameraX
+* KotlinX
+* AWS Amplify
   
 ***Arquitectura en nube***
 * DynamoDB
+* Bucket S3
+*Lambda
+*Cognito
+*API gateway
+*SQS/SNS
+*Step functions
+
   
 ***Módelo de detección de macrófagos***
 * OpenCV
-* Python
+* Python 3.9
 
 # Uso
 A continuación, se describe un tutorial de las funciones de la aplicación y su navegabilidad
