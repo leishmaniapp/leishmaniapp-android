@@ -1,7 +1,3 @@
-
-## Leishmaniapp 🔬
-Android 8.1 Application
-
 # Manual de usuario :iphone:
 
 **Tabla de contenidos**
@@ -59,19 +55,19 @@ A continuación, se describe un tutorial de las funciones de la aplicación y su
 
 1. Presione en comenzar
 
-![Inicio](docs/start.png)
+![Inicio](screenshots/start.png)
 
 2. Autenticarse con las credenciales dadas por el INS (Instituto Nacional de Salud)
    
-![Autenticación](docs/auth.png)
+![Autenticación](screenshots/auth.png)
 
 3. Seleccionar la enfermedad a diagnosticar
 
-![Selección enfermedad](docs/diseases.png)
+![Selección enfermedad](screenshots/diseases.png)
 
 4. Menú principal de la aplicación con la enfermedad seleccionada y sus módulos
 
-![Menú principal](docs/menu.png)
+![Menú principal](screenshots/menu.png)
 
 ***Pacientes*** :frowning_person: :frowning_man:
 1. Cuando se elige la opción de pacientes, la aplicación redirige a la lista de pacientes regitsrados en la aplicación.
@@ -81,23 +77,23 @@ A continuación, se describe un tutorial de las funciones de la aplicación y su
 
       _Si la lista de pacientes está vacía, le dará la opción de agregar un paciente_
    
-![Lista pacientes](docs/patients.png)
+![Lista pacientes](screenshots/patients.png)
 
 2. Para agregar un paciente debe ingresar su nombre, tipo de documento de identidad y número de documento de identidad,
  luego presione en _crear paciente_
 
 
-![Agregar paciente](docs/add_patients.png)
+![Agregar paciente](screenshots/add_patients.png)
 
 3. Para ver la lista de informes de diagnóstico asociados a un paciente, seleccionelo de la lista de pacientes. También podrá iniciar un diagnóstico desde allí
    
-![Sin Diagnosticos](docs/history_empty.png)
+![Sin Diagnosticos](screenshots/history_empty.png)
 
 ***Diagnóstico*** :camera:
 1. Luego de haber presionado en el menú principal _iniciar diagnóstico_, la aplicación se dirige a lista de pacientes para asociar un paciente
    al análisis y abre la cámara para tomar la primera fotografía a analizar
    
-![Cámara](docs/camera.png)
+![Cámara](screenshots/camera.png)
 
 2. Cuando la fotografía ha sido tomada, se observa una pantalla con la imagen,
    el nombre del paciente asociado y el número de campo de la imagen. Aquí puede
@@ -107,57 +103,57 @@ A continuación, se describe un tutorial de las funciones de la aplicación y su
    - Ver los resultados: Tabla de resultados del análisis de la fotografía por el modelo y el especialista
    - Finalizar toma de imágenes: Finalizar la toma de imágenes
      
-  ![Imagen tomada](docs/diagnosis.png)
+  ![Imagen tomada](screenshots/diagnosis.png)
   - Tabla de resultados
       Debe ingresar los resultados del especialista y esperar a que el módelo de sus resultados. De lo contrario, no podrá continuar con el diagnóstico
     
-   ![Tabla de resultados](docs/diagnosis_table.png)
+   ![Tabla de resultados](screenshots/diagnosis_table.png)
 
 3. Una vez el modelo haya respondido, se marcará una _X_ con el centro de masa de/los macrófagos detectados.
    Podrá editar las respuestas del módelo de diagnóstico al presionar _editar la imagen_
 
-   ![Imagen analizada](docs/diagnosis_center_of_mass.png)
+   ![Imagen analizada](screenshots/diagnosis_center_of_mass.png)
 
 4. Podrá desmarcar los macrófagos encontrados por el módelo y eliminarlos o descartas los cambios
 
-![Borrar macrófagos](docs/diagnosis_edit.png)
+![Borrar macrófagos](screenshots/diagnosis_edit.png)
 
 5. Podrá tomar cuantas imágenes decida hasta que presione finalizar, donde podrá ver un resumen de las imágenes tomadas para ese análisis de diagnóstico
 
 6. Cuando haya finalizado el diagnóstico definitivamente, podrá realizar observaciones a cerca del análisis hecho
 
-![Observaciones](docs/finish.png)
+![Observaciones](screenshots/finish.png)
   
 7. Luego de ingresar las observaciones y aceptar los cambios, podrá visualizar el informe d e diagnóstico final
    Aquí, podrá compartir el informe a través de formato PDF a otras aplicaciones
 
-![Informe de diagnóstico](docs/summary.png)
+![Informe de diagnóstico](screenshots/summary.png)
 
 ***Pendientes***
 1. Si el análisis es realizado bajo malas condiciones de internet, la aplicación permitirá seguir tomando fotografías
  e irá encolando las imágenes par analizarlas cuando detecte internet
 
-![Sin internet](docs/diagnosis_no_internet.png)
+![Sin internet](screenshots/diagnosis_no_internet.png)
 
 2. Al finalizar el diagnóstico, la aplicación solicitará procesar las imagénes en segundo plano 
 
-![Procesar en segundo plano](docs/image_grid.png)
+![Procesar en segundo plano](screenshots/image_grid.png)
 
 3. Para verificar el estado del diagnóstico, en el menú principal ingresar a la sección de pendientes. Aquí, se visualiza la lista de diagnósticos,
 su estado y un botón de sincronizar que permite actualizar los cambios si se ha detectado internet y se han analizado imágenes
 
-![Pendientes](docs/pending.png)
+![Pendientes](screenshots/pending.png)
 
 4. Para acceder a los detalles de cada diagnóstico en la lista de pendientes, seleccionar uno
 Dentro del detalle, podrá verificar las imágenes analizadas y editarlas
 
-![Detalle del diagnóstico](docs/gallery.png)
+![Detalle del diagnóstico](screenshots/gallery.png)
 
 ***Exportación e importación***
 
 1. Aquí podrá exportar la base de datos de la aplicación como archivo .SQLite o importar una exportada desde otro dispositivo
 
-![Compartir](docs/share.png)
+![Compartir](screenshots/share.png)
 
  # Estado del proyecto 
 
