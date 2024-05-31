@@ -4,7 +4,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.leishmaniapp.entities.Password
-import com.leishmaniapp.entities.Username
+import com.leishmaniapp.entities.Email
 import com.leishmaniapp.persistance.database.ApplicationDatabase
 import com.leishmaniapp.utils.MockGenerator
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +47,7 @@ class SpecialistDaoTests {
             // Search specialist in database
             Assert.assertEquals(
                 specialist,
-                database.specialistDao().specialistByUsername(specialist.username)
+                database.specialistDao().specialistByUsername(specialist.email)
             )
 
             // Erase the specialist
@@ -55,7 +55,7 @@ class SpecialistDaoTests {
 
             // Should not exist
             Assert.assertNull(
-                database.specialistDao().specialistByUsername(specialist.username)
+                database.specialistDao().specialistByUsername(specialist.email)
             )
         }
     }
@@ -72,15 +72,15 @@ class SpecialistDaoTests {
             // Search specialist in database
             Assert.assertEquals(
                 specialist,
-                database.specialistDao().specialistByUsername(specialist.username)
+                database.specialistDao().specialistByUsername(specialist.email)
             )
 
             // Erase the specialist
-            database.specialistDao().deleteSpecialistWithUsername(specialist.username)
+            database.specialistDao().deleteSpecialistWithUsername(specialist.email)
 
             // Should not exist
             Assert.assertNull(
-                database.specialistDao().specialistByUsername(specialist.username)
+                database.specialistDao().specialistByUsername(specialist.email)
             )
         }
     }
@@ -89,7 +89,7 @@ class SpecialistDaoTests {
     fun deleteNonExistentSpecialistDoesNothing() {
         runBlocking {
             // Erase the specialist
-            database.specialistDao().deleteSpecialistWithUsername(Username("Does not exist!"))
+            database.specialistDao().deleteSpecialistWithUsername(Email("Does not exist!"))
         }
     }
 
@@ -105,7 +105,7 @@ class SpecialistDaoTests {
             // Search specialist in database
             Assert.assertEquals(
                 specialist,
-                database.specialistDao().specialistByUsername(specialist.username)
+                database.specialistDao().specialistByUsername(specialist.email)
             )
 
             // Erase the specialist
@@ -115,7 +115,7 @@ class SpecialistDaoTests {
             // Should not exist
             Assert.assertEquals(
                 specialist,
-                database.specialistDao().specialistByUsername(specialist.username)
+                database.specialistDao().specialistByUsername(specialist.email)
             )
         }
     }
@@ -156,13 +156,13 @@ class SpecialistDaoTests {
             Assert.assertEquals(
                 selected,
                 database.specialistDao()
-                    .specialistByCredentials(selected.username, selected.password!!)
+                    .specialistByCredentials(selected.email, selected.password!!)
             )
 
             // Check non existent specialist
             Assert.assertNull(
                 database.specialistDao().specialistByCredentials(
-                    selected.username,
+                    selected.email,
                     Password("NON_VALID_PASSWORD")
                 )
             )

@@ -6,7 +6,7 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.Specialist
-import com.leishmaniapp.entities.Username
+import com.leishmaniapp.entities.Email
 
 @Dao
 interface SpecialistDao {
@@ -16,15 +16,15 @@ interface SpecialistDao {
     @Delete
     suspend fun deleteSpecialist(specialist: Specialist)
 
-    @Query("DELETE FROM Specialist WHERE username = :username")
-    suspend fun deleteSpecialistWithUsername(username: Username)
+    @Query("DELETE FROM Specialist WHERE email = :userEmail")
+    suspend fun deleteSpecialistWithUsername(email: Email)
 
     @Query("SELECT * FROM specialist")
     suspend fun allSpecialists(): List<Specialist>
 
-    @Query("SELECT * FROM specialist WHERE username = :username")
-    suspend fun specialistByUsername(username: Username): Specialist?
+    @Query("SELECT * FROM specialist WHERE email = :userEmail")
+    suspend fun specialistByUsername(email: Email): Specialist?
 
-    @Query("SELECT * FROM specialist WHERE username = :username AND password = :password")
-    suspend fun specialistByCredentials(username: Username, password: Password): Specialist?
+    @Query("SELECT * FROM specialist WHERE email = :userEmail AND password = :password")
+    suspend fun specialistByCredentials(email: Email, password: Password): Specialist?
 }

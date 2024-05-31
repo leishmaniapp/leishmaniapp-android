@@ -11,7 +11,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.Specialist
-import com.leishmaniapp.entities.Username
+import com.leishmaniapp.entities.Email
 import com.leishmaniapp.entities.disease.Disease
 import com.leishmaniapp.persistance.database.ApplicationDatabase
 import com.leishmaniapp.usecases.IAuthenticationProvider
@@ -54,9 +54,9 @@ class ApplicationViewModel @Inject constructor(
      * Look for specialist in [ApplicationDatabase],
      * if not present look for it in Cloud
      */
-    suspend fun authenticate(username: Username, password: Password): Boolean {
+    suspend fun authenticate(email: Email, password: Password): Boolean {
         // Get the specialist
-        specialist = authenticationProvider.authenticateSpecialist(username, password)
+        specialist = authenticationProvider.authenticateSpecialist(email, password)
         return specialist != null
     }
 

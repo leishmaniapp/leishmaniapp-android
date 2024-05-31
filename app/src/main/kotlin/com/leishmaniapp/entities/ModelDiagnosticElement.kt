@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 @Parcelize
 data class ModelDiagnosticElement(
     override val name: DiagnosticElementName,
-    val model: DiagnosisModel,
+    val model: DiagnosticModel,
     val coordinates: Set<Coordinates>
 ) : DiagnosticElement() {
     /**

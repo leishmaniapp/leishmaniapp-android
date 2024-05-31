@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Password
-import com.leishmaniapp.entities.Username
+import com.leishmaniapp.entities.Email
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 /**
@@ -50,7 +50,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 @Composable
 fun AuthenticationScreen(
     authenticationInProgress: Boolean = false,
-    onAuthenticate: (Username, Password) -> Unit,
+    onAuthenticate: (Email, Password) -> Unit,
 ) {
 
     var emailState by remember { mutableStateOf(TextFieldValue("")) }
@@ -132,7 +132,7 @@ fun AuthenticationScreen(
                             {
                                 // Attempt authentication
                                 onAuthenticate.invoke(
-                                    Username(emailState.text), Password(passwordState.text)
+                                    Email(emailState.text), Password(passwordState.text)
                                 )
                             }
                         } else {

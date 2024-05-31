@@ -6,7 +6,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.ComputedResultsType
-import com.leishmaniapp.entities.DiagnosisModel
+import com.leishmaniapp.entities.DiagnosticModel
 import com.leishmaniapp.entities.DiagnosticElementName
 import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.usecases.serialization.DiseaseSerializer
@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
 data object MockDisease : Disease(
     id = "mock.disease",
     models = setOf(
-        DiagnosisModel("mock.disease:mock"),
+        DiagnosticModel("mock.disease:mock"),
     ),
     elements = setOf(
         DiagnosticElementName("mock.disease:mock", R.string.mock_disease_element_mock)

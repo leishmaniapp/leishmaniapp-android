@@ -7,15 +7,6 @@ import android.util.Log
 import androidx.core.content.FileProvider
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
-import androidx.work.BackoffPolicy
-import androidx.work.Constraints
-import androidx.work.Data
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.Image
@@ -34,13 +25,10 @@ import com.leishmaniapp.usecases.IPictureStandardization
 import com.leishmaniapp.usecases.IProcessingRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
-import java.time.Duration
 import java.util.UUID
 import javax.inject.Inject
 
@@ -141,7 +129,7 @@ class DiagnosisViewModel @Inject constructor(
 
             for (element in diagnosis) {
                 val elementSpecialist = applicationDatabase.specialistDao()
-                    .specialistByUsername(element.specialistUsername)
+                    .specialistByUsername(element.specialistEmail)
                 val elementPatient = applicationDatabase.patientDao()
                     .patientById(element.patientIdDocument, element.patientIdType)
                 val elementImages = applicationDatabase.imageDao().allImagesForDiagnosis(element.id)
@@ -450,7 +438,7 @@ class DiagnosisViewModel @Inject constructor(
     suspend fun getAwaitingDiagnosis(specialist: Specialist): List<Diagnosis> {
         val diagnosis = withContext(Dispatchers.IO) {
             applicationDatabase.diagnosisDao()
-                .diagnosesForSpecialistNotFinished(specialist.username)
+                .diagnosesForSpecialistNotFinished(specialist.email)
         }
 
         return diagnosis.filter { !it.finalized }.map { diagnosisRoom ->

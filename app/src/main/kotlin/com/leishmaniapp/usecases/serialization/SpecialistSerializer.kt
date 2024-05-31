@@ -17,5 +17,5 @@ object SpecialistSerializer : KSerializer<Specialist> {
         throw SerializationException("Specialist cannot be deserialized")
 
     override fun serialize(encoder: Encoder, value: Specialist) =
-        encoder.encodeString(value.username.value)
+        encoder.encodeString(value.email.value)
 }

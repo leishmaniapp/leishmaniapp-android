@@ -10,4 +10,4 @@ import kotlinx.serialization.Serializable
  */
 @Serializable(with = DiagnosisModelSerializer::class)
 @Parcelize
-data class DiagnosisModel(val value: String) : Parcelable
+data class DiagnosticModel(val value: String) : Parcelable

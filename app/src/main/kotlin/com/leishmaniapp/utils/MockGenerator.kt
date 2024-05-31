@@ -11,7 +11,7 @@ import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
-import com.leishmaniapp.entities.Username
+import com.leishmaniapp.entities.Email
 import com.leishmaniapp.entities.disease.MockDisease
 import io.bloco.faker.Faker
 import kotlinx.datetime.TimeZone
@@ -26,7 +26,7 @@ class MockGenerator {
 
         fun mockSpecialist() = Specialist(
             name = faker.name.name(),
-            username = Username(faker.internet.userName()),
+            email = Email(faker.internet.userName()),
             password = Password("!")
         )
 

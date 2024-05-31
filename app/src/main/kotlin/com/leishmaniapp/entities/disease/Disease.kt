@@ -4,7 +4,7 @@ import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import com.leishmaniapp.entities.ComputedResultsType
-import com.leishmaniapp.entities.DiagnosisModel
+import com.leishmaniapp.entities.DiagnosticModel
 import com.leishmaniapp.entities.DiagnosticElementName
 import com.leishmaniapp.usecases.serialization.ParentDiseaseSerializer
 import kotlinx.parcelize.Parcelize
@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 @Serializable(with = ParentDiseaseSerializer::class)
 sealed class Disease(
     val id: String,
-    val models: Set<DiagnosisModel>,
+    val models: Set<DiagnosticModel>,
     val elements: Set<DiagnosticElementName>
 ) : Parcelable {
     abstract val displayName: String

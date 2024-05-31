@@ -2,7 +2,7 @@ package com.leishmaniapp
 
 import com.leishmaniapp.entities.Coordinates
 import com.leishmaniapp.entities.Diagnosis
-import com.leishmaniapp.entities.DiagnosisModel
+import com.leishmaniapp.entities.DiagnosticModel
 import com.leishmaniapp.entities.DiagnosticElement
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
@@ -15,7 +15,7 @@ import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
-import com.leishmaniapp.entities.Username
+import com.leishmaniapp.entities.Email
 import com.leishmaniapp.entities.disease.Disease
 import com.leishmaniapp.entities.disease.LeishmaniasisGiemsaDisease
 import com.leishmaniapp.entities.disease.MockDisease
@@ -60,12 +60,12 @@ class EntitiesSerializationTests {
     fun specialistSerializationShouldOnlySerializeUsername() {
         val specialist = Specialist(
             "John Doe",
-            Username("john_doe"),
+            Email("john_doe"),
             Password("password")
         )
 
         Assert.assertEquals(
-            "\"${specialist.username.value}\"",
+            "\"${specialist.email.value}\"",
             Json.encodeToString(specialist)
         )
     }
@@ -99,16 +99,16 @@ class EntitiesSerializationTests {
 
     @Test
     fun usernameSerialization() {
-        val username = Username("Username")
+        val email = Email("Username")
 
         Assert.assertEquals(
-            "\"${username.value}\"",
-            Json.encodeToString(username)
+            "\"${email.value}\"",
+            Json.encodeToString(email)
         )
 
         Assert.assertEquals(
-            Json.decodeFromString<Username>("\"${username.value}\""),
-            username
+            Json.decodeFromString<Email>("\"${email.value}\""),
+            email
         )
     }
 
@@ -181,7 +181,7 @@ class EntitiesSerializationTests {
             remarks = "Loremipsumdolorsitametconsecteturadipiscingelit",
             specialist = Specialist(
                 "JohnDoe",
-                Username("john_doe"),
+                Email("john_doe"),
                 Password("password")
             ),
             patient = Patient(
@@ -200,7 +200,7 @@ class EntitiesSerializationTests {
               "modelResult": ${diagnosis.modelResult},
               "date": "${diagnosis.date}",
               "remarks": "${diagnosis.remarks}",
-              "specialist": "${diagnosis.specialist.username.value}",
+              "specialist": "${diagnosis.specialist.email.value}",
               "patient": "${diagnosis.patient.hash}",
               "disease": "${diagnosis.disease.id}",
               "images": {
@@ -231,7 +231,7 @@ class EntitiesSerializationTests {
 
         val model = ImageProcessingResponse(
             0, mapOf(
-                DiagnosisModel("leishmaniasis.giemsa:macrophages") to listOf(
+                DiagnosticModel("leishmaniasis.giemsa:macrophages") to listOf(
                     Coordinates(1067, 712)
                 )
             )
@@ -263,7 +263,7 @@ class EntitiesSerializationTests {
         val model = listOf(
             ImageProcessingResponse(
                 0, mapOf(
-                    DiagnosisModel("leishmaniasis.giemsa:macrophages") to listOf(
+                    DiagnosticModel("leishmaniasis.giemsa:macrophages") to listOf(
                         Coordinates(1067, 712)
                     )
                 )
@@ -314,7 +314,7 @@ class EntitiesSerializationTests {
 
         val model = ImageQueryResponse(
             processed = true, mapOf(
-                DiagnosisModel("mock.disease:mock") to listOf(
+                DiagnosticModel("mock.disease:mock") to listOf(
                     Coordinates(1896, 253),
                     Coordinates(1785, 1092),
                 )

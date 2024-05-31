@@ -9,7 +9,7 @@ import com.leishmaniapp.entities.IdentificationDocument
 import com.leishmaniapp.entities.Image
 import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
-import com.leishmaniapp.entities.Username
+import com.leishmaniapp.entities.Email
 import com.leishmaniapp.entities.disease.Disease
 import com.leishmaniapp.usecases.serialization.UUIDSerializer
 import kotlinx.datetime.Clock
@@ -42,7 +42,7 @@ data class DiagnosisRoom(
     val finalized: Boolean,
     val analyzed: Boolean,
     val remarks: String?,
-    val specialistUsername: Username,
+    val specialistEmail: Email,
     val patientIdDocument: IdentificationDocument,
     val patientIdType: DocumentType,
     val disease: Disease,
@@ -56,7 +56,7 @@ data class DiagnosisRoom(
             finalized,
             completed,
             remarks,
-            specialist.username,
+            specialist.email,
             patient.id,
             patient.documentType,
             disease

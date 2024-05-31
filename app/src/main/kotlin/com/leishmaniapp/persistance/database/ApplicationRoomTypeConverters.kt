@@ -6,7 +6,7 @@ import com.leishmaniapp.entities.DiagnosticElement
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
 import com.leishmaniapp.entities.Password
-import com.leishmaniapp.entities.Username
+import com.leishmaniapp.entities.Email
 import com.leishmaniapp.entities.disease.Disease
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.encodeToString
@@ -17,10 +17,10 @@ class ApplicationRoomTypeConverters {
 
     /* Username */
     @TypeConverter
-    fun usernameToString(username: Username): String = username.value
+    fun usernameToString(email: Email): String = email.value
 
     @TypeConverter
-    fun stringToUsername(string: String): Username = Username(string)
+    fun stringToUsername(string: String): Email = Email(string)
 
     /* Password */
     @TypeConverter

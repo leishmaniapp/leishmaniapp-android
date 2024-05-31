@@ -6,7 +6,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.ComputedResultsType
-import com.leishmaniapp.entities.DiagnosisModel
+import com.leishmaniapp.entities.DiagnosticModel
 import com.leishmaniapp.entities.DiagnosticElementName
 import com.leishmaniapp.entities.ModelDiagnosticElement
 import com.leishmaniapp.usecases.serialization.DiseaseSerializer
@@ -16,8 +16,8 @@ import kotlinx.serialization.Serializable
 data object LeishmaniasisGiemsaDisease : Disease(
     id = "leishmaniasis.giemsa",
     models = setOf(
-        DiagnosisModel("leishmaniasis.giemsa:macrophages"),
-        DiagnosisModel("leishmaniasis.giemsa:parasites"),
+        DiagnosticModel("leishmaniasis.giemsa:macrophages"),
+        DiagnosticModel("leishmaniasis.giemsa:parasites"),
     ),
     elements = setOf(
         DiagnosticElementName(

@@ -7,7 +7,7 @@ import androidx.room.Upsert
 import com.leishmaniapp.entities.DocumentType
 import com.leishmaniapp.entities.IdentificationDocument
 import com.leishmaniapp.entities.Patient
-import com.leishmaniapp.entities.Username
+import com.leishmaniapp.entities.Email
 import com.leishmaniapp.persistance.entities.DiagnosisRoom
 import com.leishmaniapp.persistance.relations.DiagnosisImages
 import kotlinx.coroutines.flow.Flow
@@ -37,9 +37,9 @@ interface DiagnosisDao {
         patient.documentType
     )
 
-    @Query("SELECT * FROM DiagnosisRoom DR WHERE DR.specialistUsername = :specialistUsername AND DR.finalized = 0")
+    @Query("SELECT * FROM DiagnosisRoom DR WHERE DR.specialistEmail = :specialistUserEmail AND DR.finalized = 0")
     suspend fun diagnosesForSpecialistNotFinished(
-        specialistUsername: Username
+        specialistEmail: Email
     ): List<DiagnosisRoom>
 
     @Query("SELECT * FROM DiagnosisRoom DR WHERE DR.analyzed = 0")

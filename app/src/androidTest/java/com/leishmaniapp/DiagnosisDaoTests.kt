@@ -135,7 +135,7 @@ class DiagnosisDaoTests {
 
             Assert.assertEquals(
                 diagnosis.asRoomEntity(),
-                database.diagnosisDao().diagnosesForSpecialistNotFinished(specialist.username)
+                database.diagnosisDao().diagnosesForSpecialistNotFinished(specialist.email)
                     .first()
             )
         }
