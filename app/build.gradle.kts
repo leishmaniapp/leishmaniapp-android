@@ -7,9 +7,8 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.ksp)
-    // TODO: Generate the protobuf schema
-    // alias(libs.plugins.google.protobuf)
     alias(libs.plugins.google.dagger.hilt.android)
+    alias(libs.plugins.squareup.wire)
 }
 
 android {
@@ -76,12 +75,20 @@ kotlin {
     }
 }
 
+wire {
+    kotlin {
+        android = true
+        rpcRole = "client"
+        rpcCallStyle = "suspending"
+        singleMethodServices = true
+    }
+}
+
 dependencies {
 
-    /* Kotlinx extensions */
-    implementation(platform(libs.kotlin.bom))
-    implementation(libs.kotlin.reflect)
-    implementation(libs.bundles.kotlinx)
+    /* Protobuf & gRPC */
+    implementation(libs.squareup.wire.runtime)
+    implementation(libs.squareup.wire.grpc)
 
     /* Android core dependencies */
     implementation(libs.androidx.core.ktx)
@@ -95,36 +102,42 @@ dependencies {
     androidTestImplementation(libs.androidx.junit.ktx)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    /* Kotlinx extensions */
+    implementation(platform(libs.kotlin.bom))
+    implementation(libs.kotlin.reflect)
+    implementation(libs.bundles.kotlinx)
+
     /* Jetpack Hilt */
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.hilt.compiler)
 
     /* Jetpack Compose */
-    implementation(libs.bundles.jetpack.compose)
-    implementation(libs.bundles.material)
+    implementation(libs.bundles.androidx.compose)
+    implementation(libs.bundles.androidx.compose.material)
+
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.manifest)
 
     /* Jetpack Navigation */
-    implementation(libs.bundles.jetpack.navigation)
+    implementation(libs.bundles.androidx.navigation)
 
     /* Jetpack Startup */
     implementation(libs.androidx.startup)
 
     /* Jetpack ViewModel & Live Data */
-    implementation(libs.bundles.jetpack.lifecycle)
+    implementation(libs.bundles.androidx.lifecycle)
 
     /* Jetpack CameraX */
-    implementation(libs.bundles.jetpack.camerax)
+    implementation(libs.bundles.androidx.camera)
 
     /* Jetpack Room */
-    implementation(libs.bundles.jetpack.room)
+    implementation(libs.bundles.androidx.room)
     androidTestImplementation(libs.androidx.room.testing)
     ksp(libs.androidx.room.compiler)
 
     /* Jetpack WorkManager */
-    implementation(libs.bundles.jetpack.work)
+    implementation(libs.bundles.androidx.work)
 
     /* ArrowKt: Functional Programming */
     implementation(libs.arrow.core)
