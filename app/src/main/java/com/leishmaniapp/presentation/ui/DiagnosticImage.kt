@@ -197,7 +197,7 @@ fun DiagnosticImage(
             }
         },
         painter = if (image.path == null) {
-            painterResource(id = R.drawable.image_example)
+            painterResource(id = R.drawable.macrophage)
         } else {
             imagePainter
         },

@@ -24,10 +24,6 @@ import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.disease.Disease
-import com.leishmaniapp.infrastructure.background.DiagnosisResultsWorker
-import com.leishmaniapp.infrastructure.background.DiagnosisUploadWorker
-import com.leishmaniapp.infrastructure.background.ImageProcessingWorker
-import com.leishmaniapp.infrastructure.background.ImageResultsWorker
 import com.leishmaniapp.persistance.database.ApplicationDatabase
 import com.leishmaniapp.persistance.entities.DiagnosisRoom
 import com.leishmaniapp.persistance.entities.DiagnosisRoom.Companion.asRoomEntity
@@ -169,7 +165,7 @@ class DiagnosisViewModel @Inject constructor(
 
     fun shareCurrentDiagnosis(context: Context) {
         val file = runBlocking {
-            diagnosisShare.shareDiagnosisFile(currentDiagnosis.value!!)
+            diagnosisShare.generateDiagnosisFile(currentDiagnosis.value!!)
         }
 
         Log.d("DiagnosisShare", "Stored in file: ${file.absolutePath}")
@@ -184,65 +180,71 @@ class DiagnosisViewModel @Inject constructor(
     }
 
     fun startDiagnosisResultOneTimeWorker(context: Context) {
-        val workRequest = OneTimeWorkRequestBuilder<DiagnosisResultsWorker>().setConstraints(
-            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        ).build()
-
-        WorkManager.getInstance(context).enqueue(workRequest)
+        // TODO: Fix this
+//        val workRequest = OneTimeWorkRequestBuilder<DiagnosisResultsWorker>().setConstraints(
+//            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+//        ).build()
+//
+//        WorkManager.getInstance(context).enqueue(workRequest)
     }
 
     fun startDiagnosisUploadOneTimeWorker(context: Context, diagnosisId: UUID) {
-        val workRequest = OneTimeWorkRequestBuilder<DiagnosisUploadWorker>().setInputData(
-            Data.Builder().putString("diagnosis", diagnosisId.toString()).build()
-        ).setConstraints(
-            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        ).build()
-
-        WorkManager.getInstance(context).enqueue(workRequest)
+        // TODO: Fix this
+//        val workRequest = OneTimeWorkRequestBuilder<DiagnosisUploadWorker>().setInputData(
+//            Data.Builder().putString("diagnosis", diagnosisId.toString()).build()
+//        ).setConstraints(
+//            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+//        ).build()
+//
+//        WorkManager.getInstance(context).enqueue(workRequest)
     }
 
     fun startDiagnosisResultsBackgroundWorker(context: Context) {
-        // Call the worker
-        val workRequest =
-            PeriodicWorkRequestBuilder<DiagnosisResultsWorker>(Duration.ofSeconds(60)).setConstraints(
-                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-            ).build()
-
-        // Enqueue the request
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            DiagnosisResultsWorker::class.simpleName!!,
-            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
-            workRequest
-        )
+        // TODO: Fix this
+//        // Call the worker
+//        val workRequest =
+//            PeriodicWorkRequestBuilder<DiagnosisResultsWorker>(Duration.ofSeconds(60)).setConstraints(
+//                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+//            ).build()
+//
+//        // Enqueue the request
+//        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+//            DiagnosisResultsWorker::class.simpleName!!,
+//            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+//            workRequest
+//        )
     }
 
     fun stopDiagnosisResultsBackgroundWorker(context: Context) {
-        // Cancel work manager
-        WorkManager.getInstance(context)
-            .cancelUniqueWork(DiagnosisResultsWorker::class.simpleName!!)
+        // TODO: Fix this
+//        // Cancel work manager
+//        WorkManager.getInstance(context)
+//            .cancelUniqueWork(DiagnosisResultsWorker::class.simpleName!!)
     }
 
     fun startImageResultsWorker(context: Context, diagnosis: UUID, sample: Int) {
-        // Call the worker
-        val workRequest =
-            PeriodicWorkRequestBuilder<ImageResultsWorker>(Duration.ofSeconds(5)).setInputData(
-                Data.Builder().putString("diagnosis", diagnosis.toString()).putInt("sample", sample)
-                    .build()
-            ).setInitialDelay(Duration.ofSeconds(10)).setConstraints(
-                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-            ).build()
-
-        // Enqueue the request
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            ImageResultsWorker::class.simpleName!!,
-            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
-            workRequest
-        )
+        // TODO: Fix this
+//        // Call the worker
+//        val workRequest =
+//            PeriodicWorkRequestBuilder<ImageResultsWorker>(Duration.ofSeconds(5)).setInputData(
+//                Data.Builder().putString("diagnosis", diagnosis.toString()).putInt("sample", sample)
+//                    .build()
+//            ).setInitialDelay(Duration.ofSeconds(10)).setConstraints(
+//                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+//            ).build()
+//
+//        // Enqueue the request
+//        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+//            ImageResultsWorker::class.simpleName!!,
+//            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+//            workRequest
+//        )
     }
 
     fun stopImageResultsWorker(context: Context) {
-        // Cancel work manager
-        WorkManager.getInstance(context).cancelUniqueWork(ImageResultsWorker::class.simpleName!!)
+        // TODO: Fix this
+//        // Cancel work manager
+//        WorkManager.getInstance(context).cancelUniqueWork(ImageResultsWorker::class.simpleName!!)
     }
 
     /**
@@ -322,59 +324,60 @@ class DiagnosisViewModel @Inject constructor(
     }
 
     suspend fun analyzeImage(context: Context) {
-        // Obtain data to worker
-        val data = Data.Builder().putString("diagnosis", currentDiagnosis.value!!.id.toString())
-            .putInt("sample", currentImage.value!!.sample).build()
-
-        // Build the worker
-        val worker = OneTimeWorkRequestBuilder<ImageProcessingWorker>().setConstraints(
-            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        ).setInputData(data).setBackoffCriteria(
-            backoffPolicy = BackoffPolicy.LINEAR, duration = Duration.ofSeconds(15)
-        ).build()
-
-        // Prompt the worker
-        WorkManager.getInstance(context).enqueue(worker)
-
-        // Return the worker ID
-        currentWorkerId.value = worker.id
-        savedStateHandle["currentWorkerId"] = currentImage.value
-
-        // Image is deferred because no internet connection is available
-        if (!imageProcessingRequest.checkIfInternetConnectionIsAvailable()) {
-            setImageAsDeferred()
-        }
-
-        val workerInfo =
-            WorkManager.getInstance(context).getWorkInfoByIdLiveData(currentWorkerId.value!!)
-                .asFlow()
-
-        var workerWasCalled = false
-        var coroutineWasExecuted = false
-
-        try {
-            withTimeout(15_000) {
-                workerInfo.collect { info ->
-                    when (info.state) {
-                        // Resume execution
-                        WorkInfo.State.RUNNING, WorkInfo.State.FAILED -> coroutineWasExecuted = true
-
-                        WorkInfo.State.SUCCEEDED -> if (!workerWasCalled) {
-                            startImageResultsWorker(
-                                context, currentDiagnosis.value!!.id, currentImage.value!!.sample
-                            )
-                            workerWasCalled = true
-                        }
-
-                        // Continue waiting
-                        WorkInfo.State.BLOCKED, WorkInfo.State.CANCELLED, WorkInfo.State.ENQUEUED -> Unit
-                    }
-                }
-            }
-        } catch (e: TimeoutCancellationException) {
-            // Check if coroutine was resumed
-            if (!coroutineWasExecuted) setImageAsDeferred()
-        }
+        // TODO: Fix this
+//        // Obtain data to worker
+//        val data = Data.Builder().putString("diagnosis", currentDiagnosis.value!!.id.toString())
+//            .putInt("sample", currentImage.value!!.sample).build()
+//
+//        // Build the worker
+//        val worker = OneTimeWorkRequestBuilder<ImageProcessingWorker>().setConstraints(
+//            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+//        ).setInputData(data).setBackoffCriteria(
+//            backoffPolicy = BackoffPolicy.LINEAR, duration = Duration.ofSeconds(15)
+//        ).build()
+//
+//        // Prompt the worker
+//        WorkManager.getInstance(context).enqueue(worker)
+//
+//        // Return the worker ID
+//        currentWorkerId.value = worker.id
+//        savedStateHandle["currentWorkerId"] = currentImage.value
+//
+//        // Image is deferred because no internet connection is available
+//        if (!imageProcessingRequest.checkIfInternetConnectionIsAvailable()) {
+//            setImageAsDeferred()
+//        }
+//
+//        val workerInfo =
+//            WorkManager.getInstance(context).getWorkInfoByIdLiveData(currentWorkerId.value!!)
+//                .asFlow()
+//
+//        var workerWasCalled = false
+//        var coroutineWasExecuted = false
+//
+//        try {
+//            withTimeout(15_000) {
+//                workerInfo.collect { info ->
+//                    when (info.state) {
+//                        // Resume execution
+//                        WorkInfo.State.RUNNING, WorkInfo.State.FAILED -> coroutineWasExecuted = true
+//
+//                        WorkInfo.State.SUCCEEDED -> if (!workerWasCalled) {
+//                            startImageResultsWorker(
+//                                context, currentDiagnosis.value!!.id, currentImage.value!!.sample
+//                            )
+//                            workerWasCalled = true
+//                        }
+//
+//                        // Continue waiting
+//                        WorkInfo.State.BLOCKED, WorkInfo.State.CANCELLED, WorkInfo.State.ENQUEUED -> Unit
+//                    }
+//                }
+//            }
+//        } catch (e: TimeoutCancellationException) {
+//            // Check if coroutine was resumed
+//            if (!coroutineWasExecuted) setImageAsDeferred()
+//        }
     }
 
     /**

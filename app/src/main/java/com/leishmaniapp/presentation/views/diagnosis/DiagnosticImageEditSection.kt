@@ -110,7 +110,7 @@ fun DiagnosticImageEditSection(
             modifier = Modifier.weight(1f),
             label = "animation:animatedContent:diagnosticElementEdit",
             transitionSpec = {
-                scaleInToFitContainer() togetherWith scaleOutToFitContainer()
+                TODO("Create an animation")
             },
         ) { selectedElementState ->
             DiagnosticImage(modifier = Modifier

@@ -26,7 +26,7 @@ data object MockDisease : Disease(
         @Composable get() = stringResource(id = R.string.mock_disease)
 
     override val painterResource: Painter
-        @Composable get() = painterResource(id = R.drawable.image_example)
+        @Composable get() = painterResource(id = R.drawable.macrophage)
 
     /**
      * If there are more than 10 elements, then true

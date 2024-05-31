@@ -27,7 +27,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 class ApplicationDiagnosisSharing @Inject constructor() : IDiagnosisSharing {
-    override suspend fun shareDiagnosisFile(diagnosis: Diagnosis): File {
+    override suspend fun generateDiagnosisFile(diagnosis: Diagnosis): File {
 
         val pdfFile = withContext(Dispatchers.IO) {
             File.createTempFile("diagnosis", ".pdf")

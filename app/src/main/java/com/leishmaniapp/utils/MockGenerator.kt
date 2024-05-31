@@ -37,7 +37,7 @@ class MockGenerator {
         )
 
         fun mockImage(
-            processed: ImageAnalysisStatus = ImageAnalysisStatus.values().random(),
+            processed: ImageAnalysisStatus = ImageAnalysisStatus.entries.toTypedArray().random(),
             size: Int = 2250,
             sample: Int = Random.nextInt(150),
         ) = Image(

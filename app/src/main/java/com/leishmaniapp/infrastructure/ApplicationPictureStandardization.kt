@@ -12,12 +12,22 @@ import java.io.IOException
 import javax.inject.Inject
 import kotlin.math.sqrt
 
+/**
+ * Transform picture into an standarized cloud format
+ */
 class ApplicationPictureStandardization @Inject constructor() : IPictureStandardization {
 
     companion object {
-        const val imageResolution = 1944
+        /**
+         * Standarized picture size, both height and width
+         */
+        const val STD_IMAGE_RESOLUTION = 1944
     }
 
+    /**
+     * Crop the square inside the microscope objective lens circular area
+     * TODO: Return typed exception
+     */
     override fun cropPicture(pictureUri: Uri): Boolean {
         // Check if picture URI is valid
         if (pictureUri.path == null) return false
@@ -65,6 +75,10 @@ class ApplicationPictureStandardization @Inject constructor() : IPictureStandard
         return true
     }
 
+    /**
+     * Scale picture to the [STD_IMAGE_RESOLUTION]
+     * TODO: Return typed exception
+     */
     override fun scalePicture(pictureUri: Uri): Int? {
         // Check if picture URI is valid
         if (pictureUri.path == null) return null
@@ -76,8 +90,8 @@ class ApplicationPictureStandardization @Inject constructor() : IPictureStandard
         val scaledBitmap =
             Bitmap.createScaledBitmap(
                 sourceBitmap,
-                imageResolution,
-                imageResolution,
+                STD_IMAGE_RESOLUTION,
+                STD_IMAGE_RESOLUTION,
                 false
             ) // Sampling filtering (Smooths image)
 
@@ -97,6 +111,7 @@ class ApplicationPictureStandardization @Inject constructor() : IPictureStandard
             scaledBitmap.recycle()
             sourceBitmap.recycle()
         }
-        return imageResolution
+
+        return STD_IMAGE_RESOLUTION
     }
 }

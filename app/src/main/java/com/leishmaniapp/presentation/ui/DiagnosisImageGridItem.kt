@@ -36,7 +36,7 @@ fun DiagnosisImageGridItem(modifier: Modifier = Modifier, image: Image) {
         AsyncImage(
             model = image.path,
             contentDescription = null,
-            placeholder = painterResource(id = R.drawable.image_example)
+            placeholder = painterResource(id = R.drawable.macrophage)
         )
         Row(
             modifier = Modifier.fillMaxWidth(),

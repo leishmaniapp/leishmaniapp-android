@@ -10,6 +10,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/**
+ * Provides the use cases interfaces implementation
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class ApplicationUseCasesModule {

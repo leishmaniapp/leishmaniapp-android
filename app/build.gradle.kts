@@ -1,17 +1,15 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    id("com.android.application")
-
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.serialization")
-    id("org.jetbrains.kotlin.plugin.compose")
-
-    id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
-
-    id("kotlin-kapt")
-    id("kotlin-parcelize")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.ksp)
+    // TODO: Generate the protobuf schema
+    // alias(libs.plugins.google.protobuf)
+    alias(libs.plugins.google.dagger.hilt.android)
 }
 
 android {
@@ -42,8 +40,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_19
-        targetCompatibility = JavaVersion.VERSION_19
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     buildFeatures {
@@ -60,128 +58,85 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}" //for compose
         }
     }
+
+    sourceSets.getByName("main") {
+        kotlin.srcDir("build/generated/source/proto/main/kotlin")
+    }
 }
 
 kotlin {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_1_8)
+        jvmTarget.set(JvmTarget.JVM_17)
+        freeCompilerArgs.addAll(
+            listOf(
+                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+                "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+            )
+        )
     }
 }
 
 dependencies {
 
+    /* Kotlinx extensions */
+    implementation(platform(libs.kotlin.bom))
+    implementation(libs.kotlin.reflect)
+    implementation(libs.bundles.kotlinx)
+
     /* Android core dependencies */
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.9.24"))
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.1")
-    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
 
     /* Testing Libraries */
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("androidx.test.ext:junit-ktx:1.1.5")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    testImplementation(libs.junit)
+    testImplementation(libs.androidx.junit.ktx)
 
-    /* Jetpack Compose */
-    implementation("androidx.compose.ui:ui:1.6.7")
-    implementation("androidx.compose.runtime:runtime:1.6.7")
-    implementation("androidx.compose.foundation:foundation:1.6.7")
-    implementation("androidx.compose.animation:animation:1.6.7")
-    implementation("androidx.compose.material3:material3:1.2.1")
-
-    // Google Icons for Jetpack Compose
-    implementation("androidx.compose.material:material-icons-core")
-    implementation("androidx.compose.material:material-icons-extended")
-
-    // Jetpack Compose Testing
-    androidTestImplementation(platform("androidx.compose:compose-bom:2024.05.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-
-    // Jetpack Compose Previews
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
-
-    /* Jetpack Glance */
-    implementation("androidx.glance:glance-appwidget:1.0.0")
-
-    /* Jetpack Startup */
-    implementation("androidx.startup:startup-runtime:1.1.1")
-
-    // Jetpack ViewModel
-    implementation("androidx.lifecycle:lifecycle-runtime-compose")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate")
-
-    /* Jetpack Navigation */
-    implementation("androidx.navigation:navigation-compose:2.7.7")
-
-    /* Jetpack LiveData */
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.1")
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.7")
-
-    /* Jetpack CameraX */
-    implementation("androidx.camera:camera-camera2:1.3.3")
-    implementation("androidx.camera:camera-lifecycle:1.3.3")
-    implementation("androidx.camera:camera-view:1.3.3")
-
-    /* Jetpack Room */
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-
-    // Room testing
-    androidTestImplementation("androidx.room:room-testing:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
-
-    /* Jetpack WorkManager */
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.junit.ktx)
+    androidTestImplementation(libs.androidx.espresso.core)
 
     /* Jetpack Hilt */
-    implementation("com.google.dagger:hilt-android:2.51.1")
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    ksp(libs.androidx.hilt.compiler)
 
-    kapt("com.google.dagger:hilt-compiler:2.51.1")
-    kapt("androidx.hilt:hilt-compiler:1.2.0")
+    /* Jetpack Compose */
+    implementation(libs.bundles.jetpack.compose)
+    implementation(libs.bundles.material)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.manifest)
 
-    testImplementation("com.google.dagger:hilt-android-testing:2.51.1")
-    kaptTest("com.google.dagger:hilt-android-compiler:2.51.1")
-    testAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.51.1")
+    /* Jetpack Navigation */
+    implementation(libs.bundles.jetpack.navigation)
 
-    androidTestImplementation("com.google.dagger:hilt-android-testing:2.51.1")
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.51.1")
-    androidTestAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.51.1")
+    /* Jetpack Startup */
+    implementation(libs.androidx.startup)
 
-    implementation("androidx.hilt:hilt-work:1.2.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    /* Jetpack ViewModel & Live Data */
+    implementation(libs.bundles.jetpack.lifecycle)
 
-    /* Kotlinx extensions */
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.24")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    /* Jetpack CameraX */
+    implementation(libs.bundles.jetpack.camerax)
 
-    // Mock data generator
-    debugImplementation("io.bloco:faker:2.0.2")
+    /* Jetpack Room */
+    implementation(libs.bundles.jetpack.room)
+    androidTestImplementation(libs.androidx.room.testing)
+    ksp(libs.androidx.room.compiler)
 
-    /* Coil: Image manipulation and cropping */
-    implementation("io.coil-kt:coil:2.4.0")
-    implementation("io.coil-kt:coil-compose:2.4.0")
-
-    /* AWS Amplify */
-    implementation("com.amplifyframework:aws-storage-s3:1.31.3")
-    implementation("com.amplifyframework:aws-auth-cognito:1.31.3")
-    implementation("com.amplifyframework:aws-api:1.31.3")
+    /* Jetpack WorkManager */
+    implementation(libs.bundles.jetpack.work)
 
     /* ArrowKt: Functional Programming */
-    implementation("io.arrow-kt:arrow-core:1.2.4")
-    implementation("io.arrow-kt:arrow-fx-coroutines:1.2.0")
+    implementation(libs.arrow.core)
+    implementation(libs.arrow.fx.coroutines)
+
+    /* Faker: Mock data generation */
+    debugImplementation(libs.faker)
+
+    /* Coil: Image manipulation and cropping */
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
 
     /* iTextPDF: PDF Generation */
-    implementation("com.itextpdf:itext7-core:8.0.1")
-}
-
-kapt {
-    correctErrorTypes = true
+    implementation(libs.itextpdf.itext7)
 }

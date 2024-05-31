@@ -10,6 +10,7 @@ import com.leishmaniapp.entities.Username
 fun interface IAuthenticationProvider {
     /**
      * Authenticate with credentials, returns [Specialist] or null
+     * TODO: Use typed exceptions
      */
     suspend fun authenticateSpecialist(username: Username, password: Password): Specialist?
 }

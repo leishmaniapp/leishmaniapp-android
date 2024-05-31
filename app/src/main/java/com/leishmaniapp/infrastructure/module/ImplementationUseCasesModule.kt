@@ -1,8 +1,8 @@
 package com.leishmaniapp.infrastructure.module
 
-import com.leishmaniapp.infrastructure.cloud.CloudAuthenticationProvider
-import com.leishmaniapp.infrastructure.cloud.CloudDiagnosisUpload
-import com.leishmaniapp.infrastructure.cloud.CloudProcessingRequest
+import com.leishmaniapp.infrastructure.mock.MockAuthenticationProvider
+import com.leishmaniapp.infrastructure.mock.MockDiagnosisUpload
+import com.leishmaniapp.infrastructure.mock.MockProcessingRequest
 import com.leishmaniapp.usecases.IAuthenticationProvider
 import com.leishmaniapp.usecases.IDiagnosisUpload
 import com.leishmaniapp.usecases.IProcessingRequest
@@ -18,18 +18,18 @@ abstract class ImplementationUseCasesModule {
     @Binds
     @Singleton
     abstract fun provideProcessingRequest(
-        processingRequest: CloudProcessingRequest
+        processingRequest: MockProcessingRequest
     ): IProcessingRequest
 
     @Binds
     @Singleton
     abstract fun provideDiagnosisUpload(
-        diagnosisUpload: CloudDiagnosisUpload
+        diagnosisUpload: MockDiagnosisUpload
     ): IDiagnosisUpload
 
     @Singleton
     @Binds
     abstract fun provideAuthenticationProvider(
-        authenticationProvider: CloudAuthenticationProvider
+        authenticationProvider: MockAuthenticationProvider
     ): IAuthenticationProvider
 }

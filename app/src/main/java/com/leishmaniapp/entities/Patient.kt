@@ -25,7 +25,7 @@ data class Patient(
      */
     @IgnoredOnParcel
     @Ignore
-    val document: String = "%s %s".format(documentType, id.value)
+    val document: String = documentType.toString() + id.value
 
     /**
      * Calculate the patient hash from its document

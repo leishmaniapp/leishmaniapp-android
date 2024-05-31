@@ -6,6 +6,7 @@ import java.io.File
 fun interface IDiagnosisSharing {
     /**
      * Create a file from a [Diagnosis] for sharing
+     * TODO: Use typed exceptions
      */
-    suspend fun shareDiagnosisFile(diagnosis: Diagnosis): File
+    suspend fun generateDiagnosisFile(diagnosis: Diagnosis): File
 }

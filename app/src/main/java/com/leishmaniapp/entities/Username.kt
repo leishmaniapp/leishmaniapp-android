@@ -7,7 +7,6 @@ import kotlinx.serialization.Serializable
 
 /**
  * Functional wrapper class around username
- * Inlined: Doesn't generate runtime overhead
  */
 @Serializable(with = UsernameSerializer::class)
 @Parcelize

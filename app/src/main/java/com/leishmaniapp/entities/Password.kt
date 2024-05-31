@@ -5,9 +5,8 @@ import kotlinx.parcelize.Parcelize
 
 /**
  * Functional wrapper class around password
- * Inlined: Doesn't generate runtime overhead
  *
- * This class is NOT serializable
+ * This class is NOT serializable, sensitive data
  */
 @Parcelize
 data class Password(val value: String) : Parcelable

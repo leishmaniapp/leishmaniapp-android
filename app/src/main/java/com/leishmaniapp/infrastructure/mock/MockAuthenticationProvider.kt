@@ -13,7 +13,7 @@ import javax.inject.Inject
  * Authenticate using "admin" as both [Username] and [Password]
  */
 class MockAuthenticationProvider @Inject constructor(
-    val applicationDatabase: ApplicationDatabase
+    private val applicationDatabase: ApplicationDatabase
 ) : IAuthenticationProvider {
     override suspend fun authenticateSpecialist(
         username: Username,
