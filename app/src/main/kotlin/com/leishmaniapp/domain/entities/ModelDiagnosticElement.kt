@@ -19,6 +19,8 @@ data class ModelDiagnosticElement(
 
 ) : DiagnosticElement() {
 
+    companion object;
+
     /**
      * Amount of items depends on list size
      */

@@ -1,11 +1,13 @@
 package com.leishmaniapp
 
+import com.leishmaniapp.domain.disease.MockDotsDisease
+import com.leishmaniapp.domain.entities.AnalysisStage
+import com.leishmaniapp.domain.entities.Diagnosis
+import com.leishmaniapp.domain.entities.ImageSample
+import com.leishmaniapp.domain.entities.ModelDiagnosticElement
+import com.leishmaniapp.domain.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.domain.types.Coordinates
-import com.leishmaniapp.entities.ImageAnalysisStage
-import com.leishmaniapp.entities.ModelDiagnosticElement
-import com.leishmaniapp.entities.SpecialistDiagnosticElement
-import com.leishmaniapp.entities.disease.MockDotsDisease
-import com.leishmaniapp.utils.MockGenerator
+import com.leishmaniapp.utilities.mock.MockGenerator.mock
 import org.junit.Assert
 import org.junit.Test
 
@@ -13,7 +15,7 @@ class DiagnosisComputationsTests {
     @Test
     fun computedResultsTest() {
         val images = listOf(
-            MockGenerator.mockImage().copy(
+            ImageSample.mock().copy(
                 elements = setOf(
                     // 3 Model diagnostic elements
                     ModelDiagnosticElement(
@@ -28,7 +30,7 @@ class DiagnosisComputationsTests {
                         MockDotsDisease.elements.first(), 2
                     )
                 )
-            ), MockGenerator.mockImage().copy(
+            ), ImageSample.mock().copy(
                 elements = setOf(
                     // 1 Model diagnostic elements
                     ModelDiagnosticElement(
@@ -44,8 +46,8 @@ class DiagnosisComputationsTests {
             )
         )
 
-        val diagnosis = MockGenerator.mockDiagnosis()
-            .copy(disease = MockDotsDisease, images = images.associateBy { it.sample })
+        val diagnosis = Diagnosis.mock()
+            .copy(disease = MockDotsDisease, images = images)
 
         val computedElements = diagnosis.computedResults
 
@@ -65,7 +67,7 @@ class DiagnosisComputationsTests {
     @Test
     fun diagnosisResultWithComputedResultsForDisease() {
         val images = listOf(
-            MockGenerator.mockImage().copy(
+            ImageSample.mock().copy(
                 elements = setOf(
                     // 3 Model diagnostic elements
                     ModelDiagnosticElement(
@@ -79,51 +81,69 @@ class DiagnosisComputationsTests {
             )
         )
 
-        val diagnosis = MockGenerator.mockDiagnosis()
-            .copy(disease = MockDotsDisease, images = images.associateBy { it.sample })
+        val diagnosis = Diagnosis.mock()
+            .copy(disease = MockDotsDisease, images = images)
 
         Assert.assertEquals(
-            diagnosis.withModelResult().modelResult,
-            MockDotsDisease.computeDiagnosisResult(diagnosis.computedResults)
+            diagnosis.withResults().results.modelResult,
+            MockDotsDisease.modelResultForDisease(diagnosis.computedResults)
         )
     }
 
     @Test
     fun diagnosisSamplesTest() {
-        val images = List(10) { counter -> MockGenerator.mockImage().copy(sample = counter) }
+        val images = List(10) { counter ->
+            ImageSample.mock().run {
+                copy(metadata = metadata.copy(sample = counter))
+            }
+        }
         val diagnosis =
-            MockGenerator.mockDiagnosis().copy(images = images.associateBy { it.sample })
+            Diagnosis.mock().copy(images = images)
 
         Assert.assertEquals(diagnosis.samples, images.size)
     }
 
     @Test
     fun diagnosisIsCompletedTest() {
-        var diagnosis = MockGenerator.mockDiagnosis()
+        // Create a diagnosis
+        var diagnosis = Diagnosis.mock()
+
+        // Create a list of analyzed images
         val images = List(10) { counter ->
-            MockGenerator.mockImage()
-                .copy(sample = counter, processed = ImageAnalysisStage.Analyzed)
+            ImageSample.mock().run {
+                copy(
+                    metadata = metadata.copy(sample = counter),
+                    stage = AnalysisStage.Analyzed,
+                )
+            }
         }.toMutableList()
 
-        diagnosis = diagnosis.copy(images = images.associateBy { it.sample })
-        Assert.assertTrue(diagnosis.completed)
+        // Every image is analyzed and thus the diagnose should be analyzed
+        diagnosis = diagnosis.copy(images = images)
+        Assert.assertTrue(diagnosis.analyzed)
 
-        images[0] = images[0].copy(processed = ImageAnalysisStage.NotAnalyzed)
-        diagnosis = diagnosis.copy(images = images.associateBy { it.sample })
-        Assert.assertFalse(diagnosis.completed)
+        // One of the images is not analyzed
+        images[0] = images[0].copy(stage = AnalysisStage.NotAnalyzed)
+        diagnosis = diagnosis.copy(images = images)
+        // Thus the diagnosis must not be analyzed
+        Assert.assertFalse(diagnosis.analyzed)
     }
 
     @Test
     fun diagnosisAppendImageTest() {
-        var diagnosis = MockGenerator.mockDiagnosis()
-        val images = List(10) { counter -> MockGenerator.mockImage().copy(sample = counter) }
+        var diagnosis = Diagnosis.mock()
+        val images = List(10) { counter ->
+            ImageSample.mock().run {
+                copy(metadata = metadata.copy(sample = counter))
+            }
+        }
 
         Assert.assertEquals(
             diagnosis.samples,
             images.size
         )
 
-        diagnosis = diagnosis.appendImage(MockGenerator.mockImage())
+        diagnosis = diagnosis.appendImage(ImageSample.mock())
         Assert.assertEquals(
             diagnosis.samples,
             images.size + 1

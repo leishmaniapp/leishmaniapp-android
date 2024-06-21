@@ -51,11 +51,8 @@ fun RemainingImagesAlert(modifier: Modifier = Modifier, onButtonClick: () -> Uni
                 }
 
                 Spacer(modifier = Modifier.padding(vertical = 4.dp))
-
                 Text(text = stringResource(id = R.string.remaining_images_alert_content))
-
                 Spacer(modifier = Modifier.padding(vertical = 4.dp))
-
                 Button(onClick = onButtonClick, modifier = Modifier.fillMaxWidth()) {
                     Text(text = stringResource(id = R.string.remaining_images_alert_btn))
                 }
@@ -69,7 +66,7 @@ fun RemainingImagesAlert(modifier: Modifier = Modifier, onButtonClick: () -> Uni
 fun RemainingImagesAlertPreview() {
     LeishmaniappTheme {
         RemainingImagesAlert {
-            
+
         }
     }
 }

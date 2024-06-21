@@ -5,11 +5,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.leishmaniapp.domain.entities.Diagnosis
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
-import com.leishmaniapp.utils.MockGenerator
+import com.leishmaniapp.utilities.mock.MockGenerator.mock
 
 @Composable
-fun DiagnosisListTile(modifier: Modifier = Modifier, diagnosis: com.leishmaniapp.domain.entities.Diagnosis) {
+fun DiagnosisListTile(
+    modifier: Modifier = Modifier,
+    diagnosis: Diagnosis
+) {
     ListItem(
         modifier = modifier,
         headlineContent = {
@@ -23,6 +27,6 @@ fun DiagnosisListTile(modifier: Modifier = Modifier, diagnosis: com.leishmaniapp
 @Preview(showBackground = true)
 fun DiagnosisListTilePreview() {
     LeishmaniappTheme {
-        DiagnosisListTile(diagnosis = MockGenerator.mockDiagnosis())
+        DiagnosisListTile(diagnosis = Diagnosis.mock())
     }
 }

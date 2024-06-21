@@ -34,4 +34,6 @@ enum class AnalysisStage {
      * Image results have arrived
      */
     Analyzed;
+
+    companion object;
 }

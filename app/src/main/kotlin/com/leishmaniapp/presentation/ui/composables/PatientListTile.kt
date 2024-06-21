@@ -5,9 +5,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.leishmaniapp.entities.Patient
+import com.leishmaniapp.domain.entities.Patient
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
-import com.leishmaniapp.utils.MockGenerator
+import com.leishmaniapp.utilities.mock.MockGenerator.mock
 
 @Composable
 fun PatientListTile(modifier: Modifier = Modifier, patient: Patient) {
@@ -21,6 +21,6 @@ fun PatientListTile(modifier: Modifier = Modifier, patient: Patient) {
 @Preview
 fun PatientListTilePreview() {
     LeishmaniappTheme {
-        PatientListTile(patient = MockGenerator.mockPatient())
+        PatientListTile(patient = Patient.mock())
     }
 }

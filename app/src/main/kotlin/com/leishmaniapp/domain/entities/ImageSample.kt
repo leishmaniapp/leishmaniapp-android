@@ -34,4 +34,8 @@ data class ImageSample(
      */
     val path: Uri? = null,
 
-    ) : Parcelable
+    ) : Parcelable {
+
+        companion object;
+
+    }

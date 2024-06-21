@@ -1,8 +1,9 @@
 package com.leishmaniapp
 
-import com.leishmaniapp.entities.disease.Disease
-import com.leishmaniapp.entities.disease.LeishmaniasisGiemsaDisease
-import com.leishmaniapp.entities.disease.MockDotsDisease
+
+import com.leishmaniapp.domain.disease.Disease
+import com.leishmaniapp.domain.disease.LeishmaniasisGiemsaDisease
+import com.leishmaniapp.domain.disease.MockDotsDisease
 import org.junit.Assert
 import org.junit.Test
 

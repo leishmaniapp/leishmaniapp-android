@@ -18,6 +18,8 @@ data class Patient(
 
     ) : Parcelable {
 
+    companion object;
+
     /**
      * Get the Patient document with DocumentType and ID concatenated by a point
      */

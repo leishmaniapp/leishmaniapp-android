@@ -7,5 +7,7 @@ enum class DocumentType {
     CC,
     TI,
     CE,
-    PASSPORT
+    PASSPORT;
+
+    companion object;
 }

@@ -10,11 +10,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.leishmaniapp.domain.entities.Diagnosis
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
-import com.leishmaniapp.utils.MockGenerator
+import com.leishmaniapp.utilities.mock.MockGenerator.mock
 
 @Composable
-fun AwaitingDiagnosisListTile(diagnosis: com.leishmaniapp.domain.entities.Diagnosis, onClick: () -> Unit) {
+fun AwaitingDiagnosisListTile(
+    diagnosis: com.leishmaniapp.domain.entities.Diagnosis,
+    onClick: () -> Unit
+) {
     ListItem(
         modifier = Modifier.clickable(onClick = onClick),
         headlineContent = {
@@ -39,7 +43,7 @@ fun AwaitingDiagnosisListTile(diagnosis: com.leishmaniapp.domain.entities.Diagno
 fun AwaitingDiagnosisListTilePreview_Completed() {
     LeishmaniappTheme {
         AwaitingDiagnosisListTile(
-            diagnosis = MockGenerator.mockDiagnosis(isCompleted = true)
+            diagnosis = Diagnosis.mock(isCompleted = true)
         ) {
         }
     }
@@ -50,7 +54,7 @@ fun AwaitingDiagnosisListTilePreview_Completed() {
 fun AwaitingDiagnosisListTilePreview_Unfinished() {
     LeishmaniappTheme {
         AwaitingDiagnosisListTile(
-            diagnosis = MockGenerator.mockDiagnosis(isCompleted = false)
+            diagnosis = Diagnosis.mock(isCompleted = false)
         ) {
         }
     }
