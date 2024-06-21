@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import com.leishmaniapp.domain.entities.ImageSample
 import com.leishmaniapp.domain.services.IPictureStandardization
 import java.io.File
 import java.io.FileOutputStream
@@ -16,14 +17,6 @@ import kotlin.math.sqrt
  * Transform picture into an standarized cloud format
  */
 class ApplicationPictureStandardization @Inject constructor() : IPictureStandardization {
-
-    companion object {
-        /**
-         * Standarized picture size, both height and width
-         */
-        const val STD_IMAGE_RESOLUTION = 1944
-    }
-
     /**
      * Crop the square inside the microscope objective lens circular area
      */
@@ -90,8 +83,8 @@ class ApplicationPictureStandardization @Inject constructor() : IPictureStandard
             val scaledBitmap =
                 Bitmap.createScaledBitmap(
                     sourceBitmap,
-                    STD_IMAGE_RESOLUTION,
-                    STD_IMAGE_RESOLUTION,
+                    ImageSample.STD_IMAGE_RESOLUTION,
+                    ImageSample.STD_IMAGE_RESOLUTION,
                     false
                 ) // Sampling filtering (Smooths image)
             // Store new bitmap as jpg
@@ -116,6 +109,6 @@ class ApplicationPictureStandardization @Inject constructor() : IPictureStandard
         }
 
         // Return the standarized image resolution
-        return Result.success(STD_IMAGE_RESOLUTION)
+        return Result.success(ImageSample.STD_IMAGE_RESOLUTION)
     }
 }

@@ -1,6 +1,24 @@
 package com.leishmaniapp.presentation.navigation
 
 import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
+import androidx.navigation.navigation
+import com.leishmaniapp.presentation.ui.views.start.GreetingsScreen
+
+fun NavGraphBuilder.startNavGraph(
+    navController: NavHostController,
+) {
+    navigation(
+        route = NavigationRoutes.StartRoute.route,
+        startDestination = NavigationRoutes.StartRoute.GreetingsScreen.route,
+    ) {
+        composable(route = NavigationRoutes.StartRoute.GreetingsScreen.route) {
+            GreetingsScreen(onContinue = { navController.navigateToAuthentication() })
+        }
+    }
+}
 
 //fun NavGraphBuilder.startNavGraph(
 //    navController: NavHostController,
@@ -64,14 +82,14 @@ import androidx.navigation.NavController
 //    }
 //}
 
-//internal fun NavController.navigateToAuthentication() {
-//    this.navigate(NavigationRoutes.StartRoute.AuthenticationRoute.route)
-//}
-//
-//internal fun NavController.navigateToDiseasesMenu() {
-//    this.navigate(NavigationRoutes.StartRoute.DiseasesRoute.route) {
-//        this.popUpTo(NavigationRoutes.StartRoute.GreetingsScreen.route) {
-//            inclusive = true
-//        }
-//    }
-//}
+internal fun NavController.navigateToAuthentication() {
+    this.navigate(NavigationRoutes.StartRoute.AuthenticationRoute.route)
+}
+
+internal fun NavController.navigateToDiseasesMenu() {
+    this.navigate(NavigationRoutes.StartRoute.DiseasesRoute.route) {
+        this.popUpTo(NavigationRoutes.StartRoute.GreetingsScreen.route) {
+            inclusive = true
+        }
+    }
+}

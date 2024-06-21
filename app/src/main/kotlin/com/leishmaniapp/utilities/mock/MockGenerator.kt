@@ -2,6 +2,7 @@ package com.leishmaniapp.utilities.mock
 
 import android.graphics.ColorSpace.Model
 import com.leishmaniapp.domain.disease.Disease
+import com.leishmaniapp.domain.disease.LeishmaniasisGiemsaDisease
 import com.leishmaniapp.domain.disease.MockDotsDisease
 import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.domain.entities.Diagnosis
@@ -65,7 +66,7 @@ object MockGenerator {
     private fun ImageMetadata.Companion.mock(sample: Int) = ImageMetadata(
         diagnosis = UUID.randomUUID(),
         sample = sample,
-        disease = Disease.diseases().random(),
+        disease = setOf(LeishmaniasisGiemsaDisease, MockDotsDisease).random(),
         date = LocalDateTime.utcNow(),
     )
 
@@ -135,7 +136,10 @@ object MockGenerator {
      * Generate random mock diagnosis
      * @param isCompleted null for random image completion, else for completion status
      */
-    fun Diagnosis.Companion.mock(isCompleted: Boolean? = null, isFinished: Boolean = false) =
+    fun Diagnosis.Companion.mock(
+        isCompleted: Boolean = faker.bool.bool(),
+        isFinished: Boolean = false
+    ) =
         Diagnosis(
             results = Diagnosis.Results.mock(),
             date = LocalDateTime.utcNow(),
@@ -147,10 +151,10 @@ object MockGenerator {
             images = buildList {
                 repeat(faker.number.between(0, 10)) { idx ->
                     add(
-                        if (isCompleted == null) {
-                            ImageSample.mock(sample = idx)
-                        } else {
+                        if (isCompleted) {
                             ImageSample.mock(sample = idx, stage = AnalysisStage.Analyzed)
+                        } else {
+                            ImageSample.mock(sample = idx)
                         }
                     )
                 }

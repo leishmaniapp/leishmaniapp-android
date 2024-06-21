@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
-fun ReusableTopBar(text: String) {
+fun InformationTopBar(text: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -36,6 +36,6 @@ fun ReusableTopBar(text: String) {
 @Composable
 fun ReusableTopBarPreview() {
     LeishmaniappTheme {
-        ReusableTopBar(text = "Lorem Ipsum")
+        InformationTopBar(text = "Lorem Ipsum")
     }
 }

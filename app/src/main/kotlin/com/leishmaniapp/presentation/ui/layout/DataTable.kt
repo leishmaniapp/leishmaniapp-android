@@ -1,4 +1,4 @@
-package com.leishmaniapp.presentation.ui.composables
+package com.leishmaniapp.presentation.ui.layout
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

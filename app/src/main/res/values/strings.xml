@@ -135,6 +135,7 @@
     <string name="export_import_screen_alert">Tenga en cuenta que sólo se admiten archivos generados por la aplicación</string>
 
     <!-- Authentication -->
+    <string name="authentication">Autenticación</string>
     <string name="authentication_failure">Especialista no encontrado o credenciales incorrectas</string>
 
     <!-- Camera -->

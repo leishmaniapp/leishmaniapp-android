@@ -2,11 +2,13 @@ package com.leishmaniapp.presentation.ui.layout
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,12 +26,12 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun LeishmaniappScaffold(
     title: String = stringResource(id = R.string.app_name),
     backButtonAction: (() -> Unit)? = null,
     bottomBar: @Composable () -> Unit = {},
-    showHelp: Boolean = false,
-    content: @Composable BoxScope.() -> Unit
+    content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -63,23 +65,11 @@ fun LeishmaniappScaffold(
                     titleContentColor = MaterialTheme.colorScheme.background,
                     actionIconContentColor = MaterialTheme.colorScheme.background,
                 ),
-                actions = {
-                    if (showHelp) {
-                        IconButton(onClick = { /*TODO: Show help*/ }) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.Help,
-                                contentDescription = stringResource(R.string.help)
-                            )
-                        }
-                    }
-                }
             )
         },
         bottomBar = bottomBar
     ) { scaffoldPaddingValues ->
-        Box(modifier = Modifier.padding(scaffoldPaddingValues)) {
-            content.invoke(this)
-        }
+        content.invoke(scaffoldPaddingValues)
     }
 }
 
@@ -88,7 +78,9 @@ fun LeishmaniappScaffold(
 fun LeishmaniappScaffoldPreview() {
     LeishmaniappTheme {
         LeishmaniappScaffold {
-            Text(text = "Hello world from LeishmaniappScaffold!")
+            Box(modifier = Modifier.padding(it)) {
+                Text(text = "Hello world from LeishmaniappScaffold!")
+            }
         }
     }
 }
@@ -98,11 +90,12 @@ fun LeishmaniappScaffoldPreview() {
 fun LeishmaniappScaffoldPreview_BackButtonAndHelp() {
     LeishmaniappTheme {
         LeishmaniappScaffold(
-            title = "Back and Help",
-            showHelp = true,
+            title = "Back and Custom Title",
             backButtonAction = {}
         ) {
-            Text(text = "Hello world from LeishmaniappScaffold!")
+            Box(modifier = Modifier.padding(it)) {
+                Text(text = "Hello world from LeishmaniappScaffold!")
+            }
         }
     }
 }
@@ -116,7 +109,9 @@ fun LeishmaniappScaffoldPreview_WithBottomBar() {
                 Text(text = "This is a BottomAppBar")
             }
         }) {
-            Text(text = "Hello world from LeishmaniappScaffold!")
+            Box(modifier = Modifier.padding(it)) {
+                Text(text = "Hello world from LeishmaniappScaffold!")
+            }
         }
     }
 }

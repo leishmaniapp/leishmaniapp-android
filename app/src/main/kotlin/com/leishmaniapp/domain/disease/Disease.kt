@@ -39,7 +39,8 @@ sealed class Disease(
          * List of diseases that inherit from this disease
          */
         fun diseases(): Set<Disease> =
-            Disease::class.sealedSubclasses.map { it.objectInstance!! }.toSet()
+            Disease::class.sealedSubclasses.filter { it.objectInstance != null }
+                .map { it.objectInstance!! }.toSet()
 
         /**
          * Get a disease that inherits [Disease] with the given id

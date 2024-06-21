@@ -36,6 +36,11 @@ data class ImageSample(
 
     ) : Parcelable {
 
-        companion object;
-
+    companion object {
+        /**
+         * Standarized picture size, both height and width
+         */
+        const val STD_IMAGE_RESOLUTION = 1944
     }
+
+}

@@ -13,10 +13,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.leishmaniapp.domain.entities.Diagnosis
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import com.leishmaniapp.utilities.mock.MockGenerator.mock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.format
 
 @Composable
 fun AwaitingDiagnosisListTile(
-    diagnosis: com.leishmaniapp.domain.entities.Diagnosis,
+    diagnosis: Diagnosis,
     onClick: () -> Unit
 ) {
     ListItem(
@@ -26,7 +28,7 @@ fun AwaitingDiagnosisListTile(
                 text = String.format(
                     "%s\n%s",
                     diagnosis.patient.document,
-                    diagnosis.date.toString()
+                    diagnosis.date.format(LocalDateTime.Formats.ISO),
                 )
             )
         }, trailingContent = {

@@ -6,6 +6,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 
+/**
+ * Root of the navigation graph for the application
+ */
 @Composable
 fun RootNavigation(
     navigationController: NavHostController = rememberNavController(),
@@ -17,6 +20,6 @@ fun RootNavigation(
         exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start) }
     )
     {
-
+        startNavGraph(navController = navigationController)
     }
 }
