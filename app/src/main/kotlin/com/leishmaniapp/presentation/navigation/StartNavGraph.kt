@@ -15,9 +15,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.leishmaniapp.R
 import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
-import com.leishmaniapp.presentation.views.start.AuthenticationScreen
-import com.leishmaniapp.presentation.views.start.DiseasesMenuScreen
-import com.leishmaniapp.presentation.views.start.GreetingsScreen
+import com.leishmaniapp.presentation.ui.views.start.AuthenticationScreen
+import com.leishmaniapp.presentation.ui.views.start.DiseasesMenuScreen
+import com.leishmaniapp.presentation.ui.views.start.GreetingsScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

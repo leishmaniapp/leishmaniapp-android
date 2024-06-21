@@ -7,12 +7,14 @@
     <string name="unknown_disease">Enfermedad no Soportada</string>
     <string name="unknown_element">Elemento diagnóstico desconocido</string>
 
+    <!-- leishmaniapp.giemsa disease -->
     <string name="leishmaniasis_giemsa_disease">Leishmaniasis con tinción Giemsa</string>
     <string name="leishmaniasis_giemsa_disease_element_macrophages">Macrófagos</string>
     <string name="leishmaniasis_giemsa_disease_element_parasites">Parásitos</string>
 
-    <string name="mock_disease">Enfermedad de prueba</string>
-    <string name="mock_disease_element_mock">Elemento Mock</string>
+    <!-- mock.dots disease -->
+    <string name="mock_dots_disease">Enfermedad de prueba: Detector de puntos</string>
+    <string name="mock_dots_disease_element">Punto de prueba</string>
 
     <!-- Actions -->
     <string name="accept">Aceptar</string>
@@ -146,5 +148,7 @@
     <string name="alert_import_success">Base de Datos importada correctamente</string>
     <string name="alert_no_images">No puede concluir un diagnóstico sin imágenes</string>
 
+    <!-- Sharing -->
+    <string name="medical_exam">Examen Médico</string>
 
 </resources>

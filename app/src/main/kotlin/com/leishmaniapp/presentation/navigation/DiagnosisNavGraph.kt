@@ -25,17 +25,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.leishmaniapp.R
 import com.leishmaniapp.entities.Image
-import com.leishmaniapp.entities.ImageAnalysisStatus
-import com.leishmaniapp.presentation.ui.LoadingScreen
+import com.leishmaniapp.entities.ImageAnalysisStage
+import com.leishmaniapp.presentation.ui.composables.LoadingScreen
 import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 import com.leishmaniapp.presentation.viewmodel.DiagnosisViewModel
-import com.leishmaniapp.presentation.views.diagnosis.CameraView
-import com.leishmaniapp.presentation.views.diagnosis.DiagnosisAndAnalysisScreen
-import com.leishmaniapp.presentation.views.diagnosis.DiagnosisImageEditScreen
-import com.leishmaniapp.presentation.views.diagnosis.DiagnosisImageGridScreen
-import com.leishmaniapp.presentation.views.diagnosis.DiagnosisTableScreen
-import com.leishmaniapp.presentation.views.diagnosis.FinishDiagnosisScreen
-import com.leishmaniapp.presentation.views.menu.AwaitingDiagnosesScreen
+import com.leishmaniapp.presentation.ui.views.diagnosis.CameraView
+import com.leishmaniapp.presentation.ui.views.diagnosis.DiagnosisAndAnalysisScreen
+import com.leishmaniapp.presentation.ui.views.diagnosis.DiagnosisImageEditScreen
+import com.leishmaniapp.presentation.ui.views.diagnosis.DiagnosisImageGridScreen
+import com.leishmaniapp.presentation.ui.views.diagnosis.DiagnosisTableScreen
+import com.leishmaniapp.presentation.ui.views.diagnosis.FinishDiagnosisScreen
+import com.leishmaniapp.presentation.ui.views.menu.AwaitingDiagnosesScreen
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -141,7 +141,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 }
 
                 val imageFlowState by imageFlow.collectAsState(initial = null)
-                val analysisState = imageFlowState?.processed ?: ImageAnalysisStatus.NotAnalyzed
+                val analysisState = imageFlowState?.processed ?: ImageAnalysisStage.NotAnalyzed
 
                 if (imageFlowState == null) {
                     LoadingScreen()

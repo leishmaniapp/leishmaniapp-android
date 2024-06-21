@@ -9,7 +9,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.leishmaniapp.presentation.navigation.RootNavigation
-import com.leishmaniapp.presentation.ui.WillPopScopeAlertDialog
+import com.leishmaniapp.presentation.ui.composables.WillPopScopeAlertDialog
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 import dagger.hilt.android.AndroidEntryPoint

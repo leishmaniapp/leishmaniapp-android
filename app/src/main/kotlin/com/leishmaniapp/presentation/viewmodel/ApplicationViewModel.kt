@@ -13,8 +13,8 @@ import com.leishmaniapp.entities.Password
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.Email
 import com.leishmaniapp.entities.disease.Disease
-import com.leishmaniapp.persistance.database.ApplicationDatabase
-import com.leishmaniapp.usecases.IAuthenticationProvider
+import com.leishmaniapp.infrastructure.persistance.ApplicationDatabase
+import com.leishmaniapp.domain.services.IAuthService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
 import javax.inject.Inject
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class ApplicationViewModel @Inject constructor(
     val savedStateHandle: SavedStateHandle,
     val applicationDatabase: ApplicationDatabase,
-    val authenticationProvider: IAuthenticationProvider
+    val authenticationProvider: IAuthService
 ) : ViewModel() {
 
     /**

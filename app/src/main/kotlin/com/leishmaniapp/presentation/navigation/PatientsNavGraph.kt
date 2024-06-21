@@ -9,9 +9,9 @@ import androidx.navigation.navigation
 import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
 import com.leishmaniapp.presentation.viewmodel.DiagnosisViewModel
 import com.leishmaniapp.presentation.viewmodel.PatientsViewModel
-import com.leishmaniapp.presentation.views.patients.AddPatientScreen
-import com.leishmaniapp.presentation.views.patients.PatientDiagnosisHistoryScreen
-import com.leishmaniapp.presentation.views.patients.PatientListScreen
+import com.leishmaniapp.presentation.ui.views.patients.AddPatientScreen
+import com.leishmaniapp.presentation.ui.views.patients.PatientDiagnosisHistoryScreen
+import com.leishmaniapp.presentation.ui.views.patients.PatientListScreen
 
 fun NavGraphBuilder.patientsNavGraph(
     navController: NavHostController,
@@ -87,7 +87,7 @@ fun NavGraphBuilder.patientsNavGraph(
                 },
                 diagnosisList = diagnosisViewModel
                     .diagnosesForPatient(patientsViewModel.currentPatient!!)
-                    .filter { it.finalized && it.completed },
+                    .filter { it.finalized && it.analyzed },
                 onBackButton = { navController.popBackStack() })
         }
     }

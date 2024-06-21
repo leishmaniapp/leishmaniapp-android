@@ -22,10 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.leishmaniapp.entities.Diagnosis
-import com.leishmaniapp.presentation.ui.MissingCameraPermission
+import com.leishmaniapp.presentation.ui.composables.MissingCameraPermission
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
-import com.leishmaniapp.presentation.views.diagnosis.CameraScreen
+import com.leishmaniapp.presentation.ui.views.diagnosis.CameraScreen
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -42,7 +41,7 @@ class CameraActivity : ComponentActivity() {
     private var cameraPermissionIsGranted = mutableStateOf(false)
 
     /// Current diagnosis
-    private lateinit var diagnosis: Diagnosis
+    private lateinit var diagnosis: com.leishmaniapp.domain.entities.Diagnosis
 
     /// File name
     private lateinit var outputDirectory: File
@@ -105,7 +104,7 @@ class CameraActivity : ComponentActivity() {
 
         // Get the current Diagnosis
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            diagnosis = intent.extras!!.getParcelable("diagnosis", Diagnosis::class.java)!!
+            diagnosis = intent.extras!!.getParcelable("diagnosis", com.leishmaniapp.domain.entities.Diagnosis::class.java)!!
         } else {
             @Suppress("DEPRECATION")
             diagnosis = intent.extras!!.getParcelable("diagnosis")!!

@@ -3,7 +3,7 @@ package com.leishmaniapp.presentation.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.leishmaniapp.entities.Patient
-import com.leishmaniapp.persistance.database.ApplicationDatabase
+import com.leishmaniapp.infrastructure.persistance.ApplicationDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
@@ -15,7 +15,7 @@ class PatientsViewModel @Inject constructor(
     val applicationDatabase: ApplicationDatabase,
 ) : ViewModel() {
 
-    val patients: Flow<List<Patient>> = applicationDatabase.patientDao().allPatientsFlow()
+    val patients: Flow<List<Patient>> = applicationDatabase.patientsRepository().allPatientsFlow()
     var currentPatient: Patient? = savedStateHandle["currentPatient"]
         set(value) {
             savedStateHandle["currentPatient"] = value
@@ -24,7 +24,7 @@ class PatientsViewModel @Inject constructor(
 
     fun addNewPatient(patient: Patient) {
         runBlocking {
-            applicationDatabase.patientDao().upsertPatient(patient)
+            applicationDatabase.patientsRepository().upsertPatient(patient)
         }
     }
 }

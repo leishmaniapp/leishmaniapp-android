@@ -21,8 +21,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.leishmaniapp.R
 import com.leishmaniapp.presentation.viewmodel.ApplicationViewModel
-import com.leishmaniapp.presentation.views.menu.DatabaseScreen
-import com.leishmaniapp.presentation.views.menu.MainMenuScreen
+import com.leishmaniapp.presentation.ui.views.menu.DatabaseScreen
+import com.leishmaniapp.presentation.ui.views.menu.MainMenuScreen
 
 fun NavGraphBuilder.menuNavGraph(
     navController: NavHostController,

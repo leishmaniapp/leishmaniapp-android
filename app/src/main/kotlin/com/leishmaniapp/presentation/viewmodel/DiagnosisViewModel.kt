@@ -8,21 +8,16 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.work.WorkManager
-import com.leishmaniapp.entities.Diagnosis
 import com.leishmaniapp.entities.Image
-import com.leishmaniapp.entities.ImageAnalysisStatus
+import com.leishmaniapp.entities.ImageAnalysisStage
 import com.leishmaniapp.entities.Patient
 import com.leishmaniapp.entities.Specialist
 import com.leishmaniapp.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.entities.disease.Disease
-import com.leishmaniapp.persistance.database.ApplicationDatabase
-import com.leishmaniapp.persistance.entities.DiagnosisRoom
-import com.leishmaniapp.persistance.entities.DiagnosisRoom.Companion.asRoomEntity
-import com.leishmaniapp.persistance.entities.ImageRoom
-import com.leishmaniapp.persistance.entities.ImageRoom.Companion.asRoomEntity
-import com.leishmaniapp.usecases.IDiagnosisSharing
-import com.leishmaniapp.usecases.IPictureStandardization
-import com.leishmaniapp.usecases.IProcessingRequest
+import com.leishmaniapp.infrastructure.persistance.ApplicationDatabase
+import com.leishmaniapp.domain.services.IDiagnosisSharing
+import com.leishmaniapp.domain.services.IPictureStandardization
+import com.leishmaniapp.domain.services.IProcessingRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -54,9 +49,9 @@ class DiagnosisViewModel @Inject constructor(
     /**
      * Currently selected diagnosis
      */
-    val currentDiagnosis = MutableStateFlow<Diagnosis?>(null)
+    val currentDiagnosis = MutableStateFlow<com.leishmaniapp.domain.entities.Diagnosis?>(null)
 
-    fun setCurrentDiagnosis(diagnosis: Diagnosis?) {
+    fun setCurrentDiagnosis(diagnosis: com.leishmaniapp.domain.entities.Diagnosis?) {
         currentDiagnosis.value = diagnosis
         savedStateHandle["currentDiagnosis"] = currentDiagnosis.value
     }
@@ -76,14 +71,14 @@ class DiagnosisViewModel @Inject constructor(
      */
     val imageFlow: Flow<ImageRoom?>?
         get() = runBlocking {
-            if (currentDiagnosis.value != null && currentImage.value != null) applicationDatabase.imageDao()
+            if (currentDiagnosis.value != null && currentImage.value != null) applicationDatabase.imageSamplesRepository()
                 .imageForDiagnosisFlow(currentDiagnosis.value!!.id, currentImage.value!!.sample)
             else null
         }
 
     val diagnosisFlow: Flow<DiagnosisRoom?>?
         get() = runBlocking {
-            if (currentDiagnosis.value != null) applicationDatabase.diagnosisDao()
+            if (currentDiagnosis.value != null) applicationDatabase.diagnosesRepository()
                 .diagnosisForIdFlow(currentDiagnosis.value!!.id)
             else null
         }
@@ -93,7 +88,7 @@ class DiagnosisViewModel @Inject constructor(
      */
     val imagesForDiagnosisFlow: Flow<List<ImageRoom>?>?
         get() = runBlocking {
-            if (currentDiagnosis.value != null) applicationDatabase.imageDao()
+            if (currentDiagnosis.value != null) applicationDatabase.imageSamplesRepository()
                 .allImagesForDiagnosisFlow(
                     currentDiagnosis.value!!.id
                 )
@@ -107,7 +102,7 @@ class DiagnosisViewModel @Inject constructor(
 
     init {
         // Read from bundle when activity is destroyed
-        savedStateHandle.get<Diagnosis?>("currentDiagnosis")?.let { savedDiagnosis ->
+        savedStateHandle.get<com.leishmaniapp.domain.entities.Diagnosis?>("currentDiagnosis")?.let { savedDiagnosis ->
             currentDiagnosis.value = savedDiagnosis
         }
         savedStateHandle.get<Image?>("currentImage")?.let { savedImage ->
@@ -121,18 +116,18 @@ class DiagnosisViewModel @Inject constructor(
     /**
      * Get all diagnoses for a given patient
      */
-    fun diagnosesForPatient(patient: Patient): List<Diagnosis> {
-        val retrievalDiagnosis: MutableList<Diagnosis> = mutableListOf()
+    fun diagnosesForPatient(patient: Patient): List<com.leishmaniapp.domain.entities.Diagnosis> {
+        val retrievalDiagnosis: MutableList<com.leishmaniapp.domain.entities.Diagnosis> = mutableListOf()
 
         runBlocking {
-            val diagnosis = applicationDatabase.diagnosisDao().diagnosesForPatient(patient)
+            val diagnosis = applicationDatabase.diagnosesRepository().diagnosesForPatient(patient)
 
             for (element in diagnosis) {
-                val elementSpecialist = applicationDatabase.specialistDao()
+                val elementSpecialist = applicationDatabase.specialistsRepository()
                     .specialistByUsername(element.specialistEmail)
-                val elementPatient = applicationDatabase.patientDao()
+                val elementPatient = applicationDatabase.patientsRepository()
                     .patientById(element.patientIdDocument, element.patientIdType)
-                val elementImages = applicationDatabase.imageDao().allImagesForDiagnosis(element.id)
+                val elementImages = applicationDatabase.imageSamplesRepository().allImagesForDiagnosis(element.id)
 
                 // Add diagnosis to return value
                 retrievalDiagnosis.add(
@@ -243,7 +238,13 @@ class DiagnosisViewModel @Inject constructor(
     ) {
         // Create a new diagnosis
         runBlocking {
-            updateDiagnosis(Diagnosis(specialist, patient, disease))
+            updateDiagnosis(
+                com.leishmaniapp.domain.entities.Diagnosis(
+                    specialist,
+                    patient,
+                    disease
+                )
+            )
         }
         isNewDiagnosis = true
 
@@ -265,7 +266,7 @@ class DiagnosisViewModel @Inject constructor(
      */
     fun storeImageInDatabase() {
         runBlocking {
-            applicationDatabase.imageDao()
+            applicationDatabase.imageSamplesRepository()
                 .upsertImage(currentImage.value!!.asRoomEntity(currentDiagnosis.value!!.id))
         }
     }
@@ -282,7 +283,7 @@ class DiagnosisViewModel @Inject constructor(
 
         // Erase image from database
         runBlocking {
-            applicationDatabase.imageDao()
+            applicationDatabase.imageSamplesRepository()
                 .deleteImage(currentImage.value!!.asRoomEntity(currentDiagnosis.value!!.id))
         }
 
@@ -294,19 +295,19 @@ class DiagnosisViewModel @Inject constructor(
     fun updateImage(image: Image) {
         runBlocking {
             setCurrentImage(image)
-            applicationDatabase.imageDao()
+            applicationDatabase.imageSamplesRepository()
                 .upsertImage(image.asRoomEntity(currentDiagnosis.value!!.id))
         }
     }
 
-    suspend fun updateDiagnosis(diagnosis: Diagnosis) {
+    suspend fun updateDiagnosis(diagnosis: com.leishmaniapp.domain.entities.Diagnosis) {
         setCurrentDiagnosis(diagnosis)
-        applicationDatabase.diagnosisDao().upsertDiagnosis(diagnosis.asRoomEntity())
+        applicationDatabase.diagnosesRepository().upsertDiagnosis(diagnosis.asRoomEntity())
     }
 
     suspend fun setImageAsDeferred() {
-        applicationDatabase.imageDao().upsertImage(
-            currentImage.value!!.copy(processed = ImageAnalysisStatus.Deferred)
+        applicationDatabase.imageSamplesRepository().upsertImage(
+            currentImage.value!!.copy(processed = ImageAnalysisStage.Deferred)
                 .asRoomEntity(currentDiagnosis.value!!.id)
         )
     }
@@ -376,7 +377,7 @@ class DiagnosisViewModel @Inject constructor(
         val diseaseElements = currentDiagnosis.value!!.disease.elements.toSet()
         val currentDiagnosisElements =
             currentImage.value!!.elements.filterIsInstance<SpecialistDiagnosticElement>()
-                .map { it.name }.toSet()
+                .map { it.id }.toSet()
 
         return (diseaseElements == currentDiagnosisElements)
     }
@@ -390,7 +391,7 @@ class DiagnosisViewModel @Inject constructor(
 
             // Take last photo and update it
             updateImage(
-                applicationDatabase.imageDao()
+                applicationDatabase.imageSamplesRepository()
                     .imageForDiagnosis(currentDiagnosis.value!!.id, currentImage.value!!.sample)!!
                     .asApplicationEntity()
             )
@@ -413,15 +414,15 @@ class DiagnosisViewModel @Inject constructor(
 
         withContext(Dispatchers.IO) {
             // Delete image if not processed
-            val image = applicationDatabase.imageDao()
+            val image = applicationDatabase.imageSamplesRepository()
                 .imageForDiagnosis(currentDiagnosis.value!!.id, currentImage.value!!.sample)!!
 
-            if (image.processed == ImageAnalysisStatus.NotAnalyzed) {
-                applicationDatabase.imageDao().deleteImage(image)
+            if (image.processed == ImageAnalysisStage.NotAnalyzed) {
+                applicationDatabase.imageSamplesRepository().deleteImage(image)
             } else {
                 // Take last photo and update it
                 updateImage(
-                    applicationDatabase.imageDao().imageForDiagnosis(
+                    applicationDatabase.imageSamplesRepository().imageForDiagnosis(
                         currentDiagnosis.value!!.id, currentImage.value!!.sample
                     )!!.asApplicationEntity()
                 )
@@ -435,20 +436,20 @@ class DiagnosisViewModel @Inject constructor(
         setCurrentImage(null)
     }
 
-    suspend fun getAwaitingDiagnosis(specialist: Specialist): List<Diagnosis> {
+    suspend fun getAwaitingDiagnosis(specialist: Specialist): List<com.leishmaniapp.domain.entities.Diagnosis> {
         val diagnosis = withContext(Dispatchers.IO) {
-            applicationDatabase.diagnosisDao()
+            applicationDatabase.diagnosesRepository()
                 .diagnosesForSpecialistNotFinished(specialist.email)
         }
 
         return diagnosis.filter { !it.finalized }.map { diagnosisRoom ->
             val patient = withContext(Dispatchers.IO) {
-                applicationDatabase.patientDao()
+                applicationDatabase.patientsRepository()
                     .patientById(diagnosisRoom.patientIdDocument, diagnosisRoom.patientIdType)
             }!!
 
             val images = withContext(Dispatchers.IO) {
-                applicationDatabase.imageDao().allImagesForDiagnosis(diagnosisRoom.id)
+                applicationDatabase.imageSamplesRepository().allImagesForDiagnosis(diagnosisRoom.id)
                     .map { it.asApplicationEntity() }
             }
 
@@ -478,11 +479,11 @@ class DiagnosisViewModel @Inject constructor(
         stopImageResultsWorker(context)
         stopDiagnosisResultsBackgroundWorker(context)
         withContext(Dispatchers.IO) {
-            applicationDatabase.imageDao().allImagesForDiagnosis(currentDiagnosis.value!!.id)
+            applicationDatabase.imageSamplesRepository().allImagesForDiagnosis(currentDiagnosis.value!!.id)
                 .forEach { imageRoom ->
-                    applicationDatabase.imageDao().deleteImage(imageRoom)
+                    applicationDatabase.imageSamplesRepository().deleteImage(imageRoom)
                 }
-            applicationDatabase.diagnosisDao()
+            applicationDatabase.diagnosesRepository()
                 .deleteDiagnosis(currentDiagnosis.value!!.asRoomEntity())
         }
 
