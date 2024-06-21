@@ -2,11 +2,15 @@ package com.leishmaniapp.infrastructure.di
 
 import android.content.Context
 import androidx.room.Room
-import com.leishmaniapp.domain.repository.DiagnosesRepository
-import com.leishmaniapp.domain.repository.ImageSamplesRepository
-import com.leishmaniapp.domain.repository.PatientsRepository
-import com.leishmaniapp.domain.repository.SpecialistsRepository
+import com.leishmaniapp.domain.repository.IDiagnosesRepository
+import com.leishmaniapp.domain.repository.ISamplesRepository
+import com.leishmaniapp.domain.repository.IPatientsRepository
+import com.leishmaniapp.domain.repository.ISpecialistsRepository
 import com.leishmaniapp.infrastructure.persistance.ApplicationDatabase
+import com.leishmaniapp.infrastructure.persistance.repository.RoomDiagnosesRepositoryImpl
+import com.leishmaniapp.infrastructure.persistance.repository.RoomPatientsRepositoryImpl
+import com.leishmaniapp.infrastructure.persistance.repository.RoomSamplesRepositoryImpl
+import com.leishmaniapp.infrastructure.persistance.repository.RoomSpecialistRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,6 +23,7 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
+
     /**
      * Provides [ApplicationDatabase] implementation
      */
@@ -27,30 +32,30 @@ object DatabaseModule {
         Room.databaseBuilder(context, ApplicationDatabase::class.java, "database").build()
 
     /**
-     * Provide the [DiagnosesRepository] using the [ApplicationDatabase]
+     * Provide the [IDiagnosesRepository] using [RoomDiagnosesRepositoryImpl]
      */
     @Provides
-    fun provideDiagnosesRepository(applicationDatabase: ApplicationDatabase): DiagnosesRepository =
-        applicationDatabase.diagnosesRepository()
+    fun provideDiagnosesRepository(applicationDatabase: ApplicationDatabase): IDiagnosesRepository =
+        RoomDiagnosesRepositoryImpl(applicationDatabase.diagnosesDao())
 
     /**
-     * Provide the [ImageSamplesRepository] using the [ApplicationDatabase]
+     * Provide the [ISamplesRepository] using [RoomSamplesRepositoryImpl]
      */
     @Provides
-    fun provideImageSamplesRepository(applicationDatabase: ApplicationDatabase): ImageSamplesRepository =
-        applicationDatabase.imageSamplesRepository()
+    fun provideImageSamplesRepository(applicationDatabase: ApplicationDatabase): ISamplesRepository =
+        RoomSamplesRepositoryImpl(applicationDatabase.imageSamplesDao())
 
     /**
-     * Provide the [PatientsRepository] using the [ApplicationDatabase]
+     * Provide the [IPatientsRepository] using [RoomPatientsRepositoryImpl]
      */
     @Provides
-    fun providePatientsRepository(applicationDatabase: ApplicationDatabase): PatientsRepository =
-        applicationDatabase.patientsRepository()
+    fun providePatientsRepository(applicationDatabase: ApplicationDatabase): IPatientsRepository =
+        RoomPatientsRepositoryImpl(applicationDatabase.patientsDao())
 
     /**
-     * Provide the [SpecialistsRepository] using the [ApplicationDatabase]
+     * Provide the [ISpecialistsRepository] using [RoomSpecialistRepositoryImpl]
      */
     @Provides
-    fun provideSpecialistsRepository(applicationDatabase: ApplicationDatabase): SpecialistsRepository =
-        applicationDatabase.specialistsRepository()
+    fun provideSpecialistsRepository(applicationDatabase: ApplicationDatabase): ISpecialistsRepository =
+        RoomSpecialistRepositoryImpl(applicationDatabase.specialistsDao())
 }

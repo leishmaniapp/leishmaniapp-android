@@ -8,11 +8,14 @@ import com.leishmaniapp.R
 import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.types.Identificator
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * [DiagnosticElement] unique ID with a display name
  */
 @Parcelize
+@Serializable
 data class DiagnosticElementName(
     /**
      * Unique id for the diagnostic element, the format must be <diasease>:<element>

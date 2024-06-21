@@ -5,13 +5,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.stringResource
 import com.leishmaniapp.R
-import com.leishmaniapp.domain.entities.DiagnosticModel
 import com.leishmaniapp.domain.entities.DiagnosticElementName
+import com.leishmaniapp.domain.entities.DiagnosticModel
+import com.leishmaniapp.domain.serialization.DiseaseSerializer
 import com.leishmaniapp.domain.types.ComputedResultsType
 import com.leishmaniapp.domain.types.Identificator
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 @Parcelize
+@Serializable(with = DiseaseSerializer::class)
 sealed class Disease(
     val id: Identificator,
     val models: Set<DiagnosticModel>,

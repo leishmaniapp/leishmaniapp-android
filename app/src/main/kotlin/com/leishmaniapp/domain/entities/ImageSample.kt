@@ -12,32 +12,17 @@ import kotlinx.parcelize.Parcelize
  * [com.leishmaniapp.cloud.model.Sample] which is a completely different entity.
  * @immutable Replace by using [ImageSample.copy]
  */
-@Entity(
-    primaryKeys = ["diagnosis", "sample"],
-    foreignKeys = [
-        ForeignKey(
-            entity = Diagnosis::class,
-            childColumns = ["diagnosis"],
-            parentColumns = ["id"]
-        ),
-    ]
-)
 @Parcelize
 data class ImageSample(
     /**
      * Associated metadata to this image
      */
-    @Embedded val metadata: ImageMetadata,
+    val metadata: ImageMetadata,
 
     /**
      * Current analysis stage
      */
     val stage: AnalysisStage = AnalysisStage.NotAnalyzed,
-
-    /**
-     * Number of sample in the diagnosis
-     */
-    val sample: Int,
 
     /**
      * Associated diagnostic elements to this sample
@@ -47,6 +32,6 @@ data class ImageSample(
     /**
      * Local path to the image file inside local storage
      */
-    @Transient val path: Uri? = null,
+    val path: Uri? = null,
 
     ) : Parcelable

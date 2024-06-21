@@ -19,9 +19,7 @@ sealed class NavigationRoutes(val route: String) {
         data object PatientList : NavigationRoutes(this.route + "/list")
         data object InitializeDiagnosis : NavigationRoutes(this.route + "/init")
         data object AddPatient : NavigationRoutes(this.route + "/add")
-        data object PatientDiagnosisHistory :
-            NavigationRoutes(this.route + "/history")
-
+        data object PatientDiagnosisHistory : NavigationRoutes(this.route + "/history")
     }
 
     data object DiagnosisRoute : NavigationRoutes("/diagnosis") {
@@ -33,6 +31,4 @@ sealed class NavigationRoutes(val route: String) {
         data object AwaitingDiagnosis : NavigationRoutes(this.route + "/awaiting")
         data object DiagnosticRemarks : NavigationRoutes(this.route + "/remarks")
     }
-
-
 }

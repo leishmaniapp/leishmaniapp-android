@@ -1,9 +1,6 @@
 package com.leishmaniapp.domain.entities
 
 import android.os.Parcelable
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Ignore
 import com.leishmaniapp.domain.types.Identificator
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -12,22 +9,20 @@ import java.security.MessageDigest
 /**
  * Representation of a Patient
  */
-@Entity(primaryKeys = ["id", "document_type"])
 @Parcelize
 data class Patient(
 
     val name: String,
     val id: Identificator,
-    @ColumnInfo(name = "document_type") val documentType: DocumentType,
+    val documentType: DocumentType,
 
     ) : Parcelable {
 
     /**
-     * Get the Patient document with DocumentType and ID concatenated
+     * Get the Patient document with DocumentType and ID concatenated by a point
      */
     @IgnoredOnParcel
-    @Ignore
-    val document: String = documentType.toString() + id
+    val document: String = "$documentType.$id"
 
     /**
      * Calculate the patient hash from its document

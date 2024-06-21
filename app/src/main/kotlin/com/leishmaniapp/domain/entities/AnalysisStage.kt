@@ -1,7 +1,5 @@
 package com.leishmaniapp.domain.entities
 
-import com.leishmaniapp.domain.entities.protobuf.ProtobufCompatibleEntity
-
 /**
  * Representation of the analysis stage for a given image. For internal use only and thus must
  * not be confused with [com.leishmaniapp.cloud.model.AnalysisStage] which is a completely different entity

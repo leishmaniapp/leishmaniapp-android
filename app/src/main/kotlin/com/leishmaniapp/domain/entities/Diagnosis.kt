@@ -7,13 +7,12 @@ import androidx.room.ForeignKey
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import androidx.room.TypeConverters
 import com.leishmaniapp.domain.disease.Disease
-import com.leishmaniapp.domain.entities.protobuf.ToProto
-import com.leishmaniapp.utilities.time.toUnixTime
-import com.leishmaniapp.utilities.extensions.utcNow
-import com.leishmaniapp.domain.entities.protobuf.ProtobufCompatibleEntity
 import com.leishmaniapp.domain.parceler.LocalDateTimeParceler
 import com.leishmaniapp.domain.types.ComputedResultsType
+import com.leishmaniapp.infrastructure.persistance.ApplicationRoomTypeConverters
+import com.leishmaniapp.utilities.extensions.utcNow
 import com.squareup.wire.internal.toUnmodifiableMap
 import kotlinx.datetime.LocalDateTime
 import kotlinx.parcelize.IgnoredOnParcel
@@ -25,32 +24,18 @@ import java.util.UUID
  * Class representing a Diagnosis
  * @immutable Replace by using [Diagnosis.copy]
  */
-@Entity(
-    foreignKeys = [
-        ForeignKey(
-            entity = Specialist::class,
-            childColumns = ["specialist_name", "specialist_email"],
-            parentColumns = ["name", "email"]
-        ),
-        ForeignKey(
-            entity = Patient::class,
-            childColumns = ["patient_name", "patient_id", "patient_document_type"],
-            parentColumns = ["name", "id", "document_type"]
-        ),
-    ]
-)
 @Parcelize
 data class Diagnosis(
 
     /**
      * Unique diagnosis identification ID
      */
-    @PrimaryKey val id: UUID = UUID.randomUUID(),
+    val id: UUID = UUID.randomUUID(),
 
     /**
      * Diagnosis has been completed and confirmed by specialist
      */
-    @Transient val finalized: Boolean = false,
+    val finalized: Boolean = false,
 
     /**
      * UTC time of creation
@@ -60,7 +45,7 @@ data class Diagnosis(
     /**
      * Specialist owner of the current diagnosis
      */
-    @Embedded(prefix = "specialist_") val specialist: Specialist.Record,
+    val specialist: Specialist.Record,
 
     /**
      * Remarks specified by the specialist on completion
@@ -70,7 +55,7 @@ data class Diagnosis(
     /**
      * Patient whom the diagnosis was issued to
      */
-    @Embedded(prefix = "patient_") val patient: Patient,
+    val patient: Patient,
 
     /**
      * Disease being diagnosticated
@@ -86,14 +71,9 @@ data class Diagnosis(
     /**
      * Image samples associated to this diagnosis with sample name
      */
-    @Ignore
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "diagnosis"
-    )
-    val images: List<ImageSample> = listOf(),
+    @Transient val images: List<ImageSample> = listOf(),
 
-    ) : Parcelable, ToProto<com.leishmaniapp.cloud.model.Diagnosis> {
+    ) : Parcelable {
 
     companion object;
 
@@ -123,8 +103,7 @@ data class Diagnosis(
          */
         val modelElements: Map<DiagnosticElementName, Int>,
 
-        ) : Parcelable,
-        ProtobufCompatibleEntity<Results, com.leishmaniapp.cloud.model.Diagnosis.Results> {
+        ) : Parcelable {
 
         companion object;
 
@@ -132,28 +111,6 @@ data class Diagnosis(
          * Create results with everything set to false and empty elements
          */
         constructor() : this(false, mapOf(), false, mapOf())
-
-        override fun toProto(): com.leishmaniapp.cloud.model.Diagnosis.Results =
-            com.leishmaniapp.cloud.model.Diagnosis.Results(specialist_result = specialistResult,
-                specialist_elements = specialistElements.mapKeys { entry -> entry.key.id },
-                model_result = modelResult,
-                model_elements = modelElements.mapKeys { entry -> entry.key.id })
-
-        override fun fromProto(from: com.leishmaniapp.cloud.model.Diagnosis.Results): Results =
-            Results(
-                specialistResult = from.specialist_result,
-                specialistElements = from.specialist_elements.mapKeys { entry ->
-                    DiagnosticElementName.diagnosticElementNameById(
-                        entry.key
-                    )
-                },
-                modelResult = from.model_result,
-                modelElements = from.model_elements.mapKeys { entry ->
-                    DiagnosticElementName.diagnosticElementNameById(
-                        entry.key
-                    )
-                },
-            )
     }
 
     /**
@@ -162,6 +119,7 @@ data class Diagnosis(
      * or [SpecialistDiagnosticElement], and the value is the number of those elements found.
      * Warning! This is a heavy operation, call it from a coroutine
      */
+    @delegate:Transient
     @IgnoredOnParcel
     val computedResults: ComputedResultsType by lazy {
         images.flatMap {
@@ -221,16 +179,4 @@ data class Diagnosis(
      */
     fun appendImage(image: ImageSample): Diagnosis =
         this.copy(images = images.plus(image))
-
-    override fun toProto(): com.leishmaniapp.cloud.model.Diagnosis =
-        com.leishmaniapp.cloud.model.Diagnosis(
-            id = id.toString(),
-            disease = disease.id,
-            specialist = specialist.toProto(),
-            results = results.toProto(),
-            date = date.toUnixTime(),
-            patient_hash = patient.hash,
-            remarks = remarks,
-            samples = samples,
-        )
 }

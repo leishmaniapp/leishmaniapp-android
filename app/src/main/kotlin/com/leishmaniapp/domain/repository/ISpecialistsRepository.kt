@@ -11,36 +11,30 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Interface for manipulating [Specialist] stored in database
  */
-@Dao
-interface SpecialistsRepository {
+interface ISpecialistsRepository {
 
     /**
      * Insert or update a [Specialist]
      */
-    @Upsert
     suspend fun upsertSpecialist(specialist: Specialist)
 
     /**
      * Delete a [Specialist] from database
      */
-    @Delete
     suspend fun deleteSpecialist(specialist: Specialist)
 
     /**
      * Get a [Specialist] given its [Email]
      */
-    @Query("SELECT * FROM specialist WHERE email = :email")
-    suspend fun specialistByUsername(email: Email): Specialist?
+    fun specialistByUsername(email: Email): Flow<Specialist>
 
     /**
      * Delete a [Specialist] given its [Email]
      */
-    @Query("DELETE FROM Specialist WHERE email = :email")
-    suspend fun deleteSpecialistByUsername(email: Email)
+    fun deleteSpecialistByUsername(email: Email)
 
     /**
      * Get all the [Specialist] stored in database
      */
-    @Query("SELECT * FROM specialist")
-    suspend fun allSpecialists(): Flow<List<Specialist>>
+    fun allSpecialists(): Flow<List<Specialist>>
 }

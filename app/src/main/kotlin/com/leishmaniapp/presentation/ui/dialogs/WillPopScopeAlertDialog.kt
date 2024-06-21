@@ -1,4 +1,4 @@
-package com.leishmaniapp.presentation.ui.composables
+package com.leishmaniapp.presentation.ui.dialogs
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults

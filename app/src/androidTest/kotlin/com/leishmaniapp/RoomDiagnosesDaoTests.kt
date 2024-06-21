@@ -17,7 +17,7 @@ import java.io.IOException
 
 
 @RunWith(AndroidJUnit4::class)
-class DiagnosesRepositoryTests {
+class RoomDiagnosesDaoTests {
     private lateinit var database: ApplicationDatabase
 
     @Before

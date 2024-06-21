@@ -1,9 +1,9 @@
 package com.leishmaniapp.domain.types
 
 import com.leishmaniapp.domain.entities.DiagnosticElement
+import com.leishmaniapp.domain.entities.DiagnosticElementName
 import com.leishmaniapp.domain.entities.ModelDiagnosticElement
 import com.leishmaniapp.domain.entities.SpecialistDiagnosticElement
-import com.leishmaniapp.domain.entities.DiagnosticElementName
 import kotlin.reflect.KClass
 
 /**

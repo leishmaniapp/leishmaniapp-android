@@ -1,14 +1,13 @@
 package com.leishmaniapp.domain.disease
 
-import com.leishmaniapp.R
-import com.leishmaniapp.domain.types.ComputedResultsType
-import com.leishmaniapp.domain.entities.DiagnosticModel
-import com.leishmaniapp.domain.entities.DiagnosticElementName
-import com.leishmaniapp.domain.entities.ModelDiagnosticElement
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import com.leishmaniapp.R
+import com.leishmaniapp.domain.entities.DiagnosticElementName
+import com.leishmaniapp.domain.entities.DiagnosticModel
+import com.leishmaniapp.domain.entities.ModelDiagnosticElement
+import com.leishmaniapp.domain.types.ComputedResultsType
 
 /**
  * Disease that identifies a series of black dots in a white cnavas

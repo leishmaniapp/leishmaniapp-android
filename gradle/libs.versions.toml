@@ -12,6 +12,7 @@ wire = "4.9.9"
 
 kotlinx-datetime = "0.6.0"
 kotlinx-coroutines = "1.8.1"
+kotlinx-serialization-json = "1.7.0"
 
 androidx-hilt = "1.2.0"
 androidx-lifecycle = "2.8.2"
@@ -34,6 +35,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+kotlin-serialization = {id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
 
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
 squareup-wire = { id = "com.squareup.wire", version.ref = "wire" }
@@ -52,6 +54,7 @@ kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
 # Kotlinx
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization-json"}
 
 # Dagger/Jetpack Hilt
 dagger-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger-hilt" }
@@ -142,6 +145,7 @@ kotlin = [
 kotlinx = [
     "kotlinx-coroutines",
     "kotlinx-datetime",
+    "kotlinx-serialization-json"
 ]
 
 wire-grpc = [
