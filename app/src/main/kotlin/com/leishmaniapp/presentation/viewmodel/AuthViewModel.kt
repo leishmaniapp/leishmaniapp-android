@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.leishmaniapp.cloud.auth.AuthRequest
 import com.leishmaniapp.cloud.auth.TokenRequest
@@ -24,6 +25,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -111,11 +114,13 @@ class AuthViewModel @Inject constructor(
      */
     fun authenticate(email: Email, password: Password) {
         _authState.value = AuthState.Busy;
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 // Get the authentication token
-                val token: AccessToken = authService.authenticate(AuthRequest(email, password))
-                    .getOrThrow().run { status!!.code.throwOrElse { token!! } }
+                val token: AccessToken = withContext(Dispatchers.IO) {
+                    authService.authenticate(AuthRequest(email, password))
+                        .getOrThrow().run { status!!.code.throwOrElse { token!! } }
+                }
 
                 // Store the token and the specialist
                 // Should automatically login as init is listening on token changes

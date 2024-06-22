@@ -10,7 +10,6 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 sealed class AuthState : Parcelable {
-
     /**
      * User is not authenticated
      */

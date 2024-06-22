@@ -1,5 +1,6 @@
 package com.leishmaniapp.presentation.navigation
 
+import android.app.AlertDialog
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +14,7 @@ import androidx.navigation.navigation
 import com.leishmaniapp.presentation.state.AuthState
 import com.leishmaniapp.presentation.ui.dialogs.BusyAlertDialog
 import com.leishmaniapp.presentation.ui.dialogs.ErrorAlertDialog
+import com.leishmaniapp.presentation.ui.dialogs.ProfileAlertDialog
 import com.leishmaniapp.presentation.ui.views.start.AuthenticationScreen
 import com.leishmaniapp.presentation.ui.views.start.DiseasesMenuScreen
 import com.leishmaniapp.presentation.ui.views.start.GreetingsScreen
@@ -59,6 +61,10 @@ fun NavGraphBuilder.startNavGraph(
 
         composable(route = NavigationRoutes.StartRoute.DiseasesRoute.route) {
 
+            // Grab the authentication state
+            val authState by authViewModel.authState.observeAsState(initial = AuthState.Busy)
+
+            // Show the profile alert
             var showProfileAlert by rememberSaveable {
                 mutableStateOf(false)
             }
@@ -72,12 +78,27 @@ fun NavGraphBuilder.startNavGraph(
                     /* TODO: Select a disease */
                 },
             )
+
+            if (showProfileAlert && authState is AuthState.Authenticated) {
+                ProfileAlertDialog(
+                    specialist = (authState as AuthState.Authenticated).s,
+                    onLogout = {
+                        authViewModel.logout()
+                    },
+                    onDismiss = {
+                        showProfileAlert = false
+                    })
+            } else if (authState is AuthState.Busy) {
+                BusyAlertDialog()
+            }
         }
     }
 }
 
 internal fun NavController.navigateToAuthentication() {
-    this.navigate(NavigationRoutes.StartRoute.AuthenticationRoute.route)
+    this.navigate(NavigationRoutes.StartRoute.AuthenticationRoute.route) {
+        popUpTo(0)
+    }
 }
 
 internal fun NavController.navigateToDiseasesMenu() {

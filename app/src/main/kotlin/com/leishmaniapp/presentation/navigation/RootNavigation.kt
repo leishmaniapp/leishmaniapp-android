@@ -2,6 +2,7 @@ package com.leishmaniapp.presentation.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -19,6 +20,18 @@ fun RootNavigation(
     navigationController: NavHostController = rememberNavController(),
     authViewModel: AuthViewModel = viewModel(),
 ) {
+
+    // Navigate to authentication if unauthenticated
+    val authState by authViewModel.authState.observeAsState(initial = AuthState.Busy)
+    LaunchedEffect(key1 = authState, key2 = navigationController.currentDestination) {
+        if ((authState is AuthState.None) &&
+            ((navigationController.currentDestination!!.route != NavigationRoutes.StartRoute.AuthenticationRoute.route) ||
+                    (navigationController.currentDestination!!.route != NavigationRoutes.StartRoute.GreetingsScreen.route))
+        ) {
+            navigationController.navigateToAuthentication()
+        }
+    }
+
     NavHost(
         navController = navigationController,
         startDestination = NavigationRoutes.StartRoute.route,

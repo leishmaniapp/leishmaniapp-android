@@ -36,6 +36,7 @@
     <string name="search">Buscar</string>
     <string name="start">Comenzar</string>
     <string name="sign_in">Iniciar Sesión</string>
+    <string name="sign_out">Cerrar Sesión</string>
     <string name="select_file">Seleccionar archivo</string>
     <string name="action_export">Exportar</string>
     <string name="action_import">Importar</string>
