@@ -3,10 +3,12 @@ package com.leishmaniapp.presentation.ui.layout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Help
+import androidx.compose.material.icons.rounded.BackHand
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,12 +32,14 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 fun LeishmaniappScaffold(
     title: String = stringResource(id = R.string.app_name),
     backButtonAction: (() -> Unit)? = null,
+    actions: @Composable RowScope.() -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
+                actions = actions,
                 navigationIcon = {
                     if (backButtonAction != null) {
                         IconButton(onClick = backButtonAction) {
@@ -87,11 +91,16 @@ fun LeishmaniappScaffoldPreview() {
 
 @Composable
 @Preview(heightDp = 150)
-fun LeishmaniappScaffoldPreview_BackButtonAndHelp() {
+fun LeishmaniappScaffoldPreview_BackButtonAndActions() {
     LeishmaniappTheme {
         LeishmaniappScaffold(
-            title = "Back and Custom Title",
-            backButtonAction = {}
+            title = "Back Button and Actions",
+            backButtonAction = {},
+            actions = {
+                IconButton(onClick = { }) {
+                    Icon(imageVector = Icons.Rounded.BackHand, contentDescription = null)
+                }
+            }
         ) {
             Box(modifier = Modifier.padding(it)) {
                 Text(text = "Hello world from LeishmaniappScaffold!")

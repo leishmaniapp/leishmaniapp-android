@@ -34,15 +34,13 @@ fun Diagnosis.Results.Companion.fromProto(from: com.leishmaniapp.cloud.model.Dia
     )
 
 fun Specialist.Companion.fromProto(
-    from: com.leishmaniapp.cloud.model.Specialist,
-    token: AccessToken
-): Specialist =
-    Specialist(
-        name = from.name,
-        email = from.email,
-        token = token,
-        diseases = from.diseases.map { Disease.diseaseById(it)!! }.toSet(),
-    )
+    from: com.leishmaniapp.cloud.model.Specialist, token: AccessToken
+): Specialist = Specialist(
+    name = from.name,
+    email = from.email,
+    token = token,
+    diseases = from.diseases.mapNotNull { Disease.diseaseById(it) }.toSet(),
+)
 
 fun Specialist.Record.Companion.fromProto(from: com.leishmaniapp.cloud.model.Specialist.Record): Specialist.Record =
     Specialist.Record(

@@ -2,6 +2,9 @@ package com.leishmaniapp.presentation.navigation
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -10,8 +13,8 @@ import androidx.navigation.navigation
 import com.leishmaniapp.presentation.state.AuthState
 import com.leishmaniapp.presentation.ui.dialogs.BusyAlertDialog
 import com.leishmaniapp.presentation.ui.dialogs.ErrorAlertDialog
-import com.leishmaniapp.presentation.ui.layout.LoadingScreen
 import com.leishmaniapp.presentation.ui.views.start.AuthenticationScreen
+import com.leishmaniapp.presentation.ui.views.start.DiseasesMenuScreen
 import com.leishmaniapp.presentation.ui.views.start.GreetingsScreen
 import com.leishmaniapp.presentation.viewmodel.AuthViewModel
 
@@ -53,6 +56,23 @@ fun NavGraphBuilder.startNavGraph(
                 }
             }
         }
+
+        composable(route = NavigationRoutes.StartRoute.DiseasesRoute.route) {
+
+            var showProfileAlert by rememberSaveable {
+                mutableStateOf(false)
+            }
+
+            DiseasesMenuScreen(
+                online = false, /* TODO */
+                onProfileSelection = {
+                    showProfileAlert = true
+                },
+                onDiseaseSelection = { disease ->
+                    /* TODO: Select a disease */
+                },
+            )
+        }
     }
 }
 
@@ -62,8 +82,6 @@ internal fun NavController.navigateToAuthentication() {
 
 internal fun NavController.navigateToDiseasesMenu() {
     this.navigate(NavigationRoutes.StartRoute.DiseasesRoute.route) {
-        this.popUpTo(NavigationRoutes.StartRoute.GreetingsScreen.route) {
-            inclusive = true
-        }
+        popUpTo(0)
     }
 }

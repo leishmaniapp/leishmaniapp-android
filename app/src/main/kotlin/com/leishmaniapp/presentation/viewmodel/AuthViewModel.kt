@@ -21,6 +21,8 @@ import com.leishmaniapp.domain.types.Password
 import com.leishmaniapp.presentation.state.AuthState
 import com.leishmaniapp.utilities.extensions.throwOrElse
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first

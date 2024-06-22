@@ -1,30 +1,37 @@
 package com.leishmaniapp.presentation.state
 
+import android.os.Parcelable
 import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.exceptions.LeishmaniappException
+import kotlinx.parcelize.Parcelize
 
 /**
  * Current authentication status
  */
-sealed class AuthState {
+@Parcelize
+sealed class AuthState : Parcelable {
 
     /**
      * User is not authenticated
      */
+    @Parcelize
     data object None : AuthState()
 
     /**
      * Authentication is in progress
      */
-    data object Busy: AuthState()
+    @Parcelize
+    data object Busy : AuthState()
 
     /**
      * Authentication failed with a [LeishmaniappException]
      */
+    @Parcelize
     data class Error(val e: LeishmaniappException) : AuthState()
 
     /**
      * A [Specialist] was successfully authenticated
      */
-    data class Authenticated(val s: Specialist): AuthState()
+    @Parcelize
+    data class Authenticated(val s: Specialist) : AuthState()
 }

@@ -2,11 +2,16 @@ package com.leishmaniapp.presentation.activities
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.leishmaniapp.BuildConfig
+import com.leishmaniapp.R
 import com.leishmaniapp.presentation.navigation.RootNavigation
 import com.leishmaniapp.presentation.ui.dialogs.WillPopScopeAlertDialog
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme

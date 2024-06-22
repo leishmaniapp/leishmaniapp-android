@@ -8,6 +8,10 @@ import com.leishmaniapp.cloud.auth.TokenPayload
 import com.leishmaniapp.cloud.auth.TokenRequest
 import com.leishmaniapp.cloud.types.StatusResponse
 import com.leishmaniapp.domain.services.IAuthService
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**

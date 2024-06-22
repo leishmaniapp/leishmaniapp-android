@@ -1,7 +1,8 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- General application strings -->
     <string name="app_name">Leishmaniapp</string>
     <string name="app_description">Herramienta de diagnóstico en enfermedades parasitarias</string>
+    <string name="endpoint">Endpoint de conexión remota: %1$s</string>
 
     <!-- Diseases -->
     <string name="unknown_disease">Enfermedad no Soportada</string>
@@ -58,8 +59,13 @@
     <string name="priorize_by">Priorizar por</string>
     <string name="synchronize">Sincronizar</string>
 
+    <!-- Network -->
+    <string name="online">En Linea (%1$s)</string>
+    <string name="offline">Desconectado</string>
+
     <!-- Alerts -->
-    <string name="busy">Espere un momento</string>
+    <string name="busy" tools:ignore="Typos">Espere un momento</string>
+    <string name="busy_content" tools:ignore="Typos">Se está realizando una operación</string>
     <string name="camera_exit">Cancelando captura de campos</string>
     <string name="sure_exit">¿Está seguro que desea salir de la Aplicación?</string>
     <string name="alert_not_analyzed">Esta imágen aún no ha sido analizada. Presione el botón de analizar para generar los resultados</string>
