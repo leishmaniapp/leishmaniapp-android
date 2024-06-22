@@ -22,7 +22,7 @@ interface RoomPatientsDao {
     suspend fun deletePatient(patient: RoomPatientEntity)
 
     @Query("SELECT * FROM Patients WHERE document_type = :documentType AND id = :id")
-    fun patientById(id: Identificator, documentType: DocumentType): Flow<RoomPatientEntity>
+    fun patientById(id: Identificator, documentType: DocumentType): Flow<RoomPatientEntity?>
 
     @Query("SELECT * FROM Patients")
     fun allPatients(): Flow<List<RoomPatientEntity>>

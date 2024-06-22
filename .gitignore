@@ -1,3 +1,6 @@
+# Property files
+application.properties
+
 # Gradle files
 .gradle/
 build/

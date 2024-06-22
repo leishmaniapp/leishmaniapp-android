@@ -1,86 +1,60 @@
 package com.leishmaniapp.presentation.navigation
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.leishmaniapp.presentation.state.AuthState
+import com.leishmaniapp.presentation.ui.dialogs.BusyAlertDialog
+import com.leishmaniapp.presentation.ui.dialogs.ErrorAlertDialog
+import com.leishmaniapp.presentation.ui.layout.LoadingScreen
+import com.leishmaniapp.presentation.ui.views.start.AuthenticationScreen
 import com.leishmaniapp.presentation.ui.views.start.GreetingsScreen
+import com.leishmaniapp.presentation.viewmodel.AuthViewModel
 
 fun NavGraphBuilder.startNavGraph(
     navController: NavHostController,
+    authViewModel: AuthViewModel,
 ) {
     navigation(
         route = NavigationRoutes.StartRoute.route,
         startDestination = NavigationRoutes.StartRoute.GreetingsScreen.route,
     ) {
         composable(route = NavigationRoutes.StartRoute.GreetingsScreen.route) {
-            GreetingsScreen(onContinue = { navController.navigateToAuthentication() })
+            GreetingsScreen(onContinue = {
+                navController.navigateToAuthentication()
+            })
+        }
+
+        composable(route = NavigationRoutes.StartRoute.AuthenticationRoute.route) {
+
+            // Grab the authentication state
+            val authState by authViewModel.authState.observeAsState(initial = AuthState.Busy)
+
+            // If authenticated, then exit this screen
+            if (authState is AuthState.Authenticated) {
+                navController.navigateToDiseasesMenu()
+            }
+
+            // Show the authentication screen
+            AuthenticationScreen(onAuthenticate = { email, password ->
+                authViewModel.authenticate(email, password)
+            })
+
+            // Show alert dialogs
+            if (authState is AuthState.Busy) {
+                BusyAlertDialog()
+            } else if (authState is AuthState.Error) {
+                ErrorAlertDialog(error = (authState as AuthState.Error).e) {
+                    authViewModel.dismiss()
+                }
+            }
         }
     }
 }
-
-//fun NavGraphBuilder.startNavGraph(
-//    navController: NavHostController,
-//    applicationViewModel: ApplicationViewModel,
-//) {
-//
-//    navigation(
-//        route = NavigationRoutes.StartRoute.route,
-//        startDestination = NavigationRoutes.StartRoute.GreetingsScreen.route
-//    ) {
-//        composable(route = NavigationRoutes.StartRoute.GreetingsScreen.route) {
-//            GreetingsScreen(onContinue = { navController.navigateToAuthentication() })
-//        }
-//
-//        composable(route = NavigationRoutes.StartRoute.AuthenticationRoute.route) {
-//            val coroutineScope = rememberCoroutineScope()
-//            val context = LocalContext.current
-//
-//            var authenticationInProgress by remember {
-//                mutableStateOf(false)
-//            }
-//
-//            AuthenticationScreen(
-//                authenticationInProgress,
-//                onAuthenticate = { username, password ->
-//                    authenticationInProgress = true
-//                    coroutineScope.launch {
-//                        withContext(Dispatchers.IO) {
-//                            // Authenticate specialist
-//                            val authState = applicationViewModel.authenticate(username, password)
-//
-//                            withContext(Dispatchers.Main) {
-//                                authenticationInProgress = false
-//                                // Navigate to next screen
-//                                if (authState) {
-//                                    navController.navigateToDiseasesMenu()
-//                                } else {
-//                                    // Show authentication failure toast
-//                                    Toast.makeText(
-//                                        context,
-//                                        R.string.authentication_failure,
-//                                        Toast.LENGTH_LONG
-//                                    ).show()
-//                                }
-//                            }
-//                        }
-//                    }
-//                })
-//        }
-//
-//        composable(route = NavigationRoutes.StartRoute.DiseasesRoute.route) {
-//            DiseasesMenuScreen(
-//                diseases = applicationViewModel.specialist!!.diseases,
-//                onDiseaseSelection = { disease ->
-//                // Select the disease and navigate to the main menu
-//                Log.d("DiseasesMenuScreen", "Selected disease: $disease")
-//                applicationViewModel.disease = disease
-//                navController.navigateToMenu()
-//            })
-//        }
-//    }
-//}
 
 internal fun NavController.navigateToAuthentication() {
     this.navigate(NavigationRoutes.StartRoute.AuthenticationRoute.route)

@@ -1,4 +1,4 @@
-//package com.leishmaniapp.presentation.viewmodel
+package com.leishmaniapp.presentation.viewmodel.deprecated//package com.leishmaniapp.presentation.viewmodel
 //
 //import android.content.Context
 //import android.content.Intent

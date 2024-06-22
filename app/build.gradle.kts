@@ -1,4 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.FileInputStream
+import java.util.Locale
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -10,6 +13,13 @@ plugins {
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.squareup.wire)
     alias(libs.plugins.androidx.room)
+}
+
+/**
+ * Load the application.properties file containing the remote connection secrets
+ */
+val applicationProperties = Properties().apply {
+    load(FileInputStream(rootProject.file("application.properties")))
 }
 
 android {
@@ -26,6 +36,15 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
+        }
+
+        // Apply field from application.properties into buildConfig
+        applicationProperties.forEach { key, value ->
+            buildConfigField(
+                "String",
+                key.toString().uppercase(Locale.US),
+                "\"$value\""
+            )
         }
     }
 
@@ -79,7 +98,7 @@ wire {
         android = true
         rpcRole = "client"
         rpcCallStyle = "suspending"
-        singleMethodServices = true
+        singleMethodServices = false
     }
 }
 
@@ -96,7 +115,11 @@ dependencies {
     testImplementation(libs.bundles.test)
     androidTestImplementation(libs.bundles.android.test)
 
-    /* Protobuf & gRPC */
+    /* OkHttp (HTTP2 client for gRPC) */
+    implementation(platform(libs.okhttp.bom))
+    implementation(libs.bundles.okhttp)
+
+    /* Wire Protobuf & gRPC */
     implementation(libs.bundles.wire.grpc)
 
     /* Androidx Core */
@@ -115,6 +138,9 @@ dependencies {
 
     /* Androidx Navigation */
     implementation(libs.bundles.androidx.navigation)
+
+    /* Androidx DataStore */
+    implementation(libs.bundles.androidx.datastore)
 
     /* Androidx Room */
     implementation(libs.bundles.androidx.room)

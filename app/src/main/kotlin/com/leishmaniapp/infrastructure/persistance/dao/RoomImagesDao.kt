@@ -22,7 +22,7 @@ interface RoomImagesDao {
     suspend fun deleteImage(image: RoomImageEntity)
 
     @Query("SELECT * FROM Images WHERE diagnosis = :diagnosis AND sample = :sample")
-    fun imageForDiagnosis(diagnosis: UUID, sample: Int): Flow<RoomImageEntity>
+    fun imageForDiagnosis(diagnosis: UUID, sample: Int): Flow<RoomImageEntity?>
 
 
     @Query("SELECT * FROM Images WHERE diagnosis = :diagnosis")

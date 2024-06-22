@@ -2,6 +2,7 @@ package com.leishmaniapp.domain.services
 
 import com.leishmaniapp.cloud.auth.AuthRequest
 import com.leishmaniapp.cloud.auth.AuthResponse
+import com.leishmaniapp.cloud.auth.DecodeResponse
 import com.leishmaniapp.cloud.auth.TokenPayload
 import com.leishmaniapp.cloud.auth.TokenRequest
 import com.leishmaniapp.cloud.types.StatusResponse
@@ -26,7 +27,7 @@ interface IAuthService {
     suspend fun verifyToken(request: TokenRequest): Result<StatusResponse>
 
     /**
-     * Obtain token contents, must be a local call
+     * Obtain token contents
      */
-    suspend fun decodeToken(request: TokenRequest): Result<TokenPayload>
+    suspend fun decodeToken(request: TokenRequest): Result<DecodeResponse>
 }

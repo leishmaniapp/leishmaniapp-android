@@ -41,6 +41,6 @@ class RoomDiagnosesRepositoryImpl @Inject constructor(
         dao.diagnosesForSpecialistNotFinished(specialistEmail)
             .map { flow -> flow.map { it.toDiagnosis() } }
 
-    override fun diagnosisForId(uuid: UUID): Flow<Diagnosis> =
-        dao.diagnosisForId(uuid).map { it.toDiagnosis() }
+    override fun diagnosisForId(uuid: UUID): Flow<Diagnosis?> =
+        dao.diagnosisForId(uuid).map { it?.toDiagnosis() }
 }

@@ -43,7 +43,6 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  */
 @Composable
 fun AuthenticationScreen(
-    authenticationInProgress: Boolean = false,
     onAuthenticate: (Email, Password) -> Unit,
 ) {
 
@@ -119,23 +118,13 @@ fun AuthenticationScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 64.dp),
-                    onClick = if (!authenticationInProgress) {
-                        {
-                            // Attempt authentication
-                            onAuthenticate.invoke(email, password)
-                        }
-                    } else {
-                        { /* Authentication is in progress, do nothing */ }
+                    onClick = {
+                        // Attempt authentication
+                        onAuthenticate.invoke(email, password)
                     }
+
                 ) {
-                    if (!authenticationInProgress) {
-                        Text(text = stringResource(id = R.string.sign_in))
-                    } else {
-                        CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
+                    Text(text = stringResource(id = R.string.sign_in))
                 }
             }
         }
@@ -144,16 +133,8 @@ fun AuthenticationScreen(
 
 @Preview
 @Composable
-fun AuthenticationScreenPreview_NotInProgress() {
+fun AuthenticationScreenPreview() {
     LeishmaniappTheme {
-        AuthenticationScreen(authenticationInProgress = false) { _, _ -> }
-    }
-}
-
-@Preview
-@Composable
-fun AuthenticationScreenPreview_InProgress() {
-    LeishmaniappTheme {
-        AuthenticationScreen(authenticationInProgress = true) { _, _ -> }
+        AuthenticationScreen { _, _ -> }
     }
 }

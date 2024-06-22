@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e5968e977c1bef0671c4805b412cc5ed",
+    "identityHash": "6f0a6b088b6c2da81b4811fd4d05378e",
     "entities": [
       {
         "tableName": "Diagnoses",
@@ -197,7 +197,7 @@
       },
       {
         "tableName": "Specialists",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`email` TEXT NOT NULL, `name` TEXT NOT NULL, `token` TEXT NOT NULL, `diseases` TEXT NOT NULL, PRIMARY KEY(`email`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`email` TEXT NOT NULL, `name` TEXT NOT NULL, `token` TEXT, `diseases` TEXT NOT NULL, PRIMARY KEY(`email`))",
         "fields": [
           {
             "fieldPath": "email",
@@ -215,7 +215,7 @@
             "fieldPath": "token",
             "columnName": "token",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "diseases",
@@ -230,7 +230,17 @@
             "email"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_Specialists_token",
+            "unique": true,
+            "columnNames": [
+              "token"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Specialists_token` ON `${TABLE_NAME}` (`token`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -286,7 +296,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e5968e977c1bef0671c4805b412cc5ed')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6f0a6b088b6c2da81b4811fd4d05378e')"
     ]
   }
 }

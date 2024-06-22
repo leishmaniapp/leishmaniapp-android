@@ -27,7 +27,7 @@ interface IPatientsRepository {
     /**
      * Get a [Patient] given its [Identificator] and [DocumentType]
      */
-    fun patientById(id: Identificator, documentType: DocumentType): Flow<Patient>
+    fun patientById(id: Identificator, documentType: DocumentType): Flow<Patient?>
 
     /**
      * Get all the [Patient] stored in database

@@ -27,8 +27,8 @@ class RoomSamplesRepositoryImpl @Inject constructor(
     override suspend fun deleteImage(image: ImageSample) =
         dao.deleteImage(RoomImageEntity(image))
 
-    override fun imageForDiagnosis(diagnosis: UUID, sample: Int): Flow<ImageSample> =
-        dao.imageForDiagnosis(diagnosis, sample).map { it.toImageSample() }
+    override fun imageForDiagnosis(diagnosis: UUID, sample: Int): Flow<ImageSample?> =
+        dao.imageForDiagnosis(diagnosis, sample).map { it?.toImageSample() }
 
     override fun allImagesForDiagnosis(diagnosis: UUID): Flow<List<ImageSample>> =
         dao.allImagesForDiagnosis(diagnosis).map { flow -> flow.map { it.toImageSample() } }

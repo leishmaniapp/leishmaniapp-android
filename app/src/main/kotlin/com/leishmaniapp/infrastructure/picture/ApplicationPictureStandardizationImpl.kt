@@ -16,7 +16,7 @@ import kotlin.math.sqrt
 /**
  * Transform picture into an standarized cloud format
  */
-class ApplicationPictureStandardization @Inject constructor() : IPictureStandardization {
+class ApplicationPictureStandardizationImpl @Inject constructor() : IPictureStandardization {
     /**
      * Crop the square inside the microscope objective lens circular area
      */
@@ -69,7 +69,7 @@ class ApplicationPictureStandardization @Inject constructor() : IPictureStandard
     }
 
     /**
-     * Scale picture to the [STD_IMAGE_RESOLUTION]
+     * Scale picture to the [ImageSample.STD_IMAGE_RESOLUTION]
      */
     override fun scalePicture(pictureUri: Uri): Result<Int> {
         try {

@@ -1,8 +1,6 @@
 package com.leishmaniapp.infrastructure.sharing
 
 import android.content.Context
-import android.media.MediaScannerConnection
-import android.os.Environment
 import com.itextpdf.kernel.colors.DeviceRgb
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
@@ -21,9 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.toJavaLocalDateTime
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
@@ -31,7 +26,7 @@ import javax.inject.Inject
 /**
  * Share a [Diagnosis] into PDF format
  */
-class ApplicationDiagnosisSharing @Inject constructor(
+class ApplicationDiagnosisSharingImpl @Inject constructor(
     @ApplicationContext val context: Context,
 ) : IDiagnosisSharing {
     override suspend fun generateDiagnosisFile(diagnosis: Diagnosis): File {

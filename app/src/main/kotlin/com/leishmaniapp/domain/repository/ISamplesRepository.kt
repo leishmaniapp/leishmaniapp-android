@@ -27,7 +27,7 @@ interface ISamplesRepository {
     /**
      * Get an [ImageSample] given a [com.leishmaniapp.domain.entities.Diagnosis] id
      */
-    fun imageForDiagnosis(diagnosis: UUID, sample: Int): Flow<ImageSample>
+    fun imageForDiagnosis(diagnosis: UUID, sample: Int): Flow<ImageSample?>
 
     /**
      * Get every [ImageSample] associated to a [com.leishmaniapp.domain.entities.Diagnosis] id

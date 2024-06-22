@@ -40,5 +40,5 @@ interface RoomDiagnosesDao {
 
     @Transaction
     @Query("SELECT * FROM Diagnoses WHERE id = :uuid")
-    fun diagnosisForId(uuid: UUID): Flow<RoomCompleteDiagnosisRelation>
+    fun diagnosisForId(uuid: UUID): Flow<RoomCompleteDiagnosisRelation?>
 }

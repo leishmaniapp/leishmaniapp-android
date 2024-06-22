@@ -1,3 +1,4 @@
 [submodule "app/src/main/proto"]
 	path = app/src/main/proto
 	url = git@github.com:leishmaniapp/protobuf_schema.git
+	branch = v1.1.0-beta

@@ -16,6 +16,14 @@
     <string name="mock_dots_disease">Enfermedad de prueba: Detector de puntos</string>
     <string name="mock_dots_disease_element">Punto de prueba</string>
 
+    <!-- Exceptions -->
+    <string name="exception_title">Ha ocurrido un error</string>
+    <string name="exception_root">Error desconocido</string>
+    <string name="exception_generic">Excepción: %1$s</string>
+    <string name="exception_remote">Error en llamada a procedimiento remoto</string>
+    <string name="exception_remote_status">Error emitido por el servidor: %1$s</string>
+    <string name="exception_remote_bad_authentication">Autenticación fallida, credenciales inválidas o sesión revocada</string>
+
     <!-- Actions -->
     <string name="accept">Aceptar</string>
     <string name="dismiss">Descartar</string>
@@ -51,6 +59,7 @@
     <string name="synchronize">Sincronizar</string>
 
     <!-- Alerts -->
+    <string name="busy">Espere un momento</string>
     <string name="camera_exit">Cancelando captura de campos</string>
     <string name="sure_exit">¿Está seguro que desea salir de la Aplicación?</string>
     <string name="alert_not_analyzed">Esta imágen aún no ha sido analizada. Presione el botón de analizar para generar los resultados</string>
@@ -81,6 +90,7 @@
     <string name="search_disease">Buscar enfermedad</string>
     <string name="diagnostic_element">Elemento diagnóstico</string>
     <string name="diseases">Enfermedades</string>
+    <string name="select_disease">Seleccione una enfermedad</string>
     <string name="awaiting">Pendientes</string>
 
     <!-- Diagnosis and Analysis -->

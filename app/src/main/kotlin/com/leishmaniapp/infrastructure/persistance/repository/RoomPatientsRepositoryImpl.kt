@@ -27,8 +27,8 @@ class RoomPatientsRepositoryImpl @Inject constructor(
     override suspend fun deletePatient(patient: Patient) =
         dao.deletePatient(RoomPatientEntity(patient))
 
-    override fun patientById(id: Identificator, documentType: DocumentType): Flow<Patient> =
-        dao.patientById(id, documentType).map { it.toPatient() }
+    override fun patientById(id: Identificator, documentType: DocumentType): Flow<Patient?> =
+        dao.patientById(id, documentType).map { it?.toPatient() }
 
     override fun allPatients(): Flow<List<Patient>> =
         dao.allPatients().map { flow -> flow.map { it.toPatient() } }

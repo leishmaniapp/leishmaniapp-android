@@ -1,10 +1,7 @@
 package com.leishmaniapp.domain.repository
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Query
-import androidx.room.Upsert
 import com.leishmaniapp.domain.entities.Specialist
+import com.leishmaniapp.domain.types.AccessToken
 import com.leishmaniapp.domain.types.Email
 import kotlinx.coroutines.flow.Flow
 
@@ -26,12 +23,17 @@ interface ISpecialistsRepository {
     /**
      * Get a [Specialist] given its [Email]
      */
-    fun specialistByUsername(email: Email): Flow<Specialist>
+    fun specialistByEmail(email: Email): Flow<Specialist?>
+
+    /**
+     * Get a [Specialist] given its [AccessToken]
+     */
+    fun specialistByToken(token: AccessToken): Flow<Specialist?>
 
     /**
      * Delete a [Specialist] given its [Email]
      */
-    fun deleteSpecialistByUsername(email: Email)
+    fun deleteSpecialistByEmail(email: Email)
 
     /**
      * Get all the [Specialist] stored in database

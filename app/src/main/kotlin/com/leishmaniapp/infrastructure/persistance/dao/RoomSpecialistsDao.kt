@@ -4,6 +4,8 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
+import com.leishmaniapp.domain.entities.Specialist
+import com.leishmaniapp.domain.types.AccessToken
 import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.infrastructure.persistance.entities.RoomSpecialistEntity
 import kotlinx.coroutines.flow.Flow
@@ -21,10 +23,13 @@ interface RoomSpecialistsDao {
     suspend fun deleteSpecialist(specialist: RoomSpecialistEntity)
 
     @Query("SELECT * FROM Specialists WHERE email = :email")
-    fun specialistByUsername(email: Email): Flow<RoomSpecialistEntity>
+    fun specialistByEmail(email: Email): Flow<RoomSpecialistEntity?>
+
+    @Query("SELECT * FROM Specialists WHERE token = :token")
+    fun specialistByToken(token: AccessToken): Flow<RoomSpecialistEntity?>
 
     @Query("DELETE FROM Specialists WHERE email = :email")
-    fun deleteSpecialistByUsername(email: Email)
+    fun deleteSpecialistByEmail(email: Email)
 
     @Query("SELECT * FROM Specialists")
     fun allSpecialists(): Flow<List<RoomSpecialistEntity>>

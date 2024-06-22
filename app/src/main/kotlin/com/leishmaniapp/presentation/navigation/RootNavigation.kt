@@ -2,9 +2,14 @@ package com.leishmaniapp.presentation.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.leishmaniapp.presentation.state.AuthState
+import com.leishmaniapp.presentation.viewmodel.AuthViewModel
 
 /**
  * Root of the navigation graph for the application
@@ -12,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun RootNavigation(
     navigationController: NavHostController = rememberNavController(),
+    authViewModel: AuthViewModel = viewModel(),
 ) {
     NavHost(
         navController = navigationController,
@@ -20,6 +26,6 @@ fun RootNavigation(
         exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start) }
     )
     {
-        startNavGraph(navController = navigationController)
+        startNavGraph(navigationController, authViewModel)
     }
 }

@@ -49,5 +49,5 @@ interface IDiagnosesRepository {
     /**
      * Get a [Diagnosis] given its [Identificator]
      */
-    fun diagnosisForId(uuid: UUID): Flow<Diagnosis>
+    fun diagnosisForId(uuid: UUID): Flow<Diagnosis?>
 }

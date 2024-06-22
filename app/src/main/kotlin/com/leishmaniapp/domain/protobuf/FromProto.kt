@@ -5,6 +5,7 @@ import com.leishmaniapp.domain.entities.Diagnosis
 import com.leishmaniapp.domain.entities.DiagnosticElementName
 import com.leishmaniapp.domain.entities.ImageMetadata
 import com.leishmaniapp.domain.entities.Specialist
+import com.leishmaniapp.domain.types.AccessToken
 import com.leishmaniapp.utilities.time.fromUnixToLocalDateTime
 import java.util.UUID
 
@@ -32,10 +33,14 @@ fun Diagnosis.Results.Companion.fromProto(from: com.leishmaniapp.cloud.model.Dia
         },
     )
 
-fun Specialist.Companion.fromProto(from: com.leishmaniapp.cloud.model.Specialist): Specialist =
+fun Specialist.Companion.fromProto(
+    from: com.leishmaniapp.cloud.model.Specialist,
+    token: AccessToken
+): Specialist =
     Specialist(
         name = from.name,
         email = from.email,
+        token = token,
         diseases = from.diseases.map { Disease.diseaseById(it)!! }.toSet(),
     )
 

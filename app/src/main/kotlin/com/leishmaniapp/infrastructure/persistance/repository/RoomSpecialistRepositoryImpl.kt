@@ -2,6 +2,7 @@ package com.leishmaniapp.infrastructure.persistance.repository
 
 import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.repository.ISpecialistsRepository
+import com.leishmaniapp.domain.types.AccessToken
 import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.infrastructure.persistance.dao.RoomSpecialistsDao
 import com.leishmaniapp.infrastructure.persistance.entities.RoomSpecialistEntity
@@ -26,10 +27,13 @@ class RoomSpecialistRepositoryImpl @Inject constructor(
         RoomSpecialistEntity(specialist)
     )
 
-    override fun specialistByUsername(email: Email): Flow<Specialist> =
-        dao.specialistByUsername(email).map { it.toSpecialist() }
+    override fun specialistByEmail(email: Email): Flow<Specialist?> =
+        dao.specialistByEmail(email).map { it?.toSpecialist() }
 
-    override fun deleteSpecialistByUsername(email: Email) = dao.deleteSpecialistByUsername(email)
+    override fun specialistByToken(token: AccessToken): Flow<Specialist?> =
+        dao.specialistByToken(token).map { it?.toSpecialist() }
+
+    override fun deleteSpecialistByEmail(email: Email) = dao.deleteSpecialistByEmail(email)
 
     override fun allSpecialists(): Flow<List<Specialist>> =
         dao.allSpecialists().map { flow -> flow.map { it.toSpecialist() } }
