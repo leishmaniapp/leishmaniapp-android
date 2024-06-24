@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.leishmaniapp.cloud.auth.AuthRequest
 import com.leishmaniapp.cloud.auth.TokenRequest
@@ -23,7 +22,6 @@ import com.leishmaniapp.domain.types.AccessToken
 import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.domain.types.Password
 import com.leishmaniapp.presentation.state.AuthState
-import com.leishmaniapp.utilities.extensions.getConnectionStateFromService
 import com.leishmaniapp.utilities.extensions.throwOrElse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -31,15 +29,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -57,8 +51,8 @@ class AuthViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 
     // Services
-    private val networkService: INetworkService,
     private val authService: IAuthService,
+    networkService: INetworkService,
 
     // Repositories
     private val tokenRepository: ITokenRepository,
@@ -73,16 +67,24 @@ class AuthViewModel @Inject constructor(
         val TAG: String = AuthViewModel::class.simpleName!!
     }
 
-    private val _authState: MutableLiveData<AuthState> =
-        savedStateHandle.getLiveData(
-            "$TAG:authState", AuthState.Busy,
-        )
+    private val _authState: MutableLiveData<AuthState> = savedStateHandle.getLiveData(
+        "authState", AuthState.Busy,
+    )
 
     /**
      * Authentication status representation
      */
     val authState: LiveData<AuthState> = _authState
 
+    /**
+     * Get the current network state
+     */
+    private val networkState: StateFlow<INetworkService.NetworkState> =
+        networkService.networkState().stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            INetworkService.NetworkState.OFFLINE,
+        )
 
     /**
      * [AccessToken] flow, automatically stores the new [Specialist] information associated to the
@@ -92,11 +94,10 @@ class AuthViewModel @Inject constructor(
         // For each new token, decode the contents and update the specialist metadata
         .onEach { token ->
             // Update the specialist from the remote server if token was provided
-            if (token != null && networkService.checkIfInternetConnectionIsAvailable()) {
+            if (token != null && networkState.value != INetworkService.NetworkState.OFFLINE) {
                 // Decode the token contents
                 val payload = withContext(Dispatchers.IO) {
-                    authService.decodeToken(TokenRequest(token = token))
-                        .getOrThrow()
+                    authService.decodeToken(TokenRequest(token = token)).getOrThrow()
                         .run { status!!.code.throwOrElse { payload!! } }
                 }
                 // Get the specialist
@@ -109,15 +110,13 @@ class AuthViewModel @Inject constructor(
         .flowOn(Dispatchers.IO)
         // Catch errors within the call, can only be network errors
         .catch { err ->
+            Log.e(TAG, "Exception during AccessToken Flow", err)
             _authState.value = AuthState.Error(NetworkException(err))
         }
         // Transform to a state flow
         .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            null
+            viewModelScope, SharingStarted.Eagerly, null
         )
-
 
     /**
      * [Specialist] flow, automatically sets the authentication status when a new [AccessToken] arrives
@@ -140,19 +139,40 @@ class AuthViewModel @Inject constructor(
                 AuthState.Authenticated(specialist)
             } else {
                 // No specialist, unauthenticated
-                AuthState.None.getConnectionStateFromService(networkService)
+                AuthState.None.getConnectionState()
             }
         }
         // Catch errors within the call
         .catch { err ->
+            Log.e(TAG, "Exception during Specialist Flow", err)
             _authState.value = AuthState.Error(GenericException(err))
         }
         // Transform to a state flow
         .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            null
+            viewModelScope, SharingStarted.Eagerly, null
         )
+
+    /**
+     * Create a new [AuthState.None] state gathering the network state from a [INetworkService]
+     */
+    private fun AuthState.None.Companion.getConnectionState(): AuthState.None =
+        AuthState.None(
+            if (networkState.value == INetworkService.NetworkState.OFFLINE) {
+                AuthState.None.AuthConnectionState.OFFLINE
+            } else {
+                AuthState.None.AuthConnectionState.ONLINE
+            }
+        )
+
+
+    /**
+     * Dismiss the current [AuthState] to [AuthState.None], useful for getting rid of exceptions
+     */
+    fun dismiss() {
+        viewModelScope.launch {
+            _authState.value = AuthState.None.getConnectionState()
+        }
+    }
 
     /**
      * Try to authenticate user in remote server
@@ -163,8 +183,8 @@ class AuthViewModel @Inject constructor(
             try {
                 // Get the authentication token
                 val token: AccessToken = withContext(Dispatchers.IO) {
-                    authService.authenticate(AuthRequest(email, password))
-                        .getOrThrow().run { status!!.code.throwOrElse { token!! } }
+                    authService.authenticate(AuthRequest(email, password)).getOrThrow()
+                        .run { status!!.code.throwOrElse { token!! } }
                 }
 
                 // Store the token and the specialist
@@ -183,15 +203,6 @@ class AuthViewModel @Inject constructor(
                 Log.e(TAG, e.toString(), e)
                 _authState.value = AuthState.Error(NetworkException(e))
             }
-        }
-    }
-
-    /**
-     * Dismiss the current [AuthState] to [AuthState.None], useful for getting rid of exceptions
-     */
-    fun dismiss() {
-        viewModelScope.launch {
-            _authState.value = AuthState.None.getConnectionStateFromService(networkService)
         }
     }
 

@@ -13,7 +13,7 @@ import com.leishmaniapp.domain.types.ComputedResultsType
  * Disease that identifies a series of black dots in a white cnavas
  */
 data object MockDotsDisease : Disease(
-    id = "mock.disease",
+    id = "mock.dots",
     models = setOf(
         DiagnosticModel("mock.dots"),
     ),

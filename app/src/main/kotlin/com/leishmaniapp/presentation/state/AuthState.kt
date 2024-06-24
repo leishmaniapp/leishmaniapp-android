@@ -43,4 +43,10 @@ sealed class AuthState : Parcelable {
      */
     @Parcelize
     data class Authenticated(val s: Specialist) : AuthState()
+
+    /**
+     * Get the [AuthState] as [Authenticated] or get null
+     */
+    fun authenticatedOrNull(): Authenticated? =
+        run { if (this is Authenticated) this as Authenticated else null }
 }

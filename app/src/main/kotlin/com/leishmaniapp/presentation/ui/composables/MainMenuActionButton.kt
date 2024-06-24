@@ -36,10 +36,16 @@ fun MainMenuActionButton(
     label: String,
     onClick: () -> Unit
 ) {
-    OutlinedCard(
-        modifier = modifier.fillMaxWidth(),
-        onClick = onClick
-    ) {
+    Column {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(
+                vertical = 8.dp,
+                horizontal = 16.dp,
+            )
+        )
+
         Image(
             painter = image,
             contentDescription = null,
@@ -47,15 +53,6 @@ fun MainMenuActionButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
-        )
-
-        Text(
-            text = label,
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(
-                vertical = 8.dp,
-                horizontal = 16.dp,
-            )
         )
     }
 }
