@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.leishmaniapp.presentation.state.AuthState
 import com.leishmaniapp.presentation.ui.dialogs.BusyAlertDialog
+import com.leishmaniapp.presentation.ui.dialogs.DisconnectedAlertDialog
 import com.leishmaniapp.presentation.ui.dialogs.ErrorAlertDialog
 import com.leishmaniapp.presentation.ui.dialogs.ProfileAlertDialog
 import com.leishmaniapp.presentation.ui.views.start.AuthenticationScreen
@@ -49,13 +50,14 @@ fun NavGraphBuilder.startNavGraph(
                 authViewModel.authenticate(email, password)
             })
 
-            // Show alert dialogs
-            if (authState is AuthState.Busy) {
-                BusyAlertDialog()
-            } else if (authState is AuthState.Error) {
-                ErrorAlertDialog(error = (authState as AuthState.Error).e) {
-                    authViewModel.dismiss()
-                }
+            when (authState) {
+                is AuthState.Busy -> BusyAlertDialog()
+                AuthState.None(AuthState.None.AuthConnectionState.OFFLINE) -> DisconnectedAlertDialog()
+                is AuthState.Error -> ErrorAlertDialog(
+                    error = (authState as AuthState.Error).e
+                ) { authViewModel.dismiss() }
+
+                else -> {}
             }
         }
 

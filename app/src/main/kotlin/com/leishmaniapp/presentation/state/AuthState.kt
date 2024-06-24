@@ -14,7 +14,13 @@ sealed class AuthState : Parcelable {
      * User is not authenticated
      */
     @Parcelize
-    data object None : AuthState()
+    data class None(val connection: AuthConnectionState) :
+        AuthState() {
+        enum class AuthConnectionState {
+            OFFLINE,
+            ONLINE
+        }
+    }
 
     /**
      * Authentication is in progress

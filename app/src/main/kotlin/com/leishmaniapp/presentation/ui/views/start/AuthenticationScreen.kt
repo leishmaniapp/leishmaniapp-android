@@ -1,5 +1,6 @@
 package com.leishmaniapp.presentation.ui.views.start
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,48 +54,55 @@ fun AuthenticationScreen(
     LeishmaniappScaffold(
         title = stringResource(id = R.string.authentication)
     ) { paddingValues ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(32.dp)
-                    .weight(1f),
-                contentAlignment = Alignment.BottomStart
+
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.sign_in),
-                    textAlign = TextAlign.Start,
+                    textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.headlineMedium,
+                )
+
+                Text(
+                    text = stringResource(id = R.string.authentication_content),
+                    textAlign = TextAlign.Center,
                 )
             }
 
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp)) {
+
                 OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
                     value = email,
                     label = { Text(text = stringResource(id = R.string.username)) },
                     onValueChange = { email = it },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                    )
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                 )
 
                 OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
                     value = password,
                     label = { Text(text = stringResource(id = R.string.password)) },
                     onValueChange = { password = it },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = if (showPassword) {
                         VisualTransformation.None
                     } else {
                         PasswordVisualTransformation()
                     },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                    ),
                     trailingIcon = {
                         if (showPassword) {
                             IconButton(onClick = { showPassword = false }) {
@@ -107,25 +115,20 @@ fun AuthenticationScreen(
                         }
                     }
                 )
+
             }
 
-            Box(
+            Button(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-            ) {
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 64.dp),
-                    onClick = {
-                        // Attempt authentication
-                        onAuthenticate.invoke(email, password)
-                    }
-
-                ) {
-                    Text(text = stringResource(id = R.string.sign_in))
+                    .fillMaxWidth()
+                    .padding(horizontal = 64.dp),
+                onClick = {
+                    // Attempt authentication
+                    onAuthenticate.invoke(email, password)
                 }
+
+            ) {
+                Text(text = stringResource(id = R.string.sign_in))
             }
         }
     }

@@ -7,10 +7,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leishmaniapp.cloud.auth.AuthRequest
 import com.leishmaniapp.cloud.auth.TokenRequest
 import com.leishmaniapp.domain.entities.Specialist
+import com.leishmaniapp.domain.exceptions.BadAuthenticationException
 import com.leishmaniapp.domain.exceptions.LeishmaniappException
+import com.leishmaniapp.domain.exceptions.NetworkException
 import com.leishmaniapp.domain.protobuf.fromProto
 import com.leishmaniapp.domain.repository.ISpecialistsRepository
 import com.leishmaniapp.domain.repository.ITokenRepository
@@ -25,13 +28,23 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.math.log
 
 /**
  * Handle authentication state
@@ -67,38 +80,52 @@ class AuthViewModel @Inject constructor(
         )
 
     init {
+        // Change authentication status based on token
         viewModelScope.launch {
-            // Respond to changes in access token
-            tokenRepository.accessToken.collect { token ->
-                // If authenticated
+            tokenRepository.accessToken.collectLatest { token ->
+                // If authentication token is valid
                 if (token != null) {
-                    // Get the specialist from the remote server
-                    if (networkService.checkIfInternetConnectionIsAvailable()) {
-                        withContext(Dispatchers.IO) {
-                            // Decode the token contents
-                            val payload = authService.decodeToken(TokenRequest(token = token))
-                                .getOrThrow().run { status!!.code.throwOrElse { payload!! } }
-                            // Get the specialist
-                            val specialist = Specialist.fromProto(payload.specialist!!, token)
-
-                            // Update the specialist in the database
-                            specialistRepository.upsertSpecialist(specialist)
-                        }
-                    }
-
-                    // Listen for specialist changes
+                    // Get the specialist
                     specialistRepository.specialistByToken(token).collect { specialist ->
+                        // Specialist found
                         if (specialist != null) {
                             _authState.value = AuthState.Authenticated(specialist)
                         } else {
-                            // User logged out, forget the token
-                            _authState.value = AuthState.None
-                            tokenRepository.forgetAuthenticationToken()
+                            // No specialist, unauthenticated
+                            dismiss()
                         }
                     }
                 } else {
                     // No access token, not authenticated
-                    _authState.value = AuthState.None
+                    dismiss()
+                }
+            }
+        }
+
+        // Store incoming authentication tokens
+        viewModelScope.launch {
+            tokenRepository.accessToken.filterNotNull().collect { token ->
+                // Get the specialist from the remote server
+                if (networkService.checkIfInternetConnectionIsAvailable()) {
+                    // Decode the token contents
+                    val payload = try {
+                        withContext(Dispatchers.IO) {
+                            authService.decodeToken(TokenRequest(token = token))
+                                .getOrThrow()
+                                .run { status!!.code.throwOrElse { payload!! } }
+                        }
+                    } catch (e: Exception) {
+                        // Catch network errors
+                        _authState.value = AuthState.Error(NetworkException(e))
+                        // Forget the authentication token
+                        tokenRepository.forgetAuthenticationToken()
+                        return@collect
+                    }
+
+                    // Get the specialist
+                    val specialist = Specialist.fromProto(payload.specialist!!, token)
+                    // Update the specialist in the database
+                    specialistRepository.upsertSpecialist(specialist)
                 }
             }
         }
@@ -124,11 +151,19 @@ class AuthViewModel @Inject constructor(
 
                 // Store the token and the specialist
                 // Should automatically login as init is listening on token changes
-                tokenRepository.storeAuthenticationToken(token)
+                tokenRepository.storeAuthenticationToken(token).getOrThrow()
 
             } catch (e: LeishmaniappException) {
+
+                // Catch application exceptions
                 Log.e(TAG, e.toString(), e)
                 _authState.value = AuthState.Error(e)
+
+            } catch (e: Exception) {
+
+                // Catch gRPC exceptions
+                Log.e(TAG, e.toString(), e)
+                _authState.value = AuthState.Error(NetworkException(e))
             }
         }
     }
@@ -137,7 +172,16 @@ class AuthViewModel @Inject constructor(
      * Dismiss the current [AuthState] to [AuthState.None], useful for getting rid of exceptions
      */
     fun dismiss() {
-        _authState.value = AuthState.None
+        viewModelScope.launch {
+            _authState.value =
+                AuthState.None(
+                    if (networkService.checkIfInternetConnectionIsAvailable()) {
+                        AuthState.None.AuthConnectionState.ONLINE
+                    } else {
+                        AuthState.None.AuthConnectionState.OFFLINE
+                    }
+                )
+        }
     }
 
     /**
@@ -153,7 +197,10 @@ class AuthViewModel @Inject constructor(
             // Remove token from specialist
             specialistRepository.upsertSpecialist(s.copy(token = null))
             // Forget token
-            tokenRepository.forgetAuthenticationToken()
+            tokenRepository.forgetAuthenticationToken().onFailure { e ->
+                Log.e(TAG, "Failed logout", e)
+                _authState.value = AuthState.Error(BadAuthenticationException())
+            }
         }
     }
 }

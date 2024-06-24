@@ -21,6 +21,7 @@
     <string name="exception_title">Ha ocurrido un error</string>
     <string name="exception_root">Error desconocido</string>
     <string name="exception_generic">Excepción: %1$s</string>
+    <string name="exception_network">Error de red: %1$s</string>
     <string name="exception_remote">Error en llamada a procedimiento remoto</string>
     <string name="exception_remote_status">Error emitido por el servidor: %1$s</string>
     <string name="exception_remote_bad_authentication">Autenticación fallida, credenciales inválidas o sesión revocada</string>
@@ -153,7 +154,9 @@
 
     <!-- Authentication -->
     <string name="authentication">Autenticación</string>
+    <string name="authentication_content">Utilice las credenciales previamente asginadas para iniciar sesión</string>
     <string name="authentication_failure">Especialista no encontrado o credenciales incorrectas</string>
+    <string name="authentication_offline">Es necesario iniciar sesión con una conexión a Internet, una vez registrada la sesión es posible utilizar la aplicación sin una conexión</string>
 
     <!-- Camera -->
     <string name="missing_camera_permission">Es necesario el permiso de la cámara para continuar el diagnóstico</string>

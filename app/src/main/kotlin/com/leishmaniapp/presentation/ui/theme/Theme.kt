@@ -16,17 +16,12 @@ import androidx.core.view.WindowCompat
 @Composable
 fun LeishmaniappTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    // Get the color scheme depending on dynamic color support on SDK31+ and dark/light modes
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        else -> LeishmaniappColorScheme
+    // Get the color scheme (dark/light)
+    val colorScheme = when (darkTheme) {
+        true -> LeishmaniappDarkColorScheme
+        false -> LeishmaniappLightColorScheme
     }
 
     // Apply theme to top bar (check if not in preview first)
@@ -34,12 +29,14 @@ fun LeishmaniappTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = colorScheme.onBackground.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
 
     MaterialTheme(
-        colorScheme = colorScheme, content = content
+        typography = LeishmaniappTypography,
+        colorScheme = colorScheme,
+        content = content
     )
 }

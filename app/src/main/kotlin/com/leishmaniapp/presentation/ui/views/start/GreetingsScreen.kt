@@ -28,7 +28,10 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 @Composable
 fun GreetingsScreen(onContinue: () -> Unit) {
     LeishmaniappTheme {
-        Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = Color.Black
+        ) {
 
             /* Image is shown in background */
             Image(
@@ -51,7 +54,7 @@ fun GreetingsScreen(onContinue: () -> Unit) {
                     text = stringResource(id = R.string.app_name),
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.displayMedium.copy(
-                        color = MaterialTheme.colorScheme.surface,
+                        color = Color.White,
                         textAlign = TextAlign.Center,
                     )
                 )
@@ -59,7 +62,7 @@ fun GreetingsScreen(onContinue: () -> Unit) {
                 Text(
                     text = stringResource(id = R.string.app_description),
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        color = MaterialTheme.colorScheme.surface,
+                        color = Color.White,
                         textAlign = TextAlign.Center,
                     ),
                 )

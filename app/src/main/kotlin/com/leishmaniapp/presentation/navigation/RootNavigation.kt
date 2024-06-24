@@ -25,8 +25,8 @@ fun RootNavigation(
     val authState by authViewModel.authState.observeAsState(initial = AuthState.Busy)
     LaunchedEffect(key1 = authState, key2 = navigationController.currentDestination) {
         if ((authState is AuthState.None) &&
-            ((navigationController.currentDestination!!.route != NavigationRoutes.StartRoute.AuthenticationRoute.route) ||
-                    (navigationController.currentDestination!!.route != NavigationRoutes.StartRoute.GreetingsScreen.route))
+            (navigationController.currentDestination!!.route != NavigationRoutes.StartRoute.AuthenticationRoute.route) &&
+                    (navigationController.currentDestination!!.route != NavigationRoutes.StartRoute.GreetingsScreen.route)
         ) {
             navigationController.navigateToAuthentication()
         }

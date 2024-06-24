@@ -1,5 +1,6 @@
 package com.leishmaniapp.infrastructure.cloud
 
+import android.util.Log
 import com.leishmaniapp.cloud.auth.AuthRequest
 import com.leishmaniapp.cloud.auth.AuthResponse
 import com.leishmaniapp.cloud.auth.AuthServiceClient
@@ -12,6 +13,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -32,23 +34,29 @@ class GrpcAuthServiceImpl @Inject constructor(
     private val client: AuthServiceClient = configuration.client.create(AuthServiceClient::class)
 
     override suspend fun authenticate(request: AuthRequest): Result<AuthResponse> =
-        try {
-            Result.success(client.Authenticate().execute(request))
-        } catch (e: Throwable) {
-            Result.failure(e)
+        withContext(Dispatchers.IO) {
+            try {
+                Result.success(client.Authenticate().execute(request))
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
         }
 
     override suspend fun verifyToken(request: TokenRequest): Result<StatusResponse> =
-        try {
-            Result.success(client.VerifyToken().execute(request))
-        } catch (e: Throwable) {
-            Result.failure(e)
+        withContext(Dispatchers.IO) {
+            try {
+                Result.success(client.VerifyToken().execute(request))
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
         }
 
     override suspend fun decodeToken(request: TokenRequest): Result<DecodeResponse> =
-        try {
-            Result.success(client.DecodeToken().execute(request))
-        } catch (e: Throwable) {
-            Result.failure(e)
+        withContext(Dispatchers.IO) {
+            try {
+                Result.success(client.DecodeToken().execute(request))
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
         }
 }
