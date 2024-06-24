@@ -7,7 +7,7 @@ import com.leishmaniapp.R
 /***
  * Handle generic network exceptions
  */
-class NetworkException(val exception: Exception) :
+class NetworkException(val exception: Throwable) :
     LeishmaniappException(R.string.exception_network) {
     override val description: String
         @Composable get() = stringResource(id = descriptionResource, exception.message!!)

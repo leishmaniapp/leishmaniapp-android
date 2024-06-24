@@ -1,6 +1,5 @@
 package com.leishmaniapp.presentation.navigation
 
-import android.app.AlertDialog
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf

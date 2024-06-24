@@ -10,12 +10,16 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 sealed class AuthState : Parcelable {
+
     /**
      * User is not authenticated
      */
     @Parcelize
     data class None(val connection: AuthConnectionState) :
         AuthState() {
+
+        companion object;
+
         enum class AuthConnectionState {
             OFFLINE,
             ONLINE
