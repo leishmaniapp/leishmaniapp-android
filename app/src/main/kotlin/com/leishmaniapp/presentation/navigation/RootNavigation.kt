@@ -11,10 +11,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.leishmaniapp.presentation.navigation.graphs.menuNavGraph
 import com.leishmaniapp.presentation.navigation.graphs.navigateToAuthentication
+import com.leishmaniapp.presentation.navigation.graphs.patientsNavGraph
 import com.leishmaniapp.presentation.navigation.graphs.startNavGraph
-import com.leishmaniapp.presentation.state.AuthState
-import com.leishmaniapp.presentation.viewmodel.AuthViewModel
+import com.leishmaniapp.presentation.viewmodel.state.AuthState
+import com.leishmaniapp.presentation.viewmodel.SessionViewModel
 import com.leishmaniapp.presentation.viewmodel.DiagnosisViewModel
+import com.leishmaniapp.presentation.viewmodel.PatientViewModel
 
 /**
  * Root of the navigation graph for the application
@@ -22,12 +24,13 @@ import com.leishmaniapp.presentation.viewmodel.DiagnosisViewModel
 @Composable
 fun RootNavigation(
     navigationController: NavHostController = rememberNavController(),
-    authViewModel: AuthViewModel = viewModel(),
+    sessionViewModel: SessionViewModel = viewModel(),
     diagnosisViewModel: DiagnosisViewModel = viewModel(),
+    patientViewModel: PatientViewModel = viewModel(),
 ) {
 
     // Navigate to authentication if unauthenticated
-    val authState by authViewModel.authState.observeAsState(initial = AuthState.Busy)
+    val authState by sessionViewModel.authState.observeAsState(initial = AuthState.Busy)
     LaunchedEffect(key1 = authState, key2 = navigationController.currentDestination) {
         if ((authState is AuthState.None) &&
             (navigationController.currentDestination!!.route != NavigationRoutes.StartRoute.AuthenticationRoute.route) &&
@@ -41,18 +44,23 @@ fun RootNavigation(
         navController = navigationController,
         startDestination = NavigationRoutes.StartRoute.route,
         enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
-        exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start) }
+        exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End) }
     )
     {
         startNavGraph(
             navHostController = navigationController,
-            authViewModel = authViewModel,
+            sessionViewModel = sessionViewModel,
         )
 
         menuNavGraph(
             navHostController = navigationController,
-            authViewModel = authViewModel,
-            diagnosisViewModel = diagnosisViewModel
+            sessionViewModel = sessionViewModel,
+            diagnosisViewModel = diagnosisViewModel,
+        )
+
+        patientsNavGraph(
+            navHostController = navigationController,
+            patientViewModel = patientViewModel,
         )
     }
 }

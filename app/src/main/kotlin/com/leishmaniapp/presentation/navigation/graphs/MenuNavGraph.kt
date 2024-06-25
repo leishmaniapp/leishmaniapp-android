@@ -1,6 +1,5 @@
 package com.leishmaniapp.presentation.navigation.graphs
 
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -10,23 +9,21 @@ import androidx.lifecycle.map
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.leishmaniapp.presentation.navigation.NavigationRoutes
-import com.leishmaniapp.presentation.state.AuthState
-import com.leishmaniapp.presentation.ui.dialogs.BusyAlertDialog
+import com.leishmaniapp.presentation.viewmodel.state.AuthState
 import com.leishmaniapp.presentation.ui.dialogs.ProfileAlertDialog
 import com.leishmaniapp.presentation.ui.layout.BusyScreen
 import com.leishmaniapp.presentation.ui.views.menu.DiseasesMenuScreen
 import com.leishmaniapp.presentation.ui.views.menu.MainMenuScreen
-import com.leishmaniapp.presentation.viewmodel.AuthViewModel
+import com.leishmaniapp.presentation.viewmodel.SessionViewModel
 import com.leishmaniapp.presentation.viewmodel.DiagnosisViewModel
 
 fun NavGraphBuilder.menuNavGraph(
     navHostController: NavHostController,
-    authViewModel: AuthViewModel,
+    sessionViewModel: SessionViewModel,
     diagnosisViewModel: DiagnosisViewModel,
 ) {
     navigation(
@@ -37,7 +34,7 @@ fun NavGraphBuilder.menuNavGraph(
         composable(route = NavigationRoutes.MenuRoute.DiseasesRoute.route) {
 
             // Grab the authentication state
-            val authState: AuthState.Authenticated? by authViewModel.authState
+            val authState: AuthState.Authenticated? by sessionViewModel.authState
                 .map { it.authenticatedOrNull() }
                 .observeAsState()
             if (authState == null) {
@@ -65,7 +62,7 @@ fun NavGraphBuilder.menuNavGraph(
             if (showProfileAlert) {
                 ProfileAlertDialog(specialist = authState!!.s, onLogout = {
                     diagnosisViewModel.dismissAll()
-                    authViewModel.logout()
+                    sessionViewModel.logout()
                 }, onDismiss = {
                     showProfileAlert = false
                 })
@@ -75,7 +72,7 @@ fun NavGraphBuilder.menuNavGraph(
         composable(NavigationRoutes.MenuRoute.MainMenuRoute.route) {
 
             // Grab the authentication state
-            val authState: AuthState.Authenticated? by authViewModel.authState
+            val authState: AuthState.Authenticated? by sessionViewModel.authState
                 .map { it.authenticatedOrNull() }
                 .observeAsState()
             if (authState == null) {
@@ -106,14 +103,14 @@ fun NavGraphBuilder.menuNavGraph(
                     showProfileAlert = true
                 },
                 onStartDiagnosis = { /*TODO*/ },
-                onPatientList = { /*TODO*/ },
+                onPatientList = { navHostController.navigateToPatientsRoute() },
                 onAwaitingDiagnoses = { /*TODO*/ }) {}
 
             if (showProfileAlert) {
                 ProfileAlertDialog(specialist = (authState as AuthState.Authenticated).s,
                     onLogout = {
                         diagnosisViewModel.dismissAll()
-                        authViewModel.logout()
+                        sessionViewModel.logout()
                     },
                     onDismiss = {
                         showProfileAlert = false
@@ -131,6 +128,6 @@ internal fun NavController.navigateToDiseasesMenu(
     this.navigate(NavigationRoutes.MenuRoute.DiseasesRoute.route, builder)
 }
 
-internal fun NavController.navigateToMenu(builder: NavOptionsBuilder.() -> Unit = {}) {
+private fun NavController.navigateToMenu(builder: NavOptionsBuilder.() -> Unit = {}) {
     this.navigate(NavigationRoutes.MenuRoute.MainMenuRoute.route, builder)
 }

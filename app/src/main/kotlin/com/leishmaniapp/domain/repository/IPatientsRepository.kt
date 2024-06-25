@@ -6,6 +6,7 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.leishmaniapp.domain.entities.DocumentType
 import com.leishmaniapp.domain.entities.Patient
+import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.types.Identificator
 import kotlinx.coroutines.flow.Flow
 

@@ -7,6 +7,7 @@ import androidx.room.Upsert
 import com.leishmaniapp.domain.entities.Diagnosis
 import com.leishmaniapp.domain.entities.DocumentType
 import com.leishmaniapp.domain.entities.Patient
+import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.domain.types.Identificator
 import kotlinx.coroutines.flow.Flow
@@ -33,10 +34,17 @@ interface IDiagnosesRepository {
     fun allDiagnoses(): Flow<List<Diagnosis>>
 
     /**
-     * all the [Diagnosis] for a given [com.leishmaniapp.domain.entities.Patient]
+     * all the [Diagnosis] for a given [Patient]
      */
     fun diagnosesForPatient(
         patient: Patient
+    ): Flow<List<Diagnosis>>
+
+    /**
+     * all the [Diagnosis] for a given [Specialist]
+     */
+    fun diagnosesForSpecialist(
+        specialist: Specialist
     ): Flow<List<Diagnosis>>
 
     /**

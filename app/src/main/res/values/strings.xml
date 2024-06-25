@@ -19,6 +19,7 @@
 
     <!-- Exceptions -->
     <string name="exception_title">Ha ocurrido un error</string>
+    <string name="exception_bad_input">Entrada inválida</string>
     <string name="exception_root">Error desconocido</string>
     <string name="exception_generic">Excepción: %1$s</string>
     <string name="exception_network">Error de red: %1$s</string>
@@ -70,6 +71,8 @@
     <string name="busy_content" tools:ignore="Typos">Se está realizando una operación</string>
     <string name="camera_exit">Cancelando captura de campos</string>
     <string name="sure_exit">¿Está seguro que desea salir de la Aplicación?</string>
+    <string name="alert_success">Operación Exitosa</string>
+    <string name="alert_inserted_patient">Paciente añadido exitosamente</string>
     <string name="alert_not_analyzed">Esta imágen aún no ha sido analizada. Presione el botón de analizar para generar los resultados</string>
     <string name="alert_sure_finish_diagnosis">¿Está seguro que desea finalizar el diagnóstico?</string>
     <string name="alert_missing_result">Es necesario proveer un diagnóstico antes de continuar</string>

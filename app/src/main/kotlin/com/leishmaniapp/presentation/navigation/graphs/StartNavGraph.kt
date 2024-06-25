@@ -5,21 +5,20 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.leishmaniapp.presentation.navigation.NavigationRoutes
-import com.leishmaniapp.presentation.state.AuthState
+import com.leishmaniapp.presentation.viewmodel.state.AuthState
 import com.leishmaniapp.presentation.ui.dialogs.BusyAlertDialog
 import com.leishmaniapp.presentation.ui.dialogs.DisconnectedAlertDialog
 import com.leishmaniapp.presentation.ui.dialogs.ErrorAlertDialog
 import com.leishmaniapp.presentation.ui.views.start.AuthenticationScreen
 import com.leishmaniapp.presentation.ui.views.start.GreetingsScreen
-import com.leishmaniapp.presentation.viewmodel.AuthViewModel
+import com.leishmaniapp.presentation.viewmodel.SessionViewModel
 
 fun NavGraphBuilder.startNavGraph(
     navHostController: NavHostController,
-    authViewModel: AuthViewModel,
+    sessionViewModel: SessionViewModel,
 ) {
     navigation(
         route = NavigationRoutes.StartRoute.route,
@@ -35,7 +34,7 @@ fun NavGraphBuilder.startNavGraph(
         composable(route = NavigationRoutes.StartRoute.AuthenticationRoute.route) {
 
             // Grab the authentication state
-            val authState by authViewModel.authState.observeAsState(initial = AuthState.Busy)
+            val authState by sessionViewModel.authState.observeAsState(initial = AuthState.Busy)
 
             // If authenticated, then exit this screen
             if (authState is AuthState.Authenticated) {
@@ -44,7 +43,7 @@ fun NavGraphBuilder.startNavGraph(
 
             // Show the authentication screen
             AuthenticationScreen(onAuthenticate = { email, password ->
-                authViewModel.authenticate(email, password)
+                sessionViewModel.authenticate(email, password)
             })
 
             when (authState) {
@@ -52,7 +51,7 @@ fun NavGraphBuilder.startNavGraph(
                 AuthState.None(AuthState.None.AuthConnectionState.OFFLINE) -> DisconnectedAlertDialog()
                 is AuthState.Error -> ErrorAlertDialog(
                     error = (authState as AuthState.Error).e
-                ) { authViewModel.dismiss() }
+                ) { sessionViewModel.dismiss() }
 
                 else -> {}
             }

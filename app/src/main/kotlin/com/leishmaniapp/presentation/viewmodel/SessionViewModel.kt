@@ -8,12 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leishmaniapp.cloud.auth.AuthRequest
 import com.leishmaniapp.cloud.auth.TokenRequest
+import com.leishmaniapp.domain.entities.Patient
 import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.exceptions.BadAuthenticationException
 import com.leishmaniapp.domain.exceptions.GenericException
 import com.leishmaniapp.domain.exceptions.LeishmaniappException
 import com.leishmaniapp.domain.exceptions.NetworkException
 import com.leishmaniapp.domain.protobuf.fromProto
+import com.leishmaniapp.domain.repository.IPatientsRepository
 import com.leishmaniapp.domain.repository.ISpecialistsRepository
 import com.leishmaniapp.domain.repository.ITokenRepository
 import com.leishmaniapp.domain.services.IAuthService
@@ -21,7 +23,7 @@ import com.leishmaniapp.domain.services.INetworkService
 import com.leishmaniapp.domain.types.AccessToken
 import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.domain.types.Password
-import com.leishmaniapp.presentation.state.AuthState
+import com.leishmaniapp.presentation.viewmodel.state.AuthState
 import com.leishmaniapp.utilities.extensions.throwOrElse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +32,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
@@ -39,11 +42,11 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
- * Handle authentication state
+ * Handle authentication state and all the [Specialist] related data
  */
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
-class AuthViewModel @Inject constructor(
+class SessionViewModel @Inject constructor(
 
     /**
      * Keep state accross configuration changes
@@ -56,15 +59,16 @@ class AuthViewModel @Inject constructor(
 
     // Repositories
     private val tokenRepository: ITokenRepository,
-    private val specialistRepository: ISpecialistsRepository
+    private val specialistRepository: ISpecialistsRepository,
+    private val patientsRepository: IPatientsRepository,
 
-) : ViewModel() {
+    ) : ViewModel() {
 
     companion object {
         /**
          * TAG for using with [Log] and [SavedStateHandle]
          */
-        val TAG: String = AuthViewModel::class.simpleName!!
+        val TAG: String = SessionViewModel::class.simpleName!!
     }
 
     private val _authState: MutableLiveData<AuthState> = savedStateHandle.getLiveData(
@@ -163,7 +167,6 @@ class AuthViewModel @Inject constructor(
                 AuthState.None.AuthConnectionState.ONLINE
             }
         )
-
 
     /**
      * Dismiss the current [AuthState] to [AuthState.None], useful for getting rid of exceptions

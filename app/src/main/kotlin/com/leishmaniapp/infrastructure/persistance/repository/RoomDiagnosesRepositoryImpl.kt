@@ -2,6 +2,7 @@ package com.leishmaniapp.infrastructure.persistance.repository
 
 import com.leishmaniapp.domain.entities.Diagnosis
 import com.leishmaniapp.domain.entities.Patient
+import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.repository.IDiagnosesRepository
 import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.infrastructure.persistance.dao.RoomDiagnosesDao
@@ -18,7 +19,7 @@ class RoomDiagnosesRepositoryImpl @Inject constructor(
     /**
      * DAO for interaction with the Room database
      */
-    val dao: RoomDiagnosesDao,
+    private val dao: RoomDiagnosesDao,
 
     ) : IDiagnosesRepository {
 
@@ -35,6 +36,10 @@ class RoomDiagnosesRepositoryImpl @Inject constructor(
 
     override fun diagnosesForPatient(patient: Patient): Flow<List<Diagnosis>> =
         dao.diagnosesForPatientDocument(patient.document)
+            .map { flow -> flow.map { it.toDiagnosis() } }
+
+    override fun diagnosesForSpecialist(specialist: Specialist): Flow<List<Diagnosis>> =
+        dao.diagnosesForSpecialistEmail(specialist.email)
             .map { flow -> flow.map { it.toDiagnosis() } }
 
     override fun diagnosesForSpecialistNotFinished(specialistEmail: Email): Flow<List<Diagnosis>> =

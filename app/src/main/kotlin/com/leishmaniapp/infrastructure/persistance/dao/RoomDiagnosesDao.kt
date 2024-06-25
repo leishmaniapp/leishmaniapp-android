@@ -33,6 +33,12 @@ interface RoomDiagnosesDao {
     ): Flow<List<RoomCompleteDiagnosisRelation>>
 
     @Transaction
+    @Query("SELECT * FROM Diagnoses WHERE specialist_email = :email")
+    fun diagnosesForSpecialistEmail(
+        email: String
+    ): Flow<List<RoomCompleteDiagnosisRelation>>
+
+    @Transaction
     @Query("SELECT * FROM Diagnoses WHERE specialist_email = :specialistEmail AND finalized = 0")
     fun diagnosesForSpecialistNotFinished(
         specialistEmail: Email

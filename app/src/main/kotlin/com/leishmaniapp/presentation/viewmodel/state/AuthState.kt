@@ -1,4 +1,4 @@
-package com.leishmaniapp.presentation.state
+package com.leishmaniapp.presentation.viewmodel.state
 
 import android.os.Parcelable
 import com.leishmaniapp.domain.entities.Specialist

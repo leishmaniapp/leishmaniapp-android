@@ -17,7 +17,7 @@ class RoomSamplesRepositoryImpl @Inject constructor(
     /**
      * DAO for interaction with the Room database
      */
-    val dao: RoomImagesDao,
+    private val dao: RoomImagesDao,
 
     ) : ISamplesRepository {
 

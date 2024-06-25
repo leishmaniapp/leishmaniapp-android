@@ -50,7 +50,10 @@ object DatabaseModule {
      */
     @Provides
     fun providePatientsRepository(applicationDatabase: ApplicationDatabase): IPatientsRepository =
-        RoomPatientsRepositoryImpl(applicationDatabase.patientsDao())
+        RoomPatientsRepositoryImpl(
+            applicationDatabase.patientsDao(),
+            applicationDatabase.diagnosesDao()
+        )
 
     /**
      * Provide the [ISpecialistsRepository] using [RoomSpecialistRepositoryImpl]

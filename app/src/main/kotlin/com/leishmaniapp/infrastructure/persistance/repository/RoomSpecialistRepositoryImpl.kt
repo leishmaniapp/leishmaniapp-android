@@ -17,7 +17,7 @@ class RoomSpecialistRepositoryImpl @Inject constructor(
     /**
      * DAO for interaction with the Room database
      */
-    val dao: RoomSpecialistsDao,
+    private val dao: RoomSpecialistsDao,
 
     ) : ISpecialistsRepository {
     override suspend fun upsertSpecialist(specialist: Specialist) =

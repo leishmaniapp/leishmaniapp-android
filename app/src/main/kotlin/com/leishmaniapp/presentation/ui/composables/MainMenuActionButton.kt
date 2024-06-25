@@ -36,7 +36,7 @@ fun MainMenuActionButton(
     label: String,
     onClick: () -> Unit
 ) {
-    Column {
+    Column(modifier = modifier.onCanvasClick { onClick.invoke() }) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
