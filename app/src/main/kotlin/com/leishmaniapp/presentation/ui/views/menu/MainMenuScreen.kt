@@ -115,7 +115,7 @@ fun MainMenuScreen(
 
 @Composable
 @Preview
-fun MainMenuScreenPreview() {
+private fun MainMenuScreenPreview() {
     LeishmaniappTheme {
         MainMenuScreen(
             disease = MockDotsDisease,

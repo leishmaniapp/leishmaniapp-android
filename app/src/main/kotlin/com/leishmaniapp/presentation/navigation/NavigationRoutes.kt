@@ -17,12 +17,13 @@ sealed class NavigationRoutes(val route: String) {
 
     data object PatientsRoute : NavigationRoutes("/patients") {
         data object PatientList : NavigationRoutes(this.route + "/list")
-        data object InitializeDiagnosis : NavigationRoutes(this.route + "/init")
+        data object SelectPatient : NavigationRoutes(this.route + "/select")
         data object AddPatient : NavigationRoutes(this.route + "/add")
         data object PatientDiagnosisHistory : NavigationRoutes(this.route + "/history")
     }
 
     data object DiagnosisRoute : NavigationRoutes("/diagnosis") {
+        data object InitializeDiagnosis : NavigationRoutes(this.route + "/init")
         data object DiagnosisCamera : NavigationRoutes(this.route + "/camera")
         data object DiagnosisAndAnalysis : NavigationRoutes(this.route + "/diagnosisAndAnalysis")
         data object DiagnosisImageGrid : NavigationRoutes(this.route + "/diagnosisImageGrid")

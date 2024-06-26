@@ -1,6 +1,7 @@
 package com.leishmaniapp.utilities.mock
 
 import android.graphics.ColorSpace.Model
+import com.leishmaniapp.domain.calibration.ImageCalibrationData
 import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.disease.LeishmaniasisGiemsaDisease
 import com.leishmaniapp.domain.disease.MockDotsDisease
@@ -15,9 +16,12 @@ import com.leishmaniapp.domain.entities.Patient
 import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.domain.types.Coordinates
+import com.leishmaniapp.infrastructure.camera.computeMichelsonContrast
+import com.leishmaniapp.infrastructure.camera.computeSimpleLuminance
 import com.leishmaniapp.utilities.extensions.toRecord
 import com.leishmaniapp.utilities.extensions.utcNow
 import com.leishmaniapp.utilities.mock.MockGenerator.mock
+import com.leishmaniapp.utilities.types.Triplet
 import io.bloco.faker.Faker
 import kotlinx.datetime.LocalDateTime
 import java.util.UUID
@@ -30,6 +34,32 @@ object MockGenerator {
      * Faker instance for generating fake data
      */
     private val faker = Faker()
+
+    /**
+     * Generate fake [ImageCalibrationData.HSV] values
+     */
+    fun ImageCalibrationData.HSV.Companion.mock(): ImageCalibrationData.HSV =
+        ImageCalibrationData.HSV(
+            hue = faker.number.between(0.0, 1.0).toFloat(),
+            saturation = faker.number.between(0.0, 1.0).toFloat(),
+            value = faker.number.between(0.0, 1.0).toFloat(),
+        )
+
+    /**
+     * Generate random data for [ImageCalibrationData]
+     */
+    fun ImageCalibrationData.Companion.mock(): ImageCalibrationData = Triplet(
+        ImageCalibrationData.HSV.mock(),
+        ImageCalibrationData.HSV.mock(),
+        ImageCalibrationData.HSV.mock()
+    ).let { hsv ->
+        ImageCalibrationData(
+            megapixels = faker.number.between(1.0, 50.0),
+            hsv = hsv,
+            luminance = hsv.computeSimpleLuminance(),
+            contrast = hsv.computeMichelsonContrast()
+        )
+    }
 
     /**
      * Generate a random data [Specialist]

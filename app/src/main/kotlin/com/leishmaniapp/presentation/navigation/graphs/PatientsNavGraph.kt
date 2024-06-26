@@ -20,7 +20,6 @@ import com.leishmaniapp.presentation.ui.views.patients.AddPatientScreen
 import com.leishmaniapp.presentation.ui.views.patients.PatientDiagnosisHistoryScreen
 import com.leishmaniapp.presentation.ui.views.patients.PatientListScreen
 import com.leishmaniapp.presentation.viewmodel.PatientViewModel
-import com.leishmaniapp.presentation.viewmodel.SessionViewModel
 import com.leishmaniapp.presentation.viewmodel.state.PatientState
 
 fun NavGraphBuilder.patientsNavGraph(
@@ -33,20 +32,48 @@ fun NavGraphBuilder.patientsNavGraph(
     ) {
         composable(NavigationRoutes.PatientsRoute.PatientList.route) {
 
+            val state by patientViewModel.state.observeAsState(initial = PatientState.NotReady)
             val patients by patientViewModel.patients.collectAsStateWithLifecycle()
 
-            PatientListScreen(
-                patients = patients.toSet(),
-                onBackButton = {
-                    navHostController.popBackStack()
-                },
-                onAddPatient = {
-                    navHostController.navigateToAddPatient()
-                },
-                onPatientClick = { patient ->
-                    patientViewModel.selectPatient(patient)
-                    navHostController.navigateToPatientDiagnosisHistory()
-                })
+            if (state is PatientState.NotReady) {
+                BusyScreen()
+            } else {
+                PatientListScreen(
+                    patients = patients.toSet(),
+                    onBackButton = {
+                        navHostController.popBackStack()
+                    },
+                    onAddPatient = {
+                        navHostController.navigateToAddPatient()
+                    },
+                    onPatientClick = { patient ->
+                        patientViewModel.selectPatient(patient)
+                        navHostController.navigateToPatientDiagnosisHistory()
+                    })
+            }
+        }
+
+        composable(NavigationRoutes.PatientsRoute.SelectPatient.route) {
+
+            val state by patientViewModel.state.observeAsState(initial = PatientState.NotReady)
+            val patients by patientViewModel.patients.collectAsStateWithLifecycle()
+
+            if (state is PatientState.NotReady) {
+                BusyScreen()
+            } else {
+                PatientListScreen(
+                    patients = patients.toSet(),
+                    onBackButton = {
+                        navHostController.popBackStack()
+                    },
+                    onAddPatient = {
+                        navHostController.navigateToAddPatient()
+                    },
+                    onPatientClick = { patient ->
+                        patientViewModel.selectPatient(patient)
+                        navHostController.popBackStack()
+                    })
+            }
         }
 
         composable(NavigationRoutes.PatientsRoute.AddPatient.route) {
@@ -104,9 +131,12 @@ fun NavGraphBuilder.patientsNavGraph(
                 },
                 onDiagnosisClick = {
                     /* TODO */
-                }, onDiagnosisCreate = {
-                    /* TODO */
-                })
+                },
+                onDiagnosisCreate = {
+                    // Create a new diagnosis
+                    navHostController.navigateToDiagnosisRoute()
+                },
+            )
         }
     }
 }
@@ -114,6 +144,10 @@ fun NavGraphBuilder.patientsNavGraph(
 
 internal fun NavHostController.navigateToPatientsRoute() {
     navigate(NavigationRoutes.PatientsRoute.route)
+}
+
+internal fun NavHostController.navigateToSelectPatient() {
+    navigate(NavigationRoutes.PatientsRoute.SelectPatient.route)
 }
 
 private fun NavHostController.navigateToAddPatient() {

@@ -60,7 +60,6 @@ class SessionViewModel @Inject constructor(
     // Repositories
     private val tokenRepository: ITokenRepository,
     private val specialistRepository: ISpecialistsRepository,
-    private val patientsRepository: IPatientsRepository,
 
     ) : ViewModel() {
 
@@ -84,19 +83,35 @@ class SessionViewModel @Inject constructor(
      * Get the current network state
      */
     private val networkState: StateFlow<INetworkService.NetworkState> =
-        networkService.networkState().stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            INetworkService.NetworkState.OFFLINE,
-        )
+        networkService.networkState()
+            // Run the flow on IO
+            .flowOn(Dispatchers.IO)
+            // Update the connection state
+            .onEach { status ->
+                if (authState.value is AuthState.None) {
+                    _authState.value = AuthState.None.getConnectionState(status)
+                }
+            }
+            // Transform into StateFlow
+            .stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                INetworkService.NetworkState.OFFLINE,
+            )
 
     /**
      * [AccessToken] flow, automatically stores the new [Specialist] information associated to the
      * token contents in the datase
      */
     val token: StateFlow<AccessToken?> = tokenRepository.accessToken
+        // Run the flow on IO
+        .flowOn(Dispatchers.IO)
         // For each new token, decode the contents and update the specialist metadata
         .onEach { token ->
+            // Change the busy status
+            if (authState.value is AuthState.Busy) {
+                _authState.value = AuthState.None.getConnectionState()
+            }
             // Update the specialist from the remote server if token was provided
             if (token != null && networkState.value != INetworkService.NetworkState.OFFLINE) {
                 // Decode the token contents
@@ -110,8 +125,6 @@ class SessionViewModel @Inject constructor(
                 specialistRepository.upsertSpecialist(specialist)
             }
         }
-        // Run the flow on IO
-        .flowOn(Dispatchers.IO)
         // Catch errors within the call, can only be network errors
         .catch { err ->
             Log.e(TAG, "Exception during AccessToken Flow", err)
@@ -119,7 +132,9 @@ class SessionViewModel @Inject constructor(
         }
         // Transform to a state flow
         .stateIn(
-            viewModelScope, SharingStarted.Eagerly, null
+            viewModelScope,
+            SharingStarted.Eagerly,
+            null
         )
 
     /**
@@ -138,12 +153,10 @@ class SessionViewModel @Inject constructor(
         .flowOn(Dispatchers.IO)
         // For each new specialist, set the authentication state
         .onEach { specialist ->
-            _authState.value = if (specialist != null) {
-                // Specialist found, show as authenticated
-                AuthState.Authenticated(specialist)
-            } else {
-                // No specialist, unauthenticated
-                AuthState.None.getConnectionState()
+            _authState.value = when {
+                specialist != null -> AuthState.Authenticated(specialist)
+                authState.value is AuthState.Busy -> AuthState.Busy
+                else -> AuthState.None.getConnectionState()
             }
         }
         // Catch errors within the call
@@ -153,15 +166,19 @@ class SessionViewModel @Inject constructor(
         }
         // Transform to a state flow
         .stateIn(
-            viewModelScope, SharingStarted.Eagerly, null
+            viewModelScope,
+            SharingStarted.Eagerly,
+            null
         )
 
     /**
      * Create a new [AuthState.None] state gathering the network state from a [INetworkService]
      */
-    private fun AuthState.None.Companion.getConnectionState(): AuthState.None =
+    private fun AuthState.None.Companion.getConnectionState(
+        state: INetworkService.NetworkState = networkState.value,
+    ): AuthState.None =
         AuthState.None(
-            if (networkState.value == INetworkService.NetworkState.OFFLINE) {
+            if (state == INetworkService.NetworkState.OFFLINE) {
                 AuthState.None.AuthConnectionState.OFFLINE
             } else {
                 AuthState.None.AuthConnectionState.ONLINE

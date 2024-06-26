@@ -80,7 +80,7 @@ fun DiseasesMenuScreen(
 
 @Preview
 @Composable
-fun DiseasesMenuScreenPreview_Offline() {
+private fun DiseasesMenuScreenPreview_Offline() {
     LeishmaniappTheme {
         DiseasesMenuScreen(
             diseases = setOf(
@@ -95,7 +95,7 @@ fun DiseasesMenuScreenPreview_Offline() {
 
 @Preview
 @Composable
-fun DiseasesMenuScreenPreview_Online() {
+private fun DiseasesMenuScreenPreview_Online() {
     LeishmaniappTheme {
         DiseasesMenuScreen(
             diseases = setOf(

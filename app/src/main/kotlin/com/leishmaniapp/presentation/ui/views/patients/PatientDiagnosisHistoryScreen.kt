@@ -67,108 +67,119 @@ fun PatientDiagnosisHistoryScreen(
         backButtonAction = onBackButton
     ) { paddingValues ->
 
-        Column(
-            modifier = Modifier.padding(paddingValues).padding(16.dp)
+        Box(
+            modifier = Modifier
+                .padding(paddingValues),
         ) {
 
-            Text(
-                text = stringResource(R.string.patient), style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = patient.name, style = MaterialTheme.typography.headlineMedium
-            )
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 16.dp)
+            ) {
 
-            if (diagnosisList.isNotEmpty()) {
+                Text(
+                    text = stringResource(R.string.patient),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Text(
+                    text = patient.name, style = MaterialTheme.typography.headlineMedium
+                )
 
-                SearchBar(modifier = Modifier.clip(RoundedCornerShape(16.dp)),
-                    query = query,
-                    onQueryChange = { query = it },
-                    onSearch = { query = it },
-                    active = searchBarActive,
-                    onActiveChange = { searchBarActive = it },
-                    placeholder = { Text(text = stringResource(R.string.search)) },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Filled.Search,
-                            contentDescription = stringResource(R.string.search)
-                        )
-                    }) {
-                    LazyColumn {
-                        // Get the filtered list of patients
-                        val filteredDiagnosis =
-                            diagnosisList.filter { it.date.toString().contains(query) }
+                if (diagnosisList.isNotEmpty()) {
 
-                        // Show patients
-                        if (filteredDiagnosis.isNotEmpty()) {
-                            items(filteredDiagnosis) { diagnosis ->
-                                DiagnosisListTile(modifier = Modifier.clickable {
-                                    onDiagnosisClick.invoke(diagnosis)
-                                }, diagnosis)
-                                HorizontalDivider()
-                            }
-                        } else {
-                            item {
-                                Text(
-                                    modifier = Modifier.padding(16.dp),
-                                    text = stringResource(id = R.string.diagnosis_list_search_no_coincidence),
-                                )
+                    SearchBar(modifier = Modifier.clip(RoundedCornerShape(16.dp)),
+                        query = query,
+                        onQueryChange = { query = it },
+                        onSearch = { query = it },
+                        active = searchBarActive,
+                        onActiveChange = { searchBarActive = it },
+                        placeholder = { Text(text = stringResource(R.string.search)) },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Filled.Search,
+                                contentDescription = stringResource(R.string.search)
+                            )
+                        }) {
+                        LazyColumn {
+                            // Get the filtered list of patients
+                            val filteredDiagnosis =
+                                diagnosisList.filter { it.date.toString().contains(query) }
+
+                            // Show patients
+                            if (filteredDiagnosis.isNotEmpty()) {
+                                items(filteredDiagnosis) { diagnosis ->
+                                    DiagnosisListTile(modifier = Modifier.clickable {
+                                        onDiagnosisClick.invoke(diagnosis)
+                                    }, diagnosis)
+                                    HorizontalDivider()
+                                }
+                            } else {
+                                item {
+                                    Text(
+                                        modifier = Modifier.padding(16.dp),
+                                        text = stringResource(id = R.string.diagnosis_list_search_no_coincidence),
+                                    )
+                                }
                             }
                         }
                     }
-                }
 
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                ) {
-                    items(diagnosisList) { diagnosis ->
-                        DiagnosisListTile(modifier = Modifier.clickable {
-                            onDiagnosisClick.invoke(diagnosis)
-                        }, diagnosis)
-                        HorizontalDivider()
-                    }
-
-                    item {
-                        // Bottom List padding
-                        Box(modifier = Modifier.height(100.dp))
-                    }
-                }
-            } else /* There are no element available */ {
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth()
-                        .padding(horizontal = 62.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        Icons.Filled.AssignmentLate,
+                    LazyColumn(
                         modifier = Modifier
-                            .padding(16.dp)
-                            .size(40.dp),
-                        contentDescription = stringResource(
-                            R.string.no_previous_diagnosis
-                        ),
-                    )
-                    Text(
-                        text = stringResource(R.string.no_previous_diagnosis),
-                        style = MaterialTheme.typography.titleLarge,
-                        textAlign = TextAlign.Center
-                    )
+                            .padding(top = 16.dp)
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                    ) {
+                        items(diagnosisList) { diagnosis ->
+                            DiagnosisListTile(modifier = Modifier.clickable {
+                                onDiagnosisClick.invoke(diagnosis)
+                            }, diagnosis)
+                            HorizontalDivider()
+                        }
+
+                        item {
+                            // Bottom List padding
+                            Box(modifier = Modifier.height(100.dp))
+                        }
+                    }
+                } else /* There are no element available */ {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth()
+                            .padding(horizontal = 62.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            Icons.Filled.AssignmentLate,
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .size(40.dp),
+                            contentDescription = stringResource(
+                                R.string.no_previous_diagnosis
+                            ),
+                        )
+                        Text(
+                            text = stringResource(R.string.no_previous_diagnosis),
+                            style = MaterialTheme.typography.titleLarge,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
+            }
+
+            Button(
+                onClick = onDiagnosisCreate,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.BottomCenter)
+            ) {
+                Text(text = stringResource(R.string.start_diagnosis))
             }
         }
 
-        Button(
-            onClick = onDiagnosisCreate,
-            modifier = Modifier
-                .padding(16.dp)
-        ) {
-            Text(text = stringResource(R.string.start_diagnosis))
-        }
     }
 }
 

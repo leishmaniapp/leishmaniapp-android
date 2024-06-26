@@ -102,7 +102,7 @@ fun NavGraphBuilder.menuNavGraph(
                     // Show the specialist profile card
                     showProfileAlert = true
                 },
-                onStartDiagnosis = { /*TODO*/ },
+                onStartDiagnosis = { navHostController.navigateToDiagnosisRoute() },
                 onPatientList = { navHostController.navigateToPatientsRoute() },
                 onAwaitingDiagnoses = { /*TODO*/ }) {}
 
@@ -128,6 +128,9 @@ internal fun NavController.navigateToDiseasesMenu(
     this.navigate(NavigationRoutes.MenuRoute.DiseasesRoute.route, builder)
 }
 
-private fun NavController.navigateToMenu(builder: NavOptionsBuilder.() -> Unit = {}) {
+private fun NavController.navigateToMenu(
+    builder: NavOptionsBuilder.() -> Unit = {
+    }
+) {
     this.navigate(NavigationRoutes.MenuRoute.MainMenuRoute.route, builder)
 }

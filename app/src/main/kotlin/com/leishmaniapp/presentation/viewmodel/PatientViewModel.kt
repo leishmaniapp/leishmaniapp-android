@@ -1,5 +1,6 @@
 package com.leishmaniapp.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -14,15 +15,22 @@ import com.leishmaniapp.domain.exceptions.GenericException
 import com.leishmaniapp.domain.repository.IDiagnosesRepository
 import com.leishmaniapp.domain.repository.IPatientsRepository
 import com.leishmaniapp.domain.types.Identificator
+import com.leishmaniapp.presentation.viewmodel.state.AuthState
 import com.leishmaniapp.presentation.viewmodel.state.PatientState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -43,18 +51,33 @@ class PatientViewModel @Inject constructor(
 
     ) : ViewModel() {
 
+    companion object {
+        /**
+         * TAG to use within [Log]
+         */
+        val TAG: String = PatientViewModel::class.simpleName!!
+    }
+
     /**
      * List of all patients in database
      */
-    val patients: StateFlow<List<Patient>> =
-        patientsRepository.allPatients().stateIn(
+    val patients: StateFlow<List<Patient>> = patientsRepository.allPatients()
+        // Run the flow on IO
+        .flowOn(Dispatchers.IO)
+        .onEach {
+            if (state.value == PatientState.NotReady) {
+                _state.value = PatientState.None
+            }
+        }
+        // Transform to StateFlow
+        .stateIn(
             viewModelScope,
             SharingStarted.Lazily,
-            listOf()
+            listOf(),
         )
 
     private val _state: MutableLiveData<PatientState> =
-        savedStateHandle.getLiveData("state", PatientState.None)
+        savedStateHandle.getLiveData("state", PatientState.NotReady)
 
     /**
      * Current operation state
@@ -73,13 +96,16 @@ class PatientViewModel @Inject constructor(
      * Get the list of diagnoses for a selected patient
      */
     val diagnosesForSelectedPatient: StateFlow<List<Diagnosis>> =
-        selectedPatient.asFlow().flatMapMerge { patient ->
-            if (patient != null) {
-                diagnosesRepository.diagnosesForPatient(patient)
-            } else {
-                flowOf(listOf())
+        selectedPatient.asFlow()
+            .flatMapMerge { patient ->
+                if (patient != null) {
+                    diagnosesRepository.diagnosesForPatient(patient)
+                } else {
+                    flowOf(listOf())
+                }
             }
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, listOf())
+            .flowOn(Dispatchers.IO)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, listOf())
 
     /**
      * Store a new patient in database
@@ -99,9 +125,7 @@ class PatientViewModel @Inject constructor(
             try {
                 patientsRepository.upsertPatient(
                     Patient(
-                        name = name,
-                        id = id,
-                        documentType = type
+                        name = name, id = id, documentType = type
                     )
                 )
             } catch (e: Exception) {

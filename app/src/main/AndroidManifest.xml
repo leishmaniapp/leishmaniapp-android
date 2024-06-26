@@ -45,10 +45,6 @@
             </intent-filter>
         </activity>
 
-        <!--        <activity-->
-        <!--            android:name=".presentation.activities.CameraActivity"-->
-        <!--            android:exported="true" />-->
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.leishmaniapp"

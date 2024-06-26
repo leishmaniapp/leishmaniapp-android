@@ -1,21 +1,24 @@
 package com.leishmaniapp.presentation.activities
 
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import com.leishmaniapp.BuildConfig
-import com.leishmaniapp.R
-import com.leishmaniapp.presentation.navigation.RootNavigation
-import com.leishmaniapp.presentation.ui.dialogs.WillPopScopeAlertDialog
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import com.leishmaniapp.infrastructure.camera.CameraCalibrationAnalyzer
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.presentation.ui.views.camera.CameraPermissionHandler
+import com.leishmaniapp.presentation.ui.views.camera.CameraScreen
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.coroutineScope
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -28,17 +31,37 @@ class MainActivity : ComponentActivity() {
 
         // Set the application content with RootNavigationGraph
         setContent {
-            if (willPopScope.value) {
-                WillPopScopeAlertDialog(
-                    onDismissRequest = { willPopScope.value = false },
-                    onConfirmExit = {
-                        // Close the application
-                        this.finishAffinity()
-                    })
-            }
+//            if (willPopScope.value) {
+//                WillPopScopeAlertDialog(
+//                    onDismissRequest = { willPopScope.value = false },
+//                    onConfirmExit = {
+//                        // Close the application
+//                        this.finishAffinity()
+//                    })
+//            }
+//
+//            LeishmaniappTheme {
+//                RootNavigation()
+//            }
+
+            val context = LocalContext.current
 
             LeishmaniappTheme {
-                RootNavigation()
+                Scaffold { padding ->
+                    Box(modifier = Modifier.padding(padding)) {
+                        CameraPermissionHandler {
+                            CameraScreen(
+                                executor = ContextCompat.getMainExecutor(context),
+                                cameraCalibration = CameraCalibrationAnalyzer(lifecycleScope),
+                                onPictureTake = { bitmap ->
+                                    bitmap.recycle()
+                                },
+                                onError = { err -> },
+                                onCancel = {}
+                            )
+                        }
+                    }
+                }
             }
         }
 

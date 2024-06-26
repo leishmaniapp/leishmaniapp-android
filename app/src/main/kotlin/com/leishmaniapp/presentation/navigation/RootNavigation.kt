@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.leishmaniapp.presentation.navigation.graphs.diagnosisNavGraph
 import com.leishmaniapp.presentation.navigation.graphs.menuNavGraph
 import com.leishmaniapp.presentation.navigation.graphs.navigateToAuthentication
 import com.leishmaniapp.presentation.navigation.graphs.patientsNavGraph
@@ -59,6 +60,11 @@ fun RootNavigation(
         )
 
         patientsNavGraph(
+            navHostController = navigationController,
+            patientViewModel = patientViewModel,
+        )
+
+        diagnosisNavGraph(
             navHostController = navigationController,
             patientViewModel = patientViewModel,
         )

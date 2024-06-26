@@ -77,7 +77,7 @@
     <string name="alert_sure_finish_diagnosis">¿Está seguro que desea finalizar el diagnóstico?</string>
     <string name="alert_missing_result">Es necesario proveer un diagnóstico antes de continuar</string>
     <string name="alert_discard_diagnosis">¿Está seguro que desea salir? Esta acción descartará el diagnóstico</string>
-    <string name="alert_background_diagnosis">¿Está seguro que desea procesar este diagnóstico en segundo plano? No podrá tomar más campos una vez salgad e esta pantalla</string>
+    <string name="alert_background_diagnosis">¿Está seguro que desea procesar este diagnóstico en segundo plano? No podrá tomar más campos una vez salga de esta pantalla</string>
     <string name="alert_invalid_fields">Todos los campos deben ser válidos</string>
 
     <!-- Domain Specific -->
@@ -164,7 +164,16 @@
     <!-- Camera -->
     <string name="missing_camera_permission">Es necesario el permiso de la cámara para continuar el diagnóstico</string>
     <string name="request_permission">Autorizar permisos</string>
-    <string name="cancel_camera">Cancel camera</string>
+    <string name="check_permission">Verificar permisos</string>
+    <string name="cancel_camera">Cancelar cámara</string>
+    <string name="take_photo">Tomar foto</string>
+
+    <!-- Real Time Calibration (RTC) -->
+    <string name="calibration_title">Calibración</string>
+    <string name="calibration_properties_refresh"><b>Refresco (%1$s):</b> %1$.2f</string>
+    <string name="calibration_properties_megapixels"><b>Megapixeles:</b> %1$.2f</string>
+    <string name="calibration_properties_luminance"><b>Luminosidad:</b> %1$.2f</string>
+    <string name="calibration_properties_contrast"><b>Contraste:</b> %1$.2f</string>
 
     <string name="accept_and_finish">Aceptar cambios y finalizar</string>
     <string name="alert_unfinished_diagnosis">El diagnóstico aún no ha sido completado</string>

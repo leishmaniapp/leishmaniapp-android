@@ -8,6 +8,12 @@ import kotlinx.parcelize.Parcelize
 sealed class PatientState : Parcelable {
 
     /**
+     * Data hasn't been initialize
+     */
+    @Parcelize
+    data object NotReady: PatientState()
+
+    /**
      * No operation is being processed
      */
     @Parcelize
