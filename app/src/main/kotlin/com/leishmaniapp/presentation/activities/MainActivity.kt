@@ -14,6 +14,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.leishmaniapp.infrastructure.camera.CameraCalibrationAnalyzer
+import com.leishmaniapp.presentation.navigation.RootNavigation
+import com.leishmaniapp.presentation.ui.dialogs.WillPopScopeAlertDialog
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import com.leishmaniapp.presentation.ui.views.camera.CameraPermissionHandler
 import com.leishmaniapp.presentation.ui.views.camera.CameraScreen
@@ -31,37 +33,17 @@ class MainActivity : ComponentActivity() {
 
         // Set the application content with RootNavigationGraph
         setContent {
-//            if (willPopScope.value) {
-//                WillPopScopeAlertDialog(
-//                    onDismissRequest = { willPopScope.value = false },
-//                    onConfirmExit = {
-//                        // Close the application
-//                        this.finishAffinity()
-//                    })
-//            }
-//
-//            LeishmaniappTheme {
-//                RootNavigation()
-//            }
-
-            val context = LocalContext.current
+            if (willPopScope.value) {
+                WillPopScopeAlertDialog(
+                    onDismissRequest = { willPopScope.value = false },
+                    onConfirmExit = {
+                        // Close the application
+                        this.finishAffinity()
+                    })
+            }
 
             LeishmaniappTheme {
-                Scaffold { padding ->
-                    Box(modifier = Modifier.padding(padding)) {
-                        CameraPermissionHandler {
-                            CameraScreen(
-                                executor = ContextCompat.getMainExecutor(context),
-                                cameraCalibration = CameraCalibrationAnalyzer(lifecycleScope),
-                                onPictureTake = { bitmap ->
-                                    bitmap.recycle()
-                                },
-                                onError = { err -> },
-                                onCancel = {}
-                            )
-                        }
-                    }
-                }
+                RootNavigation()
             }
         }
 

@@ -178,5 +178,11 @@ data class Diagnosis(
      * Return a new (copy) instance of [Diagnosis] with the image added to samples
      */
     fun appendImage(image: ImageSample): Diagnosis =
-        this.copy(images = images.plus(image))
+        copy(images = images.plus(image))
+
+    /**
+     * Get the latest image in a diagnosis
+     */
+    fun latestImage(): ImageSample =
+        images.last()
 }

@@ -61,7 +61,7 @@ class SessionViewModel @Inject constructor(
     private val tokenRepository: ITokenRepository,
     private val specialistRepository: ISpecialistsRepository,
 
-    ) : ViewModel() {
+    ) : ViewModel(), DismissableState {
 
     companion object {
         /**
@@ -188,7 +188,7 @@ class SessionViewModel @Inject constructor(
     /**
      * Dismiss the current [AuthState] to [AuthState.None], useful for getting rid of exceptions
      */
-    fun dismiss() {
+    override fun dismiss() {
         viewModelScope.launch {
             _authState.value = AuthState.None.getConnectionState()
         }

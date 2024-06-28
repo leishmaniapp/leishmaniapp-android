@@ -39,8 +39,8 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import com.leishmaniapp.utilities.mock.MockGenerator.mock
 
 /// Radius at which the element will be
-const val coordinatesSelectionRadius: Int = 100
-const val outerCircleAlpha: Float = 0.35f
+const val COORDINATES_SELECTION_RADIUS: Int = 100
+const val OUTER_CIRCLE_RADIUS: Float = 0.35f
 
 /**
  * Image's real coordinates do not match on-screen coordinates due to canvas being
@@ -48,22 +48,20 @@ const val outerCircleAlpha: Float = 0.35f
  */
 fun transformCoordinatesFromRealToCanvas(
     realCoordinates: Coordinates, realSize: Int, canvasSize: Size
-): Coordinates =
-    Coordinates(
-        x = (realCoordinates.x * (canvasSize.width / realSize)).toInt(),
-        y = (realCoordinates.y * (canvasSize.height / realSize)).toInt()
-    )
+): Coordinates = Coordinates(
+    x = (realCoordinates.x * (canvasSize.width / realSize)).toInt(),
+    y = (realCoordinates.y * (canvasSize.height / realSize)).toInt()
+)
 
 /**
  * Canvas coordinates like taps need to be transformed to image's real size
  */
 fun transformCoordinatesFromCanvasToReal(
     canvasCoordinates: Coordinates, realSize: Int, canvasSize: Size
-): Coordinates =
-    Coordinates(
-        x = (canvasCoordinates.x * (realSize / canvasSize.width)).toInt(),
-        y = (canvasCoordinates.y * (realSize / canvasSize.height)).toInt()
-    )
+): Coordinates = Coordinates(
+    x = (canvasCoordinates.x * (realSize / canvasSize.width)).toInt(),
+    y = (canvasCoordinates.y * (realSize / canvasSize.height)).toInt()
+)
 
 /**
  * Calculate the Painter's center of mass offset
@@ -87,15 +85,13 @@ fun Modifier.onCanvasClick(
 ): Modifier = this.pointerInput(MutableInteractionSource()) {
     awaitEachGesture {
         val tap = awaitFirstDown().apply { if (pressed != previousPressed) consume() }
-        waitForUpOrCancellation()?.apply { if (pressed != previousPressed) consume() }
-            ?.let {
-                onCompleted.invoke(
-                    Coordinates(
-                        tap.position.x.toInt(),
-                        tap.position.y.toInt()
-                    )
+        waitForUpOrCancellation()?.apply { if (pressed != previousPressed) consume() }?.let {
+            onCompleted.invoke(
+                Coordinates(
+                    tap.position.x.toInt(), tap.position.y.toInt()
                 )
-            }
+            )
+        }
     }
 }
 
@@ -110,17 +106,15 @@ fun DiagnosticImage(
     // Late initialization of canvas size when rendered
     var canvasSize: Size? = null
 
-    // Image painter
-    val imagePainter = rememberAsyncImagePainter(image.path)
-
     // Get the Icon to be painted
     val iconPainter = rememberVectorPainter(Icons.Filled.Close)
     val iconPainterSize = 24.dp
 
+    // Create the image painter
+    val imagePainter = rememberAsyncImagePainter(image.bitmap)
+
     val elementsWithCoordinates =
-        image.elements
-            .filterIsInstance<ModelDiagnosticElement>()
-            .map { it to it.coordinates }
+        image.elements.filterIsInstance<ModelDiagnosticElement>().map { it to it.coordinates }
             .flatMap { (key, values) -> values.map { key to it } }
 
     Image(modifier = modifier
@@ -147,15 +141,13 @@ fun DiagnosticImage(
                 )
 
                 // Draw a circle behind the (x)
-                drawCircle(
-                    alpha = outerCircleAlpha,
+                drawCircle(alpha = OUTER_CIRCLE_RADIUS,
                     color = Color.Yellow,
                     // For some reason radius is multiplied by 2
-                    radius = (coordinatesSelectionRadius.toFloat() / 2f),
+                    radius = (COORDINATES_SELECTION_RADIUS.toFloat() / 2f),
                     center = canvasPosition.let {
                         Offset(x = it.x.toFloat(), y = it.y.toFloat())
-                    }
-                )
+                    })
 
                 // Draw an (x) on top of the DiagnosticElement
                 with(iconPainter) {
@@ -166,11 +158,10 @@ fun DiagnosticImage(
                     // Draw in canvas position
                     translate(
                         left = painterPosition.x.toFloat(),
-                        top = painterPosition.y.toFloat()
+                        top = painterPosition.y.toFloat(),
                     ) {
                         draw(
-                            size = painterSizePx,
-                            colorFilter = ColorFilter.tint(
+                            size = painterSizePx, colorFilter = ColorFilter.tint(
                                 if ((element to coordinates) == selectedElement) {
                                     Color.Magenta // Item is selected
                                 } else { // Item is not selected
@@ -195,15 +186,14 @@ fun DiagnosticImage(
                 }
 
                 // Invoke with callback with null or value
-                onElementPressed.invoke(
-                    tappedElement?.let { (element, coordinates) ->
-                        if (coordinates distanceTo tapToRealCoordinates <= coordinatesSelectionRadius)
-                            (element to coordinates) else null
-                    }
-                )
+                onElementPressed.invoke(tappedElement?.let { (element, coordinates) ->
+                    if (coordinates distanceTo tapToRealCoordinates <= COORDINATES_SELECTION_RADIUS) {
+                        element to coordinates
+                    } else null
+                })
             }
         },
-        painter = if (image.path == null) {
+        painter = if (image.file == null) {
             painterResource(id = R.drawable.macrophage)
         } else {
             imagePainter
@@ -221,20 +211,15 @@ fun DiagnosticElementMarkPreview() {
         val image = ImageSample.mock(stage = AnalysisStage.Analyzed).copy(
             elements = setOf(
                 ModelDiagnosticElement(
-                    MockDotsDisease.elements.first(),
-                    MockDotsDisease.models.first(),
-                    setOf(
+                    MockDotsDisease.elements.first(), MockDotsDisease.models.first(), setOf(
                         Coordinates(500, 500),
                         Coordinates(200, 250),
                         Coordinates(150, 1050),
                         Coordinates(1000, 1500),
                         Coordinates(2000, 1500),
                     )
-                ),
-                ModelDiagnosticElement(
-                    MockDotsDisease.elements.last(),
-                    MockDotsDisease.models.last(),
-                    setOf(
+                ), ModelDiagnosticElement(
+                    MockDotsDisease.elements.last(), MockDotsDisease.models.last(), setOf(
                         Coordinates(550, 600),
                         Coordinates(2200, 2000),
                         Coordinates(450, 1903),

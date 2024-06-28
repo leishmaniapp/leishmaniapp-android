@@ -2,10 +2,8 @@ package com.leishmaniapp.infrastructure.persistance.repository
 
 import com.leishmaniapp.domain.entities.DocumentType
 import com.leishmaniapp.domain.entities.Patient
-import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.repository.IPatientsRepository
 import com.leishmaniapp.domain.types.Identificator
-import com.leishmaniapp.infrastructure.persistance.dao.RoomDiagnosesDao
 import com.leishmaniapp.infrastructure.persistance.dao.RoomPatientsDao
 import com.leishmaniapp.infrastructure.persistance.entities.RoomPatientEntity
 import kotlinx.coroutines.flow.Flow
@@ -17,19 +15,18 @@ import javax.inject.Inject
  */
 class RoomPatientsRepositoryImpl @Inject constructor(
 
-    private val patientsDao: RoomPatientsDao,
-    private val diagnosesDao: RoomDiagnosesDao,
+    private val dao: RoomPatientsDao,
 
     ) : IPatientsRepository {
     override suspend fun upsertPatient(patient: Patient) =
-        patientsDao.upsertPatient(RoomPatientEntity(patient))
+        dao.upsertPatient(RoomPatientEntity(patient))
 
     override suspend fun deletePatient(patient: Patient) =
-        patientsDao.deletePatient(RoomPatientEntity(patient))
+        dao.deletePatient(RoomPatientEntity(patient))
 
     override fun patientById(id: Identificator, documentType: DocumentType): Flow<Patient?> =
-        patientsDao.patientById(id, documentType).map { it?.toPatient() }
+        dao.patientById(id, documentType).map { it?.toPatient() }
     
     override fun allPatients(): Flow<List<Patient>> =
-        patientsDao.allPatients().map { flow -> flow.map { it.toPatient() } }
+        dao.allPatients().map { flow -> flow.map { it.toPatient() } }
 }

@@ -61,7 +61,7 @@ fun NavGraphBuilder.menuNavGraph(
 
             if (showProfileAlert) {
                 ProfileAlertDialog(specialist = authState!!.s, onLogout = {
-                    diagnosisViewModel.dismissAll()
+                    diagnosisViewModel.dismissDisease()
                     sessionViewModel.logout()
                 }, onDismiss = {
                     showProfileAlert = false
@@ -109,7 +109,7 @@ fun NavGraphBuilder.menuNavGraph(
             if (showProfileAlert) {
                 ProfileAlertDialog(specialist = (authState as AuthState.Authenticated).s,
                     onLogout = {
-                        diagnosisViewModel.dismissAll()
+                        diagnosisViewModel.dismissDisease()
                         sessionViewModel.logout()
                     },
                     onDismiss = {

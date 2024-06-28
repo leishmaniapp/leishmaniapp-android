@@ -23,32 +23,26 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
 fun DiagnosisActionBar(
+    analysisStage: AnalysisStage = AnalysisStage.NotAnalyzed,
+    analysisShowAsLoading: Boolean = false,
     repeatAction: () -> Unit,
     analyzeAction: () -> Unit,
     nextAction: () -> Unit,
     finishAction: () -> Unit,
-    analysisStage: AnalysisStage = AnalysisStage.NotAnalyzed,
-    analysisShowAsLoading: Boolean = false,
 ) {
     NavigationBar {
-        NavigationBarItem(
-            selected = false,
-            onClick = repeatAction,
-            icon = {
-                Icon(
-                    Icons.Filled.Refresh,
-                    contentDescription = stringResource(id = R.string.action_repeat)
-                )
-            }, label = {
-                Text(text = stringResource(id = R.string.action_repeat))
-            })
+        NavigationBarItem(selected = false, onClick = repeatAction, icon = {
+            Icon(
+                Icons.Filled.Refresh,
+                contentDescription = stringResource(id = R.string.action_repeat)
+            )
+        }, label = {
+            Text(text = stringResource(id = R.string.action_repeat))
+        })
 
-        NavigationBarItem(
-            enabled = analysisStage == AnalysisStage.NotAnalyzed,
+        NavigationBarItem(enabled = analysisStage == AnalysisStage.NotAnalyzed,
             selected = false,
-            onClick = if (analysisShowAsLoading
-                && analysisStage == AnalysisStage.NotAnalyzed
-            ) {
+            onClick = if (analysisShowAsLoading && analysisStage == AnalysisStage.NotAnalyzed) {
                 {}
             } else {
                 analyzeAction
@@ -62,39 +56,31 @@ fun DiagnosisActionBar(
                         contentDescription = stringResource(id = R.string.action_analyze)
                     )
                 }
-            }, label = {
+            },
+            label = {
                 Text(text = stringResource(id = R.string.action_analyze))
             })
 
-        NavigationBarItem(
-            selected = false,
-            onClick = nextAction,
-            icon = {
-                Icon(
-                    if (analysisStage == AnalysisStage.Deferred ||
-                        analysisStage == AnalysisStage.Analyzed
-                    ) {
-                        Icons.Filled.CameraAlt
-                    } else {
-                        Icons.AutoMirrored.Filled.ArrowForward
-                    },
-                    contentDescription = stringResource(id = R.string.action_next)
-                )
-            }, label = {
-                Text(text = stringResource(id = R.string.action_next))
-            })
+        NavigationBarItem(selected = false, onClick = nextAction, icon = {
+            Icon(
+                if (analysisStage == AnalysisStage.Deferred || analysisStage == AnalysisStage.Analyzed) {
+                    Icons.Filled.CameraAlt
+                } else {
+                    Icons.AutoMirrored.Filled.ArrowForward
+                }, contentDescription = stringResource(id = R.string.action_next)
+            )
+        }, label = {
+            Text(text = stringResource(id = R.string.action_next))
+        })
 
-        NavigationBarItem(
-            selected = false,
-            onClick = finishAction,
-            icon = {
-                Icon(
-                    Icons.Filled.Done,
-                    contentDescription = stringResource(id = R.string.action_finish)
-                )
-            }, label = {
-                Text(text = stringResource(id = R.string.action_finish))
-            })
+        NavigationBarItem(selected = false, onClick = finishAction, icon = {
+            Icon(
+                Icons.Filled.Done,
+                contentDescription = stringResource(id = R.string.action_finish)
+            )
+        }, label = {
+            Text(text = stringResource(id = R.string.action_finish))
+        })
     }
 }
 
@@ -115,12 +101,25 @@ fun DiagnosisActionBarPreview_NextArrow() {
 @Preview
 fun DiagnosisActionBarPreview_NextCamera() {
     LeishmaniappTheme {
+        DiagnosisActionBar(repeatAction = {},
+            analyzeAction = {},
+            nextAction = {},
+            finishAction = {},
+            analysisStage = AnalysisStage.Analyzed
+        )
+    }
+}
+
+@Composable
+@Preview
+fun DiagnosisActionBarPreview_ShowAsLoading() {
+    LeishmaniappTheme {
         DiagnosisActionBar(
             repeatAction = {},
             analyzeAction = {},
             nextAction = {},
             finishAction = {},
-            analysisStage = AnalysisStage.Analyzed
+            analysisShowAsLoading = true,
         )
     }
 }

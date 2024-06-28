@@ -23,12 +23,14 @@ import java.util.UUID
             parentColumns = ["email"],
             childColumns = ["specialist_email"],
             onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE,
         ),
         ForeignKey(
             entity = RoomPatientEntity::class,
             childColumns = ["patient_document"],
             parentColumns = ["document"],
             onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE,
         )
     ],
     indices = [

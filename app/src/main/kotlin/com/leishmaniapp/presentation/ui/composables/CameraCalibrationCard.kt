@@ -3,6 +3,8 @@ package com.leishmaniapp.presentation.ui.composables
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
@@ -30,24 +32,26 @@ fun CameraCalibrationCard(
         Box(modifier = Modifier.padding(16.dp)) {
             Column {
                 leading()
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(
                         id = R.string.calibration_properties_megapixels,
-                        calibrationData.megapixels
+                        calibrationData.megapixels.toFloat()
                     )
                 )
                 Text(
                     text = stringResource(
                         id = R.string.calibration_properties_luminance,
-                        calibrationData.luminance
+                        calibrationData.luminance.toFloat()
                     )
                 )
                 Text(
                     text = stringResource(
                         id = R.string.calibration_properties_contrast,
-                        calibrationData.contrast
+                        calibrationData.contrast.toFloat()
                     )
                 )
+                Spacer(modifier = Modifier.height(8.dp))
                 trailing()
             }
         }

@@ -14,6 +14,7 @@ import com.leishmaniapp.presentation.navigation.graphs.menuNavGraph
 import com.leishmaniapp.presentation.navigation.graphs.navigateToAuthentication
 import com.leishmaniapp.presentation.navigation.graphs.patientsNavGraph
 import com.leishmaniapp.presentation.navigation.graphs.startNavGraph
+import com.leishmaniapp.presentation.viewmodel.CameraViewModel
 import com.leishmaniapp.presentation.viewmodel.state.AuthState
 import com.leishmaniapp.presentation.viewmodel.SessionViewModel
 import com.leishmaniapp.presentation.viewmodel.DiagnosisViewModel
@@ -28,6 +29,7 @@ fun RootNavigation(
     sessionViewModel: SessionViewModel = viewModel(),
     diagnosisViewModel: DiagnosisViewModel = viewModel(),
     patientViewModel: PatientViewModel = viewModel(),
+    cameraViewModel: CameraViewModel = viewModel(),
 ) {
 
     // Navigate to authentication if unauthenticated
@@ -66,6 +68,9 @@ fun RootNavigation(
 
         diagnosisNavGraph(
             navHostController = navigationController,
+            diagnosisViewModel = diagnosisViewModel,
+            cameraViewModel = cameraViewModel,
+            sessionViewModel = sessionViewModel,
             patientViewModel = patientViewModel,
         )
     }

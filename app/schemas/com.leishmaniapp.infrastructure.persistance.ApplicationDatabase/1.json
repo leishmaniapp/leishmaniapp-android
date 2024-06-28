@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "6f0a6b088b6c2da81b4811fd4d05378e",
+    "identityHash": "b56ef0ac774fed42a2400bfdcbba3fc2",
     "entities": [
       {
         "tableName": "Diagnoses",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `finalized` INTEGER NOT NULL, `date` INTEGER NOT NULL, `specialist_email` TEXT NOT NULL, `remarks` TEXT, `patient_document` TEXT NOT NULL, `disease` TEXT NOT NULL, `specialistResult` INTEGER NOT NULL, `specialistElements` TEXT NOT NULL, `modelResult` INTEGER NOT NULL, `modelElements` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`specialist_email`) REFERENCES `Specialists`(`email`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`patient_document`) REFERENCES `Patients`(`document`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `finalized` INTEGER NOT NULL, `date` INTEGER NOT NULL, `specialist_email` TEXT NOT NULL, `remarks` TEXT, `patient_document` TEXT NOT NULL, `disease` TEXT NOT NULL, `specialistResult` INTEGER NOT NULL, `specialistElements` TEXT NOT NULL, `modelResult` INTEGER NOT NULL, `modelElements` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`specialist_email`) REFERENCES `Specialists`(`email`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`patient_document`) REFERENCES `Patients`(`document`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -105,7 +105,7 @@
           {
             "table": "Specialists",
             "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
+            "onUpdate": "CASCADE",
             "columns": [
               "specialist_email"
             ],
@@ -116,7 +116,7 @@
           {
             "table": "Patients",
             "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
+            "onUpdate": "CASCADE",
             "columns": [
               "patient_document"
             ],
@@ -128,7 +128,7 @@
       },
       {
         "tableName": "Images",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`stage` TEXT NOT NULL, `elements` TEXT NOT NULL, `path` TEXT, `diagnosis` TEXT NOT NULL, `sample` INTEGER NOT NULL, `disease` TEXT NOT NULL, `date` INTEGER NOT NULL, PRIMARY KEY(`diagnosis`, `sample`), FOREIGN KEY(`diagnosis`) REFERENCES `Diagnoses`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`stage` TEXT NOT NULL, `elements` TEXT NOT NULL, `file` TEXT, `diagnosis` TEXT NOT NULL, `sample` INTEGER NOT NULL, `disease` TEXT NOT NULL, `date` INTEGER NOT NULL, PRIMARY KEY(`diagnosis`, `sample`), FOREIGN KEY(`diagnosis`) REFERENCES `Diagnoses`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "stage",
@@ -143,8 +143,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "path",
-            "columnName": "path",
+            "fieldPath": "file",
+            "columnName": "file",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -184,8 +184,8 @@
         "foreignKeys": [
           {
             "table": "Diagnoses",
-            "onDelete": "NO ACTION",
-            "onUpdate": "NO ACTION",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
             "columns": [
               "diagnosis"
             ],
@@ -296,7 +296,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6f0a6b088b6c2da81b4811fd4d05378e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b56ef0ac774fed42a2400bfdcbba3fc2')"
     ]
   }
 }

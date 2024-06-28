@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.leishmaniapp.R
 import com.leishmaniapp.domain.disease.Disease
+import com.leishmaniapp.domain.serialization.DiagnosticElementNameSerializer
 import com.leishmaniapp.domain.types.Identificator
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
@@ -15,7 +16,7 @@ import kotlinx.serialization.Transient
  * [DiagnosticElement] unique ID with a display name
  */
 @Parcelize
-@Serializable
+@Serializable(with = DiagnosticElementNameSerializer::class)
 data class DiagnosticElementName(
     /**
      * Unique id for the diagnostic element, the format must be <diasease>:<element>
@@ -25,7 +26,7 @@ data class DiagnosticElementName(
     /**
      * Android resource for showing the element name
      */
-    @StringRes private val displayNameResource: Int = R.string.unknown_element,
+    @Transient @StringRes private val displayNameResource: Int = R.string.unknown_element,
 
     ) : Parcelable {
 
@@ -36,8 +37,8 @@ data class DiagnosticElementName(
         /**
          * Get one of the registered [DiagnosticElementName] given an identificator string
          */
-        fun diagnosticElementNameById(id: String): DiagnosticElementName =
-            Disease.diseases().flatMap { it.elements }.first { it.id == id }
+        fun diagnosticElementNameById(id: String): DiagnosticElementName? =
+            Disease.diseases().flatMap { it.elements }.firstOrNull { it.id == id }
     }
 
     override fun toString(): String = id

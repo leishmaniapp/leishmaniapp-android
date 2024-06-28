@@ -35,6 +35,14 @@ import com.leishmaniapp.presentation.ui.layout.DataTable
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import com.leishmaniapp.utilities.mock.MockGenerator.mock
 
+/**
+ * Show every [DiagnosticElementName] with both the [ModelDiagnosticElement] results and a
+ * dynamic [SpecialistDiagnosticElement] results
+ *
+ * @param disease [Disease] from which to grab all the [DiagnosticElementName]
+ * @param modelFailIcon Show an error icon on the model field, used when model results return an error
+ * @param onSpecialistEdit Specialist edited the number of [SpecialistDiagnosticElement]
+ */
 @Composable
 fun DiagnosticImageResultsTable(
     modifier: Modifier = Modifier,

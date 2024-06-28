@@ -4,6 +4,7 @@ import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.repository.ISpecialistsRepository
 import com.leishmaniapp.domain.types.AccessToken
 import com.leishmaniapp.domain.types.Email
+import com.leishmaniapp.domain.types.Identificator
 import com.leishmaniapp.infrastructure.persistance.dao.RoomSpecialistsDao
 import com.leishmaniapp.infrastructure.persistance.entities.RoomSpecialistEntity
 import kotlinx.coroutines.flow.Flow

@@ -36,9 +36,11 @@
             android:name=".presentation.activities.MainActivity"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="userPortrait"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Leishmaniapp"
             tools:ignore="DiscouragedApi">
+            <!-- android:screenOrientation is discouraged but required by client -->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

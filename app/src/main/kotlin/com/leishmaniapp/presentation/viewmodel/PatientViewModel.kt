@@ -49,7 +49,7 @@ class PatientViewModel @Inject constructor(
     private val patientsRepository: IPatientsRepository,
     private val diagnosesRepository: IDiagnosesRepository,
 
-    ) : ViewModel() {
+    ) : ViewModel(), DismissableState {
 
     companion object {
         /**
@@ -158,5 +158,13 @@ class PatientViewModel @Inject constructor(
      */
     fun dismissState() {
         _state.value = PatientState.None
+    }
+
+    /**
+     * Dismiss everything
+     */
+    override fun dismiss() {
+        dismissPatient()
+        dismissState()
     }
 }

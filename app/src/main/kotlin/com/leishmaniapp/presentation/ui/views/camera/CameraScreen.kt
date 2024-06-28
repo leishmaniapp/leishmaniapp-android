@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.leishmaniapp.R
 import com.leishmaniapp.infrastructure.camera.CameraCalibrationAnalyzer
@@ -35,15 +36,14 @@ import java.util.concurrent.Executor
 @Composable
 fun CameraScreen(
     executor: Executor,
+    lifecycleOwner: LifecycleOwner,
     cameraCalibration: CameraCalibrationAnalyzer,
     onCancel: () -> Unit,
-    onPictureTake: (Bitmap) -> Unit,
-    onError: (Exception) -> Unit,
+    onPictureTake: (Result<Bitmap>) -> Unit,
 ) {
 
     // Application context and composable lifecycle
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
 
     // Get the camera controller
     val cameraController = remember {
@@ -90,7 +90,7 @@ fun CameraScreen(
                 object : ImageCapture.OnImageCapturedCallback() {
                     // Send the picture to the callback
                     override fun onCaptureSuccess(image: ImageProxy) {
-                        onPictureTake.invoke(image.toBitmap())
+                        onPictureTake.invoke(Result.success(image.toBitmap()))
                         // Close the proxy
                         image.close()
                         // Set camera as not busy
@@ -99,7 +99,7 @@ fun CameraScreen(
 
                     // Send the error callback
                     override fun onError(exception: ImageCaptureException) {
-                        onError.invoke(exception)
+                        onPictureTake.invoke(Result.failure(exception))
                         // Set camera as not busy
                         cameraBusy = false
                     }
@@ -121,7 +121,7 @@ fun CameraScreen(
                                 text = stringResource(
                                     id = R.string.calibration_properties_refresh,
                                     "mHz",
-                                    (1_000_000.0 / analysisDuration.toFloat()),
+                                    (1_000_000f / analysisDuration),
                                 ),
                             )
                         }

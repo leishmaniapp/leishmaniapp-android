@@ -1,10 +1,10 @@
 package com.leishmaniapp.domain.entities
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Parcelable
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.ForeignKey
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -32,7 +32,7 @@ data class ImageSample(
     /**
      * Local path to the image file inside local storage
      */
-    val path: Uri? = null,
+    val file: Uri? = null,
 
     ) : Parcelable {
 
@@ -43,4 +43,21 @@ data class ImageSample(
         const val STD_IMAGE_RESOLUTION = 1944
     }
 
+    /**
+     * Construct the next [ImageSample] in a [Diagnosis]
+     */
+    constructor(diagnosis: Diagnosis, file: Uri) : this(
+        file = file,
+        metadata = ImageMetadata(
+            diagnosis = diagnosis.id,
+            sample = diagnosis.samples,
+            disease = diagnosis.disease,
+        ),
+    )
+
+    /**
+     * Get the [Bitmap] associated to the sample
+     */
+    @IgnoredOnParcel
+    val bitmap by lazy { file?.let { file -> BitmapFactory.decodeFile(file.path) } }
 }

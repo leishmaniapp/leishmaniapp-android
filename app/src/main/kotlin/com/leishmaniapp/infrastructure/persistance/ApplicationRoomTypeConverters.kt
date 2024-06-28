@@ -1,6 +1,9 @@
 package com.leishmaniapp.infrastructure.persistance
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Base64
 import androidx.room.TypeConverter
 import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.entities.DiagnosticElement
@@ -11,6 +14,7 @@ import com.leishmaniapp.utilities.time.toUnixTime
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.nio.ByteBuffer
 import java.util.UUID
 
 /**
@@ -78,4 +82,22 @@ class ApplicationRoomTypeConverters {
     @TypeConverter
     fun jsonToDiagnosticElementSet(diagnosticElements: String): Set<DiagnosticElement> =
         Json.decodeFromString(diagnosticElements)
+
+    /* Bitmap */
+    @TypeConverter
+    fun bitmapToBase64(bitmap: Bitmap): String =
+        Base64.encodeToString(
+            ByteBuffer.allocate(
+                bitmap.width * bitmap.height
+            ).let { byteBuffer ->
+                bitmap.copyPixelsFromBuffer(byteBuffer)
+                byteBuffer.array()
+            }, Base64.DEFAULT
+        )
+
+    @TypeConverter
+    fun base64ToBitmap(encoded: String): Bitmap =
+        Base64.decode(encoded, Base64.DEFAULT).let { byteArray ->
+            BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        }
 }

@@ -73,18 +73,15 @@ internal fun Bitmap.computeHSV(): Triplet<ImageCalibrationData.HSV> {
             average.saturation += hsv[1]
             average.value += hsv[2]
 
-            when {
-                // Calculate max values
-                hsv[0] > max.hue -> max.hue = hsv[0]
-                hsv[1] > max.saturation -> max.saturation = hsv[1]
-                hsv[2] > max.value -> max.value = hsv[2]
+            // Calculate max values
+            if (hsv[0] > max.hue) { max.hue = hsv[0] }
+            if (hsv[1] > max.saturation) { max.saturation = hsv[1] }
+            if (hsv[2] > max.value) { max.value = hsv[2] }
 
-                // Calculate minimum values
-                hsv[0] < min.hue -> min.hue = hsv[0]
-                hsv[1] < min.saturation -> min.saturation = hsv[1]
-                hsv[2] < min.value -> min.value = hsv[2]
-            }
-
+            // Calculate minimum values
+            if (hsv[0] < min.hue) { min.hue = hsv[0] }
+            if (hsv[1] < min.saturation) { min.saturation = hsv[1] }
+            if (hsv[2] < min.value) { min.value = hsv[2] }
         }
     }
 

@@ -1,6 +1,9 @@
 package com.leishmaniapp.presentation.ui.views.camera
 
+import android.view.Surface
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.Preview
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
@@ -39,14 +42,11 @@ fun CameraCanvasPreview(
             modifier = Modifier.fillMaxSize(),
             factory = { ctx ->
                 PreviewView(ctx).apply {
+                    controller = cameraController
                     scaleType = PreviewView.ScaleType.FILL_START
                     implementationMode = PreviewView.ImplementationMode.PERFORMANCE
-                    controller = cameraController
                 }
             },
-            onRelease = {
-                cameraController.unbind()
-            }
         )
 
         // Draw the square overlay

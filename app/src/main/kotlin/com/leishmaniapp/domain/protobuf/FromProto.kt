@@ -23,13 +23,13 @@ fun Diagnosis.Results.Companion.fromProto(from: com.leishmaniapp.cloud.model.Dia
         specialistElements = from.specialist_elements.mapKeys { entry ->
             DiagnosticElementName.diagnosticElementNameById(
                 entry.key
-            )
+            )!!
         },
         modelResult = from.model_result,
         modelElements = from.model_elements.mapKeys { entry ->
             DiagnosticElementName.diagnosticElementNameById(
                 entry.key
-            )
+            )!!
         },
     )
 

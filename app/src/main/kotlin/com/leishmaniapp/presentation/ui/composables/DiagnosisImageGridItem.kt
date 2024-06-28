@@ -36,7 +36,7 @@ fun DiagnosisImageGridItem(modifier: Modifier = Modifier, image: ImageSample) {
         modifier = modifier.width(IntrinsicSize.Max),
     ) {
         AsyncImage(
-            model = image.path,
+            model = image.file,
             contentDescription = null,
             placeholder = painterResource(id = R.drawable.macrophage)
         )
@@ -60,7 +60,7 @@ fun DiagnosisImageGridItem(modifier: Modifier = Modifier, image: ImageSample) {
 
                     AnalysisStage.ResultError, AnalysisStage.DeliverError -> Icon(
                         Icons.Filled.Error,
-                        contentDescription = stringResource(id = R.string.alert_deferred)
+                        contentDescription = stringResource(id = R.string.stage_alert_deferred)
                     )
 
                     AnalysisStage.Analyzing -> Icon(
