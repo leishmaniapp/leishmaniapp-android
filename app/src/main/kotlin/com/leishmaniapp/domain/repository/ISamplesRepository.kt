@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.leishmaniapp.domain.entities.AnalysisStage
+import com.leishmaniapp.domain.entities.ImageMetadata
 import com.leishmaniapp.domain.entities.ImageSample
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
@@ -30,6 +31,11 @@ interface ISamplesRepository {
     fun imageForDiagnosis(diagnosis: UUID, sample: Int): Flow<ImageSample?>
 
     /**
+     * Get an [ImageSample] given its [ImageMetadata]
+     */
+    fun imageForMetadata(metadata: ImageMetadata): Flow<ImageSample?>
+
+    /**
      * Get every [ImageSample] associated to a [com.leishmaniapp.domain.entities.Diagnosis] id
      */
     fun allImagesForDiagnosis(diagnosis: UUID): Flow<List<ImageSample>>
@@ -42,5 +48,10 @@ interface ISamplesRepository {
         diagnosis: UUID,
         stage: AnalysisStage
     ): Flow<List<ImageSample>>
+
+    /**
+     * Get every [ImageSample] associated to an [AnalysisStage]
+     */
+    fun imagesForStage(stage: AnalysisStage): Flow<List<ImageSample>>
 
 }

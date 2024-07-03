@@ -35,8 +35,14 @@ fun CameraCalibrationCard(
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(
-                        id = R.string.calibration_properties_megapixels,
-                        calibrationData.megapixels.toFloat()
+                        id = R.string.calibration_properties_hue,
+                        calibrationData.hsv.third.hue
+                    )
+                )
+                Text(
+                    text = stringResource(
+                        id = R.string.calibration_properties_saturation,
+                        calibrationData.hsv.third.saturation
                     )
                 )
                 Text(

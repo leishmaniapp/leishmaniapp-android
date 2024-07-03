@@ -4,10 +4,6 @@ package com.leishmaniapp.domain.calibration
  * Real time image data used for calibration
  */
 data class ImageCalibrationData(
-    /**
-     * Image size in MP
-     */
-    val megapixels: Double,
 
     /**
      * Containts the HSV computed values for every pixel
@@ -38,5 +34,6 @@ data class ImageCalibrationData(
         var value: Float,
     ) {
         companion object;
+        override fun toString(): String = "HSV($hue, $saturation, $value)"
     }
 }

@@ -11,14 +11,9 @@ enum class AnalysisStage {
     NotAnalyzed,
 
     /**
-     * Image results arrived with error
+     * Image has been enqueued for analysis, but not confirmed by the backend
      */
-    ResultError,
-
-    /**
-     * Failed to send the image
-     */
-    DeliverError,
+    Enqueued,
 
     /**
      * Image is being analyzed, has been sent to remote server
@@ -31,7 +26,20 @@ enum class AnalysisStage {
     Deferred,
 
     /**
+     * Failed to send the image
+     * Final error state
+     */
+    DeliverError,
+
+    /**
+     * Image results arrived with error
+     * Final error state
+     */
+    ResultError,
+
+    /**
      * Image results have arrived
+     * Final success state
      */
     Analyzed;
 

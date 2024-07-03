@@ -1,5 +1,6 @@
 package com.leishmaniapp.domain.entities
 
+import com.leishmaniapp.cloud.types.ListOfCoordinates
 import com.leishmaniapp.domain.types.Coordinates
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
@@ -14,12 +15,19 @@ import kotlinx.serialization.Serializable
 data class ModelDiagnosticElement(
 
     override val id: DiagnosticElementName,
-    val model: DiagnosticModel,
     val coordinates: Set<Coordinates>
 
 ) : DiagnosticElement() {
 
-    companion object;
+    companion object {
+        fun from(x: Map<String, ListOfCoordinates>): Set<ModelDiagnosticElement> =
+            x.map { (key, value) ->
+                ModelDiagnosticElement(
+                    id = DiagnosticElementName.diagnosticElementNameById(key)!!,
+                    coordinates = value.coordinates.map { Coordinates(x = it.x, y = it.y) }.toSet()
+                )
+            }.toSet()
+    }
 
     /**
      * Amount of items depends on list size

@@ -16,24 +16,15 @@ import kotlinx.coroutines.coroutineScope
 suspend fun Bitmap.computeProperties(): ImageCalibrationData =
     coroutineScope {
         // Calculate properties asynchronously
-        val megapixels = async { computeTotalMegapixels() }
         val hsv = async { computeHSV() }
 
         // Wait for all the results
         ImageCalibrationData(
-            megapixels = megapixels.await(),
             hsv = hsv.await(),
             luminance = hsv.await().computeSimpleLuminance(),
             contrast = hsv.await().computeMichelsonContrast()
         )
     }
-
-/**
- * Calculate the [ImageCalibrationData.megapixels] field from a [Bitmap]
- */
-internal fun Bitmap.computeTotalMegapixels(): Double =
-    (width.toDouble() * height.toDouble()) / 1_000_000
-
 
 /**
  * Return a [Triplet] in which the first value is the minimum of each,
@@ -73,15 +64,14 @@ internal fun Bitmap.computeHSV(): Triplet<ImageCalibrationData.HSV> {
             average.saturation += hsv[1]
             average.value += hsv[2]
 
-            // Calculate max values
             if (hsv[0] > max.hue) { max.hue = hsv[0] }
-            if (hsv[1] > max.saturation) { max.saturation = hsv[1] }
-            if (hsv[2] > max.value) { max.value = hsv[2] }
+            else if (hsv[0] < min.hue) { min.hue = hsv[0] }
 
-            // Calculate minimum values
-            if (hsv[0] < min.hue) { min.hue = hsv[0] }
-            if (hsv[1] < min.saturation) { min.saturation = hsv[1] }
-            if (hsv[2] < min.value) { min.value = hsv[2] }
+            if (hsv[1] > max.saturation) { max.saturation = hsv[1] }
+            else if (hsv[1] < min.saturation) { min.saturation = hsv[1] }
+
+            if (hsv[2] > max.value) { max.value = hsv[2] }
+            else if (hsv[2] < min.value) { min.value = hsv[2] }
         }
     }
 

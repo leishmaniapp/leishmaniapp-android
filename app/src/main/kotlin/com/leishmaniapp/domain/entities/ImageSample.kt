@@ -60,4 +60,11 @@ data class ImageSample(
      */
     @IgnoredOnParcel
     val bitmap by lazy { file?.let { file -> BitmapFactory.decodeFile(file.path) } }
+
+
+    /**
+     * Create a copy of [ImageSample] with added [ModelDiagnosticElement]
+     */
+    fun withModelElements(elements: Set<ModelDiagnosticElement>): ImageSample =
+        copy(elements = elements.toMutableSet().apply { addAll(elements) })
 }

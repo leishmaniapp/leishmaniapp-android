@@ -1,7 +1,7 @@
 package com.leishmaniapp.infrastructure.di
 
-import com.leishmaniapp.domain.repository.ITokenRepository
-import com.leishmaniapp.infrastructure.preferences.DataStoreTokenRepositoryImpl
+import com.leishmaniapp.domain.services.IAuthorizationService
+import com.leishmaniapp.infrastructure.preferences.DataStoreAuthorizationServiceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,11 +15,10 @@ import dagger.hilt.components.SingletonComponent
 interface PreferencesModule {
 
     /**
-     * Provide the [ITokenRepository] via [DataStoreTokenRepositoryImpl]
+     * Provide the [IAuthorizationService] via [DataStoreAuthorizationServiceImpl]
      */
     @Binds
     fun bindTokenRepository(
-        tokenRepositoryImpl: DataStoreTokenRepositoryImpl,
-    ): ITokenRepository
-
+        tokenRepositoryImpl: DataStoreAuthorizationServiceImpl,
+    ): IAuthorizationService
 }

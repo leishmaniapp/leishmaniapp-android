@@ -5,12 +5,13 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import okhttp3.ResponseBody
 import java.io.IOException
+import javax.inject.Inject
 import kotlin.jvm.Throws
 
 /**
  * Handle [Exception] during HTTP requests
  */
-class ExceptionInterceptor : Interceptor {
+class ExceptionInterceptor @Inject constructor() : Interceptor {
 
     /**
      * Catch and rethrow exceptions

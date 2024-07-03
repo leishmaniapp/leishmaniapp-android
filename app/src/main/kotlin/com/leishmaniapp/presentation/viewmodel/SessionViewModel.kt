@@ -8,23 +8,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leishmaniapp.cloud.auth.AuthRequest
 import com.leishmaniapp.cloud.auth.TokenRequest
-import com.leishmaniapp.domain.entities.Patient
 import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.exceptions.BadAuthenticationException
 import com.leishmaniapp.domain.exceptions.GenericException
 import com.leishmaniapp.domain.exceptions.LeishmaniappException
 import com.leishmaniapp.domain.exceptions.NetworkException
 import com.leishmaniapp.domain.protobuf.fromProto
-import com.leishmaniapp.domain.repository.IPatientsRepository
 import com.leishmaniapp.domain.repository.ISpecialistsRepository
-import com.leishmaniapp.domain.repository.ITokenRepository
+import com.leishmaniapp.domain.services.IAuthorizationService
 import com.leishmaniapp.domain.services.IAuthService
 import com.leishmaniapp.domain.services.INetworkService
 import com.leishmaniapp.domain.types.AccessToken
 import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.domain.types.Password
 import com.leishmaniapp.presentation.viewmodel.state.AuthState
-import com.leishmaniapp.utilities.extensions.throwOrElse
+import com.leishmaniapp.utilities.extensions.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,7 +30,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
@@ -58,7 +55,7 @@ class SessionViewModel @Inject constructor(
     networkService: INetworkService,
 
     // Repositories
-    private val tokenRepository: ITokenRepository,
+    private val tokenRepository: IAuthorizationService,
     private val specialistRepository: ISpecialistsRepository,
 
     ) : ViewModel(), DismissableState {
@@ -117,7 +114,7 @@ class SessionViewModel @Inject constructor(
                 // Decode the token contents
                 val payload = withContext(Dispatchers.IO) {
                     authService.decodeToken(TokenRequest(token = token)).getOrThrow()
-                        .run { status!!.code.throwOrElse { payload!! } }
+                        .run { status!!.code.getOrThrow { payload!! } }
                 }
                 // Get the specialist
                 val specialist = Specialist.fromProto(payload.specialist!!, token)
@@ -204,7 +201,7 @@ class SessionViewModel @Inject constructor(
                 // Get the authentication token
                 val token: AccessToken = withContext(Dispatchers.IO) {
                     authService.authenticate(AuthRequest(email, password)).getOrThrow()
-                        .run { status!!.code.throwOrElse { token!! } }
+                        .run { status!!.code.getOrThrow { token!! } }
                 }
 
                 // Store the token and the specialist

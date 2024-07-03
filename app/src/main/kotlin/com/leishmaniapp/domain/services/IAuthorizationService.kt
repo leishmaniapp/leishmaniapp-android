@@ -1,13 +1,13 @@
-package com.leishmaniapp.domain.repository
+package com.leishmaniapp.domain.services
 
 import com.leishmaniapp.domain.types.AccessToken
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Manipulate [AccessToken] stored in memory, used for keeping application session without new login,
- * only one [AccessToken] can be stored at the time
+ * Manipulate [AccessToken] stored in memory, used for keeping application session accross multiple
+ * application modules
  */
-interface ITokenRepository {
+interface IAuthorizationService {
 
     /**
      * Get the currently stored [AccessToken] as a [Flow]

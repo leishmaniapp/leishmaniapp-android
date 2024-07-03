@@ -1,6 +1,7 @@
 package com.leishmaniapp.infrastructure.persistance.repository
 
 import com.leishmaniapp.domain.entities.AnalysisStage
+import com.leishmaniapp.domain.entities.ImageMetadata
 import com.leishmaniapp.domain.entities.ImageSample
 import com.leishmaniapp.domain.repository.ISamplesRepository
 import com.leishmaniapp.infrastructure.persistance.dao.RoomImagesDao
@@ -30,6 +31,9 @@ class RoomSamplesRepositoryImpl @Inject constructor(
     override fun imageForDiagnosis(diagnosis: UUID, sample: Int): Flow<ImageSample?> =
         dao.imageForDiagnosis(diagnosis, sample).map { it?.toImageSample() }
 
+    override fun imageForMetadata(metadata: ImageMetadata): Flow<ImageSample?> =
+        dao.imageForDiagnosis(metadata.diagnosis, metadata.sample).map { it?.toImageSample() }
+
     override fun allImagesForDiagnosis(diagnosis: UUID): Flow<List<ImageSample>> =
         dao.allImagesForDiagnosis(diagnosis).map { flow -> flow.map { it.toImageSample() } }
 
@@ -39,4 +43,7 @@ class RoomSamplesRepositoryImpl @Inject constructor(
     ): Flow<List<ImageSample>> =
         dao.imagesForDiagnosisWithStage(diagnosis, stage)
             .map { flow -> flow.map { it.toImageSample() } }
+
+    override fun imagesForStage(stage: AnalysisStage): Flow<List<ImageSample>> =
+        dao.imagesForStage(stage).map { flow -> flow.map { it.toImageSample() } }
 }

@@ -1,6 +1,8 @@
 package com.leishmaniapp.infrastructure.di
 
+import com.leishmaniapp.domain.services.IAnalysisService
 import com.leishmaniapp.domain.services.IAuthService
+import com.leishmaniapp.infrastructure.cloud.GrpcAnalysisServiceImpl
 import com.leishmaniapp.infrastructure.cloud.GrpcAuthServiceImpl
 import com.leishmaniapp.infrastructure.cloud.GrpcServiceConfiguration
 import dagger.Binds
@@ -25,4 +27,11 @@ interface CloudServicesModule {
         authServiceImpl: GrpcAuthServiceImpl,
     ): IAuthService
 
+    /**
+     * Provide [IAnalysisService] via [GrpcAnalysisServiceImpl]
+     */
+    @Binds
+    fun bindAnalysisService(
+        analysisServiceImpl: GrpcAnalysisServiceImpl
+    ): IAnalysisService
 }

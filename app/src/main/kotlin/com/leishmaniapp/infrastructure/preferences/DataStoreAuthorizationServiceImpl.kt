@@ -7,7 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.leishmaniapp.domain.repository.ITokenRepository
+import com.leishmaniapp.domain.services.IAuthorizationService
 import com.leishmaniapp.domain.types.AccessToken
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -21,20 +21,20 @@ import javax.inject.Inject
 /**
  * Create a [DataStore] to persist authentication
  */
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = DataStoreTokenRepositoryImpl.TAG)
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = DataStoreAuthorizationServiceImpl.TAG)
 
 /**
- * [DataStore] implementation for the [ITokenRepository]
+ * [DataStore] implementation for the [IAuthorizationService]
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-class DataStoreTokenRepositoryImpl @Inject constructor(
+class DataStoreAuthorizationServiceImpl @Inject constructor(
 
     /**
      * Android context to access [Context.dataStore]
      */
     @ApplicationContext context: Context,
 
-    ) : ITokenRepository {
+    ) : IAuthorizationService {
 
     companion object {
         /**
@@ -59,15 +59,13 @@ class DataStoreTokenRepositoryImpl @Inject constructor(
      */
     private val dataStore = context.dataStore
 
-    override val accessToken: Flow<AccessToken?>
-        get() = dataStore.data.mapLatest { preferences ->
-            preferences[PreferencesKeys.accessTokenKey]
-        }
+    override val accessToken: Flow<AccessToken?> = dataStore.data.mapLatest { preferences ->
+        preferences[PreferencesKeys.accessTokenKey]
+    }
 
-    override val isTokenStored: Flow<Boolean>
-        get() = dataStore.data.map { preferences ->
-            preferences.contains(PreferencesKeys.accessTokenKey)
-        }
+    override val isTokenStored: Flow<Boolean> = dataStore.data.map { preferences ->
+        preferences.contains(PreferencesKeys.accessTokenKey)
+    }
 
     override suspend fun storeAuthenticationToken(token: AccessToken): Result<Unit> =
         withContext(Dispatchers.IO) {

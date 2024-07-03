@@ -1,4 +1,4 @@
-package com.leishmaniapp.infrastructure.android
+package com.leishmaniapp.infrastructure.android.network
 
 import android.content.Context
 import android.net.ConnectivityManager

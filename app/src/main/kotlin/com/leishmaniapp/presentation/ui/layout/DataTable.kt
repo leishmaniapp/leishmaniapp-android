@@ -1,5 +1,6 @@
 package com.leishmaniapp.presentation.ui.layout
 
+import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -244,6 +245,27 @@ fun DataTable(
 @Composable
 @Preview(showBackground = true)
 fun DataTablePreview() {
+    LeishmaniappTheme {
+        DataTable(modifier = Modifier.padding(16.dp)) {
+            HeadingTableRow {
+                Cell { Text(text = "Hello World!") }
+            }
+            SubheadingTableRow {
+                Cell { Text(text = "From") }
+                Cell { Text(text = "DataTable") }
+            }
+            TableRow {
+                Cell { Text(text = "Using") }
+                SubheadingCell { Text(text = "Jetpack") }
+                HeadingCell { Text(text = "Compose") }
+            }
+        }
+    }
+}
+
+@Composable
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+fun DataTablePreview_Dark() {
     LeishmaniappTheme {
         DataTable(modifier = Modifier.padding(16.dp)) {
             HeadingTableRow {

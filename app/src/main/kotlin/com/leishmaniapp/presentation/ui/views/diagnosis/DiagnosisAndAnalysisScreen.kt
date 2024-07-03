@@ -89,6 +89,7 @@ fun DiagnosisAndAnalysisScreen(
                     AnalysisStage.ResultError,
                     AnalysisStage.DeliverError,
                     AnalysisStage.Deferred,
+                    AnalysisStage.Enqueued,
                     AnalysisStage.Analyzed -> onNextAction.invoke()
                 }
             },

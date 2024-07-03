@@ -60,6 +60,7 @@ fun DiagnosticImageSection(
                     Text(text = stringResource(id = R.string.edit_image))
                 }
 
+                AnalysisStage.Enqueued,
                 AnalysisStage.NotAnalyzed -> Row(modifier = Modifier.padding(16.dp)) {
                     Icon(
                         Icons.Filled.Error,

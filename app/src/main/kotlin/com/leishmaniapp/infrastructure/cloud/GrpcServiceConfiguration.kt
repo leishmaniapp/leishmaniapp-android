@@ -2,20 +2,19 @@ package com.leishmaniapp.infrastructure.cloud
 
 import android.util.Log
 import com.leishmaniapp.BuildConfig
+import com.leishmaniapp.infrastructure.http.AuthorizationInterceptor
 import com.leishmaniapp.infrastructure.http.ExceptionInterceptor
 import com.squareup.wire.GrpcClient
-import kotlinx.coroutines.Dispatchers
 import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.logging.HttpLoggingInterceptor
 import java.time.Duration
-import javax.inject.Inject
 
 /**
  * Provide a [GrpcClient] for use within gRPC services
  */
-data class GrpcServiceConfiguration(
+class GrpcServiceConfiguration(
 
     /**
      * HTTPS server connection string
@@ -26,6 +25,10 @@ data class GrpcServiceConfiguration(
      * Server call timeout
      */
     private val timeoutSec: Long = BuildConfig.REMOTE_TIMEOUT.toLong(),
+
+    // Interceptors
+    exceptionInterceptor: ExceptionInterceptor,
+    authorizationInterceptor: AuthorizationInterceptor,
 ) {
 
     companion object {
@@ -40,7 +43,8 @@ data class GrpcServiceConfiguration(
      */
     private val transport: OkHttpClient = OkHttpClient.Builder()
         // Interceptors
-        .addInterceptor(ExceptionInterceptor())
+        .addInterceptor(exceptionInterceptor)
+        .addInterceptor(authorizationInterceptor)
         .addInterceptor(HttpLoggingInterceptor())
         // Disable TLS encryption
         .connectionSpecs(listOf(ConnectionSpec.CLEARTEXT))
@@ -49,16 +53,12 @@ data class GrpcServiceConfiguration(
         .writeTimeout(Duration.ofSeconds(timeoutSec))
         .callTimeout(Duration.ofSeconds(timeoutSec))
         // No HTTP2 upgrade roundtrip
-        .protocols(listOf(Protocol.H2_PRIOR_KNOWLEDGE))
-        .build()
+        .protocols(listOf(Protocol.H2_PRIOR_KNOWLEDGE)).build()
 
     /**
      * Exposed gRPC client for calls
      */
-    val client: GrpcClient = GrpcClient.Builder()
-        .client(transport)
-        .baseUrl(endpoint)
-        .build()
+    val client: GrpcClient = GrpcClient.Builder().client(transport).baseUrl(endpoint).build()
 
     init {
         Log.d(TAG, "FilterChain: ${transport.interceptors.map { it::class }}")

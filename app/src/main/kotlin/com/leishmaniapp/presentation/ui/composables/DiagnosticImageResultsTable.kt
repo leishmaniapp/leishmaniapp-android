@@ -1,5 +1,6 @@
 package com.leishmaniapp.presentation.ui.composables
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
@@ -10,6 +11,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -111,7 +113,7 @@ fun DiagnosticImageResultsTable(
 
                     BasicTextField(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        textStyle = LocalTextStyle.current,
+                        textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onBackground),
                         onValueChange = { newValue ->
                             try {
                                 onSpecialistEdit.invoke(
@@ -156,6 +158,27 @@ fun ResultsTablePreview_NoneProvided() {
     }
 }
 
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun ResultsTablePreview_Dark() {
+    var specialistDiagnosticElement: SpecialistDiagnosticElement? by remember {
+        mutableStateOf(null)
+    }
+    LeishmaniappTheme {
+        Surface {
+            DiagnosticImageResultsTable(
+                disease = MockDotsDisease,
+                specialistDiagnosticElements = specialistDiagnosticElement?.let { setOf(it) },
+                modelDiagnosticElements = setOf(ModelDiagnosticElement.mock() as ModelDiagnosticElement),
+            ) { _, editedSpecialistDiagnosticElement ->
+                specialistDiagnosticElement = editedSpecialistDiagnosticElement
+            }
+        }
+    }
+}
+
+
+
 @Preview(showBackground = true)
 @Composable
 fun ResultsTablePreview_FailedModel() {
@@ -199,7 +222,6 @@ fun ResultsTablePreview_OnlySpecialistProvided() {
     var specialistDiagnosticElement: SpecialistDiagnosticElement? by remember {
         mutableStateOf(SpecialistDiagnosticElement.mock() as SpecialistDiagnosticElement)
     }
-
     LeishmaniappTheme {
         DiagnosticImageResultsTable(
             disease = MockDotsDisease,

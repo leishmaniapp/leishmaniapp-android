@@ -1,6 +1,5 @@
 package com.leishmaniapp.utilities.mock
 
-import android.graphics.ColorSpace.Model
 import com.leishmaniapp.domain.calibration.ImageCalibrationData
 import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.disease.LeishmaniasisGiemsaDisease
@@ -20,7 +19,6 @@ import com.leishmaniapp.infrastructure.camera.computeMichelsonContrast
 import com.leishmaniapp.infrastructure.camera.computeSimpleLuminance
 import com.leishmaniapp.utilities.extensions.toRecord
 import com.leishmaniapp.utilities.extensions.utcNow
-import com.leishmaniapp.utilities.mock.MockGenerator.mock
 import com.leishmaniapp.utilities.types.Triplet
 import io.bloco.faker.Faker
 import kotlinx.datetime.LocalDateTime
@@ -54,7 +52,6 @@ object MockGenerator {
         ImageCalibrationData.HSV.mock()
     ).let { hsv ->
         ImageCalibrationData(
-            megapixels = faker.number.between(1.0, 50.0),
             hsv = hsv,
             luminance = hsv.computeSimpleLuminance(),
             contrast = hsv.computeMichelsonContrast()
@@ -88,7 +85,7 @@ object MockGenerator {
     /**
      * Get a random value for [AnalysisStage]
      */
-    private fun AnalysisStage.Companion.random() = AnalysisStage.entries.random();
+    private fun AnalysisStage.Companion.random() = AnalysisStage.entries.random()
 
     /**
      * Generate a random data [ImageMetadata]
@@ -128,7 +125,6 @@ object MockGenerator {
     ): DiagnosticElement =
         ModelDiagnosticElement(
             id = MockDotsDisease.elements.first(),
-            model = MockDotsDisease.models.first(),
             coordinates = buildSet {
                 repeat(faker.number.positive(3, 12)) {
                     add(Coordinates.mock(0, imageSize))

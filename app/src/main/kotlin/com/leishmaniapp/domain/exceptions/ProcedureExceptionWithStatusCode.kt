@@ -8,7 +8,7 @@ import com.leishmaniapp.cloud.types.StatusCode
 /**
  * RPC call exception with [StatusCode], not a network failure, but a request error
  */
-class ProcedureExceptionWithStatusCode(val status: StatusCode) :
+open class ProcedureExceptionWithStatusCode(val status: StatusCode) :
     RemoteException(R.string.exception_remote_status) {
     override val description: String
         @Composable get() = stringResource(id = descriptionResource, status.toString())

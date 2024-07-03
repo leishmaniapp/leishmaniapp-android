@@ -58,6 +58,12 @@ fun DiagnosisImageGridItem(modifier: Modifier = Modifier, image: ImageSample) {
                         )
                     )
 
+                    AnalysisStage.Enqueued -> Icon(
+                        Icons.Filled.Sync, contentDescription = stringResource(
+                            id = R.string.enqueued
+                        )
+                    )
+
                     AnalysisStage.ResultError, AnalysisStage.DeliverError -> Icon(
                         Icons.Filled.Error,
                         contentDescription = stringResource(id = R.string.stage_alert_deferred)

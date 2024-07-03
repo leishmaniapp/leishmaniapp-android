@@ -5,12 +5,11 @@ import com.leishmaniapp.infrastructure.picture.ApplicationPictureStandardization
 import com.leishmaniapp.domain.services.IDiagnosisSharing
 import com.leishmaniapp.domain.services.INetworkService
 import com.leishmaniapp.domain.services.IPictureStandardization
-import com.leishmaniapp.infrastructure.android.ConnectivityManagerNetworkServiceImpl
+import com.leishmaniapp.infrastructure.android.network.ConnectivityManagerNetworkServiceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 /**
  * Provides the services implementations via DI for local application services

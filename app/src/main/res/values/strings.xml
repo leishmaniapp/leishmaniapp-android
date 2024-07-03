@@ -99,6 +99,7 @@
     <string name="image_number">Imagen #</string>
     <string name="processed">Procesada</string>
     <string name="not_analyzed">No analizada</string>
+    <string name="enqueued">Preparando para el análisis</string>
     <string name="diagnosis_results">Resultados del análisis</string>
     <string name="start_diagnosis">Iniciar un diagnóstico</string>
     <string name="diagnostic_image">Imagen Diagnóstica</string>
@@ -177,7 +178,8 @@
     <!-- Real Time Calibration (RTC) -->
     <string name="calibration_title">Calibración</string>
     <string name="calibration_properties_refresh"><b>Refresco (%1$s):</b> %2$.2f</string>
-    <string name="calibration_properties_megapixels"><b>Megapixeles:</b> %1$.2f</string>
+    <string name="calibration_properties_hue"><b>Matiz:</b> %1$.2f</string>
+    <string name="calibration_properties_saturation"><b>Saturación:</b> %1$.2f</string>
     <string name="calibration_properties_luminance"><b>Luminosidad:</b> %1$.2f</string>
     <string name="calibration_properties_contrast"><b>Contraste:</b> %1$.2f</string>
 
@@ -189,5 +191,10 @@
 
     <!-- Sharing -->
     <string name="medical_exam">Examen Médico</string>
+
+    <!-- Notifications -->
+    <string name="notification_analysis_channel">analysis_channel</string>
+    <string name="notification_analysis_title">Análisis en progreso</string>
+    <string name="notification_analysis_content">Leishmaniapp está analizando muestras en segundo plano</string>
 
 </resources>

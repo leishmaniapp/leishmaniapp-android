@@ -19,7 +19,7 @@ class DiagnosisComputationsTests {
                 elements = setOf(
                     // 3 Model diagnostic elements
                     ModelDiagnosticElement(
-                        MockDotsDisease.elements.first(), MockDotsDisease.models.first(), setOf(
+                        MockDotsDisease.elements.first(), setOf(
                             Coordinates(0, 0),
                             Coordinates(1, 1),
                             Coordinates(2, 2),
@@ -34,7 +34,7 @@ class DiagnosisComputationsTests {
                 elements = setOf(
                     // 1 Model diagnostic elements
                     ModelDiagnosticElement(
-                        MockDotsDisease.elements.first(), MockDotsDisease.models.first(), setOf(
+                        MockDotsDisease.elements.first(), setOf(
                             Coordinates(0, 0),
                         )
                     ),
@@ -72,7 +72,6 @@ class DiagnosisComputationsTests {
                     // 3 Model diagnostic elements
                     ModelDiagnosticElement(
                         MockDotsDisease.elements.first(),
-                        MockDotsDisease.models.first(),
                         List(10) { counter ->
                             Coordinates(counter, counter)
                         }.toSet()

@@ -9,13 +9,12 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"
@@ -32,6 +31,7 @@
         android:theme="@style/Theme.Leishmaniapp"
         android:usesCleartextTraffic="true">
 
+        <!-- Jetpack Compose single activity -->
         <activity
             android:name=".presentation.activities.MainActivity"
             android:configChanges="orientation"
@@ -47,6 +47,17 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            tools:node="merge" />
+
+        <!-- If you want to disable android.startup completely. -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove">
+        </provider>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.leishmaniapp"
@@ -58,4 +69,6 @@
         </provider>
 
     </application>
+
+
 </manifest>
