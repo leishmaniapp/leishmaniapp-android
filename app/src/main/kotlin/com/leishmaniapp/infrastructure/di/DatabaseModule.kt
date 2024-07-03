@@ -2,11 +2,13 @@ package com.leishmaniapp.infrastructure.di
 
 import android.content.Context
 import androidx.room.Room
+import com.leishmaniapp.domain.repository.ICredentialsRepository
 import com.leishmaniapp.domain.repository.IDiagnosesRepository
 import com.leishmaniapp.domain.repository.ISamplesRepository
 import com.leishmaniapp.domain.repository.IPatientsRepository
 import com.leishmaniapp.domain.repository.ISpecialistsRepository
 import com.leishmaniapp.infrastructure.persistance.ApplicationDatabase
+import com.leishmaniapp.infrastructure.persistance.repository.RoomCredentialsRepositoryImpl
 import com.leishmaniapp.infrastructure.persistance.repository.RoomDiagnosesRepositoryImpl
 import com.leishmaniapp.infrastructure.persistance.repository.RoomPatientsRepositoryImpl
 import com.leishmaniapp.infrastructure.persistance.repository.RoomSamplesRepositoryImpl
@@ -58,4 +60,8 @@ object DatabaseModule {
     @Provides
     fun provideSpecialistsRepository(applicationDatabase: ApplicationDatabase): ISpecialistsRepository =
         RoomSpecialistRepositoryImpl(applicationDatabase.specialistsDao())
+
+    @Provides
+    fun provideCredentialsRepository(applicationDatabase: ApplicationDatabase): ICredentialsRepository =
+        RoomCredentialsRepositoryImpl(applicationDatabase.credentialsDao())
 }

@@ -2,9 +2,10 @@ package com.leishmaniapp.domain.entities
 
 import android.os.Parcelable
 import com.leishmaniapp.domain.types.Identificator
+import com.leishmaniapp.domain.types.ShaHash
+import com.leishmaniapp.infrastructure.security.hash
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
-import java.security.MessageDigest
 
 /**
  * Representation of a Patient
@@ -30,9 +31,5 @@ data class Patient(
      * Calculate the patient hash from its document
      */
     @IgnoredOnParcel
-    val hash: String by lazy {
-        MessageDigest.getInstance("SHA-512")
-            .digest(document.toByteArray())
-            .fold("") { str, byte -> str + "%02x".format(byte) }
-    }
+    val hash: ShaHash by lazy { document.hash() }
 }

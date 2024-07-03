@@ -17,7 +17,6 @@ data class Specialist(
 
     val name: String,
     val email: Email,
-    val token: AccessToken? = null,
     val diseases: Set<Disease> = setOf()
 
 ) : Parcelable {

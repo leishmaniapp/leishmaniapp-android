@@ -12,15 +12,7 @@ import com.leishmaniapp.domain.types.Email
 /**
  * SQL representation of a [Specialist]
  */
-@Entity(
-    tableName = "Specialists",
-    indices = [
-        Index(
-            value = ["token"],
-            unique = true
-        )
-    ]
-)
+@Entity(tableName = "Specialists")
 data class RoomSpecialistEntity(
     @PrimaryKey @ColumnInfo(name = "email") val email: Email,
     @ColumnInfo(name = "name") val name: String,
@@ -30,14 +22,12 @@ data class RoomSpecialistEntity(
     constructor(specialist: Specialist) : this(
         name = specialist.name,
         email = specialist.email,
-        token = specialist.token,
         diseases = specialist.diseases,
     )
 
     fun toSpecialist(): Specialist = Specialist(
         name = name,
         email = email,
-        token = token,
         diseases = diseases
     )
 }
