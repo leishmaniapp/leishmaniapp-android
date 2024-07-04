@@ -14,6 +14,7 @@ import com.leishmaniapp.domain.types.ComputedResultsType
  */
 data object MockDotsDisease : Disease(
     id = "mock.dots",
+    crop = 1000,
     models = setOf(
         DiagnosticModel("mock.dots"),
     ),

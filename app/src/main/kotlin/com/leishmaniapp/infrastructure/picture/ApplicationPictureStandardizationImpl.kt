@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.core.net.toFile
+import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.entities.ImageSample
 import com.leishmaniapp.domain.services.IPictureStandardization
 import java.io.ByteArrayInputStream
@@ -54,15 +55,15 @@ class ApplicationPictureStandardizationImpl @Inject constructor() : IPictureStan
     }
 
     /**
-     * Scale picture to the [ImageSample.STD_IMAGE_RESOLUTION]
+     * Scale picture to the [Disease.crop] size
      */
-    override fun scale(bitmap: Bitmap): Result<Bitmap> =
+    override fun scale(bitmap: Bitmap, disease: Disease): Result<Bitmap> =
         try {
             Result.success(
                 Bitmap.createScaledBitmap(
                     bitmap,
-                    ImageSample.STD_IMAGE_RESOLUTION,
-                    ImageSample.STD_IMAGE_RESOLUTION,
+                    disease.crop,
+                    disease.crop,
                     false
                 )
             )

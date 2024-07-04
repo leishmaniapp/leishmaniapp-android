@@ -66,7 +66,7 @@ class ConnectivityManagerNetworkServiceImpl @Inject constructor(
         }
     }
 
-    override fun networkState(): Flow<INetworkService.NetworkState> = callbackFlow {
+    override fun state(): Flow<INetworkService.NetworkState> = callbackFlow {
         // Create the network callback
         val callback = object : ConnectivityManager.NetworkCallback() {
 

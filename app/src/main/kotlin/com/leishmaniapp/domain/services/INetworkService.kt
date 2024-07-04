@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 /**
  * Check if internet connection is present
+ * For application internal use only
  */
 fun interface INetworkService {
 
@@ -30,5 +31,5 @@ fun interface INetworkService {
     /**
      * [Flow] with the current network connection status
      */
-    fun networkState(): Flow<NetworkState>
+    fun state(): Flow<NetworkState>
 }

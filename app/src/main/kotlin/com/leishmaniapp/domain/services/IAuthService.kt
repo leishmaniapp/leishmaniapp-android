@@ -10,7 +10,7 @@ import com.leishmaniapp.domain.entities.Specialist
 
 
 /**
- * Service for manipulating authentication data,
+ * Service for manipulating authenticating on a remote server,
  * This service is based upon the LeishmaniappCloudServicesv2 definition
  * [visit protobuf_schema for more information](https://github.com/leishmaniapp/protobuf_schema)
  */

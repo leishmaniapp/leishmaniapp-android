@@ -25,14 +25,12 @@ import com.leishmaniapp.domain.types.Password
 import com.leishmaniapp.infrastructure.security.hash
 import com.leishmaniapp.presentation.viewmodel.state.AuthState
 import com.leishmaniapp.utilities.extensions.getOrThrow
-import com.leishmaniapp.utilities.extensions.toRecord
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
@@ -85,7 +83,7 @@ class SessionViewModel @Inject constructor(
      * Get the current network state and set the addecuate [AuthState.None] value is present
      */
     val networkState: StateFlow<INetworkService.NetworkState> =
-        networkService.networkState()
+        networkService.state()
             // Run the flow on IO
             .flowOn(Dispatchers.IO)
             // Update the connection state

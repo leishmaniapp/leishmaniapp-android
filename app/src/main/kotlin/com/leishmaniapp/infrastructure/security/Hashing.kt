@@ -10,7 +10,7 @@ import java.security.MessageDigest
 const val HASHING_ALGORITHM: String = BuildConfig.HASH_ALGORITHM
 
 /**
- * Transform a [String] into a [ShaHash] using SHA3-512
+ * Transform a [String] into a [ShaHash] (specified in application.properties)
  */
 fun String.hash(): ShaHash =
     MessageDigest.getInstance(HASHING_ALGORITHM).digest(toByteArray(Charsets.UTF_8)).toList()

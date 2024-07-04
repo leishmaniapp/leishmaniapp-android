@@ -13,12 +13,35 @@ import com.leishmaniapp.domain.types.Identificator
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents a [Disease] and all the associated [DiagnosticModel], every new disease
+ * must inherit from this class as an object
+ */
 @Parcelize
 @Serializable(with = DiseaseSerializer::class)
 sealed class Disease(
+
+    /**
+     * Must be the same within the application and the cloud
+     */
     val id: Identificator,
+
+    /**
+     * Required image size for analysis, image aspect ratio is always 1:1 so this size represents
+     * both height and width
+     */
+    val crop: Int,
+
+    /**
+     * List of [DiagnosticModel] associated to the disease
+     */
     val models: Set<DiagnosticModel>,
+
+    /**
+     * List of [DiagnosticElementName] associated to the disease
+     */
     val elements: Set<DiagnosticElementName>,
+
     @Transient val displayNameResource: Int = R.string.unknown_disease,
 ) : Parcelable {
 

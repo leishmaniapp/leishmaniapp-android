@@ -29,7 +29,7 @@ import javax.inject.Inject
 class ApplicationDiagnosisSharingImpl @Inject constructor(
     @ApplicationContext val context: Context,
 ) : IDiagnosisSharing {
-    override suspend fun generateDiagnosisFile(diagnosis: Diagnosis): File {
+    override suspend fun share(diagnosis: Diagnosis): File {
 
         // Create the file
         val pdfFile = withContext(Dispatchers.IO) {

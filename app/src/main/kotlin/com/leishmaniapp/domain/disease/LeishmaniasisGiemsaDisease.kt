@@ -15,6 +15,7 @@ import com.leishmaniapp.domain.types.ComputedResultsType
  */
 data object LeishmaniasisGiemsaDisease : Disease(
     id = "leishmaniasis.giemsa",
+    crop = 1944,
     models = setOf(
         DiagnosticModel("leishmaniasis.giemsa.macrophages"),
         DiagnosticModel("leishmaniasis.giemsa.parasites"),

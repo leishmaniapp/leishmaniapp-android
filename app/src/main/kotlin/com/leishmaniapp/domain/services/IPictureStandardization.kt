@@ -2,6 +2,7 @@ package com.leishmaniapp.domain.services
 
 import android.graphics.Bitmap
 import android.net.Uri
+import com.leishmaniapp.domain.disease.Disease
 import java.io.File
 
 /**
@@ -10,14 +11,14 @@ import java.io.File
 interface IPictureStandardization {
 
     /**
-     * Return a cropped copy of the [Bitmap] area to a standard position and aspect ratio
+     * Return a cropped copy of the [Bitmap] area to a standard position and aspect ratio (1:1)
      */
     fun crop(bitmap: Bitmap): Result<Bitmap>
 
     /**
-     * Returned a resized copy of a [Bitmap] with a standarized size
+     * Returned a resized copy of a [Bitmap] with a standarized size for the [Disease]
      */
-    fun scale(bitmap: Bitmap): Result<Bitmap>
+    fun scale(bitmap: Bitmap, disease: Disease): Result<Bitmap>
 
     /**
      * Compress the [Bitmap] into a compressed format array
@@ -32,5 +33,5 @@ interface IPictureStandardization {
     /**
      * Get the file extension
      */
-    abstract val fileExtension: String
+    val fileExtension: String
 }

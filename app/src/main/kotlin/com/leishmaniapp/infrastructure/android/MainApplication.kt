@@ -20,6 +20,11 @@ import javax.inject.Inject
 @HiltAndroidApp
 class MainApplication : Application(), CameraXConfig.Provider, Configuration.Provider {
 
+    /**
+     * Get the Jetpack Hilt factory for Jetpack WorkManager
+     */
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
 
     /**
      * Generate the CameraX configuration
@@ -30,24 +35,10 @@ class MainApplication : Application(), CameraXConfig.Provider, Configuration.Pro
             .setCameraExecutor(Executors.newSingleThreadExecutor()).setMinimumLoggingLevel(Log.INFO)
             .build()
 
-    override val workManagerConfiguration: Configuration = Configuration.Builder()
+    /**
+     * Generate the WorkManager configuration
+     */
+    override fun getWorkManagerConfiguration(): Configuration = Configuration.Builder()
+        .setWorkerFactory(workerFactory)
         .build()
-
-    override fun onCreate() {
-        
-        WorkManager.getInstance(applicationContext).enqueueUniqueWork(
-            "analysis",
-            ExistingWorkPolicy.REPLACE,
-            OneTimeWorkRequestBuilder<ImageResultsWorker>()
-                .setConstraints(
-                    Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.UNMETERED)
-                        .setRequiresBatteryNotLow(true)
-                        .build()
-                )
-                .build()
-        )
-
-        super.onCreate()
-    }
 }

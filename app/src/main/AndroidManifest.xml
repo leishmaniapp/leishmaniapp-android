@@ -49,9 +49,9 @@
 
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"
-            tools:node="merge" />
+            tools:node="merge">
+        </service>
 
-        <!-- If you want to disable android.startup completely. -->
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"

@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 
 /**
- * Send and recieve [AnalysisRequest] and [AnalysisResponse] to a remote service
+ * Send and recieve [AnalysisRequest] and [AnalysisResponse] to/from an analysis service
+ * This service is based upon the LeishmaniappCloudServicesv2 definition
+ * [visit protobuf_schema for more information](https://github.com/leishmaniapp/protobuf_schema)
  */
 interface IAnalysisService {
     /**

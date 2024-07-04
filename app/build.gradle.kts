@@ -145,6 +145,9 @@ dependencies {
     /* Androidx Room */
     implementation(libs.bundles.androidx.room)
 
+    /* Androidx AppStartup */
+    implementation(libs.bundles.androidx.startup)
+
     /* Androidx CameraX */
     implementation(libs.bundles.androidx.camerax)
 
