@@ -1,18 +1,15 @@
 package com.leishmaniapp.presentation.ui.views.start
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,7 +40,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  * @view A02
  */
 @Composable
-fun AuthenticationScreen(
+fun AuthenticationOnlineScreen(
     onAuthenticate: (Email, Password) -> Unit,
 ) {
 
@@ -85,7 +82,7 @@ fun AuthenticationScreen(
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = email,
-                    label = { Text(text = stringResource(id = R.string.username)) },
+                    label = { Text(text = stringResource(id = R.string.email)) },
                     onValueChange = { email = it },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
@@ -136,8 +133,8 @@ fun AuthenticationScreen(
 
 @Preview
 @Composable
-fun AuthenticationScreenPreview() {
+fun AuthenticationOnlineScreenPreview() {
     LeishmaniappTheme {
-        AuthenticationScreen { _, _ -> }
+        AuthenticationOnlineScreen { _, _ -> }
     }
 }

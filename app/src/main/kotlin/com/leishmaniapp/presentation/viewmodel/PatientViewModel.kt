@@ -15,22 +15,18 @@ import com.leishmaniapp.domain.exceptions.GenericException
 import com.leishmaniapp.domain.repository.IDiagnosesRepository
 import com.leishmaniapp.domain.repository.IPatientsRepository
 import com.leishmaniapp.domain.types.Identificator
-import com.leishmaniapp.presentation.viewmodel.state.AuthState
 import com.leishmaniapp.presentation.viewmodel.state.PatientState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -99,7 +95,7 @@ class PatientViewModel @Inject constructor(
         selectedPatient.asFlow()
             .flatMapMerge { patient ->
                 if (patient != null) {
-                    diagnosesRepository.diagnosesForPatient(patient)
+                    diagnosesRepository.getDiagnosesForPatient(patient)
                 } else {
                     flowOf(listOf())
                 }

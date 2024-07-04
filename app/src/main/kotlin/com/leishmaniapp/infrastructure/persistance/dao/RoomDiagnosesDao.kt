@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
-import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.infrastructure.persistance.entities.RoomCompleteDiagnosisRelation
 import com.leishmaniapp.infrastructure.persistance.entities.RoomDiagnosisEntity
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +15,7 @@ import java.util.UUID
  */
 @Dao
 interface RoomDiagnosesDao {
+
     @Upsert
     suspend fun upsertDiagnosis(diagnosis: RoomDiagnosisEntity)
 
@@ -24,27 +24,21 @@ interface RoomDiagnosesDao {
 
     @Transaction
     @Query("SELECT * FROM Diagnoses WHERE 1")
-    fun allDiagnoses(): Flow<List<RoomCompleteDiagnosisRelation>>
+    fun getAllDiagnoses(): Flow<List<RoomCompleteDiagnosisRelation>>
+
+    @Transaction
+    @Query("SELECT * FROM Diagnoses WHERE id = :uuid")
+    fun getDiagnosis(uuid: UUID): Flow<RoomCompleteDiagnosisRelation?>
 
     @Transaction
     @Query("SELECT * FROM Diagnoses WHERE patient_document = :document")
-    fun diagnosesForPatientDocument(
+    fun getDiagnosesForPatientDocument(
         document: String
     ): Flow<List<RoomCompleteDiagnosisRelation>>
 
     @Transaction
     @Query("SELECT * FROM Diagnoses WHERE specialist_email = :email")
-    fun diagnosesForSpecialistEmail(
+    fun getDiagnosesForSpecialistEmail(
         email: String
     ): Flow<List<RoomCompleteDiagnosisRelation>>
-
-    @Transaction
-    @Query("SELECT * FROM Diagnoses WHERE specialist_email = :specialistEmail AND finalized = 0")
-    fun diagnosesForSpecialistNotFinished(
-        specialistEmail: Email
-    ): Flow<List<RoomCompleteDiagnosisRelation>>
-
-    @Transaction
-    @Query("SELECT * FROM Diagnoses WHERE id = :uuid")
-    fun diagnosisForId(uuid: UUID): Flow<RoomCompleteDiagnosisRelation?>
 }

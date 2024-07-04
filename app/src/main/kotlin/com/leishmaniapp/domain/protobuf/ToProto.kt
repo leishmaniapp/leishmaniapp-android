@@ -3,7 +3,7 @@ package com.leishmaniapp.domain.protobuf
 import com.leishmaniapp.domain.entities.Diagnosis
 import com.leishmaniapp.domain.entities.ImageMetadata
 import com.leishmaniapp.domain.entities.Specialist
-import com.leishmaniapp.infrastructure.security.base64
+import com.leishmaniapp.infrastructure.security.encodeBase64
 import com.leishmaniapp.utilities.time.toUnixTime
 
 fun ImageMetadata.toProto(): com.leishmaniapp.cloud.model.ImageMetadata =
@@ -21,7 +21,7 @@ fun Diagnosis.toProto(): com.leishmaniapp.cloud.model.Diagnosis =
         specialist = specialist.toProto(),
         results = results.toProto(),
         date = date.toUnixTime(),
-        patient_hash = patient.hash.base64(),
+        patient_hash = patient.hash.encodeBase64(),
         remarks = remarks,
         samples = samples,
     )

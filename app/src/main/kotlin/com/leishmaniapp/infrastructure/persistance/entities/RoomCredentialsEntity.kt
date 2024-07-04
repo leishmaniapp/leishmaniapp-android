@@ -14,8 +14,8 @@ import com.leishmaniapp.domain.types.ShaHash
 @Entity(tableName = "Credentials")
 data class RoomCredentialsEntity(
     @PrimaryKey val email: Email,
-    @ColumnInfo val token: AccessToken,
-    @ColumnInfo(typeAffinity = ColumnInfo.BLOB) val password: ShaHash,
+    @ColumnInfo val token: AccessToken = "",
+    @ColumnInfo val password: ShaHash = listOf(),
 ) {
     constructor(credentials: Credentials) : this(
         email = credentials.email,

@@ -5,6 +5,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.map
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -12,6 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.leishmaniapp.domain.services.INetworkService
 import com.leishmaniapp.presentation.navigation.NavigationRoutes
 import com.leishmaniapp.presentation.viewmodel.state.AuthState
 import com.leishmaniapp.presentation.ui.dialogs.ProfileAlertDialog
@@ -34,13 +36,17 @@ fun NavGraphBuilder.menuNavGraph(
         composable(route = NavigationRoutes.MenuRoute.DiseasesRoute.route) {
 
             // Grab the authentication state
-            val authState: AuthState.Authenticated? by sessionViewModel.authState
+            val authState: AuthState.Authenticated? by sessionViewModel.state
                 .map { it.authenticatedOrNull() }
                 .observeAsState()
+
             if (authState == null) {
                 navHostController.navigateToAuthentication()
                 return@composable
             }
+
+            // Get the network state
+            val networkState: INetworkService.NetworkState by sessionViewModel.networkState.collectAsStateWithLifecycle()
 
             // Show the profile alert
             var showProfileAlert by rememberSaveable {
@@ -48,7 +54,7 @@ fun NavGraphBuilder.menuNavGraph(
             }
 
             DiseasesMenuScreen(
-                online = false, /* TODO */
+                online = networkState != INetworkService.NetworkState.OFFLINE,
                 diseases = authState!!.s.diseases,
                 onProfileSelection = {
                     showProfileAlert = true
@@ -60,19 +66,27 @@ fun NavGraphBuilder.menuNavGraph(
             )
 
             if (showProfileAlert) {
-                ProfileAlertDialog(specialist = authState!!.s, onLogout = {
-                    diagnosisViewModel.dismissDisease()
-                    sessionViewModel.logout()
-                }, onDismiss = {
-                    showProfileAlert = false
-                })
+                ProfileAlertDialog(
+                    specialist = authState!!.s,
+                    onLogout = {
+                        diagnosisViewModel.dismissDisease()
+                        sessionViewModel.logout()
+                    },
+                    onForget = {
+                        diagnosisViewModel.dismissDisease()
+                        sessionViewModel.forget()
+                    },
+                    onDismiss = {
+                        showProfileAlert = false
+                    },
+                )
             }
         }
 
         composable(NavigationRoutes.MenuRoute.MainMenuRoute.route) {
 
             // Grab the authentication state
-            val authState: AuthState.Authenticated? by sessionViewModel.authState
+            val authState: AuthState.Authenticated? by sessionViewModel.state
                 .map { it.authenticatedOrNull() }
                 .observeAsState()
             if (authState == null) {
@@ -107,14 +121,20 @@ fun NavGraphBuilder.menuNavGraph(
                 onAwaitingDiagnoses = { /*TODO*/ }) {}
 
             if (showProfileAlert) {
-                ProfileAlertDialog(specialist = (authState as AuthState.Authenticated).s,
+                ProfileAlertDialog(
+                    specialist = (authState as AuthState.Authenticated).s,
                     onLogout = {
                         diagnosisViewModel.dismissDisease()
                         sessionViewModel.logout()
                     },
+                    onForget = {
+                        diagnosisViewModel.dismissDisease()
+                        sessionViewModel.forget()
+                    },
                     onDismiss = {
                         showProfileAlert = false
-                    })
+                    },
+                )
             }
         }
     }

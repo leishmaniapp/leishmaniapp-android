@@ -42,8 +42,8 @@ object CloudConfigurationModule {
     @Provides
     @Singleton
     fun provideAuthorizationInterceptior(
-        tokenRepository: IAuthorizationService,
+        authorizationService: IAuthorizationService,
     ): AuthorizationInterceptor = AuthorizationInterceptor(
-        tokenRepository = tokenRepository
+        authorizationService = authorizationService
     )
 }

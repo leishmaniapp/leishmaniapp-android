@@ -8,12 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leishmaniapp.cloud.auth.AuthRequest
 import com.leishmaniapp.cloud.auth.TokenRequest
+import com.leishmaniapp.domain.entities.Credentials
 import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.exceptions.BadAuthenticationException
-import com.leishmaniapp.domain.exceptions.GenericException
 import com.leishmaniapp.domain.exceptions.LeishmaniappException
 import com.leishmaniapp.domain.exceptions.NetworkException
 import com.leishmaniapp.domain.protobuf.fromProto
+import com.leishmaniapp.domain.repository.ICredentialsRepository
 import com.leishmaniapp.domain.repository.ISpecialistsRepository
 import com.leishmaniapp.domain.services.IAuthorizationService
 import com.leishmaniapp.domain.services.IAuthService
@@ -21,15 +22,18 @@ import com.leishmaniapp.domain.services.INetworkService
 import com.leishmaniapp.domain.types.AccessToken
 import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.domain.types.Password
+import com.leishmaniapp.infrastructure.security.hash
 import com.leishmaniapp.presentation.viewmodel.state.AuthState
 import com.leishmaniapp.utilities.extensions.getOrThrow
+import com.leishmaniapp.utilities.extensions.toRecord
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
@@ -52,10 +56,11 @@ class SessionViewModel @Inject constructor(
 
     // Services
     private val authService: IAuthService,
+    private val authorizationService: IAuthorizationService,
     networkService: INetworkService,
 
     // Repositories
-    private val tokenRepository: IAuthorizationService,
+    private val credentialsRepository: ICredentialsRepository,
     private val specialistRepository: ISpecialistsRepository,
 
     ) : ViewModel(), DismissableState {
@@ -67,26 +72,26 @@ class SessionViewModel @Inject constructor(
         val TAG: String = SessionViewModel::class.simpleName!!
     }
 
-    private val _authState: MutableLiveData<AuthState> = savedStateHandle.getLiveData(
+    private val _state: MutableLiveData<AuthState> = savedStateHandle.getLiveData(
         "authState", AuthState.Busy,
     )
 
     /**
      * Authentication status representation
      */
-    val authState: LiveData<AuthState> = _authState
+    val state: LiveData<AuthState> = _state
 
     /**
-     * Get the current network state
+     * Get the current network state and set the addecuate [AuthState.None] value is present
      */
-    private val networkState: StateFlow<INetworkService.NetworkState> =
+    val networkState: StateFlow<INetworkService.NetworkState> =
         networkService.networkState()
             // Run the flow on IO
             .flowOn(Dispatchers.IO)
             // Update the connection state
             .onEach { status ->
-                if (authState.value is AuthState.None) {
-                    _authState.value = AuthState.None.getConnectionState(status)
+                if (state.value is AuthState.None) {
+                    _state.value = AuthState.None.getConnectionState(status)
                 }
             }
             // Transform into StateFlow
@@ -97,105 +102,64 @@ class SessionViewModel @Inject constructor(
             )
 
     /**
-     * [AccessToken] flow, automatically stores the new [Specialist] information associated to the
-     * token contents in the datase
-     */
-    val token: StateFlow<AccessToken?> = tokenRepository.accessToken
-        // Run the flow on IO
-        .flowOn(Dispatchers.IO)
-        // For each new token, decode the contents and update the specialist metadata
-        .onEach { token ->
-            // Change the busy status
-            if (authState.value is AuthState.Busy) {
-                _authState.value = AuthState.None.getConnectionState()
-            }
-            // Update the specialist from the remote server if token was provided
-            if (token != null && networkState.value != INetworkService.NetworkState.OFFLINE) {
-                // Decode the token contents
-                val payload = withContext(Dispatchers.IO) {
-                    authService.decodeToken(TokenRequest(token = token)).getOrThrow()
-                        .run { status!!.code.getOrThrow { payload!! } }
-                }
-                // Get the specialist
-                val specialist = Specialist.fromProto(payload.specialist!!, token)
-                // Update the specialist in the database
-                specialistRepository.upsertSpecialist(specialist)
-            }
-        }
-        // Catch errors within the call, can only be network errors
-        .catch { err ->
-            Log.e(TAG, "Exception during AccessToken Flow", err)
-            _authState.value = AuthState.Error(NetworkException(err))
-        }
-        // Transform to a state flow
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            null
-        )
-
-    /**
-     * [Specialist] flow, automatically sets the authentication status when a new [AccessToken] arrives
-     */
-    val specialist: StateFlow<Specialist?> = token
-        // Transform the latest token flow into a specialist
-        .flatMapLatest { token ->
-            if (token != null) {
-                specialistRepository.specialistByToken(token)
-            } else {
-                flowOf(null)
-            }
-        }
-        // Run the flow on IO
-        .flowOn(Dispatchers.IO)
-        // For each new specialist, set the authentication state
-        .onEach { specialist ->
-            _authState.value = when {
-                specialist != null -> AuthState.Authenticated(specialist)
-                authState.value is AuthState.Busy -> AuthState.Busy
-                else -> AuthState.None.getConnectionState()
-            }
-        }
-        // Catch errors within the call
-        .catch { err ->
-            Log.e(TAG, "Exception during Specialist Flow", err)
-            _authState.value = AuthState.Error(GenericException(err))
-        }
-        // Transform to a state flow
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            null
-        )
-
-    /**
      * Create a new [AuthState.None] state gathering the network state from a [INetworkService]
      */
     private fun AuthState.None.Companion.getConnectionState(
         state: INetworkService.NetworkState = networkState.value,
-    ): AuthState.None =
-        AuthState.None(
-            if (state == INetworkService.NetworkState.OFFLINE) {
-                AuthState.None.AuthConnectionState.OFFLINE
-            } else {
-                AuthState.None.AuthConnectionState.ONLINE
-            }
-        )
+    ): AuthState.None = AuthState.None(
+        if (state == INetworkService.NetworkState.OFFLINE) {
+            AuthState.None.AuthConnectionState.OFFLINE
+        } else {
+            AuthState.None.AuthConnectionState.ONLINE
+        }
+    )
 
     /**
      * Dismiss the current [AuthState] to [AuthState.None], useful for getting rid of exceptions
      */
     override fun dismiss() {
         viewModelScope.launch {
-            _authState.value = AuthState.None.getConnectionState()
+            _state.value = AuthState.None.getConnectionState()
         }
     }
 
     /**
+     * Get the currently authorized credentials
+     */
+    private val credentials: StateFlow<Credentials?> =
+        authorizationService.credentials.flowOn(Dispatchers.IO)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    /**
+     * Get the currently logged in specialist
+     */
+    val specialist: StateFlow<Specialist?> =
+        credentials
+            .flatMapMerge {
+                it?.let { c -> specialistRepository.specialistByEmail(c.email) }
+                    ?: flowOf(null)
+            }
+            .flowOn(Dispatchers.IO)
+            .onEach { s ->
+                // Set the authentication value
+                _state.value =
+                    s?.let { AuthState.Authenticated(s) } ?: AuthState.None.getConnectionState()
+            }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    /**
+     * Get a list with all the remembered credentials
+     */
+    val rememberedCredentials: StateFlow<List<Email>> =
+        credentialsRepository.getAllEmailsFromCredentials()
+            .flowOn(Dispatchers.IO)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, listOf())
+
+    /**
      * Try to authenticate user in remote server
      */
-    fun authenticate(email: Email, password: Password) {
-        _authState.value = AuthState.Busy;
+    fun authenticateOnline(email: Email, password: Password) {
+        _state.value = AuthState.Busy
         viewModelScope.launch {
             try {
                 // Get the authentication token
@@ -204,21 +168,68 @@ class SessionViewModel @Inject constructor(
                         .run { status!!.code.getOrThrow { token!! } }
                 }
 
-                // Store the token and the specialist
-                // Should automatically login as init is listening on token changes
-                tokenRepository.storeAuthenticationToken(token).getOrThrow()
+                // Get the specialist
+                withContext(Dispatchers.IO) {
+                    authService.decodeToken(TokenRequest(token)).getOrThrow().let { payload ->
+                        // Get the specialist and insert it
+                        payload.status!!.code.getOrThrow { payload.payload!! }.specialist!!.let { specialist ->
+                            specialistRepository.upsertSpecialist(Specialist.fromProto(specialist))
+                        }
+                    }
+                }
+
+                // Create the specialist credentials
+                Credentials(
+                    email = email, token = token, password = password.hash()
+                ).let { credentials ->
+                    withContext(Dispatchers.IO) {
+                        // Store the token and the credentials
+                        credentialsRepository.upsertCredentials(credentials)
+                        // Authorize the user
+                        authorizationService.authorize(credentials)
+                    }
+                }
 
             } catch (e: LeishmaniappException) {
 
                 // Catch application exceptions
                 Log.e(TAG, e.toString(), e)
-                _authState.value = AuthState.Error(e)
+                _state.value = AuthState.Error(e)
 
             } catch (e: Exception) {
 
                 // Catch gRPC exceptions
                 Log.e(TAG, e.toString(), e)
-                _authState.value = AuthState.Error(NetworkException(e))
+                _state.value = AuthState.Error(NetworkException(e))
+            }
+        }
+    }
+
+    /**
+     * Try to authenticate user using internal credentials
+     */
+    fun authenticateOffline(email: Email, password: Password) {
+        _state.value = AuthState.Busy
+        viewModelScope.launch {
+            try {
+                // Get the stored credentials
+                credentialsRepository.credentialsByEmailAndHash(email, password.hash()).first()
+                    // Authorize the user
+                    ?.let { credentials -> authorizationService.authorize(credentials) }
+                // If credentials were not found, throw authentication exception
+                    ?: throw BadAuthenticationException()
+
+            } catch (e: LeishmaniappException) {
+
+                // Catch application exceptions
+                Log.e(TAG, e.toString(), e)
+                _state.value = AuthState.Error(e)
+
+            } catch (e: Exception) {
+
+                // Catch gRPC exceptions
+                Log.e(TAG, e.toString(), e)
+                _state.value = AuthState.Error(NetworkException(e))
             }
         }
     }
@@ -226,19 +237,27 @@ class SessionViewModel @Inject constructor(
     /**
      * Forget authentication and [dismiss] state
      */
+    fun forget() {
+        credentials.value?.let { c ->
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    // Delete the user credentials
+                    credentialsRepository.deleteCredentials(c)
+                    // Remove user authorization
+                    authorizationService.forget()
+                }
+            }
+        }
+    }
+
+    /**
+     * Unauthorize (keeping credentials) and [dismiss] state for switching users
+     */
     fun logout() {
-        // Get the specialist (Required authentication)
-        val s = (_authState.value as? AuthState.Authenticated ?: return).s
-        // Change state to busy
-        _authState.value = AuthState.Busy
-        // Change specialist token to empty
-        viewModelScope.launch(Dispatchers.IO) {
-            // Remove token from specialist
-            specialistRepository.upsertSpecialist(s.copy(token = null))
-            // Forget token
-            tokenRepository.forgetAuthenticationToken().onFailure { e ->
-                Log.e(TAG, "Failed logout", e)
-                _authState.value = AuthState.Error(BadAuthenticationException())
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                // Remove user authorization
+                authorizationService.forget()
             }
         }
     }

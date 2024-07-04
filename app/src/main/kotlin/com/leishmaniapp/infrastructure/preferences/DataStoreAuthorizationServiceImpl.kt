@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.leishmaniapp.domain.entities.Credentials
 import com.leishmaniapp.domain.services.IAuthorizationService
 import com.leishmaniapp.domain.types.AccessToken
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -16,6 +17,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 /**
@@ -40,7 +43,7 @@ class DataStoreAuthorizationServiceImpl @Inject constructor(
         /**
          * TAG for using with [DataStore]
          */
-        const val TAG: String = "TokenDataStore"
+        val TAG: String = DataStoreAuthorizationServiceImpl::class.simpleName!!
     }
 
     /**
@@ -51,7 +54,7 @@ class DataStoreAuthorizationServiceImpl @Inject constructor(
         /**
          * Key for accessing a [AccessToken] stored in [DataStore]
          */
-        val accessTokenKey = stringPreferencesKey("$TAG:accessToken")
+        val credentialsKey = stringPreferencesKey("${TAG}_credentials")
     }
 
     /**
@@ -59,38 +62,34 @@ class DataStoreAuthorizationServiceImpl @Inject constructor(
      */
     private val dataStore = context.dataStore
 
-    override val accessToken: Flow<AccessToken?> = dataStore.data.mapLatest { preferences ->
-        preferences[PreferencesKeys.accessTokenKey]
+    /**
+     * Currently stored [Credentials]
+     */
+    override val credentials: Flow<Credentials?> = dataStore.data.mapLatest { preferences ->
+        preferences[PreferencesKeys.credentialsKey]?.let { Json.decodeFromString(it) }
     }
 
-    override val isTokenStored: Flow<Boolean> = dataStore.data.map { preferences ->
-        preferences.contains(PreferencesKeys.accessTokenKey)
-    }
-
-    override suspend fun storeAuthenticationToken(token: AccessToken): Result<Unit> =
+    override suspend fun authorize(crendentials: Credentials): Result<Unit> =
         withContext(Dispatchers.IO) {
             try {
                 dataStore.edit { preferences ->
-                    preferences[PreferencesKeys.accessTokenKey] = token
+                    preferences[PreferencesKeys.credentialsKey] =
+                        Json.encodeToString(crendentials)
                 }
-                Log.d(TAG, "Stored new authentication token")
                 return@withContext Result.success(Unit)
             } catch (e: Throwable) {
-                Log.e(TAG, "Failed to store an authentication token", e)
                 return@withContext Result.failure(e)
             }
         }
 
-    override suspend fun forgetAuthenticationToken(): Result<Unit> =
+    override suspend fun forget() =
         withContext(Dispatchers.IO) {
             try {
                 dataStore.edit { preferences ->
-                    preferences.remove(PreferencesKeys.accessTokenKey)
+                    preferences.remove(PreferencesKeys.credentialsKey)
                 }
-                Log.d(TAG, "Deleted authentication token")
                 return@withContext Result.success(Unit)
             } catch (e: Throwable) {
-                Log.e(TAG, "Failed to delete current authentication token", e)
                 return@withContext Result.failure(e)
             }
         }

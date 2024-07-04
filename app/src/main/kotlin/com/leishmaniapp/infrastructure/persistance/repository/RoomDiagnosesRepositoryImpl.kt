@@ -4,7 +4,6 @@ import com.leishmaniapp.domain.entities.Diagnosis
 import com.leishmaniapp.domain.entities.Patient
 import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.repository.IDiagnosesRepository
-import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.infrastructure.persistance.dao.RoomDiagnosesDao
 import com.leishmaniapp.infrastructure.persistance.entities.RoomDiagnosisEntity
 import kotlinx.coroutines.flow.Flow
@@ -31,21 +30,14 @@ class RoomDiagnosesRepositoryImpl @Inject constructor(
         RoomDiagnosisEntity(diagnosis)
     )
 
-    override fun allDiagnoses(): Flow<List<Diagnosis>> =
-        dao.allDiagnoses().map { flow -> flow.map { it.toDiagnosis() } }
-
-    override fun diagnosesForPatient(patient: Patient): Flow<List<Diagnosis>> =
-        dao.diagnosesForPatientDocument(patient.document)
+    override fun getDiagnosesForPatient(patient: Patient): Flow<List<Diagnosis>> =
+        dao.getDiagnosesForPatientDocument(patient.document)
             .map { flow -> flow.map { it.toDiagnosis() } }
 
-    override fun diagnosesForSpecialist(specialist: Specialist): Flow<List<Diagnosis>> =
-        dao.diagnosesForSpecialistEmail(specialist.email)
+    override fun getDiagnosesForSpecialist(specialist: Specialist): Flow<List<Diagnosis>> =
+        dao.getDiagnosesForSpecialistEmail(specialist.email)
             .map { flow -> flow.map { it.toDiagnosis() } }
 
-    override fun diagnosesForSpecialistNotFinished(specialistEmail: Email): Flow<List<Diagnosis>> =
-        dao.diagnosesForSpecialistNotFinished(specialistEmail)
-            .map { flow -> flow.map { it.toDiagnosis() } }
-
-    override fun diagnosisForId(uuid: UUID): Flow<Diagnosis?> =
-        dao.diagnosisForId(uuid).map { it?.toDiagnosis() }
+    override fun getDiagnosis(uuid: UUID): Flow<Diagnosis?> =
+        dao.getDiagnosis(uuid).map { it?.toDiagnosis() }
 }

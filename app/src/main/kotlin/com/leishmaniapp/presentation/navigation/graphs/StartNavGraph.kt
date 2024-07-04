@@ -1,18 +1,21 @@
 package com.leishmaniapp.presentation.navigation.graphs
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.leishmaniapp.presentation.navigation.NavigationRoutes
-import com.leishmaniapp.presentation.viewmodel.state.AuthState
 import com.leishmaniapp.presentation.ui.dialogs.BusyAlertDialog
-import com.leishmaniapp.presentation.ui.dialogs.DisconnectedAlertDialog
+import com.leishmaniapp.presentation.viewmodel.state.AuthState
 import com.leishmaniapp.presentation.ui.dialogs.ErrorAlertDialog
-import com.leishmaniapp.presentation.ui.views.start.AuthenticationScreen
+import com.leishmaniapp.presentation.ui.layout.BusyScreen
+import com.leishmaniapp.presentation.ui.views.start.AuthenticationOfflineScreen
+import com.leishmaniapp.presentation.ui.views.start.AuthenticationOnlineScreen
 import com.leishmaniapp.presentation.ui.views.start.GreetingsScreen
 import com.leishmaniapp.presentation.viewmodel.SessionViewModel
 
@@ -29,26 +32,44 @@ fun NavGraphBuilder.startNavGraph(
             GreetingsScreen(onContinue = {
                 navHostController.navigateToAuthentication()
             })
+
+            // Signout for old sessions
+            LaunchedEffect(key1 = true) {
+                sessionViewModel.logout()
+            }
         }
 
         composable(route = NavigationRoutes.StartRoute.AuthenticationRoute.route) {
 
             // Grab the authentication state
-            val authState by sessionViewModel.authState.observeAsState(initial = AuthState.Busy)
+            val authState by sessionViewModel.state.observeAsState(initial = AuthState.Busy)
+            val rememberedCredentials by sessionViewModel.rememberedCredentials.collectAsStateWithLifecycle()
 
             // If authenticated, then exit this screen
             if (authState is AuthState.Authenticated) {
                 navHostController.navigateToDiseasesMenu()
             }
 
-            // Show the authentication screen
-            AuthenticationScreen(onAuthenticate = { email, password ->
-                sessionViewModel.authenticate(email, password)
-            })
+            // Show auth screens
+            when (authState) {
+                AuthState.None(AuthState.None.AuthConnectionState.OFFLINE) ->
+                    AuthenticationOfflineScreen(emails = rememberedCredentials) { email, password ->
+                        // Show the normal offline screen
+                        sessionViewModel.authenticateOffline(email, password)
+                    }
 
+                AuthState.None(AuthState.None.AuthConnectionState.ONLINE) ->
+                    // Show the normal authentication screen
+                    AuthenticationOnlineScreen(onAuthenticate = { email, password ->
+                        sessionViewModel.authenticateOnline(email, password)
+                    })
+
+                else -> {}
+            }
+
+            // Show alert dialogs
             when (authState) {
                 is AuthState.Busy -> BusyAlertDialog()
-                AuthState.None(AuthState.None.AuthConnectionState.OFFLINE) -> DisconnectedAlertDialog()
                 is AuthState.Error -> ErrorAlertDialog(
                     error = (authState as AuthState.Error).e
                 ) { sessionViewModel.dismiss() }

@@ -20,6 +20,16 @@ interface ICredentialsRepository {
     suspend fun deleteCredentials(email: Email)
 
     /**
+     * Delete [Credentials]
+     */
+    suspend fun deleteCredentials(credentials: Credentials)
+
+    /**
+     * Get all the [Email] fields from all the stored [Credentials]
+     */
+    fun getAllEmailsFromCredentials(): Flow<List<Email>>
+
+    /**
      * Get credentials given their [Email] and [ShaHash]
      */
     fun credentialsByEmailAndHash(email: Email, hash: ShaHash): Flow<Credentials?>

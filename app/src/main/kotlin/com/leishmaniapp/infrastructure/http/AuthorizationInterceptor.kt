@@ -15,18 +15,19 @@ class AuthorizationInterceptor @Inject constructor(
     /**
      * Get the authentication token
      */
-    private val tokenRepository: IAuthorizationService,
+    private val authorizationService: IAuthorizationService,
 
     ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response =
         // Get the authorization token
-        runBlocking { tokenRepository.accessToken.first() }.let { token ->
+        runBlocking { authorizationService.credentials.first() }.let { credentials ->
             chain.proceed(
                 // If token is present add the authorization header
-                if (token != null) {
+                if (credentials != null) {
                     chain.request().newBuilder()
-                        .header("authorization", "Bearer $token")
+                        .header("Authorization", "Bearer ${credentials.token}")
+                        .header("From", "Bearer ${credentials.email}")
                         .build()
                 }
                 // If not, just forward the request

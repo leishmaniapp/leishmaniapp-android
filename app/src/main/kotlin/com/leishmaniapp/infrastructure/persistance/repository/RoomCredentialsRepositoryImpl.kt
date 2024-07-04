@@ -18,10 +18,18 @@ class RoomCredentialsRepositoryImpl @Inject constructor(
     private val dao: RoomCredentialsDao,
 
     ) : ICredentialsRepository {
+
     override suspend fun upsertCredentials(credentials: Credentials) =
         dao.upsertCredentials(RoomCredentialsEntity(credentials))
 
-    override suspend fun deleteCredentials(email: Email) = dao.deleteCredentials(email)
+    override suspend fun deleteCredentials(email: Email) =
+        dao.deleteCredentials(RoomCredentialsEntity(email))
+
+    override suspend fun deleteCredentials(credentials: Credentials) =
+        dao.deleteCredentials(RoomCredentialsEntity(credentials))
+
+    override fun getAllEmailsFromCredentials(): Flow<List<Email>> =
+        dao.getAllCredentials().map { list -> list.map { it.email } }
 
     override fun credentialsByEmailAndHash(email: Email, hash: ShaHash): Flow<Credentials?> =
         dao.credentialsByEmailAndHash(email, hash).map { it?.toCredentials() }

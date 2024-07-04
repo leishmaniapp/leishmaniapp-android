@@ -1,7 +1,6 @@
 package com.leishmaniapp.presentation.viewmodel
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -20,7 +19,6 @@ import com.leishmaniapp.domain.repository.IPatientsRepository
 import com.leishmaniapp.domain.repository.ISamplesRepository
 import com.leishmaniapp.domain.repository.ISpecialistsRepository
 import com.leishmaniapp.domain.services.IPictureStandardization
-import com.leishmaniapp.infrastructure.picture.ApplicationPictureStandardizationImpl
 import com.leishmaniapp.presentation.viewmodel.state.DiagnosisState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -107,7 +105,7 @@ class DiagnosisViewModel @Inject constructor(
      */
     val diagnosis: StateFlow<Diagnosis?> = state.asFlow().flatMapMerge { state ->
         when (state) {
-            is DiagnosisState.OnDiagnosis -> diagnosesRepository.diagnosisForId(state.id)
+            is DiagnosisState.OnDiagnosis -> diagnosesRepository.getDiagnosis(state.id)
             is DiagnosisState.None -> flowOf(null)
         }
     }.flowOn(Dispatchers.IO).stateIn(viewModelScope, SharingStarted.Eagerly, null)

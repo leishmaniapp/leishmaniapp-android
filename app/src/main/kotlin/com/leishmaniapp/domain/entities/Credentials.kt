@@ -5,11 +5,13 @@ import com.leishmaniapp.domain.types.AccessToken
 import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.domain.types.ShaHash
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 /**
  * Store credentials for internal use
  */
 @Parcelize
+@Serializable
 data class Credentials(
 
     /**

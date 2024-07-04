@@ -64,7 +64,6 @@ object MockGenerator {
     fun Specialist.Companion.mock() = Specialist(
         name = faker.name.name(),
         email = faker.internet.email(),
-        token = faker.internet.password(),
         diseases = Disease.diseases(),
     )
 

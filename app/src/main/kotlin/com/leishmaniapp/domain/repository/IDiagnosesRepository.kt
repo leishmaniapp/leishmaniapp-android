@@ -1,14 +1,8 @@
 package com.leishmaniapp.domain.repository
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Query
-import androidx.room.Upsert
 import com.leishmaniapp.domain.entities.Diagnosis
-import com.leishmaniapp.domain.entities.DocumentType
 import com.leishmaniapp.domain.entities.Patient
 import com.leishmaniapp.domain.entities.Specialist
-import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.domain.types.Identificator
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
@@ -29,33 +23,21 @@ interface IDiagnosesRepository {
     suspend fun deleteDiagnosis(diagnosis: Diagnosis)
 
     /**
-     * Get all the [Diagnosis] stored in database
+     * Get a [Diagnosis] given its [Identificator]
      */
-    fun allDiagnoses(): Flow<List<Diagnosis>>
+    fun getDiagnosis(uuid: UUID): Flow<Diagnosis?>
 
     /**
      * all the [Diagnosis] for a given [Patient]
      */
-    fun diagnosesForPatient(
+    fun getDiagnosesForPatient(
         patient: Patient
     ): Flow<List<Diagnosis>>
 
     /**
      * all the [Diagnosis] for a given [Specialist]
      */
-    fun diagnosesForSpecialist(
+    fun getDiagnosesForSpecialist(
         specialist: Specialist
     ): Flow<List<Diagnosis>>
-
-    /**
-     * List of [Diagnosis] that have not been finished for a given specialist
-     */
-    fun diagnosesForSpecialistNotFinished(
-        specialistEmail: Email
-    ): Flow<List<Diagnosis>>
-
-    /**
-     * Get a [Diagnosis] given its [Identificator]
-     */
-    fun diagnosisForId(uuid: UUID): Flow<Diagnosis?>
 }

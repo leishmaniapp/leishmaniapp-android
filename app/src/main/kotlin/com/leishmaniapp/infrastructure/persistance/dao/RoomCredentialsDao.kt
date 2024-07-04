@@ -13,10 +13,13 @@ import kotlinx.coroutines.flow.Flow
 interface RoomCredentialsDao {
 
     @Upsert
-    suspend fun upsertCredentials(credentials: RoomCredentialsEntity?)
+    suspend fun upsertCredentials(credentials: RoomCredentialsEntity)
 
     @Delete
-    suspend fun deleteCredentials(email: Email)
+    suspend fun deleteCredentials(credentials: RoomCredentialsEntity)
+
+    @Query("SELECT * FROM Credentials")
+    fun getAllCredentials(): Flow<List<RoomCredentialsEntity>>
 
     @Query("SELECT * FROM Credentials WHERE email = :email AND password = :hash")
     fun credentialsByEmailAndHash(email: Email, hash: ShaHash): Flow<RoomCredentialsEntity?>

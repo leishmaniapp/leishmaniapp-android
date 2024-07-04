@@ -3,7 +3,9 @@ package com.leishmaniapp.utilities.extensions
 import com.leishmaniapp.cloud.types.StatusCode
 import com.leishmaniapp.domain.exceptions.BadAnalysisException
 import com.leishmaniapp.domain.exceptions.BadAuthenticationException
+import com.leishmaniapp.domain.exceptions.LeishmaniappException
 import com.leishmaniapp.domain.exceptions.ProcedureExceptionWithStatusCode
+import kotlin.jvm.Throws
 
 /**
  * Return a [ProcedureExceptionWithStatusCode] or a corresponding [com.leishmaniapp.domain.exceptions.LeishmaniappException]
@@ -25,5 +27,6 @@ fun <T> StatusCode.asResult(f: () -> T): Result<T> =
 /**
  * Run [asResult] and throw on [Result.failure]
  */
+@Throws(LeishmaniappException::class)
 fun <T> StatusCode.getOrThrow(f: () -> T): T =
     this.asResult(f).getOrThrow()

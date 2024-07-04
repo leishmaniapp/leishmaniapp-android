@@ -39,7 +39,8 @@
     <string name="search">Buscar</string>
     <string name="start">Comenzar</string>
     <string name="sign_in">Iniciar Sesión</string>
-    <string name="sign_out">Cerrar Sesión</string>
+    <string name="sign_out">Olvidar Sesión</string>
+    <string name="change">Cambiar Usuario</string>
     <string name="select_file">Seleccionar archivo</string>
     <string name="action_export">Exportar</string>
     <string name="action_import">Importar</string>
@@ -52,7 +53,7 @@
 
     <!-- General -->
     <string name="date_time">Fecha y Hora</string>
-    <string name="username">Usuario</string>
+    <string name="email">Correo</string>
     <string name="password">Contraseña</string>
     <string name="database">Base de Datos</string>
     <string name="export_import">Exportar e Importar</string>
@@ -166,7 +167,9 @@
     <string name="authentication">Autenticación</string>
     <string name="authentication_content">Utilice las credenciales previamente asginadas para iniciar sesión</string>
     <string name="authentication_failure">Especialista no encontrado o credenciales incorrectas</string>
-    <string name="authentication_offline">Es necesario iniciar sesión con una conexión a Internet, una vez registrada la sesión es posible utilizar la aplicación sin una conexión</string>
+    <string name="authentication_welcome">Bienvenido de nuevo</string>
+    <string name="authentication_content_offline">Utilice un usuario que haya sido previamente registrado en la aplicación</string>
+    <string name="authentication_offline">Es necesario iniciar sesión con una conexión a Internet, una vez registrada la sesión es posible utilizar el mismo usuario para acceder a la aplicación</string>
 
     <!-- Camera -->
     <string name="missing_camera_permission">Es necesario el permiso de la cámara para continuar el diagnóstico</string>

@@ -33,7 +33,7 @@ fun RootNavigation(
 ) {
 
     // Navigate to authentication if unauthenticated
-    val authState by sessionViewModel.authState.observeAsState(initial = AuthState.Busy)
+    val authState by sessionViewModel.state.observeAsState(initial = AuthState.Busy)
     LaunchedEffect(key1 = authState, key2 = navigationController.currentDestination) {
         if ((authState is AuthState.None) &&
             (navigationController.currentDestination!!.route != NavigationRoutes.StartRoute.AuthenticationRoute.route) &&

@@ -1,32 +1,26 @@
 package com.leishmaniapp.domain.services
 
+import com.leishmaniapp.domain.entities.Credentials
 import com.leishmaniapp.domain.types.AccessToken
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Manipulate [AccessToken] stored in memory, used for keeping application session accross multiple
- * application modules
+ * Manipulate current authorization [Credentials], only one set of [Credentials] can be used at the time
  */
 interface IAuthorizationService {
 
     /**
-     * Get the currently stored [AccessToken] as a [Flow]
+     * currently stored [Credentials]
      */
-    val accessToken: Flow<AccessToken?>
+    val credentials: Flow<Credentials?>
 
     /**
-     * Check if an authentication token is present in storage
-     * If set, it means that a user is logged in
+     * Store [Credentials] in application memory
      */
-    val isTokenStored: Flow<Boolean>
+    suspend fun authorize(crendentials: Credentials): Result<Unit>
 
     /**
-     * Store a new [AccessToken] to keep user session alive
+     * Forget the authorization [Credentials]
      */
-    suspend fun storeAuthenticationToken(token: AccessToken): Result<Unit>
-
-    /**
-     * Forget about the current [AccessToken], session is revoked
-     */
-    suspend fun forgetAuthenticationToken(): Result<Unit>
+    suspend fun forget(): Result<Unit>
 }

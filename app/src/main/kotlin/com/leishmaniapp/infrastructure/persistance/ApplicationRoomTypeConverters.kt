@@ -9,6 +9,9 @@ import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.entities.DiagnosticElement
 import com.leishmaniapp.domain.entities.DiagnosticElementName
 import com.leishmaniapp.domain.entities.DocumentType
+import com.leishmaniapp.domain.types.ShaHash
+import com.leishmaniapp.infrastructure.security.decodeBase64
+import com.leishmaniapp.infrastructure.security.encodeBase64
 import com.leishmaniapp.utilities.time.fromUnixToLocalDateTime
 import com.leishmaniapp.utilities.time.toUnixTime
 import kotlinx.datetime.LocalDateTime
@@ -58,6 +61,13 @@ class ApplicationRoomTypeConverters {
     @TypeConverter
     fun stringToUri(value: String): Uri = Uri.parse(value)
 
+    /* ShaHash */
+    @TypeConverter
+    fun hashToBase64(value: ShaHash): String = value.encodeBase64()
+
+    @TypeConverter
+    fun base64ToHash(value: String): ShaHash = value.decodeBase64()
+
     /* Set<Disease> */
     @TypeConverter
     fun diseasesSetToJson(diseases: Set<Disease>): String = Json.encodeToString(diseases)
@@ -82,22 +92,4 @@ class ApplicationRoomTypeConverters {
     @TypeConverter
     fun jsonToDiagnosticElementSet(diagnosticElements: String): Set<DiagnosticElement> =
         Json.decodeFromString(diagnosticElements)
-
-    /* Bitmap */
-    @TypeConverter
-    fun bitmapToBase64(bitmap: Bitmap): String =
-        Base64.encodeToString(
-            ByteBuffer.allocate(
-                bitmap.width * bitmap.height
-            ).let { byteBuffer ->
-                bitmap.copyPixelsFromBuffer(byteBuffer)
-                byteBuffer.array()
-            }, Base64.DEFAULT
-        )
-
-    @TypeConverter
-    fun base64ToBitmap(encoded: String): Bitmap =
-        Base64.decode(encoded, Base64.DEFAULT).let { byteArray ->
-            BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-        }
 }
