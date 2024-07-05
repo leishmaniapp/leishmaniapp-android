@@ -1,10 +1,8 @@
 package com.leishmaniapp.infrastructure.work
 
-import android.Manifest
 import android.app.Notification
 import android.app.NotificationManager
 import android.content.Context
-import android.content.pm.ServiceInfo
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
@@ -21,7 +19,6 @@ import com.leishmaniapp.domain.protobuf.fromProto
 import com.leishmaniapp.domain.repository.ISamplesRepository
 import com.leishmaniapp.domain.services.IAnalysisService
 import com.leishmaniapp.utilities.extensions.asResult
-import com.leishmaniapp.utilities.extensions.getOrThrow
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +26,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 @HiltWorker
-class ImageResultsWorker @AssistedInject constructor(
+class RemoteAnaysisResultsWorker @AssistedInject constructor(
 
     @Assisted context: Context,
     @Assisted workerParameters: WorkerParameters,
@@ -46,7 +43,7 @@ class ImageResultsWorker @AssistedInject constructor(
         const val NOTIFICATION_ID = 0;
 
 
-        val TAG: String = ImageResultsWorker::class.simpleName!!
+        val TAG: String = RemoteAnaysisResultsWorker::class.simpleName!!
     }
 
     /**
@@ -61,6 +58,7 @@ class ImageResultsWorker @AssistedInject constructor(
     private val workerNotification: Notification = NotificationCompat.Builder(
         applicationContext, applicationContext.getString(R.string.notification_analysis_channel)
     ).setContentTitle(applicationContext.getString(R.string.notification_analysis_title))
+        .setSmallIcon(R.drawable.foreground_icon)
         .setContentText(applicationContext.getString(R.string.notification_analysis_content))
         .setOngoing(true).build()
 
@@ -84,7 +82,7 @@ class ImageResultsWorker @AssistedInject constructor(
                         // Parse the image metadata
                         val metadata = ImageMetadata.fromProto(v.metadata!!)
                         // Get the image (or create a new one)
-                        val image = samplesRepository.imageForMetadata(metadata).first()
+                        val image = samplesRepository.getSampleForMetadata(metadata).first()
                             ?: ImageSample(
                                 metadata = metadata,
                                 stage = AnalysisStage.Analyzed,
@@ -94,14 +92,14 @@ class ImageResultsWorker @AssistedInject constructor(
                             .withModelElements(ModelDiagnosticElement.from(v.results))
                             .copy(stage = AnalysisStage.Analyzed)
                         // Store the copy
-                        samplesRepository.upsertImage(copy)
+                        samplesRepository.upsertSample(copy)
 
                     }, onFailure = { e ->
                         if (e is BadAnalysisException) {
                             // Parse the image metadata
                             val metadata = ImageMetadata.fromProto(response.error!!.metadata!!)
                             // Get the image (or create a new one)
-                            val image = samplesRepository.imageForMetadata(metadata).first()
+                            val image = samplesRepository.getSampleForMetadata(metadata).first()
                                 ?: ImageSample(
                                     metadata = metadata,
                                     stage = AnalysisStage.ResultError,
@@ -109,7 +107,7 @@ class ImageResultsWorker @AssistedInject constructor(
                             // Create a copy with the new stage
                             val copy = image.copy(stage = AnalysisStage.ResultError)
                             // Store the copy
-                            samplesRepository.upsertImage(copy)
+                            samplesRepository.upsertSample(copy)
                         } else {
                             Log.e(TAG, "Unexpected error response for image", e)
                         }

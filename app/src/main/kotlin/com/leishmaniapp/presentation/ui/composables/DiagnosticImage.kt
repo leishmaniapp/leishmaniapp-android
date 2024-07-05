@@ -47,20 +47,20 @@ const val OUTER_CIRCLE_RADIUS: Float = 0.35f
  * smaller depending on the size of the devices thus coordinates need to be transformed
  */
 fun transformCoordinatesFromRealToCanvas(
-    realCoordinates: Coordinates, realSize: Int, canvasSize: Size
+    realCoordinates: Coordinates, xreal: Int, yreal: Int, canvasSize: Size
 ): Coordinates = Coordinates(
-    x = (realCoordinates.x * (canvasSize.width / realSize)).toInt(),
-    y = (realCoordinates.y * (canvasSize.height / realSize)).toInt()
+    x = (realCoordinates.x * (canvasSize.width / xreal)).toInt(),
+    y = (realCoordinates.y * (canvasSize.height / yreal)).toInt()
 )
 
 /**
  * Canvas coordinates like taps need to be transformed to image's real size
  */
 fun transformCoordinatesFromCanvasToReal(
-    canvasCoordinates: Coordinates, realSize: Int, canvasSize: Size
+    canvasCoordinates: Coordinates, xreal: Int, yreal: Int, canvasSize: Size
 ): Coordinates = Coordinates(
-    x = (canvasCoordinates.x * (realSize / canvasSize.width)).toInt(),
-    y = (canvasCoordinates.y * (realSize / canvasSize.height)).toInt()
+    x = (canvasCoordinates.x * (xreal / canvasSize.width)).toInt(),
+    y = (canvasCoordinates.y * (yreal / canvasSize.height)).toInt()
 )
 
 /**
@@ -110,97 +110,106 @@ fun DiagnosticImage(
     val iconPainter = rememberVectorPainter(Icons.Filled.Close)
     val iconPainterSize = 24.dp
 
-    // Create the image painter
-    val imagePainter = rememberAsyncImagePainter(image.bitmap)
-
     val elementsWithCoordinates =
         image.elements.filterIsInstance<ModelDiagnosticElement>().map { it to it.coordinates }
             .flatMap { (key, values) -> values.map { key to it } }
 
-    Image(modifier = modifier
-        .aspectRatio(1f)
-        .drawWithContent {
-            // Draw the image
-            drawContent()
 
-            // Guard (Do not draw if not processed
-            if (image.stage != AnalysisStage.Analyzed) return@drawWithContent
-            // Store the canvas size
-            canvasSize = this.size
-            // Get the Painter size in Px
-            val painterSizePx = Size(iconPainterSize.toPx(), iconPainterSize.toPx())
+    if (image.file == null) {
+        Image(
+            modifier = modifier.aspectRatio(1f),
+            painter = painterResource(id = R.drawable.macrophage),
+            contentDescription = stringResource(id = R.string.diagnostic_image),
+            contentScale = ContentScale.Crop,
+        )
+    } else {
+        // Get the image bitmap
+        val bitmap = image.bitmap!!
 
-            // For each coordinate
-            elementsWithCoordinates.forEach { (element, coordinates) ->
-                // The coordinate must be included in the element coordinates
-                assert(coordinates in element.coordinates)
+        // Create the image painter
+        val imagePainter = rememberAsyncImagePainter(bitmap)
 
-                // Calculate canvas position with painter center of mass
-                val canvasPosition = transformCoordinatesFromRealToCanvas(
-                    coordinates, ImageSample.STD_IMAGE_RESOLUTION, canvasSize!!
-                )
+        Image(modifier = modifier
+            .aspectRatio(1f)
+            .drawWithContent {
+                // Draw the image
+                drawContent()
 
-                // Draw a circle behind the (x)
-                drawCircle(alpha = OUTER_CIRCLE_RADIUS,
-                    color = Color.Yellow,
-                    // For some reason radius is multiplied by 2
-                    radius = (COORDINATES_SELECTION_RADIUS.toFloat() / 2f),
-                    center = canvasPosition.let {
-                        Offset(x = it.x.toFloat(), y = it.y.toFloat())
-                    })
+                // Guard (Do not draw if not processed
+                if (image.stage != AnalysisStage.Analyzed) return@drawWithContent
+                // Store the canvas size
+                canvasSize = this.size
+                // Get the Painter size in Px
+                val painterSizePx = Size(iconPainterSize.toPx(), iconPainterSize.toPx())
 
-                // Draw an (x) on top of the DiagnosticElement
-                with(iconPainter) {
-                    // Calculate offset due to center of mass
-                    val painterPosition = calculatePainterCenterOfMass(
-                        canvasPosition, painterSizePx
+                // For each coordinate
+                elementsWithCoordinates.forEach { (element, coordinates) ->
+                    // The coordinate must be included in the element coordinates
+                    assert(coordinates in element.coordinates)
+
+                    // Calculate canvas position with painter center of mass
+                    val canvasPosition = transformCoordinatesFromRealToCanvas(
+                        coordinates, bitmap.width, bitmap.height, canvasSize!!
                     )
-                    // Draw in canvas position
-                    translate(
-                        left = painterPosition.x.toFloat(),
-                        top = painterPosition.y.toFloat(),
-                    ) {
-                        draw(
-                            size = painterSizePx, colorFilter = ColorFilter.tint(
-                                if ((element to coordinates) == selectedElement) {
-                                    Color.Magenta // Item is selected
-                                } else { // Item is not selected
-                                    Color.Black
-                                }
-                            )
+
+                    // Draw a circle behind the (x)
+                    drawCircle(alpha = OUTER_CIRCLE_RADIUS,
+                        color = Color.Yellow,
+                        // For some reason radius is multiplied by 2
+                        radius = (COORDINATES_SELECTION_RADIUS.toFloat() / 2f),
+                        center = canvasPosition.let {
+                            Offset(x = it.x.toFloat(), y = it.y.toFloat())
+                        })
+
+                    // Draw an (x) on top of the DiagnosticElement
+                    with(iconPainter) {
+                        // Calculate offset due to center of mass
+                        val painterPosition = calculatePainterCenterOfMass(
+                            canvasPosition, painterSizePx
                         )
+                        // Draw in canvas position
+                        translate(
+                            left = painterPosition.x.toFloat(),
+                            top = painterPosition.y.toFloat(),
+                        ) {
+                            draw(
+                                size = painterSizePx, colorFilter = ColorFilter.tint(
+                                    if ((element to coordinates) == selectedElement) {
+                                        Color.Magenta // Item is selected
+                                    } else { // Item is not selected
+                                        Color.Black
+                                    }
+                                )
+                            )
+                        }
                     }
                 }
             }
-        }
-        .onCanvasClick { tap ->
-            if (clickEnabled) {
-                // Transform canvas coordinates to real coordinates
-                val tapToRealCoordinates = transformCoordinatesFromCanvasToReal(
-                    tap, ImageSample.STD_IMAGE_RESOLUTION, canvasSize!!
-                )
+            .onCanvasClick { tap ->
+                if (clickEnabled) {
+                    // Transform canvas coordinates to real coordinates
+                    val tapToRealCoordinates = transformCoordinatesFromCanvasToReal(
+                        tap, bitmap.width, bitmap.height, canvasSize!!
+                    )
 
-                // Get the nearest element
-                val tappedElement = elementsWithCoordinates.minByOrNull { (_, coordinates) ->
-                    coordinates distanceTo tapToRealCoordinates
+                    // Get the nearest element
+                    val tappedElement = elementsWithCoordinates.minByOrNull { (_, coordinates) ->
+                        coordinates distanceTo tapToRealCoordinates
+                    }
+
+                    // Invoke with callback with null or value
+                    onElementPressed.invoke(tappedElement?.let { (element, coordinates) ->
+                        if (coordinates distanceTo tapToRealCoordinates <= COORDINATES_SELECTION_RADIUS) {
+                            element to coordinates
+                        } else null
+                    })
                 }
-
-                // Invoke with callback with null or value
-                onElementPressed.invoke(tappedElement?.let { (element, coordinates) ->
-                    if (coordinates distanceTo tapToRealCoordinates <= COORDINATES_SELECTION_RADIUS) {
-                        element to coordinates
-                    } else null
-                })
-            }
-        },
-        painter = if (image.file == null) {
-            painterResource(id = R.drawable.macrophage)
-        } else {
-            imagePainter
-        },
-        contentDescription = stringResource(id = R.string.diagnostic_image),
-        contentScale = ContentScale.Crop
-    )
+            },
+            painter = imagePainter,
+            contentDescription = stringResource(id = R.string.diagnostic_image),
+            contentScale = ContentScale.Crop
+        )
+    }
 }
 
 @Composable
@@ -235,7 +244,8 @@ fun DiagnosticElementMarkPreview() {
 
         // Create the diagnostic image
         DiagnosticImage(
-            image = image, selectedElement = selectedElement
+            image = image,
+            selectedElement = selectedElement
         ) { tappedSelectedElement -> selectedElement = tappedSelectedElement }
     }
 }

@@ -23,9 +23,6 @@ data object MockDotsDisease : Disease(
     ),
     displayNameResource = R.string.mock_dots_disease,
 ) {
-    override val painterResource: Painter
-        @Composable get() = painterResource(id = R.drawable.macrophage)
-
     /**
      * If there are more than 3 elements, then true
      */

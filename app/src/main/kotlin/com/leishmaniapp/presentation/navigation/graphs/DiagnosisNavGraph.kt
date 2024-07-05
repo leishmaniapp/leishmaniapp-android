@@ -79,6 +79,13 @@ fun NavGraphBuilder.diagnosisNavGraph(
 
             // Get the state
             val state by cameraViewModel.cameraState.observeAsState(initial = CameraState.None)
+            val disease by diagnosisViewModel.disease.observeAsState()
+
+            // Wait for disease to become available
+            if (disease == null) {
+                BusyScreen()
+                return@composable
+            }
 
             CameraPermissionHandler {
                 CameraScreen(
@@ -86,7 +93,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
                     lifecycleOwner = lifecycleOwner,
                     cameraCalibration = cameraViewModel.cameraCalibration,
                     onPictureTake = {
-                        cameraViewModel.onPictureTake(it, context)
+                        cameraViewModel.onPictureTake(it, disease!!, context)
                     },
                     onCancel = {
                         willPopScope = true
@@ -139,7 +146,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
             // Get the camera state
             val cameraState by cameraViewModel.cameraState.observeAsState()
             val currentDiagnosis by diagnosisViewModel.diagnosis.collectAsStateWithLifecycle()
-            val currentImage by diagnosisViewModel.currentImageSample.observeAsState()
+            val currentImage by diagnosisViewModel.currentImageSample.collectAsStateWithLifecycle()
 
             when (cameraState) {
 

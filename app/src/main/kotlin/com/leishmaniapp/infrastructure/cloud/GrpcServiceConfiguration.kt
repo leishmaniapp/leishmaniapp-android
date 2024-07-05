@@ -19,12 +19,12 @@ class GrpcServiceConfiguration(
     /**
      * HTTPS server connection string
      */
-    private val endpoint: String = BuildConfig.REMOTE_ENDPOINT,
+    endpoint: String = BuildConfig.REMOTE_ENDPOINT,
 
     /**
      * Server call timeout
      */
-    private val timeoutSec: Long = BuildConfig.REMOTE_TIMEOUT.toLong(),
+    val timeoutSec: Long = BuildConfig.REMOTE_TIMEOUT.toLong(),
 
     // Interceptors
     exceptionInterceptor: ExceptionInterceptor,
@@ -48,10 +48,6 @@ class GrpcServiceConfiguration(
         .addInterceptor(HttpLoggingInterceptor())
         // Disable TLS encryption
         .connectionSpecs(listOf(ConnectionSpec.CLEARTEXT))
-        // Set the timeouts for remote calls
-        .readTimeout(Duration.ofSeconds(timeoutSec))
-        .writeTimeout(Duration.ofSeconds(timeoutSec))
-        .callTimeout(Duration.ofSeconds(timeoutSec))
         // No HTTP2 upgrade roundtrip
         .protocols(listOf(Protocol.H2_PRIOR_KNOWLEDGE)).build()
 

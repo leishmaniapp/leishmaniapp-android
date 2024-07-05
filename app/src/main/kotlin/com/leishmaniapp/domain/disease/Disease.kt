@@ -3,6 +3,7 @@ package com.leishmaniapp.domain.disease
 import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.leishmaniapp.R
 import com.leishmaniapp.domain.entities.DiagnosticElementName
@@ -42,7 +43,16 @@ sealed class Disease(
      */
     val elements: Set<DiagnosticElementName>,
 
+    /**
+     * [R.string] resource representing the intl disease name
+     */
     @Transient val displayNameResource: Int = R.string.unknown_disease,
+
+    /**
+     * [R.drawable] resource with the disease icon in menu
+     */
+    @Transient val painterResource: Int = R.drawable.macrophage
+
 ) : Parcelable {
 
     /**
@@ -54,8 +64,8 @@ sealed class Disease(
     /**
      * Icon to show within the diseases menu
      */
-    abstract val painterResource: Painter
-        @Composable get
+    val painter: Painter
+        @Composable get() = painterResource(id = painterResource)
 
     companion object {
         /**

@@ -22,28 +22,28 @@ class RoomSamplesRepositoryImpl @Inject constructor(
 
     ) : ISamplesRepository {
 
-    override suspend fun upsertImage(image: ImageSample) =
+    override suspend fun upsertSample(image: ImageSample) =
         dao.upsertImage(RoomImageEntity(image))
 
-    override suspend fun deleteImage(image: ImageSample) =
+    override suspend fun deleteSample(image: ImageSample) =
         dao.deleteImage(RoomImageEntity(image))
 
-    override fun imageForDiagnosis(diagnosis: UUID, sample: Int): Flow<ImageSample?> =
+    override fun getSampleForDiagnosis(diagnosis: UUID, sample: Int): Flow<ImageSample?> =
         dao.imageForDiagnosis(diagnosis, sample).map { it?.toImageSample() }
 
-    override fun imageForMetadata(metadata: ImageMetadata): Flow<ImageSample?> =
+    override fun getSampleForMetadata(metadata: ImageMetadata): Flow<ImageSample?> =
         dao.imageForDiagnosis(metadata.diagnosis, metadata.sample).map { it?.toImageSample() }
 
-    override fun allImagesForDiagnosis(diagnosis: UUID): Flow<List<ImageSample>> =
+    override fun getAllSamplesForDiagnosis(diagnosis: UUID): Flow<List<ImageSample>> =
         dao.allImagesForDiagnosis(diagnosis).map { flow -> flow.map { it.toImageSample() } }
 
-    override fun imagesForDiagnosisWithStage(
+    override fun getAllSamplesForDiagnosisWithStage(
         diagnosis: UUID,
         stage: AnalysisStage
     ): Flow<List<ImageSample>> =
         dao.imagesForDiagnosisWithStage(diagnosis, stage)
             .map { flow -> flow.map { it.toImageSample() } }
 
-    override fun imagesForStage(stage: AnalysisStage): Flow<List<ImageSample>> =
+    override fun getAllSamplesForStage(stage: AnalysisStage): Flow<List<ImageSample>> =
         dao.imagesForStage(stage).map { flow -> flow.map { it.toImageSample() } }
 }

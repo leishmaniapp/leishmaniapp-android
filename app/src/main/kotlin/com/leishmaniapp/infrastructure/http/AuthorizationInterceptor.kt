@@ -2,6 +2,7 @@ package com.leishmaniapp.infrastructure.http
 
 import com.leishmaniapp.domain.services.IAuthorizationService
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response

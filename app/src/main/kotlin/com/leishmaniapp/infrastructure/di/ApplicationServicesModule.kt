@@ -14,6 +14,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 /**
  * Provides the services implementations via DI for local application services
@@ -26,7 +27,8 @@ interface ApplicationServicesModule {
      * Provide the [IAuthorizationService] via [DataStoreAuthorizationServiceImpl]
      */
     @Binds
-    fun bindTokenRepository(
+    @Singleton
+    fun bindAuthorizationService(
         tokenRepositoryImpl: DataStoreAuthorizationServiceImpl,
     ): IAuthorizationService
 
@@ -34,6 +36,7 @@ interface ApplicationServicesModule {
      * Provide the [IQueuingService] via [WorkQueuingServiceImpl]
      */
     @Binds
+    @Singleton
     fun bindQueuingService(
         queuingServiceImpl: WorkQueuingServiceImpl,
     ): IQueuingService
@@ -42,6 +45,7 @@ interface ApplicationServicesModule {
      * Provide the [IDiagnosisSharing] via [ApplicationDiagnosisSharingImpl]
      */
     @Binds
+    @Singleton
     fun dingDiagnosisSharing(
         diagnosisSharing: ApplicationDiagnosisSharingImpl
     ): IDiagnosisSharing
@@ -50,6 +54,7 @@ interface ApplicationServicesModule {
      * Provide the [IPictureStandardization] via [ApplicationDiagnosisSharingImpl]
      */
     @Binds
+    @Singleton
     fun bindPictureStandardization(
         pictureStandardizationImpl: ApplicationPictureStandardizationImpl
     ): IPictureStandardization
@@ -58,6 +63,7 @@ interface ApplicationServicesModule {
      * Provide the [INetworkService] via [ConnectivityManagerNetworkServiceImpl]
      */
     @Binds
+    @Singleton
     fun bindNetworkService(
         networkService: ConnectivityManagerNetworkServiceImpl
     ): INetworkService

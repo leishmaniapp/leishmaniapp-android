@@ -30,11 +30,9 @@ data object LeishmaniasisGiemsaDisease : Disease(
             R.string.leishmaniasis_giemsa_disease_element_parasites
         )
     ),
-    displayNameResource = R.string.leishmaniasis_giemsa_disease
+    displayNameResource = R.string.leishmaniasis_giemsa_disease,
+    painterResource = R.drawable.macrophage
 ) {
-    override val painterResource: Painter
-        @Composable get() = painterResource(id = R.drawable.macrophage)
-
     /**
      * Returns true if any given parasite is found
      */

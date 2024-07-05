@@ -22,6 +22,10 @@ import kotlin.math.sqrt
  */
 class ApplicationPictureStandardizationImpl @Inject constructor() : IPictureStandardization {
 
+    override val fileExtension: String = ".jpeg"
+
+    override val mimeType: String = "image/jpeg"
+
     /**
      * Crop the square inside the microscope objective lens circular area
      */
@@ -97,9 +101,4 @@ class ApplicationPictureStandardizationImpl @Inject constructor() : IPictureStan
     } catch (e: Throwable) {
         Result.failure(e)
     }
-
-    /**
-     * JPEG file extension
-     */
-    override val fileExtension: String = ".jpeg"
 }

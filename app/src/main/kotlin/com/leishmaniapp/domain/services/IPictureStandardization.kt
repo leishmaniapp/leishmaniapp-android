@@ -11,6 +11,16 @@ import java.io.File
 interface IPictureStandardization {
 
     /**
+     * Get the file extension
+     */
+    val fileExtension: String
+
+    /**
+     * Get the file mime type
+     */
+    val mimeType: String
+
+    /**
      * Return a cropped copy of the [Bitmap] area to a standard position and aspect ratio (1:1)
      */
     fun crop(bitmap: Bitmap): Result<Bitmap>
@@ -29,9 +39,4 @@ interface IPictureStandardization {
      * Store the [bitmap] into the provided [file]
      */
     fun store(file: File, bitmap: Bitmap): Result<Unit>
-
-    /**
-     * Get the file extension
-     */
-    val fileExtension: String
 }

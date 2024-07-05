@@ -35,7 +35,7 @@ fun DiseaseItemList(
             )
         }, leadingContent = {
             Image(
-                painter = disease.painterResource,
+                painter = disease.painter,
                 contentDescription = null,
                 modifier = modifier
                     .size(65.dp)

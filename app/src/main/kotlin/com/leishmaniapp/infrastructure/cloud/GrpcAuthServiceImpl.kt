@@ -13,7 +13,10 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.time.withTimeout
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
+import java.time.Duration
 import javax.inject.Inject
 
 /**
@@ -24,7 +27,7 @@ class GrpcAuthServiceImpl @Inject constructor(
     /**
      * gRPC configuration
      */
-    configuration: GrpcServiceConfiguration,
+    private val configuration: GrpcServiceConfiguration,
 
     ) : IAuthService {
 
@@ -36,7 +39,9 @@ class GrpcAuthServiceImpl @Inject constructor(
     override suspend fun authenticate(request: AuthRequest): Result<AuthResponse> =
         withContext(Dispatchers.IO) {
             try {
-                Result.success(client.Authenticate().execute(request))
+                withTimeout(Duration.ofSeconds(configuration.timeoutSec)) {
+                    Result.success(client.Authenticate().execute(request))
+                }
             } catch (e: Exception) {
                 Result.failure(e)
             }
@@ -45,7 +50,9 @@ class GrpcAuthServiceImpl @Inject constructor(
     override suspend fun verifyToken(request: TokenRequest): Result<StatusResponse> =
         withContext(Dispatchers.IO) {
             try {
-                Result.success(client.VerifyToken().execute(request))
+                withTimeout(Duration.ofSeconds(configuration.timeoutSec)) {
+                    Result.success(client.VerifyToken().execute(request))
+                }
             } catch (e: Exception) {
                 Result.failure(e)
             }
@@ -54,7 +61,9 @@ class GrpcAuthServiceImpl @Inject constructor(
     override suspend fun decodeToken(request: TokenRequest): Result<DecodeResponse> =
         withContext(Dispatchers.IO) {
             try {
-                Result.success(client.DecodeToken().execute(request))
+                withTimeout(Duration.ofSeconds(configuration.timeoutSec)) {
+                    Result.success(client.DecodeToken().execute(request))
+                }
             } catch (e: Exception) {
                 Result.failure(e)
             }

@@ -1,6 +1,8 @@
 package com.leishmaniapp.domain.services
 
 import com.leishmaniapp.domain.entities.ImageSample
+import com.leishmaniapp.domain.entities.Specialist
+import com.leishmaniapp.domain.types.Email
 
 /**
  * Queue [ImageSample] for further (local or remote) analysis
@@ -8,7 +10,18 @@ import com.leishmaniapp.domain.entities.ImageSample
 interface IQueuingService {
 
     /**
-     * Enqueue an [ImageSample] for analysis
+     * Listen for analysis results
      */
-    fun enqueue(sample: ImageSample): Result<Unit>
+    suspend fun startSync()
+
+    /**
+     * Stop listening for results
+     */
+    suspend fun cancelSync()
+
+    /**
+     * Enqueue an [ImageSample] for analysis
+     * @param mime MIME type associated to the sample from [IPictureStandardization]
+     */
+    suspend fun enqueue(sample: ImageSample, specialist: Email, mime: String)
 }

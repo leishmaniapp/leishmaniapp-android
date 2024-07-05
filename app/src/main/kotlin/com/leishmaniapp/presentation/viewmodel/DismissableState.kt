@@ -9,4 +9,5 @@ fun interface DismissableState {
      * Restart the state, reset all variables
      */
     fun dismiss()
+
 }

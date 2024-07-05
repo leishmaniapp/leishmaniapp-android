@@ -17,6 +17,15 @@
     <string name="mock_dots_disease">Enfermedad de prueba: Detector de puntos</string>
     <string name="mock_dots_disease_element">Punto de prueba</string>
 
+    <!-- mock.spots disease -->
+    <string name="mock_spots_disease">Enfermedad de prueba: Detector de colores</string>
+    <string name="mock_spots_disease_red">Rojo</string>
+    <string name="mock_spots_disease_green">Verde</string>
+    <string name="mock_spots_disease_blue">Azul</string>
+    <string name="mock_spots_disease_cyan">Celeste</string>
+    <string name="mock_spots_disease_yellow">Amarillo</string>
+    <string name="mock_spots_disease_magenta">Magenta</string>
+
     <!-- Exceptions -->
     <string name="exception_title">Ha ocurrido un error</string>
     <string name="exception_bad_input">Entrada inválida</string>

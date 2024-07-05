@@ -11,6 +11,7 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.entities.Diagnosis
+import com.leishmaniapp.domain.entities.ImageMetadata
 import com.leishmaniapp.domain.entities.ImageSample
 import com.leishmaniapp.domain.entities.Patient
 import com.leishmaniapp.domain.entities.Specialist
@@ -19,12 +20,14 @@ import com.leishmaniapp.domain.repository.IPatientsRepository
 import com.leishmaniapp.domain.repository.ISamplesRepository
 import com.leishmaniapp.domain.repository.ISpecialistsRepository
 import com.leishmaniapp.domain.services.IPictureStandardization
+import com.leishmaniapp.domain.services.IQueuingService
 import com.leishmaniapp.presentation.viewmodel.state.DiagnosisState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
@@ -47,6 +50,7 @@ class DiagnosisViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 
     // Services
+    private val queuingService: IQueuingService,
     private val pictureStandardizationService: IPictureStandardization,
 
     // Repositories
@@ -67,7 +71,8 @@ class DiagnosisViewModel @Inject constructor(
 
     /* -- Disease Selection -- */
 
-    private val _disease: MutableLiveData<Disease?> = savedStateHandle.getLiveData("disease", null)
+    private val _disease: MutableLiveData<Disease?> =
+        savedStateHandle.getLiveData("disease", null)
 
     /**
      * Selected disease by the specialist
@@ -108,7 +113,10 @@ class DiagnosisViewModel @Inject constructor(
             is DiagnosisState.OnDiagnosis -> diagnosesRepository.getDiagnosis(state.id)
             is DiagnosisState.None -> flowOf(null)
         }
-    }.flowOn(Dispatchers.IO).stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    }
+        .flowOn(Dispatchers.IO)
+        .catch { e -> Log.e(TAG, "Exception thrown during diagnosis StateFlow collection", e) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /**
      * [Specialist] associated with the diagnosis for internal use
@@ -119,7 +127,10 @@ class DiagnosisViewModel @Inject constructor(
         } else {
             flowOf(null)
         }
-    }.flowOn(Dispatchers.IO).stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    }
+        .flowOn(Dispatchers.IO)
+        .catch { e -> Log.e(TAG, "Exception thrown during specialist StateFlow collection", e) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /**
      * [Patient] associated with the diagnosis for internal use
@@ -130,7 +141,10 @@ class DiagnosisViewModel @Inject constructor(
         } else {
             flowOf(null)
         }
-    }.flowOn(Dispatchers.IO).stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    }
+        .flowOn(Dispatchers.IO)
+        .catch { e -> Log.e(TAG, "Exception thrown during patient StateFlow collection", e) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /**
      * Start a new [Diagnosis] given a [Specialist] and a [Patient]
@@ -145,7 +159,9 @@ class DiagnosisViewModel @Inject constructor(
             ).let { diagnosis ->
                 viewModelScope.launch {
                     // Store in database
-                    withContext(Dispatchers.IO) { diagnosesRepository.upsertDiagnosis(diagnosis) }
+                    withContext(Dispatchers.IO) {
+                        diagnosesRepository.upsertDiagnosis(diagnosis)
+                    }
                     // Set the new state
                     _state.value = DiagnosisState.OnDiagnosis(diagnosis.id)
                 }
@@ -153,45 +169,67 @@ class DiagnosisViewModel @Inject constructor(
         }
     }
 
-    private val _currentImageSample: MutableLiveData<ImageSample?> =
+    /**
+     * [ImageMetadata] for identifying the [ImageSample]
+     */
+    private val currentImageMetadata: MutableLiveData<ImageMetadata?> =
         savedStateHandle.getLiveData("currentImageSample", null)
 
     /**
-     * Current [ImageSample] being modified
+     * Actual [ImageSample] flow from database based on the [currentImageSample]
      */
-    val currentImageSample: LiveData<ImageSample?> = _currentImageSample
+    val currentImageSample: StateFlow<ImageSample?> =
+        currentImageMetadata.asFlow().flatMapMerge { metadata ->
+            if (metadata != null) {
+                samplesRespository.getSampleForMetadata(metadata)
+            } else {
+                flowOf(null)
+            }
+        }
+            .flowOn(Dispatchers.IO)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /**
      * Create a new [ImageSample]
      */
     fun setCurrentImageSample(uri: Uri) {
         // Set the image sample given the current diagnosis
-        diagnosis.value?.let { diagnosis ->
-            _currentImageSample.value = ImageSample(diagnosis = diagnosis, file = uri)
+        viewModelScope.launch {
+            diagnosis.value?.let { diagnosis ->
+                ImageSample(diagnosis = diagnosis, file = uri).let { sample ->
+                    // Store the sample in database
+                    withContext(Dispatchers.IO) {
+                        samplesRespository.upsertSample(sample)
+                    }
+                    // Set the metadata value
+                    currentImageMetadata.value = sample.metadata
+                }
+            }
         }
     }
 
     /**
-     * Change the current [ImageSample]
+     * Update the current [ImageSample]
      */
-    fun updateImageSample(imageSample: ImageSample){
-        _currentImageSample.value = imageSample
+    fun updateImageSample(imageSample: ImageSample) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                samplesRespository.upsertSample(imageSample)
+            }
+        }
     }
 
     /**
-     * Store the current [ImageSample] in database and reset the [currentImageSample]
+     * Push the current image sample to analysis
      */
-    fun saveSampleAndContinue(context: Context) {
-        currentImageSample.value?.let { sample ->
+    fun startSampleAnalysis() {
+        if (currentImageSample.value != null && specialist.value != null) {
             viewModelScope.launch {
-                pictureStandardizationService.store(
-                    File(
-                        context.filesDir,
-                        sample.metadata.diagnosis.toString() + File.separator + sample.metadata.sample
-                    ), sample.bitmap!!
+                queuingService.enqueue(
+                    currentImageSample.value!!,
+                    specialist.value!!.email,
+                    pictureStandardizationService.mimeType
                 )
-                withContext(Dispatchers.IO) { samplesRespository.upsertImage(sample) }
-                _currentImageSample.value = null
             }
         }
     }
@@ -202,7 +240,7 @@ class DiagnosisViewModel @Inject constructor(
     override fun dismiss() {
         // Set the state to none
         _state.value = DiagnosisState.None
-        _currentImageSample.value = null
+        currentImageMetadata.value = null
     }
 
     /**

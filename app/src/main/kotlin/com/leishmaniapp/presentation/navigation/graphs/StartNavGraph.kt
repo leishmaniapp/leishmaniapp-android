@@ -32,11 +32,6 @@ fun NavGraphBuilder.startNavGraph(
             GreetingsScreen(onContinue = {
                 navHostController.navigateToAuthentication()
             })
-
-            // Signout for old sessions
-            LaunchedEffect(key1 = true) {
-                sessionViewModel.logout()
-            }
         }
 
         composable(route = NavigationRoutes.StartRoute.AuthenticationRoute.route) {

@@ -19,6 +19,7 @@ import com.leishmaniapp.domain.repository.ISpecialistsRepository
 import com.leishmaniapp.domain.services.IAuthorizationService
 import com.leishmaniapp.domain.services.IAuthService
 import com.leishmaniapp.domain.services.INetworkService
+import com.leishmaniapp.domain.services.IQueuingService
 import com.leishmaniapp.domain.types.AccessToken
 import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.domain.types.Password
@@ -30,6 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOf
@@ -55,6 +57,7 @@ class SessionViewModel @Inject constructor(
     // Services
     private val authService: IAuthService,
     private val authorizationService: IAuthorizationService,
+    private val queuingService: IQueuingService,
     networkService: INetworkService,
 
     // Repositories
@@ -92,6 +95,7 @@ class SessionViewModel @Inject constructor(
                     _state.value = AuthState.None.getConnectionState(status)
                 }
             }
+            .catch { e -> Log.e(TAG, "Failed to get network status", e) }
             // Transform into StateFlow
             .stateIn(
                 viewModelScope,
@@ -126,6 +130,14 @@ class SessionViewModel @Inject constructor(
      */
     private val credentials: StateFlow<Credentials?> =
         authorizationService.credentials.flowOn(Dispatchers.IO)
+            .flowOn(Dispatchers.IO)
+            .onEach { cr ->
+                if (cr != null) {
+                    queuingService.startSync()
+                } else {
+                    queuingService.cancelSync()
+                }
+            }
             .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /**
@@ -137,11 +149,12 @@ class SessionViewModel @Inject constructor(
                 it?.let { c -> specialistRepository.specialistByEmail(c.email) }
                     ?: flowOf(null)
             }
-            .flowOn(Dispatchers.IO)
             .onEach { s ->
                 // Set the authentication value
                 _state.value =
                     s?.let { AuthState.Authenticated(s) } ?: AuthState.None.getConnectionState()
+
+                Log.i(TAG, "Authentication status changed for specialist: ${_state.value}")
             }
             .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
@@ -166,9 +179,17 @@ class SessionViewModel @Inject constructor(
                         .run { status!!.code.getOrThrow { token!! } }
                 }
 
+                Log.i(TAG, "New authentication token (${token.length} bytes) successfully gathered")
+
                 // Get the specialist
                 withContext(Dispatchers.IO) {
                     authService.decodeToken(TokenRequest(token)).getOrThrow().let { payload ->
+
+                        Log.d(
+                            TAG,
+                            "Token contents decoded for specialist (StatusCode: ${payload.status?.code})"
+                        )
+
                         // Get the specialist and insert it
                         payload.status!!.code.getOrThrow { payload.payload!! }.specialist!!.let { specialist ->
                             specialistRepository.upsertSpecialist(Specialist.fromProto(specialist))

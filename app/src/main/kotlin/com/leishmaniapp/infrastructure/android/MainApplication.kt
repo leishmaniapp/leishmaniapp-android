@@ -7,12 +7,6 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraXConfig
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import androidx.work.Constraints
-import androidx.work.ExistingWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import com.leishmaniapp.infrastructure.work.ImageResultsWorker
 import dagger.hilt.android.HiltAndroidApp
 import java.util.concurrent.Executors
 import javax.inject.Inject

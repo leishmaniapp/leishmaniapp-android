@@ -16,6 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -61,6 +62,10 @@ class DataStoreAuthorizationServiceImpl @Inject constructor(
      * Grab a reference to the context's [DataStore]
      */
     private val dataStore = context.dataStore
+
+    init {
+        runBlocking { forget() }
+    }
 
     /**
      * Currently stored [Credentials]

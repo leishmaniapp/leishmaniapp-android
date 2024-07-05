@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.AlertDialog
@@ -13,6 +15,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -25,6 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.itextpdf.layout.properties.VerticalAlignment
 import com.leishmaniapp.R
+import com.leishmaniapp.domain.disease.LeishmaniasisGiemsaDisease
+import com.leishmaniapp.domain.disease.MockDotsDisease
+import com.leishmaniapp.domain.disease.MockSpotsDisease
 import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import com.leishmaniapp.utilities.mock.MockGenerator.mock
@@ -71,6 +77,25 @@ fun ProfileAlertDialog(
 
                 Text(text = specialist.email, textAlign = TextAlign.Center)
 
+                HorizontalDivider()
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = stringResource(id = R.string.diseases),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    LazyRow {
+                        items(specialist.diseases.toList()) { disease ->
+                            SuggestionChip(
+                                modifier = Modifier.padding(4.dp),
+                                onClick = {},
+                                label = { Text(text = disease.id) })
+                        }
+                    }
+                }
+
+                HorizontalDivider()
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Button(
@@ -105,7 +130,12 @@ fun ProfileAlertDialog(
 private fun ProfileAlertDialogPreview() {
     LeishmaniappTheme {
         ProfileAlertDialog(
-            specialist = Specialist.mock(),
+            specialist = Specialist.mock()
+                .copy(
+                    diseases = setOf(
+                        MockDotsDisease, MockSpotsDisease, LeishmaniasisGiemsaDisease
+                    )
+                ),
             onLogout = {},
             onDismiss = {},
             onForget = {})
