@@ -133,8 +133,10 @@ class SessionViewModel @Inject constructor(
             .flowOn(Dispatchers.IO)
             .onEach { cr ->
                 if (cr != null) {
+                    Log.i(TAG, "Started remote results synchronization")
                     queuingService.startSync()
                 } else {
+                    Log.w(TAG, "Canceled remote results synchronization")
                     queuingService.cancelSync()
                 }
             }

@@ -38,7 +38,7 @@ fun DiagnosisImageGridItem(modifier: Modifier = Modifier, image: ImageSample) {
         AsyncImage(
             model = image.file,
             contentDescription = null,
-            placeholder = painterResource(id = R.drawable.macrophage)
+            placeholder = painterResource(id = R.drawable.disease_leishmaniasis_giemsa_icon)
         )
         Row(
             modifier = Modifier.fillMaxWidth(),

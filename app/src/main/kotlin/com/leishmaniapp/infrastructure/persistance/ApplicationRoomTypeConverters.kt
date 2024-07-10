@@ -56,7 +56,7 @@ class ApplicationRoomTypeConverters {
 
     /* Uri */
     @TypeConverter
-    fun uriToString(uri: Uri): String = uri.path!!
+    fun uriToString(uri: Uri): String = uri.toString()
 
     @TypeConverter
     fun stringToUri(value: String): Uri = Uri.parse(value)

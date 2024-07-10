@@ -22,6 +22,7 @@ data object MockDotsDisease : Disease(
         DiagnosticElementName("mock.dots:dot", R.string.mock_dots_disease_element)
     ),
     displayNameResource = R.string.mock_dots_disease,
+    painterResource = R.drawable.disease_mock_dots_icon
 ) {
     /**
      * If there are more than 3 elements, then true

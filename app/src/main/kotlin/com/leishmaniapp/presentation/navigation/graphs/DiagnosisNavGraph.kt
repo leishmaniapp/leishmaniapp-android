@@ -182,7 +182,9 @@ fun NavGraphBuilder.diagnosisNavGraph(
                                 onRepeatAction = {
                                     cameraViewModel.dismiss()
                                 },
-                                onAnalyzeAction = { /*TODO*/ },
+                                onAnalyzeAction = {
+                                    diagnosisViewModel.startSampleAnalysis()
+                                },
                                 onNextAction = { /*TODO*/ },
                                 onFinishAction = { /*TODO*/ },
                             )

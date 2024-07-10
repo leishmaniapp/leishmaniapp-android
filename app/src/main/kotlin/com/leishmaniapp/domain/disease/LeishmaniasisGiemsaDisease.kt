@@ -1,8 +1,5 @@
 package com.leishmaniapp.domain.disease
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
 import com.leishmaniapp.R
 import com.leishmaniapp.domain.entities.DiagnosticElementName
 import com.leishmaniapp.domain.entities.DiagnosticModel
@@ -31,7 +28,7 @@ data object LeishmaniasisGiemsaDisease : Disease(
         )
     ),
     displayNameResource = R.string.leishmaniasis_giemsa_disease,
-    painterResource = R.drawable.macrophage
+    painterResource = R.drawable.disease_leishmaniasis_giemsa_icon
 ) {
     /**
      * Returns true if any given parasite is found

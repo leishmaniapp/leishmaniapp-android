@@ -118,7 +118,7 @@ fun DiagnosticImage(
     if (image.file == null) {
         Image(
             modifier = modifier.aspectRatio(1f),
-            painter = painterResource(id = R.drawable.macrophage),
+            painter = painterResource(id = R.drawable.disease_leishmaniasis_giemsa_icon),
             contentDescription = stringResource(id = R.string.diagnostic_image),
             contentScale = ContentScale.Crop,
         )

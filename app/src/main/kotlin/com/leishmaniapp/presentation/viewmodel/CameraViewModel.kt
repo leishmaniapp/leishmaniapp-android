@@ -75,6 +75,7 @@ class CameraViewModel @Inject constructor(
 
                 // Set new bitmap value (from the URI)
                 _cameraState.value = CameraState.Photo(file.toUri())
+                Log.d(TAG, "Stored new photo with uri: ${_cameraState.value}")
 
                 // Recycle the bitmap
                 bitmap.recycle()

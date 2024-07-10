@@ -205,8 +205,9 @@
     <string name="medical_exam">Examen Médico</string>
 
     <!-- Notifications -->
-    <string name="notification_analysis_channel">analysis_channel</string>
-    <string name="notification_analysis_title">Análisis en progreso</string>
-    <string name="notification_analysis_content">Leishmaniapp está analizando muestras en segundo plano</string>
+    <string name="notification_remote_analysis_channel_id">analysis_channel</string>
+    <string name="notification_remote_analysis_channel_name">Estado de análisis en línea</string>
+    <string name="notification_remote_analysis_title">Análisis en línea en progreso</string>
+    <string name="notification_analysis_content">Leishmaniapp está conectado al servidor remoto y se encuentra analizando muestras en segundo plano</string>
 
 </resources>

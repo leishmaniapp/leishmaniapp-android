@@ -23,6 +23,7 @@ interface CloudServicesModule {
      * Provide [IAuthService] via [GrpcAuthServiceImpl]
      */
     @Binds
+    @Singleton
     fun bindAuthService(
         authServiceImpl: GrpcAuthServiceImpl,
     ): IAuthService
@@ -31,6 +32,7 @@ interface CloudServicesModule {
      * Provide [IAnalysisService] via [GrpcAnalysisServiceImpl]
      */
     @Binds
+    @Singleton
     fun bindAnalysisService(
         analysisServiceImpl: GrpcAnalysisServiceImpl
     ): IAnalysisService

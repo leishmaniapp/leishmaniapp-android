@@ -1,10 +1,6 @@
 package com.leishmaniapp.presentation.ui.layout
 
 import android.content.res.Configuration
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -29,7 +25,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.leishmaniapp.R
 import com.leishmaniapp.domain.calibration.ImageCalibrationData
 import com.leishmaniapp.presentation.ui.composables.CameraCalibrationCard
@@ -108,7 +103,7 @@ private fun CameraLayoutPreview() {
                 ) {
                     Image(
                         modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(id = R.drawable.macrophage),
+                        painter = painterResource(id = R.drawable.disease_leishmaniasis_giemsa_icon),
                         contentDescription = null
                     )
                 }
@@ -145,7 +140,7 @@ private fun CameraLayoutPreview_DarkTheme() {
                     ) {
                         Image(
                             modifier = Modifier.fillMaxSize(),
-                            painter = painterResource(id = R.drawable.macrophage),
+                            painter = painterResource(id = R.drawable.disease_leishmaniasis_giemsa_icon),
                             contentDescription = null
                         )
                     }

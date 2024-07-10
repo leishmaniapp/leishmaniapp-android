@@ -46,7 +46,7 @@ interface ApplicationServicesModule {
      */
     @Binds
     @Singleton
-    fun dingDiagnosisSharing(
+    fun bindDiagnosisSharing(
         diagnosisSharing: ApplicationDiagnosisSharingImpl
     ): IDiagnosisSharing
 

@@ -1,5 +1,6 @@
 package com.leishmaniapp.infrastructure.http
 
+import android.util.Log
 import com.leishmaniapp.domain.services.IAuthorizationService
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
@@ -20,15 +21,29 @@ class AuthorizationInterceptor @Inject constructor(
 
     ) : Interceptor {
 
+    companion object {
+        /**
+         * TAG for [Log]
+         */
+        val TAG: String = AuthorizationInterceptor::class.simpleName!!
+    }
+
     override fun intercept(chain: Interceptor.Chain): Response =
         // Get the authorization token
         runBlocking { authorizationService.credentials.first() }.let { credentials ->
+
+            if (credentials != null) {
+                Log.d(TAG, "Credentials for user (${credentials.email}) gathered")
+            } else {
+                Log.w(TAG, "Credentials not found, requests will not provide Authorization header")
+            }
+
             chain.proceed(
                 // If token is present add the authorization header
                 if (credentials != null) {
                     chain.request().newBuilder()
                         .header("Authorization", "Bearer ${credentials.token}")
-                        .header("From", "Bearer ${credentials.email}")
+                        .header("From", credentials.email)
                         .build()
                 }
                 // If not, just forward the request

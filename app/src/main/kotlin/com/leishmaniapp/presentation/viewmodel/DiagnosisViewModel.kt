@@ -200,6 +200,7 @@ class DiagnosisViewModel @Inject constructor(
                     // Store the sample in database
                     withContext(Dispatchers.IO) {
                         samplesRespository.upsertSample(sample)
+                        Log.d(TAG, "Sample stored: (${sample})")
                     }
                     // Set the metadata value
                     currentImageMetadata.value = sample.metadata

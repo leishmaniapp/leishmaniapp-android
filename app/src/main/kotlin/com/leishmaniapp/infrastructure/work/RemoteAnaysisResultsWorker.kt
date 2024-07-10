@@ -1,6 +1,7 @@
 package com.leishmaniapp.infrastructure.work
 
 import android.app.Notification
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.util.Log
@@ -42,25 +43,49 @@ class RemoteAnaysisResultsWorker @AssistedInject constructor(
          */
         const val NOTIFICATION_ID = 0;
 
-
+        /**
+         * TAG for using with [Log]
+         */
         val TAG: String = RemoteAnaysisResultsWorker::class.simpleName!!
     }
 
     /**
      * Get the system [NotificationManager] for foreground service
      */
-    private val notificationManager =
+    private val notificationManager: NotificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    /**
+     * [NotificationChannel] for emitting notificiations
+     */
+    private val notificationChannel: NotificationChannel = NotificationChannel(
+        applicationContext.getString(R.string.notification_remote_analysis_channel_id),
+        applicationContext.getString(R.string.notification_remote_analysis_channel_name),
+        NotificationManager.IMPORTANCE_LOW
+    )
 
     /**
      * Foreground service persistent notification
      */
-    private val workerNotification: Notification = NotificationCompat.Builder(
-        applicationContext, applicationContext.getString(R.string.notification_analysis_channel)
-    ).setContentTitle(applicationContext.getString(R.string.notification_analysis_title))
-        .setSmallIcon(R.drawable.foreground_icon)
+    private val notification: Notification = NotificationCompat.Builder(
+        applicationContext,
+        applicationContext.getString(R.string.notification_remote_analysis_channel_id)
+    ).setContentTitle(applicationContext.getString(R.string.notification_remote_analysis_title))
+        .setSmallIcon(R.drawable.icon_microscope)
         .setContentText(applicationContext.getString(R.string.notification_analysis_content))
         .setOngoing(true).build()
+
+    /**
+     * Show the [RemoteAnaysisResultsWorker]
+     */
+    private fun showNotification() {
+        Log.d(TAG, "Created persistent notification")
+        // Create the notification channel
+        notificationManager.createNotificationChannel(notificationChannel)
+        // Show the notification
+        notificationManager.notify(NOTIFICATION_ID, notification)
+    }
+
 
     override suspend fun doWork(): Result {
 
@@ -70,49 +95,59 @@ class RemoteAnaysisResultsWorker @AssistedInject constructor(
         setForeground(
             ForegroundInfo(
                 NOTIFICATION_ID,
-                workerNotification
+                notification
             )
         )
 
-        // Collect the results
-        withContext(Dispatchers.IO) {
-            analysisService.results().collect { response ->
-                response.status!!.code.asResult { response.ok!! }.fold(
-                    onSuccess = { v ->
-                        // Parse the image metadata
-                        val metadata = ImageMetadata.fromProto(v.metadata!!)
-                        // Get the image (or create a new one)
-                        val image = samplesRepository.getSampleForMetadata(metadata).first()
-                            ?: ImageSample(
-                                metadata = metadata,
-                                stage = AnalysisStage.Analyzed,
-                            )
-                        // Create a copy with the new elements
-                        val copy = image
-                            .withModelElements(ModelDiagnosticElement.from(v.results))
-                            .copy(stage = AnalysisStage.Analyzed)
-                        // Store the copy
-                        samplesRepository.upsertSample(copy)
+        // Show the notification
+        showNotification()
 
-                    }, onFailure = { e ->
-                        if (e is BadAnalysisException) {
+        // Collect the results
+        try {
+            withContext(Dispatchers.IO) {
+                analysisService.results.collect { response ->
+                    Log.i(TAG, "Got response with status: ${response.status}")
+
+                    response.status!!.code.asResult { response.ok!! }.fold(
+                        onSuccess = { v ->
                             // Parse the image metadata
-                            val metadata = ImageMetadata.fromProto(response.error!!.metadata!!)
+                            val metadata = ImageMetadata.fromProto(v.metadata!!)
                             // Get the image (or create a new one)
                             val image = samplesRepository.getSampleForMetadata(metadata).first()
                                 ?: ImageSample(
                                     metadata = metadata,
-                                    stage = AnalysisStage.ResultError,
+                                    stage = AnalysisStage.Analyzed,
                                 )
-                            // Create a copy with the new stage
-                            val copy = image.copy(stage = AnalysisStage.ResultError)
+                            // Create a copy with the new elements
+                            val copy = image
+                                .withModelElements(ModelDiagnosticElement.from(v.results))
+                                .copy(stage = AnalysisStage.Analyzed)
                             // Store the copy
                             samplesRepository.upsertSample(copy)
-                        } else {
-                            Log.e(TAG, "Unexpected error response for image", e)
-                        }
-                    })
+
+                        }, onFailure = { e ->
+                            if (e is BadAnalysisException) {
+                                // Parse the image metadata
+                                val metadata = ImageMetadata.fromProto(response.error!!.metadata!!)
+                                // Get the image (or create a new one)
+                                val image = samplesRepository.getSampleForMetadata(metadata).first()
+                                    ?: ImageSample(
+                                        metadata = metadata,
+                                        stage = AnalysisStage.ResultError,
+                                    )
+                                // Create a copy with the new stage
+                                val copy = image.copy(stage = AnalysisStage.ResultError)
+                                // Store the copy
+                                samplesRepository.upsertSample(copy)
+                            } else {
+                                Log.e(TAG, "Unexpected error response for image", e)
+                            }
+                        })
+                }
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to fetch results", e)
+            return Result.retry()
         }
 
         return Result.success()

@@ -22,8 +22,6 @@ import com.leishmaniapp.utilities.extensions.toRecord
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.onFailure
-import kotlinx.coroutines.channels.onSuccess
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import okio.ByteString
@@ -69,12 +67,14 @@ class RemoteAnalysisQueuingWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
 
         // Check if worker has the required parameters
-        if (workerParameters.inputData.run {
+        if (!workerParameters.inputData.run {
                 hasKeyWithValueOfType<String>(DIAGNOSIS_KEY) &&
                         hasKeyWithValueOfType<String>(SPECIALIST_KEY) &&
                         hasKeyWithValueOfType<Int>(SAMPLE_KEY) &&
                         hasKeyWithValueOfType<String>(MIME_KEY)
             }) {
+
+            Log.e(TAG, "Invalid request parameters: ${workerParameters.inputData}")
             return Result.failure()
         }
 
@@ -98,6 +98,9 @@ class RemoteAnalysisQueuingWorker @AssistedInject constructor(
                 workerParameters.inputData.getInt(SAMPLE_KEY, 0)
             ).first()
         }
+
+        // Queue the sample
+        Log.i(TAG, "Queuing sample for analysis ($sample) for analysis")
 
         // Could not find the sample
         if (sample == null) {
@@ -128,34 +131,33 @@ class RemoteAnalysisQueuingWorker @AssistedInject constructor(
         }
 
         // Set the analysis status
-        withContext(Dispatchers.IO) {
-            analysisService.analyze().trySend(
-                AnalysisRequest(
-                    metadata = sample.metadata.toProto(),
-                    specialist = specialist.toProto().toRecord(),
-                    image = ImageBytes(
-                        mime = workerParameters.inputData.getString(MIME_KEY)!!,
-                        data_ = ByteString.of(*imageBytes)
+        return withContext(Dispatchers.IO) {
+            try {
+                analysisService.analyze(
+                    AnalysisRequest(
+                        metadata = sample.metadata.toProto(),
+                        specialist = specialist.toProto().toRecord(),
+                        image = ImageBytes(
+                            mime = workerParameters.inputData.getString(MIME_KEY)!!,
+                            data_ = ByteString.of(*imageBytes)
+                        )
                     )
                 )
-            )
-        }.onFailure { e ->
-            // Set the exception
-            Log.e(TAG, "Failed to send the AnalysisRequest to a remote server", e)
 
-            // Set the image status
-            withContext(Dispatchers.IO) {
-                samplesRepository.upsertSample(sample.copy(stage = AnalysisStage.DeliverError))
-            }
-            return Result.failure()
+                Log.i(TAG, "Analysis request for (${sample.metadata}) completed")
 
-        }.onSuccess {
-            // Set the image status
-            withContext(Dispatchers.IO) {
+                // Set the image status
                 samplesRepository.upsertSample(sample.copy(stage = AnalysisStage.Analyzing))
+                return@withContext Result.success()
+
+            } catch (e: Exception) {
+                // Set the exception
+                Log.e(TAG, "Failed to send the AnalysisRequest to a remote server", e)
+
+                // Set the image status
+                samplesRepository.upsertSample(sample.copy(stage = AnalysisStage.DeliverError))
+                return@withContext Result.failure()
             }
         }
-
-        return Result.success()
     }
 }

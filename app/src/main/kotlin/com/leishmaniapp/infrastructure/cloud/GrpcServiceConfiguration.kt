@@ -42,6 +42,8 @@ class GrpcServiceConfiguration(
      * HTTP2 client with no TLS configuration as transport for gRPC
      */
     private val transport: OkHttpClient = OkHttpClient.Builder()
+        // Timeout
+        .readTimeout(Duration.ofDays(15))
         // Interceptors
         .addInterceptor(exceptionInterceptor)
         .addInterceptor(authorizationInterceptor)

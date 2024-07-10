@@ -51,7 +51,7 @@ sealed class Disease(
     /**
      * [R.drawable] resource with the disease icon in menu
      */
-    @Transient val painterResource: Int = R.drawable.macrophage
+    @Transient val painterResource: Int = R.drawable.disease_unknown_icon
 
 ) : Parcelable {
 
@@ -87,4 +87,19 @@ sealed class Disease(
      * found during the diagnosis, each disease must implement its own way of computing a result
      */
     abstract fun modelResultForDisease(computedResults: ComputedResultsType): Boolean
+
+    /**
+     * Use [id] as [String] representation of the [Disease]
+     */
+    override fun toString(): String = id
+
+    /**
+     * Use the [id] hash code as the [Disease] hashcode
+     */
+    override fun hashCode(): Int = id.hashCode()
+
+    /**
+     * Compare diseases using their [id]
+     */
+    override fun equals(other: Any?): Boolean = (other is Disease) && (other.id == id)
 }

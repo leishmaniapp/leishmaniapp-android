@@ -20,6 +20,7 @@ data object MockSpotsDisease : Disease(
         DiagnosticElementName("mock.spots:magenta", R.string.mock_spots_disease_magenta),
     ),
     displayNameResource = R.string.mock_spots_disease,
+    painterResource = R.drawable.disease_mock_spots_icon,
 ) {
     override fun modelResultForDisease(computedResults: ComputedResultsType): Boolean {
         return computedResults.isNotEmpty()
