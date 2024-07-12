@@ -4,11 +4,11 @@ import com.leishmaniapp.domain.services.IAuthorizationService
 import com.leishmaniapp.infrastructure.sharing.ApplicationDiagnosisSharingImpl
 import com.leishmaniapp.infrastructure.picture.ApplicationPictureStandardizationImpl
 import com.leishmaniapp.domain.services.IDiagnosisSharing
-import com.leishmaniapp.domain.services.INetworkService
+import com.leishmaniapp.domain.services.IAvailabilityService
 import com.leishmaniapp.domain.services.IPictureStandardization
 import com.leishmaniapp.domain.services.IQueuingService
 import com.leishmaniapp.infrastructure.analysis.WorkQueuingServiceImpl
-import com.leishmaniapp.infrastructure.android.network.ConnectivityManagerNetworkServiceImpl
+import com.leishmaniapp.infrastructure.cloud.GrpcAvailabilityServiceImpl
 import com.leishmaniapp.infrastructure.preferences.DataStoreAuthorizationServiceImpl
 import dagger.Binds
 import dagger.Module
@@ -58,13 +58,4 @@ interface ApplicationServicesModule {
     fun bindPictureStandardization(
         pictureStandardizationImpl: ApplicationPictureStandardizationImpl
     ): IPictureStandardization
-
-    /**
-     * Provide the [INetworkService] via [ConnectivityManagerNetworkServiceImpl]
-     */
-    @Binds
-    @Singleton
-    fun bindNetworkService(
-        networkService: ConnectivityManagerNetworkServiceImpl
-    ): INetworkService
 }

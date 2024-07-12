@@ -37,6 +37,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 /**
  * [DataStore] implementation for the [IAuthorizationService]
  */
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class DataStoreAuthorizationServiceImpl @Inject constructor(
 
     /**
@@ -78,7 +79,6 @@ class DataStoreAuthorizationServiceImpl @Inject constructor(
     /**
      * Currently stored [Credentials]
      */
-    @OptIn(FlowPreview::class)
     override val credentials: StateFlow<Credentials?> =
         // Fetch the data from DataStore
         dataStore.data

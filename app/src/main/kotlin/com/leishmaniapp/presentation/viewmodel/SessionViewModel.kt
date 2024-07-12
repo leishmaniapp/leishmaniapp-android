@@ -18,7 +18,7 @@ import com.leishmaniapp.domain.repository.ICredentialsRepository
 import com.leishmaniapp.domain.repository.ISpecialistsRepository
 import com.leishmaniapp.domain.services.IAuthorizationService
 import com.leishmaniapp.domain.services.IAuthService
-import com.leishmaniapp.domain.services.INetworkService
+import com.leishmaniapp.domain.services.IAvailabilityService
 import com.leishmaniapp.domain.services.IQueuingService
 import com.leishmaniapp.domain.types.AccessToken
 import com.leishmaniapp.domain.types.Email
@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
@@ -58,7 +58,7 @@ class SessionViewModel @Inject constructor(
     private val authService: IAuthService,
     private val authorizationService: IAuthorizationService,
     private val queuingService: IQueuingService,
-    networkService: INetworkService,
+    networkService: IAvailabilityService,
 
     // Repositories
     private val credentialsRepository: ICredentialsRepository,
@@ -85,43 +85,28 @@ class SessionViewModel @Inject constructor(
     /**
      * Get the current network state and set the addecuate [AuthState.None] value is present
      */
-    val networkState: StateFlow<INetworkService.NetworkState> =
-        networkService.state()
-            // Run the flow on IO
-            .flowOn(Dispatchers.IO)
+    val isOnlineAuthenticationAvailable: StateFlow<Boolean> =
+        networkService.isServiceAvailable
             // Update the connection state
             .onEach { status ->
+                Log.d(TAG, "isOnlineAuthenticationAvailable=$status")
                 if (state.value is AuthState.None) {
-                    _state.value = AuthState.None.getConnectionState(status)
+                    _state.value = AuthState.None(status)
                 }
             }
-            .catch { e -> Log.e(TAG, "Failed to get network status", e) }
             // Transform into StateFlow
             .stateIn(
                 viewModelScope,
                 SharingStarted.Eagerly,
-                INetworkService.NetworkState.OFFLINE,
+                false,
             )
-
-    /**
-     * Create a new [AuthState.None] state gathering the network state from a [INetworkService]
-     */
-    private fun AuthState.None.Companion.getConnectionState(
-        state: INetworkService.NetworkState = networkState.value,
-    ): AuthState.None = AuthState.None(
-        if (state == INetworkService.NetworkState.OFFLINE) {
-            AuthState.None.AuthConnectionState.OFFLINE
-        } else {
-            AuthState.None.AuthConnectionState.ONLINE
-        }
-    )
 
     /**
      * Dismiss the current [AuthState] to [AuthState.None], useful for getting rid of exceptions
      */
     override fun dismiss() {
         viewModelScope.launch {
-            _state.value = AuthState.None.getConnectionState()
+            _state.value = AuthState.None(isOnlineAuthenticationAvailable.value)
         }
     }
 
@@ -142,18 +127,22 @@ class SessionViewModel @Inject constructor(
             .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /**
-     * Get the currently logged in specialist
+     * Get the currently logged specialist
      */
     val specialist: StateFlow<Specialist?> =
         credentials
-            .flatMapMerge {
-                it?.let { c -> specialistRepository.specialistByEmail(c.email) }
-                    ?: flowOf(null)
+            .flatMapLatest { credentials ->
+                if (credentials != null) {
+                    specialistRepository.specialistByEmail(credentials.email)
+                } else {
+                    flowOf(null)
+                }
             }
             .onEach { s ->
                 // Set the authentication value
-                _state.value =
-                    s?.let { AuthState.Authenticated(s) } ?: AuthState.None.getConnectionState()
+                _state.value = s?.let { AuthState.Authenticated(s) } ?: AuthState.None(
+                    isOnlineAuthenticationAvailable.value
+                )
 
                 Log.i(TAG, "Authentication status changed for specialist: ${_state.value}")
             }

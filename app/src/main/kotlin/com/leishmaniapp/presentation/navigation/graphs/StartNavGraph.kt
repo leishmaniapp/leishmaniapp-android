@@ -52,17 +52,16 @@ fun NavGraphBuilder.startNavGraph(
 
             // Show auth screens
             when (authState) {
-                AuthState.None(AuthState.None.AuthConnectionState.OFFLINE) ->
+                AuthState.None(false) ->
+                    // Show the offline authentication screen
                     AuthenticationOfflineScreen(emails = rememberedCredentials) { email, password ->
-                        // Show the normal offline screen
                         sessionViewModel.authenticateOffline(email, password)
                     }
 
-                AuthState.None(AuthState.None.AuthConnectionState.ONLINE) ->
-                    // Show the normal authentication screen
-                    AuthenticationOnlineScreen(onAuthenticate = { email, password ->
-                        sessionViewModel.authenticateOnline(email, password)
-                    })
+                // Show the online authentication screen
+                AuthState.None(true) -> AuthenticationOnlineScreen(onAuthenticate = { email, password ->
+                    sessionViewModel.authenticateOnline(email, password)
+                })
 
                 else -> {}
             }

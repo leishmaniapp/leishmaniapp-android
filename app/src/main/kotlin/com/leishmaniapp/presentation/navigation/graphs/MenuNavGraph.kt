@@ -1,6 +1,5 @@
 package com.leishmaniapp.presentation.navigation.graphs
 
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -14,7 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.leishmaniapp.domain.services.INetworkService
+import com.leishmaniapp.domain.services.IAvailabilityService
 import com.leishmaniapp.presentation.navigation.NavigationRoutes
 import com.leishmaniapp.presentation.viewmodel.state.AuthState
 import com.leishmaniapp.presentation.ui.dialogs.ProfileAlertDialog
@@ -47,7 +46,7 @@ fun NavGraphBuilder.menuNavGraph(
             }
 
             // Get the network state
-            val networkState: INetworkService.NetworkState by sessionViewModel.networkState.collectAsStateWithLifecycle()
+            val isOnline by sessionViewModel.isOnlineAuthenticationAvailable.collectAsStateWithLifecycle()
 
             // Show the profile alert
             var showProfileAlert by rememberSaveable {
@@ -55,7 +54,7 @@ fun NavGraphBuilder.menuNavGraph(
             }
 
             DiseasesMenuScreen(
-                online = networkState != INetworkService.NetworkState.OFFLINE,
+                online = isOnline,
                 diseases = authState!!.s.diseases,
                 onProfileSelection = {
                     showProfileAlert = true

@@ -120,9 +120,12 @@ class RemoteAnaysisResultsWorker @AssistedInject constructor(
                                     metadata = metadata,
                                     stage = AnalysisStage.Analyzed,
                                 )
+                            // Gather the results
+                            val results = ModelDiagnosticElement.from(v.results)
+                            Log.i(TAG, results.toString())
                             // Create a copy with the new elements
                             val copy = image
-                                .withModelElements(ModelDiagnosticElement.from(v.results))
+                                .withModelElements(results)
                                 .copy(stage = AnalysisStage.Analyzed)
                             // Store the copy
                             samplesRepository.upsertSample(copy)

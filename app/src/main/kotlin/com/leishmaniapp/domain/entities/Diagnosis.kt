@@ -179,10 +179,4 @@ data class Diagnosis(
      */
     fun appendImage(image: ImageSample): Diagnosis =
         copy(images = images.plus(image))
-
-    /**
-     * Get the latest image in a diagnosis
-     */
-    fun latestImage(): ImageSample =
-        images.last()
 }

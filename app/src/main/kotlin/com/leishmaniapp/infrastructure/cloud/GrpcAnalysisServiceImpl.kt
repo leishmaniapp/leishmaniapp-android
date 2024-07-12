@@ -39,8 +39,7 @@ class GrpcAnalysisServiceImpl @Inject constructor(
     /**
      * Protobuf representation of [AnalysisServiceClient]
      */
-    private val client: AnalysisServiceClient =
-        configuration.client.create(AnalysisServiceClient::class)
+    private val client: AnalysisServiceClient = configuration.client.create()
 
     /**
      * Channel for sending async requests

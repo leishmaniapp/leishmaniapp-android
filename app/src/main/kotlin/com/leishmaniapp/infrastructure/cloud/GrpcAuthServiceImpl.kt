@@ -34,7 +34,7 @@ class GrpcAuthServiceImpl @Inject constructor(
     /**
      * Protobuf definition of a [AuthServiceClient]
      */
-    private val client: AuthServiceClient = configuration.client.create(AuthServiceClient::class)
+    private val client: AuthServiceClient = configuration.client.create()
 
     override suspend fun authenticate(request: AuthRequest): Result<AuthResponse> =
         withContext(Dispatchers.IO) {

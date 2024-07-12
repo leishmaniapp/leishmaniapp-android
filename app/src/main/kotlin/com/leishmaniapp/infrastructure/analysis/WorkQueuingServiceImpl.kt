@@ -6,7 +6,6 @@ import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
@@ -14,6 +13,7 @@ import androidx.work.workDataOf
 import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.domain.entities.ImageSample
 import com.leishmaniapp.domain.repository.ISamplesRepository
+import com.leishmaniapp.domain.services.IAvailabilityService
 import com.leishmaniapp.domain.services.IQueuingService
 import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.infrastructure.work.RemoteAnalysisQueuingWorker
@@ -29,11 +29,16 @@ import javax.inject.Inject
  */
 class WorkQueuingServiceImpl @Inject constructor(
 
-    // Android context for WorkManager
+    /**
+     * [Context] for [WorkManager]
+     */
     @ApplicationContext applicationContext: Context,
 
     // Repositories
     private val samplesRepository: ISamplesRepository,
+
+    // Services
+    private val networkService: IAvailabilityService,
 
     ) : IQueuingService {
 

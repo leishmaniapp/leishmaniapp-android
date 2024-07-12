@@ -102,7 +102,10 @@ fun DiagnosticImageResultsTable(
                             CircularProgressIndicator(modifier = Modifier.size(24.dp))
                         }
                     } else {
-                        Text(text = modelDiagnosticElements.first { it.id == diagnosticElementName }.amount.toString())
+                        Text(
+                            text = (modelDiagnosticElements.firstOrNull { it.id == diagnosticElementName }?.amount
+                                ?: 0).toString()
+                        )
                     }
                 }
                 // Specialist
@@ -176,7 +179,6 @@ fun ResultsTablePreview_Dark() {
         }
     }
 }
-
 
 
 @Preview(showBackground = true)

@@ -43,7 +43,7 @@ fun CameraCanvasPreview(
             factory = { ctx ->
                 PreviewView(ctx).apply {
                     controller = cameraController
-                    scaleType = PreviewView.ScaleType.FIT_CENTER
+                    scaleType = PreviewView.ScaleType.FILL_CENTER
                     implementationMode = PreviewView.ImplementationMode.PERFORMANCE
                 }
             },

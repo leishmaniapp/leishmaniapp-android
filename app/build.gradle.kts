@@ -78,10 +78,6 @@ android {
         }
     }
 
-    sourceSets.getByName("main") {
-        kotlin.srcDir("build/generated/source/proto/main/kotlin")
-    }
-
     room {
         schemaDirectory("$projectDir/schemas")
     }
@@ -94,6 +90,14 @@ kotlin {
 }
 
 wire {
+    sourcePath {
+        srcDirs(
+            // protobuf_schema from github submodules
+            "src/main/proto",
+            // grpc-proto files from https://github.com/grpc/grpc-proto
+            "src/main/grpc"
+        )
+    }
     kotlin {
         android = true
         rpcRole = "client"

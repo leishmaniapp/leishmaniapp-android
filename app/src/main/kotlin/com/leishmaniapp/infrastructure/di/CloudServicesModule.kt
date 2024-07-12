@@ -2,8 +2,10 @@ package com.leishmaniapp.infrastructure.di
 
 import com.leishmaniapp.domain.services.IAnalysisService
 import com.leishmaniapp.domain.services.IAuthService
+import com.leishmaniapp.domain.services.IAvailabilityService
 import com.leishmaniapp.infrastructure.cloud.GrpcAnalysisServiceImpl
 import com.leishmaniapp.infrastructure.cloud.GrpcAuthServiceImpl
+import com.leishmaniapp.infrastructure.cloud.GrpcAvailabilityServiceImpl
 import com.leishmaniapp.infrastructure.cloud.GrpcServiceConfiguration
 import dagger.Binds
 import dagger.Module
@@ -36,4 +38,13 @@ interface CloudServicesModule {
     fun bindAnalysisService(
         analysisServiceImpl: GrpcAnalysisServiceImpl
     ): IAnalysisService
+
+    /**
+     * Provide the [IAvailabilityService] via [GrpcAvailabilityServiceImpl]
+     */
+    @Binds
+    @Singleton
+    fun bindAvailabilityService(
+        networkService: GrpcAvailabilityServiceImpl
+    ): IAvailabilityService
 }
