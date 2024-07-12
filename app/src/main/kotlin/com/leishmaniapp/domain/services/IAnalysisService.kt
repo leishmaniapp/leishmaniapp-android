@@ -20,4 +20,9 @@ interface IAnalysisService {
      * Send a new [AnalysisRequest] for analysis
      */
     suspend fun analyze(request: AnalysisRequest): Result<Unit>
+
+    /**
+     * Restart the bidirectional stream
+     */
+    suspend fun reset(): Result<Unit>
 }

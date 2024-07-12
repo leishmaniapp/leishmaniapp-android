@@ -1,5 +1,6 @@
 package com.leishmaniapp.presentation.navigation.graphs
 
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
@@ -10,6 +11,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.core.content.ContextCompat
@@ -20,6 +23,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.infrastructure.camera.CameraCalibrationAnalyzer
 import com.leishmaniapp.presentation.navigation.NavigationRoutes
 import com.leishmaniapp.presentation.ui.dialogs.ErrorAlertDialog

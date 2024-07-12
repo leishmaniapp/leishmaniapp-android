@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.entities.Diagnosis
@@ -28,9 +29,14 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -115,7 +121,7 @@ class DiagnosisViewModel @Inject constructor(
         }
     }
         .flowOn(Dispatchers.IO)
-        .catch { e -> Log.e(TAG, "Exception thrown during diagnosis StateFlow collection", e) }
+        .catch { e -> Log.e(TAG, "Exception thrown during Diagnosis StateFlow collection", e) }
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /**
@@ -129,7 +135,7 @@ class DiagnosisViewModel @Inject constructor(
         }
     }
         .flowOn(Dispatchers.IO)
-        .catch { e -> Log.e(TAG, "Exception thrown during specialist StateFlow collection", e) }
+        .catch { e -> Log.e(TAG, "Exception thrown during Specialist StateFlow collection", e) }
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /**
@@ -143,7 +149,7 @@ class DiagnosisViewModel @Inject constructor(
         }
     }
         .flowOn(Dispatchers.IO)
-        .catch { e -> Log.e(TAG, "Exception thrown during patient StateFlow collection", e) }
+        .catch { e -> Log.e(TAG, "Exception thrown during Patient StateFlow collection", e) }
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /**
@@ -176,18 +182,27 @@ class DiagnosisViewModel @Inject constructor(
         savedStateHandle.getLiveData("currentImageSample", null)
 
     /**
-     * Actual [ImageSample] flow from database based on the [currentImageSample]
+     * Actual [ImageSample] flow from database based on the [currentImageMetadata]
      */
-    val currentImageSample: StateFlow<ImageSample?> =
-        currentImageMetadata.asFlow().flatMapMerge { metadata ->
+    val currentImageSample: StateFlow<ImageSample?> = currentImageMetadata.asFlow()
+        .flatMapLatest { metadata ->
             if (metadata != null) {
                 samplesRespository.getSampleForMetadata(metadata)
             } else {
                 flowOf(null)
             }
         }
-            .flowOn(Dispatchers.IO)
-            .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+        .distinctUntilChanged()
+        .flowOn(Dispatchers.IO)
+        .onEach { s -> Log.d(TAG, "CurrentImageSample=${s.toString()}") }
+        .catch { e ->
+            Log.e(
+                TAG,
+                "Exception thrown during ImageSample StateFlow collection",
+                e
+            )
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /**
      * Create a new [ImageSample]
@@ -216,6 +231,7 @@ class DiagnosisViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 samplesRespository.upsertSample(imageSample)
+                Log.i(TAG, "Pushing replacement for CurrentImageSample (${imageSample.metadata})")
             }
         }
     }

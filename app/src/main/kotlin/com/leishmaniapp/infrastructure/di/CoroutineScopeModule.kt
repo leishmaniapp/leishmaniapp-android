@@ -15,14 +15,14 @@ import javax.inject.Singleton
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
-annotation class InjectDefaultDispatcher
+annotation class InjectScopeWithDefaultDispatcher
 
 /**
  * Provides [Dispatchers.IO] as dispatcher for [CoroutineScope]
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
-annotation class InjectIODispatcher
+annotation class InjectScopeWithIODispatcher
 
 /**
  * Provide an application wide [CoroutineScope]
@@ -32,13 +32,13 @@ annotation class InjectIODispatcher
 class CoroutineScopeModule {
     @Provides
     @Singleton
-    @InjectDefaultDispatcher
+    @InjectScopeWithDefaultDispatcher
     fun provideDefaultCoroutineScope(): CoroutineScope =
         CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     @Provides
     @Singleton
-    @InjectIODispatcher
+    @InjectScopeWithIODispatcher
     fun provideIOCoroutineScope(): CoroutineScope =
         CoroutineScope(SupervisorJob() + Dispatchers.IO)
 }

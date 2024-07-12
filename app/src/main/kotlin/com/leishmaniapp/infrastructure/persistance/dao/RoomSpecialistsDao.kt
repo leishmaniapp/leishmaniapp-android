@@ -26,9 +26,6 @@ interface RoomSpecialistsDao {
     @Query("SELECT * FROM Specialists WHERE email = :email")
     fun specialistByEmail(email: Email): Flow<RoomSpecialistEntity?>
 
-    @Query("SELECT * FROM Specialists WHERE token = :token")
-    fun specialistByToken(token: AccessToken): Flow<RoomSpecialistEntity?>
-
     @Query("DELETE FROM Specialists WHERE email = :email")
     fun deleteSpecialistByEmail(email: Email)
 

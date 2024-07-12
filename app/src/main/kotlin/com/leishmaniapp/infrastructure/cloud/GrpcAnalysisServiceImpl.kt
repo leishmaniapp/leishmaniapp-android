@@ -1,23 +1,17 @@
 package com.leishmaniapp.infrastructure.cloud
 
-import android.content.Context
+import android.util.Log
 import com.leishmaniapp.cloud.analysis.AnalysisRequest
 import com.leishmaniapp.cloud.analysis.AnalysisResponse
 import com.leishmaniapp.cloud.analysis.AnalysisServiceClient
 import com.leishmaniapp.domain.services.IAnalysisService
-import com.leishmaniapp.infrastructure.di.InjectIODispatcher
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.leishmaniapp.infrastructure.di.InjectScopeWithIODispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -25,8 +19,8 @@ import javax.inject.Inject
  */
 class GrpcAnalysisServiceImpl @Inject constructor(
 
-    @InjectIODispatcher
-    coroutineScope: CoroutineScope,
+    @InjectScopeWithIODispatcher
+    private val coroutineScope: CoroutineScope,
 
     /**
      * gRPC connection properties and configuration
@@ -34,6 +28,13 @@ class GrpcAnalysisServiceImpl @Inject constructor(
     configuration: GrpcServiceConfiguration,
 
     ) : IAnalysisService {
+
+    companion object {
+        /**
+         * TAG for using with [Log]
+         */
+        val TAG: String = GrpcAnalysisServiceImpl::class.simpleName!!
+    }
 
     /**
      * Protobuf representation of [AnalysisServiceClient]
@@ -44,19 +45,18 @@ class GrpcAnalysisServiceImpl @Inject constructor(
     /**
      * Channel for sending async requests
      */
-    private lateinit var sendChannel: SendChannel<AnalysisRequest>
+    private var sendChannel: SendChannel<AnalysisRequest>
 
     /**
      * Channel for recieving async responses
      */
-    private lateinit var recvChannel: ReceiveChannel<AnalysisResponse>
+    private var recvChannel: ReceiveChannel<AnalysisResponse>
 
     /**
      * [Flow] with the [AnalysisResponse] pushed by the server stream
      */
-    override val results: Flow<AnalysisResponse> by lazy {
-        recvChannel.receiveAsFlow()
-    }
+    override val results: Flow<AnalysisResponse>
+        get() = recvChannel.receiveAsFlow()
 
     init {
         // Create the channels
@@ -67,9 +67,6 @@ class GrpcAnalysisServiceImpl @Inject constructor(
         recvChannel = recv
     }
 
-    /**
-     * Send a new [AnalysisRequest]
-     */
     override suspend fun analyze(request: AnalysisRequest): Result<Unit> =
         coroutineScope {
             try {
@@ -78,5 +75,25 @@ class GrpcAnalysisServiceImpl @Inject constructor(
             } catch (e: Exception) {
                 return@coroutineScope Result.failure(e)
             }
+        }
+
+    override suspend fun reset(): Result<Unit> =
+        try {
+            // Close previous channels
+            sendChannel.close()
+
+            // Create the channels
+            val (send, recv) = client.StartAnalysis().executeIn(coroutineScope)
+
+            // Add the channels to current variables
+            sendChannel = send
+            recvChannel = recv
+
+            // Return success
+            Log.i(TAG, "Reset on AnalysisService stream")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "Cannot create new AnalysisServer stream", e)
+            Result.failure(e)
         }
 }

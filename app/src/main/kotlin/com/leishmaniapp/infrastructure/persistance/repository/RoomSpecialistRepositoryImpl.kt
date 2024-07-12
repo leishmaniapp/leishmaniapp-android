@@ -31,9 +31,6 @@ class RoomSpecialistRepositoryImpl @Inject constructor(
     override fun specialistByEmail(email: Email): Flow<Specialist?> =
         dao.specialistByEmail(email).map { it?.toSpecialist() }
 
-    override fun specialistByToken(token: AccessToken): Flow<Specialist?> =
-        dao.specialistByToken(token).map { it?.toSpecialist() }
-
     override fun deleteSpecialistByEmail(email: Email) = dao.deleteSpecialistByEmail(email)
 
     override fun allSpecialists(): Flow<List<Specialist>> =

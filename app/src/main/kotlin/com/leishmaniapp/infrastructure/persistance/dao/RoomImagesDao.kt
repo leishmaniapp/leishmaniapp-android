@@ -36,4 +36,7 @@ interface RoomImagesDao {
 
     @Query("SELECT * FROM Images WHERE stage = :stage")
     fun imagesForStage(stage: AnalysisStage): Flow<List<RoomImageEntity>>
+
+    @Query("SELECT * FROM Images")
+    fun allImages(): Flow<List<RoomImageEntity>>
 }

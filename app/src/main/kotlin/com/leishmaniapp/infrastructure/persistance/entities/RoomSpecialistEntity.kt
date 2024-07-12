@@ -16,7 +16,6 @@ import com.leishmaniapp.domain.types.Email
 data class RoomSpecialistEntity(
     @PrimaryKey @ColumnInfo(name = "email") val email: Email,
     @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "token") val token: AccessToken? = null,
     @ColumnInfo(name = "diseases") val diseases: Set<Disease> = setOf()
 ) {
     constructor(specialist: Specialist) : this(

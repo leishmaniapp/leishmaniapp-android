@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b351dbd1d49aef3111ff8185946bf5e4",
+    "identityHash": "02bad091b27ad4f565b3fc2d1a870922",
     "entities": [
       {
         "tableName": "Diagnoses",
@@ -197,7 +197,7 @@
       },
       {
         "tableName": "Specialists",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`email` TEXT NOT NULL, `name` TEXT NOT NULL, `token` TEXT, `diseases` TEXT NOT NULL, PRIMARY KEY(`email`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`email` TEXT NOT NULL, `name` TEXT NOT NULL, `diseases` TEXT NOT NULL, PRIMARY KEY(`email`))",
         "fields": [
           {
             "fieldPath": "email",
@@ -210,12 +210,6 @@
             "columnName": "name",
             "affinity": "TEXT",
             "notNull": true
-          },
-          {
-            "fieldPath": "token",
-            "columnName": "token",
-            "affinity": "TEXT",
-            "notNull": false
           },
           {
             "fieldPath": "diseases",
@@ -318,7 +312,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b351dbd1d49aef3111ff8185946bf5e4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '02bad091b27ad4f565b3fc2d1a870922')"
     ]
   }
 }

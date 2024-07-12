@@ -45,5 +45,8 @@ class RoomSamplesRepositoryImpl @Inject constructor(
             .map { flow -> flow.map { it.toImageSample() } }
 
     override fun getAllSamplesForStage(stage: AnalysisStage): Flow<List<ImageSample>> =
-        dao.imagesForStage(stage).map { flow -> flow.map { it.toImageSample() } }
+        dao.imagesForStage(stage).map { list -> list.map { it.toImageSample() } }
+
+    override fun getAllSamples(): Flow<List<ImageSample>> =
+        dao.allImages().map { list -> list.map { it.toImageSample() } }
 }

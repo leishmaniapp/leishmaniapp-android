@@ -12,7 +12,14 @@ import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.HourglassFull
 import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material.icons.rounded.Block
+import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material.icons.rounded.HourglassFull
+import androidx.compose.material.icons.rounded.Sync
+import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -46,41 +53,42 @@ fun DiagnosisImageGridItem(modifier: Modifier = Modifier, image: ImageSample) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "#${(image.metadata.sample + 1)}",
-                modifier = Modifier.padding(8.dp)
+                text = "#${(image.metadata.sample + 1)}", modifier = Modifier.padding(8.dp)
             )
 
             Box(modifier = Modifier.padding(8.dp)) {
                 when (image.stage) {
+
                     AnalysisStage.NotAnalyzed -> Icon(
-                        Icons.Filled.Block, contentDescription = stringResource(
+                        Icons.Rounded.Block, contentDescription = stringResource(
                             id = R.string.not_analyzed
                         )
                     )
 
                     AnalysisStage.Enqueued -> Icon(
-                        Icons.Filled.Sync, contentDescription = stringResource(
+                        Icons.Rounded.HourglassFull, contentDescription = stringResource(
                             id = R.string.enqueued
                         )
                     )
 
-                    AnalysisStage.ResultError, AnalysisStage.DeliverError -> Icon(
-                        Icons.Filled.Error,
-                        contentDescription = stringResource(id = R.string.stage_alert_deferred)
-                    )
-
                     AnalysisStage.Analyzing -> Icon(
-                        Icons.Filled.Sync,
+                        Icons.Rounded.Sync,
                         contentDescription = stringResource(id = R.string.waiting)
                     )
 
                     AnalysisStage.Deferred -> Icon(
-                        Icons.Filled.Cloud,
+                        Icons.Rounded.Timer,
                         contentDescription = stringResource(id = R.string.processed)
                     )
 
+                    AnalysisStage.ResultError, AnalysisStage.DeliverError -> Icon(
+                        Icons.Rounded.Error,
+                        contentDescription = stringResource(id = R.string.deferred)
+                    )
+
+
                     AnalysisStage.Analyzed -> Icon(
-                        Icons.Filled.Done,
+                        Icons.Rounded.Done,
                         contentDescription = stringResource(id = R.string.processed)
                     )
                 }

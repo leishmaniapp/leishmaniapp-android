@@ -50,4 +50,8 @@ interface ISamplesRepository {
      */
     fun getAllSamplesForStage(stage: AnalysisStage): Flow<List<ImageSample>>
 
+    /**
+     * Get all the [ImageSample] in database
+     */
+    fun getAllSamples(): Flow<List<ImageSample>>
 }

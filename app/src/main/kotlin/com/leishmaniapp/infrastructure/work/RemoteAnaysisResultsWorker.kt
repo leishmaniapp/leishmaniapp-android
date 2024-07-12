@@ -106,10 +106,12 @@ class RemoteAnaysisResultsWorker @AssistedInject constructor(
         try {
             withContext(Dispatchers.IO) {
                 analysisService.results.collect { response ->
-                    Log.i(TAG, "Got response with status: ${response.status}")
-
                     response.status!!.code.asResult { response.ok!! }.fold(
                         onSuccess = { v ->
+                            Log.i(
+                                TAG,
+                                "Got successfull response with status (${response.status}) for sample: ${response.ok?.metadata}"
+                            )
                             // Parse the image metadata
                             val metadata = ImageMetadata.fromProto(v.metadata!!)
                             // Get the image (or create a new one)
@@ -126,6 +128,11 @@ class RemoteAnaysisResultsWorker @AssistedInject constructor(
                             samplesRepository.upsertSample(copy)
 
                         }, onFailure = { e ->
+                            Log.e(
+                                TAG,
+                                "Failed analysis with status (${response.status}) for sample: ${response.error?.metadata}",
+                                e
+                            )
                             if (e is BadAnalysisException) {
                                 // Parse the image metadata
                                 val metadata = ImageMetadata.fromProto(response.error!!.metadata!!)
@@ -147,6 +154,7 @@ class RemoteAnaysisResultsWorker @AssistedInject constructor(
             }
         } catch (e: Exception) {
             Log.e(TAG, "Failed to fetch results", e)
+            analysisService.reset()
             return Result.retry()
         }
 

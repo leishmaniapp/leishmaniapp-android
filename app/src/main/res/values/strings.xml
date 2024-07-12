@@ -31,7 +31,7 @@
     <string name="exception_bad_input">Entrada inválida</string>
     <string name="exception_root">Error desconocido</string>
     <string name="exception_generic">Excepción: %1$s</string>
-    <string name="exception_image">Error en captura de imágen: %1$s</string>
+    <string name="exception_image">Error en captura de imagen: %1$s</string>
     <string name="exception_network">Error de red: %1$s</string>
     <string name="exception_remote">Error en llamada a procedimiento remoto</string>
     <string name="exception_remote_status">Error emitido por el servidor: %1$s</string>
@@ -87,7 +87,7 @@
     <string name="sure_exit_diagnosis">¿Está seguro que desea cancelar el diagnóstico?</string>
     <string name="alert_success">Operación Exitosa</string>
     <string name="alert_inserted_patient">Paciente añadido exitosamente</string>
-    <string name="alert_not_analyzed">Esta imágen aún no ha sido analizada. Presione el botón de analizar para generar los resultados</string>
+    <string name="alert_not_analyzed">Esta imagen aún no ha sido analizada. Presione el botón de analizar para generar los resultados</string>
     <string name="alert_sure_finish_diagnosis">¿Está seguro que desea finalizar el diagnóstico?</string>
     <string name="alert_missing_result">Es necesario proveer un diagnóstico antes de continuar</string>
     <string name="alert_discard_diagnosis">¿Está seguro que desea salir? Esta acción descartará el diagnóstico</string>
@@ -110,6 +110,7 @@
     <string name="processed">Procesada</string>
     <string name="not_analyzed">No analizada</string>
     <string name="enqueued">Preparando para el análisis</string>
+    <string name="deferred">Análisis diferido</string>
     <string name="diagnosis_results">Resultados del análisis</string>
     <string name="start_diagnosis">Iniciar un diagnóstico</string>
     <string name="diagnostic_image">Imagen Diagnóstica</string>
@@ -119,12 +120,21 @@
     <string name="select_disease">Seleccione una enfermedad</string>
     <string name="awaiting">Pendientes</string>
 
-    <!-- Diagnosis and Analysis -->
-    <string name="stage_alert_not_analyzed">La imagen aún no ha sido procesada</string>
-    <string name="stage_alert_analyzing">La imagen está siendo procesada</string>
-    <string name="stage_alert_deferred">Falló la conexión a internet. El análisis se realizará cuando se reestablezca la conexión</string>
-    <string name="stage_alert_result_error">Falló el análisis de esta imágen, los resultados del modelo serán descartados</string>
+    <!-- Analysis Stages -->
+    <string name="stage_not_analyzed_title">Imagen no analizada</string>
+    <string name="stage_not_analyzed_content">Pulse en "Analizar" para iniciar el análisis de esta muestra</string>
+    <string name="stage_enqueued_title">En cola para el procesamiento</string>
+    <string name="stage_enqueued_content">Espere a que el procesamiento inicie</string>
+    <string name="stage_analyzing_title">Imagen en procesamiento</string>
+    <string name="stage_analyzing_content">Esta operación puede tardar unos minutos</string>
+    <string name="stage_deferred_title">Análisis diferido</string>
+    <string name="stage_deferred_content">El análisis se realizará cuando se reestablezca la conexión con el servidor de análisis</string>
+    <string name="stage_deliver_error_title">Error de entrega</string>
+    <string name="stage_deliver_error_content">El servidor de análisis ha rechazado la muestra, inténtelo nuevamente</string>
+    <string name="stage_result_error_title">Falla en el análisis de muestras</string>
+    <string name="stage_result_error_content">El servidor de análisis ha fallado en analizar esta muestra</string>
 
+    <!-- Diagnosis and Analysis -->
     <string name="patient_id_document">Documento de Identificación</string>
     <string name="diagnosis_results_positive">Positivo</string>
     <string name="diagnosis_results_negative">Negativo</string>
@@ -197,7 +207,7 @@
 
     <string name="accept_and_finish">Aceptar cambios y finalizar</string>
     <string name="alert_unfinished_diagnosis">El diagnóstico aún no ha sido completado</string>
-    <string name="alert_taking_photo">Se está tomando la imágen</string>
+    <string name="alert_taking_photo">Se está tomando la imagen</string>
     <string name="alert_import_success">Base de Datos importada correctamente</string>
     <string name="alert_no_images">No puede concluir un diagnóstico sin imágenes</string>
 

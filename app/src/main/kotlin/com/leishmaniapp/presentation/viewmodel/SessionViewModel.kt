@@ -129,8 +129,7 @@ class SessionViewModel @Inject constructor(
      * Get the currently authorized credentials
      */
     private val credentials: StateFlow<Credentials?> =
-        authorizationService.credentials.flowOn(Dispatchers.IO)
-            .flowOn(Dispatchers.IO)
+        authorizationService.credentials
             .onEach { cr ->
                 if (cr != null) {
                     Log.i(TAG, "Started remote results synchronization")

@@ -8,6 +8,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 /**
@@ -43,7 +44,9 @@ object CloudConfigurationModule {
     @Singleton
     fun provideAuthorizationInterceptior(
         authorizationService: IAuthorizationService,
+        @InjectScopeWithIODispatcher coroutineScope: CoroutineScope,
     ): AuthorizationInterceptor = AuthorizationInterceptor(
-        authorizationService = authorizationService
+        authorizationService = authorizationService,
+        coroutineScope = coroutineScope
     )
 }

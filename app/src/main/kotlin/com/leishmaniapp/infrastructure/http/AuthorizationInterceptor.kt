@@ -1,10 +1,13 @@
 package com.leishmaniapp.infrastructure.http
 
 import android.util.Log
+import com.leishmaniapp.domain.entities.Credentials
 import com.leishmaniapp.domain.services.IAuthorizationService
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.runBlocking
+import com.leishmaniapp.infrastructure.di.InjectScopeWithIODispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
@@ -17,9 +20,12 @@ class AuthorizationInterceptor @Inject constructor(
     /**
      * Get the authentication token
      */
-    private val authorizationService: IAuthorizationService,
+    authorizationService: IAuthorizationService,
 
-    ) : Interceptor {
+    @InjectScopeWithIODispatcher
+    coroutineScope: CoroutineScope
+
+) : Interceptor {
 
     companion object {
         /**
@@ -28,26 +34,23 @@ class AuthorizationInterceptor @Inject constructor(
         val TAG: String = AuthorizationInterceptor::class.simpleName!!
     }
 
+    private val credentials: StateFlow<Credentials?> =
+        authorizationService.credentials.stateIn(coroutineScope, SharingStarted.Eagerly, null)
+
     override fun intercept(chain: Interceptor.Chain): Response =
-        // Get the authorization token
-        runBlocking { authorizationService.credentials.first() }.let { credentials ->
-
-            if (credentials != null) {
-                Log.d(TAG, "Credentials for user (${credentials.email}) gathered")
-            } else {
-                Log.w(TAG, "Credentials not found, requests will not provide Authorization header")
+        chain.proceed(
+            // If token is present add the authorization header
+            if (credentials.value != null) {
+                Log.d(TAG, "Credentials for user (${credentials.value!!.email}) gathered")
+                chain.request().newBuilder()
+                    .header("Authorization", "Bearer ${credentials.value!!.token}")
+                    .header("From", credentials.value!!.email)
+                    .build()
             }
-
-            chain.proceed(
-                // If token is present add the authorization header
-                if (credentials != null) {
-                    chain.request().newBuilder()
-                        .header("Authorization", "Bearer ${credentials.token}")
-                        .header("From", credentials.email)
-                        .build()
-                }
-                // If not, just forward the request
-                else chain.request()
-            )
-        }
+            // If not, just forward the request
+            else {
+                Log.w(TAG, "Credentials not found, requests will not provide Authorization header")
+                chain.request()
+            }
+        )
 }

@@ -18,6 +18,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 /**
  * Provide dependency injection for the application database
@@ -30,8 +31,9 @@ object DatabaseModule {
      * Provides [ApplicationDatabase] implementation
      */
     @Provides
+    @Singleton
     fun providerApplicationDatabase(@ApplicationContext context: Context): ApplicationDatabase =
-        Room.databaseBuilder(context, ApplicationDatabase::class.java, "database").build()
+        Room.databaseBuilder(context, ApplicationDatabase::class.java, "leishmaniapp_database").build()
 
     /**
      * Provide the [IDiagnosesRepository] using [RoomDiagnosesRepositoryImpl]

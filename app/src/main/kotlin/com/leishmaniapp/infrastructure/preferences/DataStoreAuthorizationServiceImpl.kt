@@ -10,16 +10,23 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.leishmaniapp.domain.entities.Credentials
 import com.leishmaniapp.domain.services.IAuthorizationService
 import com.leishmaniapp.domain.types.AccessToken
+import com.leishmaniapp.infrastructure.di.InjectScopeWithIODispatcher
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.time.Duration
 import javax.inject.Inject
 
 /**
@@ -30,13 +37,18 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 /**
  * [DataStore] implementation for the [IAuthorizationService]
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 class DataStoreAuthorizationServiceImpl @Inject constructor(
 
     /**
      * Android context to access [Context.dataStore]
      */
     @ApplicationContext context: Context,
+
+    /**
+     * credentials [StateFlow] coroutine scope
+     */
+    @InjectScopeWithIODispatcher
+    coroutineScope: CoroutineScope,
 
     ) : IAuthorizationService {
 
@@ -63,16 +75,22 @@ class DataStoreAuthorizationServiceImpl @Inject constructor(
      */
     private val dataStore = context.dataStore
 
-    init {
-        runBlocking { forget() }
-    }
-
     /**
      * Currently stored [Credentials]
      */
-    override val credentials: Flow<Credentials?> = dataStore.data.mapLatest { preferences ->
-        preferences[PreferencesKeys.credentialsKey]?.let { Json.decodeFromString(it) }
-    }
+    @OptIn(FlowPreview::class)
+    override val credentials: StateFlow<Credentials?> =
+        // Fetch the data from DataStore
+        dataStore.data
+            .flowOn(Dispatchers.IO)
+            // Get the JSON data decoded
+            .mapLatest<Preferences, Credentials?> { preferences ->
+                preferences[PreferencesKeys.credentialsKey]?.let { Json.decodeFromString(it) }
+            }
+            // Log the credentials
+            .onEach { c -> Log.i(TAG, "Global credentials set for '${c?.email.toString()}'") }
+            // Use within StateFlow
+            .stateIn(coroutineScope, SharingStarted.Eagerly, null)
 
     override suspend fun authorize(crendentials: Credentials): Result<Unit> =
         withContext(Dispatchers.IO) {

@@ -26,11 +26,6 @@ interface ISpecialistsRepository {
     fun specialistByEmail(email: Email): Flow<Specialist?>
 
     /**
-     * Get a [Specialist] given its [AccessToken]
-     */
-    fun specialistByToken(token: AccessToken): Flow<Specialist?>
-
-    /**
      * Delete a [Specialist] given its [Email]
      */
     fun deleteSpecialistByEmail(email: Email)

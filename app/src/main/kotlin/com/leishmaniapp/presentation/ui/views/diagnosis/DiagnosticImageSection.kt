@@ -8,7 +8,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material.icons.rounded.HourglassFull
+import androidx.compose.material.icons.rounded.Image
+import androidx.compose.material.icons.rounded.Sync
+import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -17,12 +23,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.domain.entities.ImageSample
 import com.leishmaniapp.presentation.ui.composables.DiagnosticImage
+import com.leishmaniapp.presentation.ui.composables.ImageStageHeader
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import com.leishmaniapp.utilities.mock.MockGenerator.mock
 
@@ -48,6 +56,42 @@ fun DiagnosticImageSection(
         ) {
             when (image.stage) {
 
+                AnalysisStage.NotAnalyzed -> ImageStageHeader(
+                    icon = Icons.Rounded.Image,
+                    title = stringResource(id = R.string.stage_not_analyzed_title),
+                    content = stringResource(id = R.string.stage_not_analyzed_content)
+                )
+
+                AnalysisStage.Enqueued -> ImageStageHeader(
+                    icon = Icons.Rounded.HourglassFull,
+                    title = stringResource(id = R.string.stage_enqueued_title),
+                    content = stringResource(id = R.string.stage_enqueued_content)
+                )
+
+                AnalysisStage.Analyzing -> ImageStageHeader(
+                    icon = Icons.Rounded.Sync,
+                    title = stringResource(id = R.string.stage_analyzing_title),
+                    content = stringResource(id = R.string.stage_analyzing_content)
+                )
+
+                AnalysisStage.Deferred -> ImageStageHeader(
+                    icon = Icons.Rounded.Timer,
+                    title = stringResource(id = R.string.stage_deferred_title),
+                    content = stringResource(id = R.string.stage_deferred_content)
+                )
+
+                AnalysisStage.DeliverError -> ImageStageHeader(
+                    icon = Icons.Rounded.Error,
+                    title = stringResource(id = R.string.stage_deliver_error_title),
+                    content = stringResource(id = R.string.stage_deliver_error_content)
+                )
+
+                AnalysisStage.ResultError -> ImageStageHeader(
+                    icon = Icons.Rounded.Error,
+                    title = stringResource(id = R.string.stage_result_error_title),
+                    content = stringResource(id = R.string.stage_result_error_content)
+                )
+
                 AnalysisStage.Analyzed -> TextButton(
                     modifier = Modifier.padding(8.dp),
                     onClick = onImageEdit
@@ -58,45 +102,6 @@ fun DiagnosticImageSection(
                         modifier = Modifier.padding(end = 8.dp),
                     )
                     Text(text = stringResource(id = R.string.edit_image))
-                }
-
-                AnalysisStage.Enqueued,
-                AnalysisStage.NotAnalyzed -> Row(modifier = Modifier.padding(16.dp)) {
-                    Icon(
-                        Icons.Filled.Error,
-                        contentDescription = stringResource(id = R.string.stage_alert_not_analyzed),
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    Text(stringResource(id = R.string.stage_alert_not_analyzed))
-                }
-
-                AnalysisStage.Analyzing -> Row(modifier = Modifier.padding(16.dp)) {
-                    Icon(
-                        Icons.Filled.Sync,
-                        contentDescription = stringResource(id = R.string.stage_alert_analyzing),
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    Text(stringResource(id = R.string.stage_alert_analyzing))
-                }
-
-                AnalysisStage.DeliverError, AnalysisStage.Deferred -> Row(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Icon(
-                        Icons.Filled.Error,
-                        contentDescription = stringResource(id = R.string.stage_alert_deferred),
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    Text(stringResource(id = R.string.stage_alert_deferred))
-                }
-
-                AnalysisStage.ResultError -> Row(modifier = Modifier.padding(16.dp)) {
-                    Icon(
-                        Icons.Filled.Error,
-                        contentDescription = stringResource(id = R.string.stage_alert_result_error),
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    Text(stringResource(id = R.string.stage_alert_result_error))
                 }
             }
         }
@@ -120,7 +125,7 @@ fun DiagnosticImageSection(
 
 @Composable
 @Preview(showBackground = true)
-private fun DiagnosticImageSectionPreview_NotProcessed() {
+private fun DiagnosticImageSectionPreview_NotAnalyzed() {
     LeishmaniappTheme {
         DiagnosticImageSection(
             image = ImageSample.mock(stage = AnalysisStage.NotAnalyzed),
@@ -131,21 +136,10 @@ private fun DiagnosticImageSectionPreview_NotProcessed() {
 
 @Composable
 @Preview(showBackground = true)
-private fun DiagnosticImageSectionPreview_ResultError() {
+private fun DiagnosticImageSectionPreview_Enqueued() {
     LeishmaniappTheme {
         DiagnosticImageSection(
-            image = ImageSample.mock(stage = AnalysisStage.ResultError),
-            onImageEdit = {}
-        ) {}
-    }
-}
-
-@Composable
-@Preview(showBackground = true)
-private fun DiagnosticImageSectionPreview_DeliverError() {
-    LeishmaniappTheme {
-        DiagnosticImageSection(
-            image = ImageSample.mock(stage = AnalysisStage.DeliverError),
+            image = ImageSample.mock(stage = AnalysisStage.Enqueued),
             onImageEdit = {}
         ) {}
     }
@@ -168,6 +162,28 @@ fun DiagnosticImageSectionPreview_Deferred() {
     LeishmaniappTheme {
         DiagnosticImageSection(
             image = ImageSample.mock(stage = AnalysisStage.Deferred),
+            onImageEdit = {}
+        ) {}
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun DiagnosticImageSectionPreview_DeliverError() {
+    LeishmaniappTheme {
+        DiagnosticImageSection(
+            image = ImageSample.mock(stage = AnalysisStage.DeliverError),
+            onImageEdit = {}
+        ) {}
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun DiagnosticImageSectionPreview_ResultError() {
+    LeishmaniappTheme {
+        DiagnosticImageSection(
+            image = ImageSample.mock(stage = AnalysisStage.ResultError),
             onImageEdit = {}
         ) {}
     }
