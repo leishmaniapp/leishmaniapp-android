@@ -1,7 +1,7 @@
 package com.leishmaniapp.infrastructure.di
 
 import com.leishmaniapp.domain.services.IAuthorizationService
-import com.leishmaniapp.infrastructure.cloud.GrpcServiceConfiguration
+import com.leishmaniapp.infrastructure.service.cloud.GrpcServiceConfiguration
 import com.leishmaniapp.infrastructure.http.AuthorizationInterceptor
 import com.leishmaniapp.infrastructure.http.ExceptionInterceptor
 import dagger.Module

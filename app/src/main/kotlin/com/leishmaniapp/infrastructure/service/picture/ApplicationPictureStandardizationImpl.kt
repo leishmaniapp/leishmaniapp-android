@@ -1,26 +1,20 @@
-package com.leishmaniapp.infrastructure.picture
+package com.leishmaniapp.infrastructure.service.picture
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.core.net.toFile
 import com.leishmaniapp.domain.disease.Disease
-import com.leishmaniapp.domain.entities.ImageSample
-import com.leishmaniapp.domain.services.IPictureStandardization
-import java.io.ByteArrayInputStream
+import com.leishmaniapp.domain.services.IPictureStandardizationService
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import javax.inject.Inject
 import kotlin.math.sqrt
 
 /**
  * Transform picture into an standarized cloud format
  */
-class ApplicationPictureStandardizationImpl @Inject constructor() : IPictureStandardization {
+class ApplicationPictureStandardizationImpl @Inject constructor() : IPictureStandardizationService {
 
     override val fileExtension: String = ".jpeg"
 

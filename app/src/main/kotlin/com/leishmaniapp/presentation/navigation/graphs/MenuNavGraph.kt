@@ -17,6 +17,7 @@ import com.leishmaniapp.domain.services.IAvailabilityService
 import com.leishmaniapp.presentation.navigation.NavigationRoutes
 import com.leishmaniapp.presentation.viewmodel.state.AuthState
 import com.leishmaniapp.presentation.ui.dialogs.ProfileAlertDialog
+import com.leishmaniapp.presentation.ui.dialogs.RecoverOngoingDiagnosis
 import com.leishmaniapp.presentation.ui.layout.BusyScreen
 import com.leishmaniapp.presentation.ui.views.menu.DiseasesMenuScreen
 import com.leishmaniapp.presentation.ui.views.menu.MainMenuScreen
@@ -44,6 +45,9 @@ fun NavGraphBuilder.menuNavGraph(
                 navHostController.navigateToAuthentication()
                 return@composable
             }
+
+            // Get current diagnosis
+            val diagnosis by diagnosisViewModel.diagnosis.collectAsStateWithLifecycle()
 
             // Get the network state
             val isOnline by sessionViewModel.isOnlineAuthenticationAvailable.collectAsStateWithLifecycle()
@@ -78,6 +82,18 @@ fun NavGraphBuilder.menuNavGraph(
                     },
                     onDismiss = {
                         showProfileAlert = false
+                    },
+                )
+            }
+
+            if (diagnosis != null) {
+                RecoverOngoingDiagnosis(
+                    onRecover = {
+                        diagnosisViewModel.setDisease(disease = diagnosis!!.disease)
+                        navHostController.navigateToDiagnosisRoute()
+                    },
+                    onDiscard = {
+                        diagnosisViewModel.discard()
                     },
                 )
             }

@@ -1,6 +1,7 @@
 package com.leishmaniapp.domain.entities
 
 import android.os.Parcelable
+import androidx.core.net.toFile
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -18,6 +19,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.TypeParceler
+import java.io.File
 import java.util.UUID
 
 /**
@@ -179,4 +181,12 @@ data class Diagnosis(
      */
     fun appendImage(image: ImageSample): Diagnosis =
         copy(images = images.plus(image))
+
+
+    /**
+     * Delete [File] associated to the [ImageSample]
+     */
+    fun deleteImageFiles() {
+        images.forEach { it.file?.toFile()?.delete() }
+    }
 }

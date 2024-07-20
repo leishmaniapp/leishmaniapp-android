@@ -1,6 +1,5 @@
 package com.leishmaniapp.presentation.viewmodel
 
-import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -8,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.entities.Diagnosis
@@ -20,27 +18,26 @@ import com.leishmaniapp.domain.repository.IDiagnosesRepository
 import com.leishmaniapp.domain.repository.IPatientsRepository
 import com.leishmaniapp.domain.repository.ISamplesRepository
 import com.leishmaniapp.domain.repository.ISpecialistsRepository
-import com.leishmaniapp.domain.services.IPictureStandardization
+import com.leishmaniapp.domain.services.IOngoingDiagnosisService
+import com.leishmaniapp.domain.services.IPictureStandardizationService
 import com.leishmaniapp.domain.services.IQueuingService
 import com.leishmaniapp.presentation.viewmodel.state.DiagnosisState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
 
 /**
@@ -56,8 +53,9 @@ class DiagnosisViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 
     // Services
+    private val ongoingDiagnosisService: IOngoingDiagnosisService,
     private val queuingService: IQueuingService,
-    private val pictureStandardizationService: IPictureStandardization,
+    private val pictureStandardizationService: IPictureStandardizationService,
 
     // Repositories
     private val diagnosesRepository: IDiagnosesRepository,
@@ -103,26 +101,28 @@ class DiagnosisViewModel @Inject constructor(
 
     /* -- Diagnosis State -- */
 
-    private val _state: MutableLiveData<DiagnosisState> =
-        savedStateHandle.getLiveData("state", DiagnosisState.None)
-
-    /**
-     * Current diagnosis state
-     */
-    val state: LiveData<DiagnosisState> = _state
+    // Get the o
+    private val ongoingDiagnosis = ongoingDiagnosisService.ongoingDiagnosis.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        null
+    )
 
     /**
      * Current [Diagnosis] being constructed
      */
-    val diagnosis: StateFlow<Diagnosis?> = state.asFlow().flatMapMerge { state ->
-        when (state) {
-            is DiagnosisState.OnDiagnosis -> diagnosesRepository.getDiagnosis(state.id)
-            is DiagnosisState.None -> flowOf(null)
-        }
-    }
-        .flowOn(Dispatchers.IO)
-        .catch { e -> Log.e(TAG, "Exception thrown during Diagnosis StateFlow collection", e) }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    val diagnosis: StateFlow<Diagnosis?> =
+        ongoingDiagnosis
+            .flatMapMerge { uuid ->
+                if (uuid != null) {
+                    diagnosesRepository.getDiagnosis(uuid)
+                } else {
+                    flowOf(null)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .catch { e -> Log.e(TAG, "Exception thrown during Diagnosis StateFlow collection", e) }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /**
      * [Specialist] associated with the diagnosis for internal use
@@ -168,8 +168,9 @@ class DiagnosisViewModel @Inject constructor(
                     withContext(Dispatchers.IO) {
                         diagnosesRepository.upsertDiagnosis(diagnosis)
                     }
-                    // Set the new state
-                    _state.value = DiagnosisState.OnDiagnosis(diagnosis.id)
+
+                    // Set as ongoing diagnosis
+                    ongoingDiagnosisService.setOngoingDiagnosis(diagnosis.id)
                 }
             }
         }
@@ -255,8 +256,11 @@ class DiagnosisViewModel @Inject constructor(
      * Restart the current [DiagnosisState]
      */
     override fun dismiss() {
-        // Set the state to none
-        _state.value = DiagnosisState.None
+        // Remove ongoing diagnosis
+        viewModelScope.launch {
+            ongoingDiagnosisService.removeOngoingDiagnosis()
+        }
+        // Remove image metadata
         currentImageMetadata.value = null
     }
 
@@ -266,6 +270,10 @@ class DiagnosisViewModel @Inject constructor(
     fun discard() {
         diagnosis.value?.let { diagnosis ->
             viewModelScope.launch {
+
+                // Delete images
+                diagnosis.deleteImageFiles()
+
                 // Delete the current diagnosis
                 withContext(Dispatchers.IO) {
                     diagnosesRepository.deleteDiagnosis(diagnosis)

@@ -2,7 +2,6 @@ package com.leishmaniapp.presentation.viewmodel
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
@@ -12,7 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.exceptions.BadImageException
-import com.leishmaniapp.domain.services.IPictureStandardization
+import com.leishmaniapp.domain.services.IPictureStandardizationService
 import com.leishmaniapp.infrastructure.camera.CameraCalibrationAnalyzer
 import com.leishmaniapp.presentation.viewmodel.state.CameraState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +27,7 @@ class CameraViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 
     // Services
-    private val pictureStandardizationService: IPictureStandardization,
+    private val pictureStandardizationService: IPictureStandardizationService,
 
     ) : ViewModel(), DismissableState {
 

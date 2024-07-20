@@ -1,4 +1,4 @@
-package com.leishmaniapp.infrastructure.cloud
+package com.leishmaniapp.infrastructure.service.cloud
 
 import android.content.Context
 import android.util.Log

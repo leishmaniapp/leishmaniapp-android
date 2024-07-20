@@ -1,15 +1,15 @@
 package com.leishmaniapp.infrastructure.di
 
 import com.leishmaniapp.domain.services.IAuthorizationService
-import com.leishmaniapp.infrastructure.sharing.ApplicationDiagnosisSharingImpl
-import com.leishmaniapp.infrastructure.picture.ApplicationPictureStandardizationImpl
+import com.leishmaniapp.infrastructure.service.sharing.ApplicationDiagnosisSharingImpl
+import com.leishmaniapp.infrastructure.service.picture.ApplicationPictureStandardizationImpl
 import com.leishmaniapp.domain.services.IDiagnosisSharing
-import com.leishmaniapp.domain.services.IAvailabilityService
-import com.leishmaniapp.domain.services.IPictureStandardization
+import com.leishmaniapp.domain.services.IOngoingDiagnosisService
+import com.leishmaniapp.domain.services.IPictureStandardizationService
 import com.leishmaniapp.domain.services.IQueuingService
-import com.leishmaniapp.infrastructure.analysis.WorkQueuingServiceImpl
-import com.leishmaniapp.infrastructure.cloud.GrpcAvailabilityServiceImpl
-import com.leishmaniapp.infrastructure.preferences.DataStoreAuthorizationServiceImpl
+import com.leishmaniapp.infrastructure.service.analysis.WorkQueuingServiceImpl
+import com.leishmaniapp.infrastructure.service.preferences.DataStoreAuthorizationServiceImpl
+import com.leishmaniapp.infrastructure.service.preferences.DataStoreOngoingDiagnosisServiceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -29,8 +29,17 @@ interface ApplicationServicesModule {
     @Binds
     @Singleton
     fun bindAuthorizationService(
-        tokenRepositoryImpl: DataStoreAuthorizationServiceImpl,
+        authorizationServiceImpl: DataStoreAuthorizationServiceImpl,
     ): IAuthorizationService
+
+    /**
+     * Provide the [IOngoingDiagnosisService] via [DataStoreOngoingDiagnosisServiceImpl]
+     */
+    @Binds
+    @Singleton
+    fun bindOngoingDiagnosisService(
+        diagnosisServiceImpl: DataStoreOngoingDiagnosisServiceImpl,
+    ): IOngoingDiagnosisService
 
     /**
      * Provide the [IQueuingService] via [WorkQueuingServiceImpl]
@@ -51,11 +60,11 @@ interface ApplicationServicesModule {
     ): IDiagnosisSharing
 
     /**
-     * Provide the [IPictureStandardization] via [ApplicationDiagnosisSharingImpl]
+     * Provide the [IPictureStandardizationService] via [ApplicationDiagnosisSharingImpl]
      */
     @Binds
     @Singleton
     fun bindPictureStandardization(
         pictureStandardizationImpl: ApplicationPictureStandardizationImpl
-    ): IPictureStandardization
+    ): IPictureStandardizationService
 }

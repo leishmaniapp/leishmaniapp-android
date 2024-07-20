@@ -59,6 +59,8 @@
     <string name="action_finish">Finalizar</string>
     <string name="action_continue">Continuar</string>
     <string name="fail">Error</string>
+    <string name="recover">Recuperar</string>
+    <string name="discard">Deshechar</string>
 
     <!-- General -->
     <string name="date_time">Fecha y Hora</string>
@@ -93,6 +95,8 @@
     <string name="alert_discard_diagnosis">¿Está seguro que desea salir? Esta acción descartará el diagnóstico</string>
     <string name="alert_background_diagnosis">¿Está seguro que desea procesar este diagnóstico en segundo plano? No podrá tomar más campos una vez salga de esta pantalla</string>
     <string name="alert_invalid_fields">Todos los campos deben ser válidos</string>
+    <string name="alert_recover_diagnosis_title">Se ha encontrado un diagnóstico en curso</string>
+    <string name="alert_recover_diagnosis_content">¿Desea recuperar este diagnóstico?, si lo recupera deberá continuarlo inmediatamente, si lo descarta el progreso se perderá</string>
 
     <!-- Domain Specific -->
     <string name="diagnosis">Diagnóstico</string>

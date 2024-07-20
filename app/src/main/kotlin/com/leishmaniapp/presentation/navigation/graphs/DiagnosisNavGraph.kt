@@ -58,9 +58,17 @@ fun NavGraphBuilder.diagnosisNavGraph(
             // Get the current patient
             val patient by patientViewModel.selectedPatient.observeAsState()
             val specialist by sessionViewModel.specialist.collectAsStateWithLifecycle()
+            val diagnosis by diagnosisViewModel.diagnosis.collectAsStateWithLifecycle()
 
             // Trigger this code only when patient value actually changes
-            LaunchedEffect(key1 = patient, key2 = specialist) {
+            LaunchedEffect(key1 = patient, key2 = specialist, key3 = diagnosis) {
+
+                // Recover diagnosis
+                if (diagnosis != null) {
+                    navHostController.navigateToPictureTake()
+                    return@LaunchedEffect
+                }
+
                 // Delegate to the next route
                 if (patient == null) {
                     navHostController.navigateToSelectPatient()

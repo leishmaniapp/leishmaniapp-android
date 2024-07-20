@@ -3,10 +3,10 @@ package com.leishmaniapp.infrastructure.di
 import com.leishmaniapp.domain.services.IAnalysisService
 import com.leishmaniapp.domain.services.IAuthService
 import com.leishmaniapp.domain.services.IAvailabilityService
-import com.leishmaniapp.infrastructure.cloud.GrpcAnalysisServiceImpl
-import com.leishmaniapp.infrastructure.cloud.GrpcAuthServiceImpl
-import com.leishmaniapp.infrastructure.cloud.GrpcAvailabilityServiceImpl
-import com.leishmaniapp.infrastructure.cloud.GrpcServiceConfiguration
+import com.leishmaniapp.infrastructure.service.cloud.GrpcAnalysisServiceImpl
+import com.leishmaniapp.infrastructure.service.cloud.GrpcAuthServiceImpl
+import com.leishmaniapp.infrastructure.service.cloud.GrpcAvailabilityServiceImpl
+import com.leishmaniapp.infrastructure.service.cloud.GrpcServiceConfiguration
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

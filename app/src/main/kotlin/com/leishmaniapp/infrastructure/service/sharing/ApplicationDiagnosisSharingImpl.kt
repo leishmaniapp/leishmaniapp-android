@@ -1,4 +1,4 @@
-package com.leishmaniapp.infrastructure.sharing
+package com.leishmaniapp.infrastructure.service.sharing
 
 import android.content.Context
 import com.itextpdf.kernel.colors.DeviceRgb

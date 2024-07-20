@@ -17,7 +17,7 @@ import com.leishmaniapp.domain.protobuf.toProto
 import com.leishmaniapp.domain.repository.ISamplesRepository
 import com.leishmaniapp.domain.repository.ISpecialistsRepository
 import com.leishmaniapp.domain.services.IAnalysisService
-import com.leishmaniapp.domain.services.IPictureStandardization
+import com.leishmaniapp.domain.services.IPictureStandardizationService
 import com.leishmaniapp.utilities.extensions.toRecord
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -34,7 +34,7 @@ import java.util.UUID
  * [DIAGNOSIS_KEY]: [Diagnosis] UUID
  * [SPECIALIST_KEY]: [Specialist] email
  * [SAMPLE_KEY]: [ImageSample.metadata] sample number
- * [MIME_KEY]: Image MIME type from [IPictureStandardization]
+ * [MIME_KEY]: Image MIME type from [IPictureStandardizationService]
  */
 @HiltWorker
 class RemoteAnalysisQueuingWorker @AssistedInject constructor(

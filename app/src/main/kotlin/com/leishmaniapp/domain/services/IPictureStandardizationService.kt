@@ -1,14 +1,13 @@
 package com.leishmaniapp.domain.services
 
 import android.graphics.Bitmap
-import android.net.Uri
 import com.leishmaniapp.domain.disease.Disease
 import java.io.File
 
 /**
  * Standardize a picture (crop and resize)
  */
-interface IPictureStandardization {
+interface IPictureStandardizationService {
 
     /**
      * Get the file extension

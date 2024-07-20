@@ -1,4 +1,4 @@
-package com.leishmaniapp.infrastructure.analysis
+package com.leishmaniapp.infrastructure.service.analysis
 
 import android.content.Context
 import android.util.Log
@@ -71,7 +71,6 @@ class WorkQueuingServiceImpl @Inject constructor(
                 .setConstraints(
                     Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .setRequiresBatteryNotLow(true)
                         .build()
                 )
                 .setBackoffCriteria(
@@ -109,7 +108,6 @@ class WorkQueuingServiceImpl @Inject constructor(
                 .setConstraints(
                     Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .setRequiresBatteryNotLow(true)
                         .build()
                 )
                 .setInputData(

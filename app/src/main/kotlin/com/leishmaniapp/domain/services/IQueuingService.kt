@@ -1,7 +1,6 @@
 package com.leishmaniapp.domain.services
 
 import com.leishmaniapp.domain.entities.ImageSample
-import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.types.Email
 
 /**
@@ -21,7 +20,7 @@ interface IQueuingService {
 
     /**
      * Enqueue an [ImageSample] for analysis
-     * @param mime MIME type associated to the sample from [IPictureStandardization]
+     * @param mime MIME type associated to the sample from [IPictureStandardizationService]
      */
     suspend fun enqueue(sample: ImageSample, specialist: Email, mime: String)
 }
