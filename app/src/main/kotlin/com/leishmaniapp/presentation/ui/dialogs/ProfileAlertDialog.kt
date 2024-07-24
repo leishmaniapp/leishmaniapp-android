@@ -38,14 +38,12 @@ import com.leishmaniapp.utilities.mock.MockGenerator.mock
 /**
  * Show an [AlertDialog] containg the user information and some actions
  * @param onLogout Close the current session without deleting stored credentials
- * @param onForget Close the current session and forget stored credentials
  */
 @Composable
 fun ProfileAlertDialog(
     modifier: Modifier = Modifier,
     specialist: Specialist,
     onLogout: () -> Unit,
-    onForget: () -> Unit,
     onDismiss: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismiss) {
@@ -60,9 +58,9 @@ fun ProfileAlertDialog(
                     contentDescription = stringResource(id = R.string.specialist)
                 )
 
-                HorizontalDivider()
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text(
                         text = stringResource(id = R.string.specialist),
                         style = MaterialTheme.typography.bodyLarge,
@@ -73,53 +71,23 @@ fun ProfileAlertDialog(
                         style = MaterialTheme.typography.displaySmall,
                         textAlign = TextAlign.Center,
                     )
+                    Text(text = specialist.email, textAlign = TextAlign.Center)
                 }
 
-                Text(text = specialist.email, textAlign = TextAlign.Center)
-
-                HorizontalDivider()
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = stringResource(id = R.string.diseases),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                    LazyRow {
-                        items(specialist.diseases.toList()) { disease ->
-                            SuggestionChip(
-                                modifier = Modifier.padding(4.dp),
-                                onClick = {},
-                                label = { Text(text = disease.id) })
-                        }
-                    }
-                }
-
-                HorizontalDivider()
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Button(
                         onClick = onLogout,
                     ) {
                         Text(text = stringResource(id = R.string.change))
                     }
 
-                    Button(
-                        onClick = onForget,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.error,
-                            contentColor = MaterialTheme.colorScheme.onError
-                        ),
-                    ) {
-                        Text(text = stringResource(id = R.string.sign_out))
+                    TextButton(onClick = onDismiss) {
+                        Text(text = stringResource(id = R.string.accept))
                     }
                 }
-
-
-                TextButton(onClick = onDismiss) {
-                    Text(text = stringResource(id = R.string.accept))
-                }
-
             }
         }
     }
@@ -137,7 +105,6 @@ private fun ProfileAlertDialogPreview() {
                     )
                 ),
             onLogout = {},
-            onDismiss = {},
-            onForget = {})
+            onDismiss = {})
     }
 }

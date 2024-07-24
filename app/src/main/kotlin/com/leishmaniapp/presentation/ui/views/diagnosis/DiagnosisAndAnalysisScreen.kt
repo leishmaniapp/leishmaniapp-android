@@ -4,6 +4,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -33,13 +37,16 @@ import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.domain.entities.Diagnosis
 import com.leishmaniapp.domain.entities.ImageSample
 import com.leishmaniapp.domain.entities.ModelDiagnosticElement
+import com.leishmaniapp.domain.entities.Patient
 import com.leishmaniapp.domain.entities.SpecialistDiagnosticElement
 import com.leishmaniapp.presentation.ui.composables.DiagnosticImageResultsTable
 import com.leishmaniapp.presentation.ui.layout.DiagnosisActionBar
 import com.leishmaniapp.presentation.ui.layout.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
+import com.leishmaniapp.utilities.mock.MockGenerator.lorem
 import com.leishmaniapp.utilities.mock.MockGenerator.mock
 import kotlinx.coroutines.launch
+import java.util.concurrent.Flow
 
 /**
  * Pages to show within the [DiagnosisAndAnalysisScreen]
@@ -52,7 +59,7 @@ private enum class DiagnosisAndAnalysisPages(
 }
 
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 fun DiagnosisAndAnalysisScreen(
     diagnosis: Diagnosis,
     image: ImageSample,
@@ -101,18 +108,24 @@ fun DiagnosisAndAnalysisScreen(
                 .fillMaxSize()
         ) {
 
-            // Show the patient name
-            Row(
-                modifier = Modifier.background(MaterialTheme.colorScheme.primary),
-                horizontalArrangement = Arrangement.Center
+            // Show the patient name and sample number
+            FlowRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.primary),
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
             ) {
                 Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
+                    modifier = Modifier,
                     text = diagnosis.patient.name,
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+
+                Text(
+                    modifier = Modifier,
+                    text = stringResource(id = R.string.sample_number, image.metadata.sample + 1),
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
 
@@ -239,7 +252,7 @@ fun DiagnosisAndAnalysisScreen(
 
 @Composable
 @Preview
-fun DiagnosisAndAnalysisPreview_NotAnalyzed() {
+private fun DiagnosisAndAnalysisPreview_NotAnalyzed() {
     LeishmaniappTheme {
         DiagnosisAndAnalysisScreen(
             diagnosis = Diagnosis.mock(),
@@ -255,11 +268,31 @@ fun DiagnosisAndAnalysisPreview_NotAnalyzed() {
 
 @Composable
 @Preview
-fun DiagnosisAndAnalysisPreview_Analyzed() {
+private fun DiagnosisAndAnalysisPreview_Analyzed() {
     LeishmaniappTheme {
         DiagnosisAndAnalysisScreen(
             diagnosis = Diagnosis.mock(),
             image = ImageSample.mock(stage = AnalysisStage.Analyzed),
+            onAnalyzeAction = {},
+            onFinishAction = {},
+            onNextAction = {},
+            onRepeatAction = {},
+            onImageChange = {},
+        )
+    }
+}
+
+@Composable
+@Preview
+private fun DiagnosisAndAnalysisPreview_LargeHeader() {
+    LeishmaniappTheme {
+        DiagnosisAndAnalysisScreen(
+            diagnosis = Diagnosis.mock()
+                .copy(
+                    patient = Patient.mock()
+                        .copy(name = String.lorem())
+                ),
+            image = ImageSample.mock(stage = AnalysisStage.NotAnalyzed),
             onAnalyzeAction = {},
             onFinishAction = {},
             onNextAction = {},

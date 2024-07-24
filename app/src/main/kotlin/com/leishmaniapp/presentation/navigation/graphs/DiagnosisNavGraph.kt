@@ -1,37 +1,37 @@
 package com.leishmaniapp.presentation.navigation.graphs
 
-import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.leishmaniapp.domain.entities.AnalysisStage
-import com.leishmaniapp.infrastructure.camera.CameraCalibrationAnalyzer
 import com.leishmaniapp.presentation.navigation.NavigationRoutes
+import com.leishmaniapp.presentation.ui.dialogs.BackgroundDiagnosisAlertDialog
+import com.leishmaniapp.presentation.ui.dialogs.BusyAlertDialog
 import com.leishmaniapp.presentation.ui.dialogs.ErrorAlertDialog
+import com.leishmaniapp.presentation.ui.dialogs.FinalizeDiagnosisAlertDialog
 import com.leishmaniapp.presentation.ui.dialogs.WillPopScopeAlertDialog
 import com.leishmaniapp.presentation.ui.layout.BusyScreen
 import com.leishmaniapp.presentation.ui.views.camera.CameraPermissionHandler
 import com.leishmaniapp.presentation.ui.views.camera.CameraScreen
 import com.leishmaniapp.presentation.ui.views.diagnosis.DiagnosisAndAnalysisScreen
+import com.leishmaniapp.presentation.ui.views.diagnosis.DiagnosisImageEditScreen
+import com.leishmaniapp.presentation.ui.views.diagnosis.DiagnosisImageGridScreen
+import com.leishmaniapp.presentation.ui.views.diagnosis.DiagnosisTableScreen
+import com.leishmaniapp.presentation.ui.views.diagnosis.FinalizeDiagnosisScreen
 import com.leishmaniapp.presentation.viewmodel.CameraViewModel
 import com.leishmaniapp.presentation.viewmodel.DiagnosisViewModel
 import com.leishmaniapp.presentation.viewmodel.PatientViewModel
@@ -63,8 +63,13 @@ fun NavGraphBuilder.diagnosisNavGraph(
             // Trigger this code only when patient value actually changes
             LaunchedEffect(key1 = patient, key2 = specialist, key3 = diagnosis) {
 
+                // Get finalized diagnosis values
+                if (diagnosis != null && diagnosis!!.finalized) {
+                    navHostController.navigateToDiagnosisTable()
+                    return@LaunchedEffect
+                }
                 // Recover diagnosis
-                if (diagnosis != null) {
+                else if (diagnosis != null) {
                     navHostController.navigateToPictureTake()
                     return@LaunchedEffect
                 }
@@ -100,8 +105,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
             }
 
             CameraPermissionHandler {
-                CameraScreen(
-                    executor = ContextCompat.getMainExecutor(context),
+                CameraScreen(executor = ContextCompat.getMainExecutor(context),
                     lifecycleOwner = lifecycleOwner,
                     cameraCalibration = cameraViewModel.cameraCalibration,
                     onPictureTake = {
@@ -109,8 +113,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
                     },
                     onCancel = {
                         willPopScope = true
-                    }
-                )
+                    })
             }
 
             when {
@@ -128,11 +131,8 @@ fun NavGraphBuilder.diagnosisNavGraph(
                         willPopScope = false
                     },
                     onConfirmExit = {
-
                         // Navigate to patient selection or go to main menu
-                        if (navHostController.previousBackStackEntry?.destination?.route
-                            == NavigationRoutes.DiagnosisRoute.InitializeDiagnosis.route
-                        ) {
+                        if (navHostController.previousBackStackEntry?.destination?.route == NavigationRoutes.DiagnosisRoute.InitializeDiagnosis.route) {
                             navHostController.navigate(NavigationRoutes.MenuRoute.MainMenuRoute.route) {
                                 popUpTo(NavigationRoutes.MenuRoute.MainMenuRoute.route)
                             }
@@ -155,13 +155,18 @@ fun NavGraphBuilder.diagnosisNavGraph(
 
         composable(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route) {
 
-            // Get the camera state
+            // Get the context
+            val context = LocalContext.current
+
+            // Get the camera and diagnosis state
             val cameraState by cameraViewModel.cameraState.observeAsState()
             val currentDiagnosis by diagnosisViewModel.diagnosis.collectAsStateWithLifecycle()
             val currentImage by diagnosisViewModel.currentImageSample.collectAsStateWithLifecycle()
 
-            when (cameraState) {
+            // Dialog state
+            var showSureFinishAlertDialog by rememberSaveable { mutableStateOf(false) }
 
+            when (cameraState) {
                 // Return to picture take
                 is CameraState.Error, CameraState.None -> navHostController.navigateToPictureTake {
                     popUpTo(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route)
@@ -175,7 +180,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
 
                     LaunchedEffect(key1 = cameraState) {
                         // Set the image sample
-                        diagnosisViewModel.setCurrentImageSample((cameraState as CameraState.Photo).location)
+                        diagnosisViewModel.setNewImageSample((cameraState as CameraState.Photo).location)
                     }
 
                     when {
@@ -188,22 +193,167 @@ fun NavGraphBuilder.diagnosisNavGraph(
                                 diagnosis = currentDiagnosis!!,
                                 image = currentImage!!,
                                 onNextActionNotAnalyzed = {},
+                                analysisInProgress = (currentImage!!.stage == AnalysisStage.Analyzing),
                                 onImageChange = { image ->
                                     diagnosisViewModel.updateImageSample(image)
                                 },
                                 onRepeatAction = {
+                                    diagnosisViewModel.discardCurrentImageSample()
                                     cameraViewModel.dismiss()
                                 },
                                 onAnalyzeAction = {
                                     diagnosisViewModel.startSampleAnalysis()
                                 },
-                                onNextAction = { /*TODO*/ },
-                                onFinishAction = { /*TODO*/ },
+                                onNextAction = {
+                                    diagnosisViewModel.saveImageSample(context)
+                                    cameraViewModel.dismiss()
+                                },
+                                onFinishAction = {
+                                    showSureFinishAlertDialog = true
+                                },
                             )
                         }
                     }
                 }
             }
+
+            if (showSureFinishAlertDialog) {
+                FinalizeDiagnosisAlertDialog(onDismissRequest = {
+                    showSureFinishAlertDialog = false
+                }, onConfirmFinalize = {
+                    diagnosisViewModel.saveImageSample(context)
+                    navHostController.navigateToDiagnosisImageGrid()
+                    showSureFinishAlertDialog = false
+                })
+            }
+        }
+
+        composable(NavigationRoutes.DiagnosisRoute.DiagnosisImageGrid.route) {
+
+            // Get the current diagnosis
+            val diagnosis by diagnosisViewModel.diagnosis.collectAsStateWithLifecycle()
+
+            // Dialog state
+            var showSureFinishAlertDialog by remember { mutableStateOf(false) }
+            var showSureBackgroundAlertDialog by remember { mutableStateOf(false) }
+
+            // Show loading screen
+            if (diagnosis == null) {
+                BusyScreen()
+                return@composable
+            }
+
+            DiagnosisImageGridScreen(
+                diagnosis = diagnosis!!,
+                isBackground = diagnosis!!.background,
+                allowReturn = !diagnosis!!.background,
+                onBackgroundProcessing = {
+                    showSureBackgroundAlertDialog = true
+                },
+                onGoBack = {
+                    navHostController.popBackStack()
+                },
+                onFinalizeDiagnosis = {
+                    showSureFinishAlertDialog = true
+                },
+                onImageClick = { image ->
+                    diagnosisViewModel.setCurrentImageSample(image)
+                    navHostController.navigateToDiagnosticImageEdit()
+                },
+            )
+
+            if (showSureBackgroundAlertDialog) {
+                BackgroundDiagnosisAlertDialog(onDismissRequest = {
+                    showSureBackgroundAlertDialog = false
+                }, onConfirmBackground = {
+                    // Set the new diagnosis values, dismiss and return
+                    diagnosisViewModel.setBackgroundDiagnosis()
+                    diagnosisViewModel.dismiss()
+                    navHostController.navigateReturnToMenu()
+                })
+            }
+
+            if (showSureFinishAlertDialog) {
+                FinalizeDiagnosisAlertDialog(onDismissRequest = {
+                    showSureFinishAlertDialog = false
+                }, onConfirmFinalize = {
+                    navHostController.navigateToDiagnosticRemarks()
+                })
+            }
+        }
+
+        composable(NavigationRoutes.DiagnosisRoute.DiagnosticImageEdit.route) {
+
+            val diagnosis by diagnosisViewModel.diagnosis.collectAsStateWithLifecycle()
+            val image by diagnosisViewModel.currentImageSample.collectAsStateWithLifecycle()
+
+            // Show loading screen
+            if (diagnosis == null || image == null) {
+                BusyScreen()
+                return@composable
+            }
+
+            DiagnosisImageEditScreen(
+                diagnosis = diagnosis!!,
+                image = image!!,
+                onImageChange = { i ->
+                    diagnosisViewModel.updateImageSample(i)
+                    navHostController.popBackStack()
+                },
+                onExit = {
+                    navHostController.popBackStack()
+                },
+            )
+        }
+
+        composable(NavigationRoutes.DiagnosisRoute.DiagnosticRemarks.route) {
+
+            val diagnosis by diagnosisViewModel.diagnosis.collectAsStateWithLifecycle()
+
+            if (diagnosis == null) {
+                BusyScreen()
+                return@composable
+            }
+
+            if (diagnosis!!.finalized) {
+                BusyAlertDialog()
+                navHostController.navigateToDiagnosisTable()
+            }
+
+            FinalizeDiagnosisScreen(
+                diagnosis = diagnosis!!,
+                onGoBack = { navHostController.popBackStack() },
+                onDiagnosisFinish = { remarks, result ->
+                    diagnosisViewModel.finalizeDiagnosis(remarks, result)
+                }
+            )
+        }
+
+        composable(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route) {
+
+            val context = LocalContext.current
+            val diagnosis by diagnosisViewModel.diagnosis.collectAsStateWithLifecycle()
+
+            if (diagnosis == null) {
+                BusyScreen()
+                return@composable
+            }
+
+            BackHandler {
+                diagnosisViewModel.dismiss()
+                navHostController.navigateReturnToMenu()
+            }
+
+            DiagnosisTableScreen(
+                diagnosis = diagnosis!!,
+                onBackButton = {
+                    diagnosisViewModel.dismiss()
+                    navHostController.navigateReturnToMenu()
+                },
+                onShareDiagnosis = {
+                    diagnosisViewModel.shareDiagnosis(context)
+                }
+            )
         }
     }
 }
@@ -219,10 +369,29 @@ internal fun NavHostController.navigateToDiagnosisRoute(
     this.navigate(NavigationRoutes.DiagnosisRoute.route, builder)
 }
 
+/**
+ * Navigate to the results table for the diagnosis
+ */
+internal fun NavHostController.navigateToDiagnosisTable(builder: NavOptionsBuilder.() -> Unit = {}) {
+    navigate(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route, builder)
+}
+
 private fun NavHostController.navigateToPictureTake(builder: NavOptionsBuilder.() -> Unit = {}) {
     navigate(NavigationRoutes.DiagnosisRoute.DiagnosisCamera.route, builder)
 }
 
 private fun NavHostController.navigateToDiagnosisAndAnalysis() {
     navigate(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route)
+}
+
+private fun NavHostController.navigateToDiagnosisImageGrid(builder: NavOptionsBuilder.() -> Unit = {}) {
+    navigate(NavigationRoutes.DiagnosisRoute.DiagnosisImageGrid.route, builder)
+}
+
+private fun NavHostController.navigateToDiagnosticImageEdit(builder: NavOptionsBuilder.() -> Unit = {}) {
+    navigate(NavigationRoutes.DiagnosisRoute.DiagnosticImageEdit.route, builder)
+}
+
+private fun NavHostController.navigateToDiagnosticRemarks(builder: NavOptionsBuilder.() -> Unit = {}) {
+    navigate(NavigationRoutes.DiagnosisRoute.DiagnosticRemarks.route, builder)
 }

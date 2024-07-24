@@ -1,9 +1,9 @@
 package com.leishmaniapp.infrastructure.di
 
 import com.leishmaniapp.domain.services.IAuthorizationService
-import com.leishmaniapp.infrastructure.service.sharing.ApplicationDiagnosisSharingImpl
+import com.leishmaniapp.infrastructure.service.sharing.ApplicationDiagnosisSharingServiceImpl
 import com.leishmaniapp.infrastructure.service.picture.ApplicationPictureStandardizationImpl
-import com.leishmaniapp.domain.services.IDiagnosisSharing
+import com.leishmaniapp.domain.services.IDiagnosisSharingService
 import com.leishmaniapp.domain.services.IOngoingDiagnosisService
 import com.leishmaniapp.domain.services.IPictureStandardizationService
 import com.leishmaniapp.domain.services.IQueuingService
@@ -51,16 +51,16 @@ interface ApplicationServicesModule {
     ): IQueuingService
 
     /**
-     * Provide the [IDiagnosisSharing] via [ApplicationDiagnosisSharingImpl]
+     * Provide the [IDiagnosisSharingService] via [ApplicationDiagnosisSharingServiceImpl]
      */
     @Binds
     @Singleton
     fun bindDiagnosisSharing(
-        diagnosisSharing: ApplicationDiagnosisSharingImpl
-    ): IDiagnosisSharing
+        diagnosisSharing: ApplicationDiagnosisSharingServiceImpl
+    ): IDiagnosisSharingService
 
     /**
-     * Provide the [IPictureStandardizationService] via [ApplicationDiagnosisSharingImpl]
+     * Provide the [IPictureStandardizationService] via [ApplicationDiagnosisSharingServiceImpl]
      */
     @Binds
     @Singleton

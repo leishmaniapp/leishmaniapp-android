@@ -11,7 +11,7 @@ import com.leishmaniapp.R
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
-fun RecoverOngoingDiagnosis(
+fun RecoverOngoingDiagnosisAlertDialog(
     onRecover: () -> Unit,
     onDiscard: () -> Unit,
 ) {
@@ -34,9 +34,9 @@ fun RecoverOngoingDiagnosis(
 
 @Composable
 @Preview
-private fun RecoverOngoingDiagnosisPreview() {
+private fun RecoverOngoingDiagnosisAlertDialogPreview() {
     LeishmaniappTheme {
-        RecoverOngoingDiagnosis(
+        RecoverOngoingDiagnosisAlertDialog(
             onDiscard = {},
             onRecover = {}
         )

@@ -39,7 +39,6 @@ import javax.inject.Inject
 /**
  * [IAvailabilityService] using Android SDK tools
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 class GrpcAvailabilityServiceImpl @Inject constructor(
 
     /**

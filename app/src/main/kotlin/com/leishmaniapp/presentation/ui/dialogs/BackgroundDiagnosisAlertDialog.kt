@@ -12,26 +12,23 @@ import com.leishmaniapp.R
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
-fun WillPopDiagnosisAlertDialog(onDismissRequest: () -> Unit, onConfirmExit: () -> Unit) {
+fun BackgroundDiagnosisAlertDialog(onDismissRequest: () -> Unit, onConfirmBackground: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = {
-            Text(text = stringResource(id = R.string.finalize_diagnosis))
-        },
         dismissButton = {
             TextButton(onClick = onDismissRequest) {
-                Text(text = stringResource(id = R.string.continue_diagnosis))
+                Text(text = stringResource(id = R.string.cancel))
             }
         },
         text = {
-            Text(text = stringResource(id = R.string.sure_exit_diagnosis))
+            Text(text = stringResource(id = R.string.alert_background_diagnosis))
         },
         confirmButton = {
             TextButton(
-                onClick = onConfirmExit,
+                onClick = onConfirmBackground,
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
             ) {
-                Text(text = stringResource(id = R.string.exit))
+                Text(text = stringResource(id = R.string.accept))
             }
         },
     )
@@ -39,8 +36,8 @@ fun WillPopDiagnosisAlertDialog(onDismissRequest: () -> Unit, onConfirmExit: () 
 
 @Preview
 @Composable
-private fun WillPopDiagnosisAlertDialogPreview() {
+private fun BackgroundDiagnosisAlertDialogPreview() {
     LeishmaniappTheme {
-        WillPopDiagnosisAlertDialog(onDismissRequest = {}, onConfirmExit = {})
+        BackgroundDiagnosisAlertDialog(onDismissRequest = {}, onConfirmBackground = {})
     }
 }

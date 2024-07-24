@@ -26,7 +26,7 @@ data class DiagnosticElementName(
     /**
      * Android resource for showing the element name
      */
-    @Transient @StringRes private val displayNameResource: Int = R.string.unknown_element,
+    @Transient @StringRes val displayNameResource: Int = R.string.unknown_element,
 
     ) : Parcelable {
 

@@ -15,6 +15,7 @@ import com.leishmaniapp.domain.services.IPictureStandardizationService
 import com.leishmaniapp.infrastructure.camera.CameraCalibrationAnalyzer
 import com.leishmaniapp.presentation.viewmodel.state.CameraState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
@@ -55,37 +56,38 @@ class CameraViewModel @Inject constructor(
     /**
      * Callback when a picture is taken
      */
-    fun onPictureTake(result: Result<Bitmap>, disease: Disease, context: Context) {
-        File(
-            context.filesDir,
-            File.separator + "AnalysisLastTaken" + pictureStandardizationService.fileExtension
-        ).let { file ->
+    fun onPictureTake(result: Result<Bitmap>, disease: Disease, context: Context) =
+        viewModelScope.launch {
+            File(
+                context.cacheDir,
+                File.separator + "lt0" + pictureStandardizationService.fileExtension
+            ).let { file ->
 
-            result.fold({ bitmap ->
+                result.fold({ bitmap ->
 
-                // Scale and Crop
-                val newBitmap = pictureStandardizationService.scale(
-                    pictureStandardizationService.crop(bitmap).getOrThrow(),
-                    disease,
-                ).getOrThrow()
+                    // Scale and Crop
+                    val newBitmap = pictureStandardizationService.scale(
+                        pictureStandardizationService.crop(bitmap).getOrThrow(),
+                        disease,
+                    ).getOrThrow()
 
-                // Save the bitmap in storage
-                pictureStandardizationService.store(file, newBitmap)
+                    // Save the bitmap in storage
+                    pictureStandardizationService.store(file, newBitmap)
 
-                // Set new bitmap value (from the URI)
-                _cameraState.value = CameraState.Photo(file.toUri())
-                Log.d(TAG, "Stored new photo with uri: ${_cameraState.value}")
+                    // Set new bitmap value (from the URI)
+                    _cameraState.value = CameraState.Photo(file.toUri())
+                    Log.d(TAG, "Stored new photo with uri: ${_cameraState.value}")
 
-                // Recycle the bitmap
-                bitmap.recycle()
+                    // Recycle the bitmap
+                    bitmap.recycle()
 
-            }, { ex ->
-                Log.e(TAG, "Failed to take picture", ex)
-                // Set the error state
-                _cameraState.value = CameraState.Error(BadImageException(ex))
-            })
+                }, { ex ->
+                    Log.e(TAG, "Failed to take picture", ex)
+                    // Set the error state
+                    _cameraState.value = CameraState.Error(BadImageException(ex))
+                })
+            }
         }
-    }
 
     /**
      * Dismiss all the current state

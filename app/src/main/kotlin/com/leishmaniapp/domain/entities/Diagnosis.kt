@@ -2,17 +2,9 @@ package com.leishmaniapp.domain.entities
 
 import android.os.Parcelable
 import androidx.core.net.toFile
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Ignore
-import androidx.room.PrimaryKey
-import androidx.room.Relation
-import androidx.room.TypeConverters
 import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.parceler.LocalDateTimeParceler
 import com.leishmaniapp.domain.types.ComputedResultsType
-import com.leishmaniapp.infrastructure.persistance.ApplicationRoomTypeConverters
 import com.leishmaniapp.utilities.extensions.utcNow
 import com.squareup.wire.internal.toUnmodifiableMap
 import kotlinx.datetime.LocalDateTime
@@ -33,6 +25,11 @@ data class Diagnosis(
      * Unique diagnosis identification ID
      */
     val id: UUID = UUID.randomUUID(),
+
+    /**
+     * Diagnosis has been deferred for background processing
+     */
+    val background: Boolean = false,
 
     /**
      * Diagnosis has been completed and confirmed by specialist
@@ -177,11 +174,16 @@ data class Diagnosis(
         get() = images.all { it.stage == AnalysisStage.Analyzed }
 
     /**
-     * Return a new (copy) instance of [Diagnosis] with the image added to samples
+     * Return a new (copy) instance of [Diagnosis] with the [image] appended to [images]
      */
     fun appendImage(image: ImageSample): Diagnosis =
         copy(images = images.plus(image))
 
+    /**
+     * Return a new (copy) instance of [Diagnosis] with the [image] removed from [images]
+     */
+    fun removeImage(image: ImageSample): Diagnosis =
+        copy(images = images.minus(image))
 
     /**
      * Delete [File] associated to the [ImageSample]

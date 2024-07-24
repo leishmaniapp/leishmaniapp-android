@@ -1,13 +1,16 @@
 package com.leishmaniapp.infrastructure.persistance.repository
 
+import androidx.core.net.toFile
 import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.domain.entities.ImageMetadata
 import com.leishmaniapp.domain.entities.ImageSample
 import com.leishmaniapp.domain.repository.ISamplesRepository
 import com.leishmaniapp.infrastructure.persistance.dao.RoomImagesDao
 import com.leishmaniapp.infrastructure.persistance.entities.RoomImageEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import java.util.UUID
 import javax.inject.Inject
 
@@ -25,8 +28,11 @@ class RoomSamplesRepositoryImpl @Inject constructor(
     override suspend fun upsertSample(image: ImageSample) =
         dao.upsertImage(RoomImageEntity(image))
 
-    override suspend fun deleteSample(image: ImageSample) =
+    override suspend fun deleteSample(image: ImageSample) = withContext(Dispatchers.IO) {
+        // Delete the file
+        image.file?.toFile()?.delete()
         dao.deleteImage(RoomImageEntity(image))
+    }
 
     override fun getSampleForDiagnosis(diagnosis: UUID, sample: Int): Flow<ImageSample?> =
         dao.imageForDiagnosis(diagnosis, sample).map { it?.toImageSample() }

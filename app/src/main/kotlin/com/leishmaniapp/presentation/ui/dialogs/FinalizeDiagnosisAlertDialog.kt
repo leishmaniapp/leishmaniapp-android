@@ -12,7 +12,7 @@ import com.leishmaniapp.R
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
-fun WillPopDiagnosisAlertDialog(onDismissRequest: () -> Unit, onConfirmExit: () -> Unit) {
+fun FinalizeDiagnosisAlertDialog(onDismissRequest: () -> Unit, onConfirmFinalize: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = {
@@ -20,18 +20,18 @@ fun WillPopDiagnosisAlertDialog(onDismissRequest: () -> Unit, onConfirmExit: () 
         },
         dismissButton = {
             TextButton(onClick = onDismissRequest) {
-                Text(text = stringResource(id = R.string.continue_diagnosis))
+                Text(text = stringResource(id = R.string.cancel))
             }
         },
         text = {
-            Text(text = stringResource(id = R.string.sure_exit_diagnosis))
+            Text(text = stringResource(id = R.string.alert_sure_finish_diagnosis))
         },
         confirmButton = {
             TextButton(
-                onClick = onConfirmExit,
+                onClick = onConfirmFinalize,
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
             ) {
-                Text(text = stringResource(id = R.string.exit))
+                Text(text = stringResource(id = R.string.finalize_diagnosis))
             }
         },
     )
@@ -39,8 +39,8 @@ fun WillPopDiagnosisAlertDialog(onDismissRequest: () -> Unit, onConfirmExit: () 
 
 @Preview
 @Composable
-private fun WillPopDiagnosisAlertDialogPreview() {
+private fun FinalizeDiagnosisAlertDialogPreview() {
     LeishmaniappTheme {
-        WillPopDiagnosisAlertDialog(onDismissRequest = {}, onConfirmExit = {})
+        FinalizeDiagnosisAlertDialog(onDismissRequest = {}, onConfirmFinalize = {})
     }
 }

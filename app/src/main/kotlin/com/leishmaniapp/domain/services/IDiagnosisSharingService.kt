@@ -6,7 +6,12 @@ import java.io.File
 /**
  * Create a file from a [Diagnosis] for sharing
  */
-fun interface IDiagnosisSharing {
+interface IDiagnosisSharingService {
+
+    /**
+     * MIME type for resulting files
+     */
+    val mime: String
 
     /**
      * Share the [Diagnosis] as a file

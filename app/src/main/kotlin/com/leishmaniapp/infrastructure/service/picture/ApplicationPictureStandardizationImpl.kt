@@ -5,6 +5,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.services.IPictureStandardizationService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -23,7 +25,7 @@ class ApplicationPictureStandardizationImpl @Inject constructor() : IPictureStan
     /**
      * Crop the square inside the microscope objective lens circular area
      */
-    override fun crop(bitmap: Bitmap): Result<Bitmap> = try {
+    override suspend fun crop(bitmap: Bitmap): Result<Bitmap> = try {
 
         // Calculate image center
         val centerOffset = Offset(
@@ -39,13 +41,15 @@ class ApplicationPictureStandardizationImpl @Inject constructor() : IPictureStan
 
         // Return a new bitmap with the cropped area
         Result.success(
-            Bitmap.createBitmap(
-                bitmap,
-                cropRect.left.toInt(),
-                cropRect.top.toInt(),
-                cropRect.width.toInt(),
-                cropRect.height.toInt()
-            )
+            withContext(Dispatchers.Default) {
+                Bitmap.createBitmap(
+                    bitmap,
+                    cropRect.left.toInt(),
+                    cropRect.top.toInt(),
+                    cropRect.width.toInt(),
+                    cropRect.height.toInt()
+                )
+            }
         )
 
     } catch (e: Throwable) {
@@ -55,15 +59,17 @@ class ApplicationPictureStandardizationImpl @Inject constructor() : IPictureStan
     /**
      * Scale picture to the [Disease.crop] size
      */
-    override fun scale(bitmap: Bitmap, disease: Disease): Result<Bitmap> =
+    override suspend fun scale(bitmap: Bitmap, disease: Disease): Result<Bitmap> =
         try {
             Result.success(
-                Bitmap.createScaledBitmap(
-                    bitmap,
-                    disease.crop,
-                    disease.crop,
-                    false
-                )
+                withContext(Dispatchers.Default) {
+                    Bitmap.createScaledBitmap(
+                        bitmap,
+                        disease.crop,
+                        disease.crop,
+                        false
+                    )
+                }
             )
         } catch (e: Throwable) {
             Result.failure(e)
@@ -72,12 +78,14 @@ class ApplicationPictureStandardizationImpl @Inject constructor() : IPictureStan
     /**
      * Compress the [Bitmap] into a JPEG [ByteArray]
      */
-    override fun compress(bitmap: Bitmap): Result<ByteArray> =
+    override suspend fun compress(bitmap: Bitmap): Result<ByteArray> =
         try {
             Result.success(
-                ByteArrayOutputStream().use { outputStream ->
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-                    outputStream.toByteArray()
+                withContext(Dispatchers.IO) {
+                    ByteArrayOutputStream().use { outputStream ->
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                        outputStream.toByteArray()
+                    }
                 }
             )
         } catch (e: Throwable) {
@@ -87,9 +95,11 @@ class ApplicationPictureStandardizationImpl @Inject constructor() : IPictureStan
     /**
      * Store image file into
      */
-    override fun store(file: File, bitmap: Bitmap): Result<Unit> = try {
-        FileOutputStream(file).use { outputStream ->
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+    override suspend fun store(file: File, bitmap: Bitmap): Result<Unit> = try {
+        withContext(Dispatchers.IO) {
+            FileOutputStream(file).use { outputStream ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            }
         }
         Result.success(Unit)
     } catch (e: Throwable) {

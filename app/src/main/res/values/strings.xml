@@ -84,7 +84,7 @@
     <!-- Alerts -->
     <string name="busy" tools:ignore="Typos">Espere un momento</string>
     <string name="busy_content" tools:ignore="Typos">Se está realizando una operación</string>
-    <string name="camera_exit">Cancelando captura de campos</string>
+    <string name="camera_exit">Cancelando captura de muestras</string>
     <string name="sure_exit">¿Está seguro que desea salir de la Aplicación?</string>
     <string name="sure_exit_diagnosis">¿Está seguro que desea cancelar el diagnóstico?</string>
     <string name="alert_success">Operación Exitosa</string>
@@ -93,8 +93,8 @@
     <string name="alert_sure_finish_diagnosis">¿Está seguro que desea finalizar el diagnóstico?</string>
     <string name="alert_missing_result">Es necesario proveer un diagnóstico antes de continuar</string>
     <string name="alert_discard_diagnosis">¿Está seguro que desea salir? Esta acción descartará el diagnóstico</string>
-    <string name="alert_background_diagnosis">¿Está seguro que desea procesar este diagnóstico en segundo plano? No podrá tomar más campos una vez salga de esta pantalla</string>
-    <string name="alert_invalid_fields">Todos los campos deben ser válidos</string>
+    <string name="alert_background_diagnosis">¿Está seguro que desea procesar este diagnóstico en segundo plano? No podrá capturar mas muestras una vez salga de esta pantalla</string>
+    <string name="alert_invalid_fields">Todos las muestras deben ser válidas</string>
     <string name="alert_recover_diagnosis_title">Se ha encontrado un diagnóstico en curso</string>
     <string name="alert_recover_diagnosis_content">¿Desea recuperar este diagnóstico?, si lo recupera deberá continuarlo inmediatamente, si lo descarta el progreso se perderá</string>
 
@@ -106,16 +106,17 @@
     <string name="patients">Pacientes</string>
     <string name="sample">Campo</string>
     <string name="model">Modelo</string>
-    <string name="remarks">Observaciones</string>
+    <string name="remarks">Observaciones del diagnóstico</string>
     <string name="no_remarks">Sin observaciones</string>
     <string name="characteristic">Caracteristica</string>
-    <string name="number_of_samples">Número de campos</string>
+    <string name="number_of_samples">Número de muestras</string>
     <string name="image_number">Imagen #</string>
     <string name="processed">Procesada</string>
     <string name="not_analyzed">No analizada</string>
     <string name="enqueued">Preparando para el análisis</string>
     <string name="deferred">Análisis diferido</string>
-    <string name="diagnosis_results">Resultados del análisis</string>
+    <string name="diagnosis_results_prompt">Seleccione el resultado para el análisis de la enfermedad (<i>%1$s</i>)</string>
+    <string name="diagnosis_results">Resultado del diagnóstico</string>
     <string name="start_diagnosis">Iniciar un diagnóstico</string>
     <string name="diagnostic_image">Imagen Diagnóstica</string>
     <string name="search_disease">Buscar enfermedad</string>
@@ -140,6 +141,7 @@
 
     <!-- Diagnosis and Analysis -->
     <string name="patient_id_document">Documento de Identificación</string>
+    <string name="sample_number">(Muestra #%1$d)</string>
     <string name="diagnosis_results_positive">Positivo</string>
     <string name="diagnosis_results_negative">Negativo</string>
     <string name="diagnosis_history_title">Historial de Diagnóstico</string>
@@ -153,14 +155,14 @@
     <string name="erase_element">¿Desea eliminar el elemento "<i>%1$s</i>" ?</string>
 
     <!-- Diagnostic images -->
-    <string name="diagnosis_image_grid_screen_header">Galería de Campos</string>
+    <string name="diagnosis_image_grid_screen_header">Galería de Muestras</string>
     <string name="remaining_images_alert_icon">Alerta de procesamiento</string>
     <string name="remaining_images_alert_title">Algunas imágenes aún no han sido procesadas</string>
     <string name="remaining_images_alert_content">No podrás consultar los resultados hasta que las imágenes sean procesadas</string>
     <string name="remaining_images_alert_btn">Procesar en segundo plano</string>
     <string name="remaining_images_progress_title">Las imágenes aún están siendo procesadas</string>
     <string name="remaining_images_progress_icon">Sincronizando</string>
-    <string name="finish_diagnosis">Finalizar Diagnóstico</string>
+    <string name="finalize_diagnosis">Finalizar Diagnóstico</string>
     <string name="continue_diagnosis">Continuar Diagnóstico</string>
     <string name="continue_to_report">Ver informe de diagnóstico</string>
 
@@ -209,14 +211,44 @@
     <string name="calibration_properties_luminance"><b>Luminosidad:</b> %1$.2f</string>
     <string name="calibration_properties_contrast"><b>Contraste:</b> %1$.2f</string>
 
-    <string name="accept_and_finish">Aceptar cambios y finalizar</string>
+    <string name="accept_and_finish">Aceptar resultados y finalizar</string>
     <string name="alert_unfinished_diagnosis">El diagnóstico aún no ha sido completado</string>
     <string name="alert_taking_photo">Se está tomando la imagen</string>
     <string name="alert_import_success">Base de Datos importada correctamente</string>
     <string name="alert_no_images">No puede concluir un diagnóstico sin imágenes</string>
 
     <!-- Sharing -->
-    <string name="medical_exam">Examen Médico</string>
+    <string name="document_title">Resultados de diagnóstico</string>
+    <string name="document_subtitle">Documento generado por <b>Leishmaniapp</b></string>
+    <string name="document_code">Código identificador del diagnóstico</string>
+
+    <string name="document_base">Información básica</string>
+    <string name="document_base_disease">Enfermedad diagnosticada</string>
+    <string name="document_base_disease_id">Identificador enfermedad</string>
+    <string name="document_base_date">Fecha y Hora</string>
+    <string name="document_base_sample">Número de muestras</string>
+
+    <string name="document_specialist">Información del especialista</string>
+    <string name="document_specialist_name">Nombre completo</string>
+    <string name="document_specialist_email">Correo electrónico de registro</string>
+
+    <string name="document_patient">Información del paciente</string>
+    <string name="document_patient_name">Nombre completo</string>
+    <string name="document_patient_document_type">Tipo de documento</string>
+    <string name="document_patient_document_id">Identificación</string>
+
+    <string name="document_results">Resultados del diagnóstico</string>
+    <string name="document_results_result">Resultado</string>
+    <string name="document_results_model">Modelo</string>
+    <string name="document_results_specialist">Especialista</string>
+    <string name="document_results_elements">Número de elementos diagnósticos totales encontrados</string>
+    <string name="document_results_remarks">Observaciones del especialista</string>
+    <string name="document_results_no_remarks">No hay observaciones</string>
+
+    <string name="document_footer_generation">Este informe fue generado automáticamente por Leishmaniapp</string>
+    <string name="document_footer_time">Generado %1$s (Formato ISO, Tiempo Universal Coordinado UTC)</string>
+    <string name="document_footer_disclaimer">Aviso Legal: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum hendrerit sem sit amet scelerisque cursus. Sed id metus mi. Duis scelerisque mollis odio. Cras quam sapien, laoreet a velit eget, consequat iaculis lacus. Suspendisse vulputate metus ac dolor accumsan interdum. Ut quis porttitor metus, at luctus justo. In et risus mi. Sed non ipsum mi. Duis faucibus risus id turpis lobortis, at efficitur ante scelerisque. Morbi pharetra cursus sapien vitae aliquet. Quisque ut mi efficitur, ultricies ex ac, iaculis est. </string>
+
 
     <!-- Notifications -->
     <string name="notification_remote_analysis_channel_id">analysis_channel</string>

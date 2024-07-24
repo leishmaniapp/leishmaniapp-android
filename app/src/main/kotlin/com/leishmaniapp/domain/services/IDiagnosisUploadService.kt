@@ -8,10 +8,15 @@ import com.leishmaniapp.cloud.types.StatusResponse
  * This service is based upon the LeishmaniappCloudServicesv2 definition
  * [visit protobuf_schema for more information](https://github.com/leishmaniapp/protobuf_schema)
  */
-fun interface IDiagnosisUpload {
+interface IDiagnosisUploadService {
 
     /**
-     * Finish and upload a diagnosis
+     * Upload a diagnosis
      */
     suspend fun upload(diagnosis: Diagnosis): Result<StatusResponse>
+
+    /**
+     * Upload a diagnosis within an async worker
+     */
+    suspend fun uploadAsync(diagnosis: Diagnosis)
 }

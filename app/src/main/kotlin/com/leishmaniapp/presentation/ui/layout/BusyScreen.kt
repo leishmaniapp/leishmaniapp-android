@@ -20,7 +20,7 @@ fun BusyScreen() {
 
 @Preview
 @Composable
-fun LoadingScreenPreview() {
+private fun BusyScreenPreview() {
     LeishmaniappTheme {
         BusyScreen()
     }

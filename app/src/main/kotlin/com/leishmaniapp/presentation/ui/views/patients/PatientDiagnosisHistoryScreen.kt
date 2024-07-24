@@ -83,12 +83,15 @@ fun PatientDiagnosisHistoryScreen(
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Text(
-                    text = patient.name, style = MaterialTheme.typography.headlineMedium
+                    text = patient.name,
+                    style = MaterialTheme.typography.headlineMedium
                 )
 
                 if (diagnosisList.isNotEmpty()) {
 
-                    SearchBar(modifier = Modifier.clip(RoundedCornerShape(16.dp)),
+                    SearchBar(modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .padding(top = 12.dp),
                         query = query,
                         onQueryChange = { query = it },
                         onSearch = { query = it },

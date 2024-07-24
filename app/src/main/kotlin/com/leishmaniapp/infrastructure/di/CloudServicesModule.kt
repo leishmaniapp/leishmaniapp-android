@@ -3,9 +3,11 @@ package com.leishmaniapp.infrastructure.di
 import com.leishmaniapp.domain.services.IAnalysisService
 import com.leishmaniapp.domain.services.IAuthService
 import com.leishmaniapp.domain.services.IAvailabilityService
+import com.leishmaniapp.domain.services.IDiagnosisUploadService
 import com.leishmaniapp.infrastructure.service.cloud.GrpcAnalysisServiceImpl
 import com.leishmaniapp.infrastructure.service.cloud.GrpcAuthServiceImpl
 import com.leishmaniapp.infrastructure.service.cloud.GrpcAvailabilityServiceImpl
+import com.leishmaniapp.infrastructure.service.cloud.GrpcDiagnosisUploadServiceImpl
 import com.leishmaniapp.infrastructure.service.cloud.GrpcServiceConfiguration
 import dagger.Binds
 import dagger.Module
@@ -21,11 +23,11 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 interface CloudServicesModule {
+
     /**
      * Provide [IAuthService] via [GrpcAuthServiceImpl]
      */
     @Binds
-    @Singleton
     fun bindAuthService(
         authServiceImpl: GrpcAuthServiceImpl,
     ): IAuthService
@@ -47,4 +49,12 @@ interface CloudServicesModule {
     fun bindAvailabilityService(
         networkService: GrpcAvailabilityServiceImpl
     ): IAvailabilityService
+
+    /**
+     * Provide [IDiagnosisUploadService] via [GrpcDiagnosisUploadServiceImpl]
+     */
+    @Binds
+    fun bindDiagnosisUploadService(
+        diagnosisUploadServiceImpl: GrpcDiagnosisUploadServiceImpl
+    ): IDiagnosisUploadService
 }

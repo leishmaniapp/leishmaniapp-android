@@ -64,6 +64,7 @@ fun RootNavigation(
         patientsNavGraph(
             navHostController = navigationController,
             patientViewModel = patientViewModel,
+            diagnosisViewModel = diagnosisViewModel,
         )
 
         diagnosisNavGraph(

@@ -19,12 +19,14 @@ import com.leishmaniapp.presentation.ui.layout.BusyScreen
 import com.leishmaniapp.presentation.ui.views.patients.AddPatientScreen
 import com.leishmaniapp.presentation.ui.views.patients.PatientDiagnosisHistoryScreen
 import com.leishmaniapp.presentation.ui.views.patients.PatientListScreen
+import com.leishmaniapp.presentation.viewmodel.DiagnosisViewModel
 import com.leishmaniapp.presentation.viewmodel.PatientViewModel
 import com.leishmaniapp.presentation.viewmodel.state.PatientState
 
 fun NavGraphBuilder.patientsNavGraph(
     navHostController: NavHostController,
     patientViewModel: PatientViewModel,
+    diagnosisViewModel: DiagnosisViewModel,
 ) {
     navigation(
         route = NavigationRoutes.PatientsRoute.route,
@@ -129,8 +131,9 @@ fun NavGraphBuilder.patientsNavGraph(
                     navHostController.popBackStack()
                     patientViewModel.dismissPatient()
                 },
-                onDiagnosisClick = {
-                    /* TODO */
+                onDiagnosisClick = { diagnosis ->
+                    diagnosisViewModel.setCurrentDiagnosis(diagnosis)
+                    navHostController.navigateToDiagnosisTable()
                 },
                 onDiagnosisCreate = {
                     // Create a new diagnosis

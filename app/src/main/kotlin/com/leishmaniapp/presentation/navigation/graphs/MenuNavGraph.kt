@@ -13,11 +13,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.leishmaniapp.domain.services.IAvailabilityService
 import com.leishmaniapp.presentation.navigation.NavigationRoutes
 import com.leishmaniapp.presentation.viewmodel.state.AuthState
 import com.leishmaniapp.presentation.ui.dialogs.ProfileAlertDialog
-import com.leishmaniapp.presentation.ui.dialogs.RecoverOngoingDiagnosis
+import com.leishmaniapp.presentation.ui.dialogs.RecoverOngoingDiagnosisAlertDialog
 import com.leishmaniapp.presentation.ui.layout.BusyScreen
 import com.leishmaniapp.presentation.ui.views.menu.DiseasesMenuScreen
 import com.leishmaniapp.presentation.ui.views.menu.MainMenuScreen
@@ -76,10 +75,6 @@ fun NavGraphBuilder.menuNavGraph(
                         diagnosisViewModel.dismissDisease()
                         sessionViewModel.logout()
                     },
-                    onForget = {
-                        diagnosisViewModel.dismissDisease()
-                        sessionViewModel.forget()
-                    },
                     onDismiss = {
                         showProfileAlert = false
                     },
@@ -87,7 +82,15 @@ fun NavGraphBuilder.menuNavGraph(
             }
 
             if (diagnosis != null) {
-                RecoverOngoingDiagnosis(
+
+                // Do not recover finalized diagnoses
+                if (diagnosis!!.finalized) {
+                    diagnosisViewModel.dismiss()
+                    return@composable
+                }
+
+                // Show the recovery dialog
+                RecoverOngoingDiagnosisAlertDialog(
                     onRecover = {
                         diagnosisViewModel.setDisease(disease = diagnosis!!.disease)
                         navHostController.navigateToDiagnosisRoute()
@@ -143,10 +146,6 @@ fun NavGraphBuilder.menuNavGraph(
                         diagnosisViewModel.dismissDisease()
                         sessionViewModel.logout()
                     },
-                    onForget = {
-                        diagnosisViewModel.dismissDisease()
-                        sessionViewModel.forget()
-                    },
                     onDismiss = {
                         showProfileAlert = false
                     },
@@ -169,4 +168,10 @@ private fun NavController.navigateToMenu(
     }
 ) {
     this.navigate(NavigationRoutes.MenuRoute.MainMenuRoute.route, builder)
+}
+
+fun NavController.navigateReturnToMenu() {
+    this.navigate(NavigationRoutes.MenuRoute.MainMenuRoute.route) {
+        popUpTo(NavigationRoutes.MenuRoute.MainMenuRoute.route)
+    }
 }

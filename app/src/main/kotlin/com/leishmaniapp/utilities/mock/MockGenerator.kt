@@ -34,6 +34,11 @@ object MockGenerator {
     private val faker = Faker()
 
     /**
+     * Get a [String] with Lorem Ipsum
+     */
+    fun String.Companion.lorem(wordCount: Int = 12): String = faker.lorem.sentence(wordCount)
+
+    /**
      * Generate fake [ImageCalibrationData.HSV] values
      */
     fun ImageCalibrationData.HSV.Companion.mock(): ImageCalibrationData.HSV =

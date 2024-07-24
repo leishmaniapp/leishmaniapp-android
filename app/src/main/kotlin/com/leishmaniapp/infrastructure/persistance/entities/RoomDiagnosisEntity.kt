@@ -46,6 +46,7 @@ import java.util.UUID
 )
 data class RoomDiagnosisEntity(
     @PrimaryKey @ColumnInfo(name = "id") val id: UUID,
+    @ColumnInfo(name = "background") val background: Boolean,
     @ColumnInfo(name = "finalized") val finalized: Boolean,
     @ColumnInfo(name = "date") val date: LocalDateTime,
     @ColumnInfo(name = "specialist_email") val specialistEmail: Email,
@@ -56,6 +57,7 @@ data class RoomDiagnosisEntity(
 ) {
     constructor(diagnosis: Diagnosis) : this(
         id = diagnosis.id,
+        background = diagnosis.background,
         finalized = diagnosis.finalized,
         date = diagnosis.date,
         specialistEmail = diagnosis.specialist.email,
