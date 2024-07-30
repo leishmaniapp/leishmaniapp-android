@@ -56,6 +56,13 @@ android {
                 "proguard-rules.pro"
             )
         }
+
+        debug {
+            isMinifyEnabled = false
+            kotlinOptions {
+                freeCompilerArgs = listOf("-Xdebug")
+            }
+        }
     }
 
     compileOptions {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="postSplashScreenTheme">@style/Theme.Leishmaniapp</item>
+        <item name="android:windowSplashscreenContent">@drawable/splash_screen</item>
+    </style>
+</resources>

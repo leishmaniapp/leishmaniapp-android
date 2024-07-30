@@ -1,6 +1,7 @@
 package com.leishmaniapp.infrastructure.service.picture
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import com.leishmaniapp.domain.disease.Disease
@@ -29,12 +30,14 @@ class ApplicationPictureStandardizationImpl @Inject constructor() : IPictureStan
 
         // Calculate image center
         val centerOffset = Offset(
-            (bitmap.width / 2).toFloat(), (bitmap.height / 2).toFloat()
+            (bitmap.width / 2).toFloat(),
+            (bitmap.height / 2).toFloat()
         )
 
-        // Calculate image radius
+        // Calculate objective image radius
         val imageRadius = ( // In terms of picture radius
-                (bitmap.width / 2) * sqrt(1.0 / 2.0)).toFloat()
+                (bitmap.width / 2) /
+                        sqrt(2.0)).toFloat()
 
         // Cropping Area
         val cropRect = Rect(centerOffset, imageRadius)

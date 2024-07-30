@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.leishmaniapp.infrastructure.camera.CameraCalibrationAnalyzer
 import com.leishmaniapp.presentation.navigation.RootNavigation
@@ -30,6 +31,7 @@ import kotlinx.coroutines.coroutineScope
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
 
         // Is user trying to exit the application?

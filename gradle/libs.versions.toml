@@ -15,6 +15,7 @@ kotlinx-datetime = "0.6.0"
 kotlinx-coroutines = "1.8.1"
 kotlinx-serialization-json = "1.7.0"
 
+androidx-core-splashscreen = "1.0.0"
 androidx-hilt = "1.2.0"
 androidx-lifecycle = "2.8.3"
 androidx-compose = "2024.06.00"
@@ -49,6 +50,7 @@ androidx-room = { id = "androidx.room", version.ref = "androidx-room" }
 
 # Androidx core and appcompat
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidx-core-splashscreen" }
 
 # Kotlin Extensions
 kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }
@@ -69,7 +71,7 @@ squareup-wire-runtime = { group = "com.squareup.wire", name = "wire-runtime", ve
 squareup-wire-grpc = { group = "com.squareup.wire", name = "wire-grpc-client", version.ref = "wire" }
 
 # OkHttp
-okhttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okhttp"}
+okhttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okhttp" }
 okhttp-core = { group = "com.squareup.okhttp3", name = "okhttp" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor" }
 
@@ -176,6 +178,7 @@ okhttp = [
 
 androidx-core = [
     "androidx-core-ktx",
+    "androidx-core-splashscreen",
 ]
 
 androidx-hilt = [

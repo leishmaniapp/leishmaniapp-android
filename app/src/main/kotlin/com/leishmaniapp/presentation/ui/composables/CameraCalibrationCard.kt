@@ -25,14 +25,10 @@ import com.leishmaniapp.utilities.mock.MockGenerator.mock
 fun CameraCalibrationCard(
     modifier: Modifier = Modifier,
     calibrationData: ImageCalibrationData,
-    leading: @Composable ColumnScope.() -> Unit = {},
-    trailing: @Composable ColumnScope.() -> Unit = {},
 ) {
     Card(modifier = modifier) {
         Box(modifier = Modifier.padding(16.dp)) {
             Column {
-                leading()
-                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(
                         id = R.string.calibration_properties_hue,
@@ -57,8 +53,6 @@ fun CameraCalibrationCard(
                         calibrationData.contrast.toFloat()
                     )
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                trailing()
             }
         }
     }

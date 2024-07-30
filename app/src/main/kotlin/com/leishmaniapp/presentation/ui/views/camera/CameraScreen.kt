@@ -1,7 +1,9 @@
 package com.leishmaniapp.presentation.ui.views.camera
 
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.os.SystemClock
+import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -90,7 +92,28 @@ fun CameraScreen(
                 object : ImageCapture.OnImageCapturedCallback() {
                     // Send the picture to the callback
                     override fun onCaptureSuccess(image: ImageProxy) {
-                        onPictureTake.invoke(Result.success(image.toBitmap()))
+                        image.toBitmap().let { bitmap ->
+                            // Rotation matrix for the rotationDegrees on the proxy
+                            val rotationMatrix =
+                                Matrix().apply {
+                                    postRotate(image.imageInfo.rotationDegrees.toFloat())
+                                }
+
+                            // Rotate the original bitmap
+                            val rotatedBitmap = Bitmap.createBitmap(
+                                bitmap,
+                                0,
+                                0,
+                                bitmap.width,
+                                bitmap.height,
+                                rotationMatrix,
+                                true
+                            )
+
+                            // Invoke with the new bitmap
+                            onPictureTake.invoke(Result.success(rotatedBitmap))
+                        }
+
                         // Close the proxy
                         image.close()
                         // Set camera as not busy
@@ -115,16 +138,6 @@ fun CameraScreen(
                     CameraCalibrationCard(
                         modifier = Modifier.padding(16.dp),
                         calibrationData = properties,
-                        leading = {
-                            Text(
-                                style = MaterialTheme.typography.labelMedium,
-                                text = stringResource(
-                                    id = R.string.calibration_properties_refresh,
-                                    "mHz",
-                                    (1_000_000f / analysisDuration),
-                                ),
-                            )
-                        }
                     )
                 }
             }
