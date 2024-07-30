@@ -249,11 +249,10 @@
     <string name="document_footer_time">Generado %1$s (Formato ISO, Tiempo Universal Coordinado UTC)</string>
     <string name="document_footer_disclaimer">Aviso Legal: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum hendrerit sem sit amet scelerisque cursus. Sed id metus mi. Duis scelerisque mollis odio. Cras quam sapien, laoreet a velit eget, consequat iaculis lacus. Suspendisse vulputate metus ac dolor accumsan interdum. Ut quis porttitor metus, at luctus justo. In et risus mi. Sed non ipsum mi. Duis faucibus risus id turpis lobortis, at efficitur ante scelerisque. Morbi pharetra cursus sapien vitae aliquet. Quisque ut mi efficitur, ultricies ex ac, iaculis est. </string>
 
-
     <!-- Notifications -->
-    <string name="notification_remote_analysis_channel_id">analysis_channel</string>
-    <string name="notification_remote_analysis_channel_name">Estado de análisis en línea</string>
+    <string name="notification_remote_analysis_channel_id">analysis_analysis_channel</string>
+    <string name="notification_remote_analysis_channel_name">Estado del análisis en línea</string>
     <string name="notification_remote_analysis_title">Análisis en línea en progreso</string>
-    <string name="notification_analysis_content">Leishmaniapp está conectado al servidor remoto y se encuentra analizando muestras en segundo plano</string>
+    <string name="notification_remote_analysis_content">Leishmaniapp está conectado al servidor remoto y se encuentra analizando muestras en segundo plano</string>
 
 </resources>

@@ -73,7 +73,6 @@ class DiagnosisViewModel @Inject constructor(
     private val diagnosesRepository: IDiagnosesRepository,
     private val samplesRespository: ISamplesRepository,
     private val specialistsRepository: ISpecialistsRepository,
-    private val patientsRepository: IPatientsRepository,
 
     ) : ViewModel(), DismissableState {
 
@@ -151,6 +150,22 @@ class DiagnosisViewModel @Inject constructor(
             .flowOn(Dispatchers.IO)
             .onEach { d -> Log.i(TAG, d?.let { "Loaded (${d.id})" } ?: "No diagnosis found") }
             .catch { e -> Log.e(TAG, "Exception thrown during Diagnosis StateFlow collection", e) }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    /**
+     * List of awaiting [Diagnosis]
+     */
+    val awaitingDiagnoses: StateFlow<List<Diagnosis>?> =
+        credentials
+            .flatMapLatest { c ->
+                if (c != null) {
+                    diagnosesRepository.getAwaitingDiagnosesForSpecialist(c.email)
+                } else {
+                    flowOf(null)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .catch { e -> Log.e(TAG, "Failed to gather AwaitingDiagnosis", e) }
             .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /**

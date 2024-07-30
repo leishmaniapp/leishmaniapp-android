@@ -72,14 +72,13 @@ class RemoteAnaysisResultsWorker @AssistedInject constructor(
         applicationContext.getString(R.string.notification_remote_analysis_channel_id)
     ).setContentTitle(applicationContext.getString(R.string.notification_remote_analysis_title))
         .setSmallIcon(R.drawable.icon_microscope)
-        .setContentText(applicationContext.getString(R.string.notification_analysis_content))
+        .setContentText(applicationContext.getString(R.string.notification_remote_analysis_content))
         .setOngoing(true).build()
 
     /**
      * Show the [RemoteAnaysisResultsWorker]
      */
     private fun showNotification() {
-        Log.d(TAG, "Created persistent notification")
         // Create the notification channel
         notificationManager.createNotificationChannel(notificationChannel)
         // Show the notification

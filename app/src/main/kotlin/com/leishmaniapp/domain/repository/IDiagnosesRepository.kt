@@ -3,6 +3,7 @@ package com.leishmaniapp.domain.repository
 import com.leishmaniapp.domain.entities.Diagnosis
 import com.leishmaniapp.domain.entities.Patient
 import com.leishmaniapp.domain.entities.Specialist
+import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.domain.types.Identificator
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
@@ -39,5 +40,12 @@ interface IDiagnosesRepository {
      */
     fun getDiagnosesForSpecialist(
         specialist: Specialist
+    ): Flow<List<Diagnosis>>
+
+    /**
+     * All the [Diagnosis.background] diagnoses not [Diagnosis.background] for a given [Specialist]
+     */
+    fun getAwaitingDiagnosesForSpecialist(
+        specialist: Email
     ): Flow<List<Diagnosis>>
 }

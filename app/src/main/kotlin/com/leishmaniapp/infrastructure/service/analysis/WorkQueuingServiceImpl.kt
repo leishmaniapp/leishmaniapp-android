@@ -91,7 +91,6 @@ class WorkQueuingServiceImpl @Inject constructor(
 
     /**
      * Pass the image to either the [RemoteAnalysisQueuingWorker] or a [?]
-     * TODO: Check for internet access and defer requests
      * TODO: Use the LocalAnalysisWorker
      */
     override suspend fun enqueue(sample: ImageSample, specialist: Email, mime: String) {
@@ -101,8 +100,14 @@ class WorkQueuingServiceImpl @Inject constructor(
             samplesRepository.upsertSample(sample.copy(stage = AnalysisStage.Enqueued))
         }
 
-        // Enqueue the worker
-        Log.i(TAG, "Enqueued new sample for remote analysis")
+        // Set the deferred status
+        if (!networkService.checkServiceAvailability()) {
+            withContext(Dispatchers.IO) {
+                samplesRepository.upsertSample(sample.copy(stage = AnalysisStage.Deferred))
+            }
+        }
+
+        // Enqueue the online worker
         workManager.enqueue(
             OneTimeWorkRequestBuilder<RemoteAnalysisQueuingWorker>()
                 .setConstraints(
@@ -120,5 +125,6 @@ class WorkQueuingServiceImpl @Inject constructor(
                 )
                 .build()
         )
+
     }
 }

@@ -4,6 +4,7 @@ import com.leishmaniapp.domain.entities.Diagnosis
 import com.leishmaniapp.domain.entities.Patient
 import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.repository.IDiagnosesRepository
+import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.infrastructure.persistance.dao.RoomDiagnosesDao
 import com.leishmaniapp.infrastructure.persistance.entities.RoomDiagnosisEntity
 import kotlinx.coroutines.flow.Flow
@@ -36,6 +37,10 @@ class RoomDiagnosesRepositoryImpl @Inject constructor(
 
     override fun getDiagnosesForSpecialist(specialist: Specialist): Flow<List<Diagnosis>> =
         dao.getDiagnosesForSpecialistEmail(specialist.email)
+            .map { flow -> flow.map { it.toDiagnosis() } }
+
+    override fun getAwaitingDiagnosesForSpecialist(specialist: Email): Flow<List<Diagnosis>> =
+        dao.getBackgroundNotFinalizedDiagnosesForSpecialistEmail(specialist)
             .map { flow -> flow.map { it.toDiagnosis() } }
 
     override fun getDiagnosis(uuid: UUID): Flow<Diagnosis?> =

@@ -27,6 +27,7 @@ import com.leishmaniapp.presentation.ui.dialogs.WillPopScopeAlertDialog
 import com.leishmaniapp.presentation.ui.layout.BusyScreen
 import com.leishmaniapp.presentation.ui.views.camera.CameraPermissionHandler
 import com.leishmaniapp.presentation.ui.views.camera.CameraScreen
+import com.leishmaniapp.presentation.ui.views.diagnosis.AwaitingDiagnosesScreen
 import com.leishmaniapp.presentation.ui.views.diagnosis.DiagnosisAndAnalysisScreen
 import com.leishmaniapp.presentation.ui.views.diagnosis.DiagnosisImageEditScreen
 import com.leishmaniapp.presentation.ui.views.diagnosis.DiagnosisImageGridScreen
@@ -355,6 +356,28 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 }
             )
         }
+
+        composable(NavigationRoutes.DiagnosisRoute.AwaitingDiagnosis.route) {
+
+            val specialist by sessionViewModel.specialist.collectAsStateWithLifecycle()
+            val awaitingDiagnoses by diagnosisViewModel.awaitingDiagnoses.collectAsStateWithLifecycle()
+
+            if (specialist == null || awaitingDiagnoses == null) {
+                BusyScreen()
+                return@composable
+            }
+
+            AwaitingDiagnosesScreen(
+                specialist = specialist!!,
+                awaitingDiagnoses = awaitingDiagnoses!!,
+                onBackButton = { navHostController.popBackStack() },
+                onDiagnosisClick = { diagnosis ->
+                    diagnosisViewModel.setCurrentDiagnosis(diagnosis)
+                    navHostController.navigateToDiagnosisImageGrid()
+                },
+            )
+
+        }
     }
 }
 
@@ -372,8 +395,19 @@ internal fun NavHostController.navigateToDiagnosisRoute(
 /**
  * Navigate to the results table for the diagnosis
  */
-internal fun NavHostController.navigateToDiagnosisTable(builder: NavOptionsBuilder.() -> Unit = {}) {
+internal fun NavHostController.navigateToDiagnosisTable(
+    builder: NavOptionsBuilder.() -> Unit = {}
+) {
     navigate(NavigationRoutes.DiagnosisRoute.DiagnosisTable.route, builder)
+}
+
+/*
+ * Navigate to the deferred diagnoses
+ */
+internal fun NavHostController.navigateToAwaitingDiagnoses(
+    builder: NavOptionsBuilder.() -> Unit = {}
+) {
+    navigate(NavigationRoutes.DiagnosisRoute.AwaitingDiagnosis.route, builder)
 }
 
 private fun NavHostController.navigateToPictureTake(builder: NavOptionsBuilder.() -> Unit = {}) {

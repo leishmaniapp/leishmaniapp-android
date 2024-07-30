@@ -125,7 +125,8 @@ fun NavGraphBuilder.menuNavGraph(
                 mutableStateOf(false)
             }
 
-            MainMenuScreen(disease = disease!!,
+            MainMenuScreen(
+                disease = disease!!,
                 onBackButton = {
                     // Delete the current disease
                     diagnosisViewModel.dismissDisease()
@@ -137,7 +138,9 @@ fun NavGraphBuilder.menuNavGraph(
                 },
                 onStartDiagnosis = { navHostController.navigateToDiagnosisRoute() },
                 onPatientList = { navHostController.navigateToPatientsRoute() },
-                onAwaitingDiagnoses = { /*TODO*/ }) {}
+                onAwaitingDiagnoses = { navHostController.navigateToAwaitingDiagnoses() },
+                onDatabase = {},
+            )
 
             if (showProfileAlert) {
                 ProfileAlertDialog(
