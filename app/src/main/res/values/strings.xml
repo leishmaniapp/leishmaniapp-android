@@ -162,6 +162,7 @@
     <string name="remaining_images_alert_btn">Procesar en segundo plano</string>
     <string name="remaining_images_progress_title">Las imágenes aún están siendo procesadas</string>
     <string name="remaining_images_progress_icon">Sincronizando</string>
+    <string name="remaining_images_done">Todas las imágenes han sido procesadas</string>
     <string name="finalize_diagnosis">Finalizar Diagnóstico</string>
     <string name="continue_diagnosis">Continuar Diagnóstico</string>
     <string name="continue_to_report">Ver informe de diagnóstico</string>

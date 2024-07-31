@@ -13,18 +13,12 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.RemoveRedEye
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,8 +28,9 @@ import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.domain.entities.Diagnosis
 import com.leishmaniapp.domain.entities.ImageSample
 import com.leishmaniapp.presentation.ui.composables.DiagnosisImageGridItem
-import com.leishmaniapp.presentation.ui.dialogs.RemainingImagesAlert
-import com.leishmaniapp.presentation.ui.dialogs.RemainingImagesProgress
+import com.leishmaniapp.presentation.ui.dialogs.ImageProcessingCompletedDialog
+import com.leishmaniapp.presentation.ui.dialogs.RemainingImagesBackgroundDialog
+import com.leishmaniapp.presentation.ui.dialogs.RemainingImagesProgressDialog
 import com.leishmaniapp.presentation.ui.layout.LeishmaniappScaffold
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import com.leishmaniapp.utilities.mock.MockGenerator.mock
@@ -47,8 +42,6 @@ import com.leishmaniapp.utilities.mock.MockGenerator.mock
 @Composable
 fun DiagnosisImageGridScreen(
     diagnosis: Diagnosis,
-    isBackground: Boolean,
-    allowReturn: Boolean = false,
     gridColumns: Int = 3,
     onBackgroundProcessing: () -> Unit,
     onGoBack: () -> Unit,
@@ -59,10 +52,11 @@ fun DiagnosisImageGridScreen(
         title = stringResource(id = R.string.finalize_diagnosis), bottomBar = {
             NavigationBar {
                 NavigationBarItem(selected = false,
-                    enabled = allowReturn,
+                    enabled = !diagnosis.background,
                     onClick = onGoBack,
                     icon = { Icon(Icons.Filled.CameraAlt, contentDescription = null) },
                     label = { Text(text = stringResource(id = R.string.continue_diagnosis)) })
+
                 NavigationBarItem(selected = false,
                     enabled = diagnosis.analyzed,
                     onClick = onFinalizeDiagnosis,
@@ -88,43 +82,17 @@ fun DiagnosisImageGridScreen(
                         modifier = Modifier.padding(vertical = 12.dp)
                     )
 
-                    // Show alerts
-                    if (!diagnosis.analyzed) {
+                    Box(modifier = Modifier.padding(bottom = 12.dp)) {
+                        when {
+                            diagnosis.analyzed -> ImageProcessingCompletedDialog()
+                            diagnosis.background -> RemainingImagesProgressDialog(
+                                done = diagnosis.images.count { image: ImageSample -> image.stage == AnalysisStage.Analyzed },
+                                of = diagnosis.samples
+                            )
 
-                        var showAlert by remember {
-                            mutableStateOf(false)
-                        }
-
-                        if (showAlert) {
-                            AlertDialog(onDismissRequest = {
-                                showAlert = false
-                            },
-                                dismissButton = {
-                                    TextButton(onClick = { showAlert = false }) {
-                                        Text(text = stringResource(id = R.string.cancel))
-                                    }
-                                },
-                                confirmButton = {
-                                    TextButton(
-                                        onClick = onBackgroundProcessing
-                                    ) {
-                                        Text(text = stringResource(id = R.string.accept))
-                                    }
-                                },
-                                text = { Text(text = stringResource(id = R.string.alert_sure_finish_diagnosis)) })
-                        }
-
-                        Box(modifier = Modifier.padding(bottom = 12.dp)) {
-                            if (!isBackground) {
-                                RemainingImagesAlert(onButtonClick = {
-                                    showAlert = true
-                                })
-                            } else {
-                                RemainingImagesProgress(
-                                    done = diagnosis.images.count { image: ImageSample -> image.stage == AnalysisStage.Analyzed },
-                                    of = diagnosis.samples
-                                )
-                            }
+                            !diagnosis.background -> RemainingImagesBackgroundDialog(onButtonClick = {
+                                onBackgroundProcessing.invoke()
+                            })
                         }
                     }
                 }
@@ -144,7 +112,6 @@ fun DiagnosisImageGridScreen(
 private fun DiagnosisImageGridScreenPreview_Done() {
     LeishmaniappTheme {
         DiagnosisImageGridScreen(diagnosis = Diagnosis.mock(isCompleted = true),
-            isBackground = false,
             onBackgroundProcessing = {},
             onGoBack = { },
             onFinalizeDiagnosis = {},
@@ -154,10 +121,9 @@ private fun DiagnosisImageGridScreenPreview_Done() {
 
 @Composable
 @Preview
-private fun DiagnosisImageGridScreenPreview_Awaiting() {
+private fun DiagnosisImageGridScreenPreview_NotBackground() {
     LeishmaniappTheme {
-        DiagnosisImageGridScreen(diagnosis = Diagnosis.mock(),
-            isBackground = false,
+        DiagnosisImageGridScreen(diagnosis = Diagnosis.mock(isCompleted = false),
             onBackgroundProcessing = {},
             onGoBack = {},
             onFinalizeDiagnosis = {},
@@ -167,10 +133,11 @@ private fun DiagnosisImageGridScreenPreview_Awaiting() {
 
 @Composable
 @Preview
-private fun DiagnosisImageGridScreenPreview_AwaitingBackground() {
+private fun DiagnosisImageGridScreenPreview_Background() {
     LeishmaniappTheme {
-        DiagnosisImageGridScreen(diagnosis = Diagnosis.mock(),
-            isBackground = true,
+        DiagnosisImageGridScreen(diagnosis = Diagnosis.mock(
+            isCompleted = false
+        ).copy(background = true),
             onBackgroundProcessing = {},
             onGoBack = { },
             onFinalizeDiagnosis = {},

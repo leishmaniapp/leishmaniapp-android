@@ -142,21 +142,28 @@ class RemoteAnalysisQueuingWorker @AssistedInject constructor(
                             data_ = ByteString.of(*imageBytes)
                         )
                     )
+                ).fold(
+                    onSuccess = {
+                        // Set the image status
+                        samplesRepository.upsertSample(sample.copy(stage = AnalysisStage.Analyzing))
+                        return@fold Result.success()
+                    },
+                    onFailure = { e ->
+                        // Set the exception
+                        Log.e(TAG, "Failed to connect to remote server", e)
+
+                        // Set the image status
+                        samplesRepository.upsertSample(sample.copy(stage = AnalysisStage.DeliverError))
+                        return@fold Result.failure()
+                    }
                 )
-
-                Log.i(TAG, "Analysis request for (${sample.metadata}) completed")
-
-                // Set the image status
-                samplesRepository.upsertSample(sample.copy(stage = AnalysisStage.Analyzing))
-                return@withContext Result.success()
-
             } catch (e: Exception) {
                 // Set the exception
                 Log.e(TAG, "Failed to send the AnalysisRequest to a remote server", e)
 
                 // Set the image status
                 samplesRepository.upsertSample(sample.copy(stage = AnalysisStage.DeliverError))
-                return@withContext Result.failure()
+                return@withContext Result.retry()
             }
         }
     }

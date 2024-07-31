@@ -67,41 +67,45 @@ fun DiagnosisResultsTable(
         }
 
         HeadingTableRow { Cell { Text(text = stringResource(id = R.string.diagnosis_results)) } }
-        TableRow {
-            Cell {
-                Text(
-                    text = stringResource(
-                        id =
-                        if (diagnosis.results.modelResult) {
-                            R.string.diagnosis_results_positive
-                        } else {
-                            R.string.diagnosis_results_negative
-                        }
-                    )
-                )
-            }
-            Cell {
-                Text(
-                    text = stringResource(
-                        id =
-                        if (diagnosis.results.specialistResult) {
-                            R.string.diagnosis_results_positive
-                        } else {
-                            R.string.diagnosis_results_negative
-                        }
-                    )
-                )
-            }
-        }
-
-        diagnosis.computedResults.forEach { (element, data) ->
-            HeadingTableRow { Cell { Text(text = element.displayName) } }
+        // Show diagnosis results (positive/negative)
+        diagnosis.results.let { r ->
             TableRow {
                 Cell {
-                    Text(text = data[ModelDiagnosticElement::class].toString())
+                    Text(
+                        text = stringResource(
+                            id =
+                            if (r.modelResult) {
+                                R.string.diagnosis_results_positive
+                            } else {
+                                R.string.diagnosis_results_negative
+                            }
+                        )
+                    )
                 }
                 Cell {
-                    Text(text = data[SpecialistDiagnosticElement::class].toString())
+                    Text(
+                        text = stringResource(
+                            id =
+                            if (r.specialistResult) {
+                                R.string.diagnosis_results_positive
+                            } else {
+                                R.string.diagnosis_results_negative
+                            }
+                        )
+                    )
+                }
+            }
+
+            // Show each element amount
+            diagnosis.disease.elements.forEach { e ->
+                HeadingTableRow { Cell { Text(text = e.displayName) } }
+                TableRow {
+                    Cell {
+                        Text(text = r.modelElements[e]?.toString() ?: "0")
+                    }
+                    Cell {
+                        Text(text = r.specialistElements[e]?.toString() ?: "0")
+                    }
                 }
             }
         }

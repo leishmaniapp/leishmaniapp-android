@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -64,6 +67,7 @@ fun DiagnosisImageEditScreen(
     image: ImageSample,
     onImageChange: (ImageSample) -> Unit,
     onExit: () -> Unit,
+    onReanalyze: (() -> Unit)? = null
 ) {
     val pagerState = rememberPagerState(pageCount = { DiagnosisImageEditPages.entries.size })
     val coroutineScope = rememberCoroutineScope()
@@ -74,10 +78,23 @@ fun DiagnosisImageEditScreen(
             NavigationBar {
                 NavigationBarItem(
                     selected = false,
+                    enabled = onReanalyze != null,
+                    onClick = { onReanalyze?.invoke() },
+                    icon = {
+                        Icon(
+                            Icons.AutoMirrored.Filled.Send,
+                            contentDescription = stringResource(id = R.string.action_analyze)
+                        )
+                    }, label = {
+                        Text(text = stringResource(id = R.string.action_analyze))
+                    })
+
+                NavigationBarItem(
+                    selected = false,
                     onClick = onExit,
                     icon = {
                         Icon(
-                            Icons.Filled.Cancel,
+                            Icons.Filled.Done,
                             contentDescription = stringResource(id = R.string.accept)
                         )
                     }, label = {

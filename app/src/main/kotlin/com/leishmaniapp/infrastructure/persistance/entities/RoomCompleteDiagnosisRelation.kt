@@ -32,6 +32,7 @@ data class RoomCompleteDiagnosisRelation(
 ) {
     fun toDiagnosis(): Diagnosis = Diagnosis(
         id = diagnosis.id,
+        background = diagnosis.background,
         finalized = diagnosis.finalized,
         date = diagnosis.date,
         specialist = specialist.toSpecialist().toRecord(),

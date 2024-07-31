@@ -31,11 +31,7 @@ fun AwaitingDiagnosesTable(
         modifier = modifier
             .border(
                 width = 1.dp,
-                color = Color.Gray,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .background(
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 shape = RoundedCornerShape(16.dp)
             )
     ) {

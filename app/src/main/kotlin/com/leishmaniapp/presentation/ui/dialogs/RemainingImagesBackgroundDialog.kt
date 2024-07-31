@@ -28,7 +28,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  * @mockup D02_2
  */
 @Composable
-fun RemainingImagesAlert(modifier: Modifier = Modifier, onButtonClick: () -> Unit) {
+fun RemainingImagesBackgroundDialog(modifier: Modifier = Modifier, onButtonClick: () -> Unit) {
     Card(modifier) {
         Box(modifier = Modifier.padding(24.dp)) {
             Column {
@@ -63,9 +63,9 @@ fun RemainingImagesAlert(modifier: Modifier = Modifier, onButtonClick: () -> Uni
 
 @Composable
 @Preview
-fun RemainingImagesAlertPreview() {
+private fun RemainingImagesBackgroundDialogPreview() {
     LeishmaniappTheme {
-        RemainingImagesAlert {
+        RemainingImagesBackgroundDialog {
 
         }
     }

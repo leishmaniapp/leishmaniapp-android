@@ -83,8 +83,8 @@ fun NavGraphBuilder.menuNavGraph(
 
             if (diagnosis != null) {
 
-                // Do not recover finalized diagnoses
-                if (diagnosis!!.finalized) {
+                // Do not recover finalized or background diagnoses
+                if (diagnosis!!.finalized || diagnosis!!.background) {
                     diagnosisViewModel.dismiss()
                     return@composable
                 }
@@ -175,6 +175,8 @@ private fun NavController.navigateToMenu(
 
 fun NavController.navigateReturnToMenu() {
     this.navigate(NavigationRoutes.MenuRoute.MainMenuRoute.route) {
-        popUpTo(NavigationRoutes.MenuRoute.MainMenuRoute.route)
+        popUpTo(NavigationRoutes.MenuRoute.MainMenuRoute.route) {
+            inclusive = true
+        }
     }
 }

@@ -144,10 +144,20 @@ data class Diagnosis(
         val specialistElements: MutableMap<DiagnosticElementName, Int> = mutableMapOf()
         val modelElements: MutableMap<DiagnosticElementName, Int> = mutableMapOf()
 
-        // Separate grouped results
-        computedResults.forEach { (element, type) ->
-            specialistElements[element] = type[SpecialistDiagnosticElement::class] ?: 0
-            modelElements[element] = type[ModelDiagnosticElement::class] ?: 0
+        // Get the computed results
+        computedResults.let { cr ->
+            // For each element that has to be diagnosed
+            disease.elements.forEach { elementName ->
+                // Get the element from computed results or zero if null
+                modelElements[elementName] =
+                    cr[elementName]?.get(ModelDiagnosticElement::class) ?: 0
+
+                // Get the specialist element from computed results, if specialist
+                // didn't provide a value, the same used in model is used
+                specialistElements[elementName] =
+                    cr[elementName]?.get(SpecialistDiagnosticElement::class)
+                        ?: modelElements[elementName]!!
+            }
         }
 
         // Return the copy with the new results

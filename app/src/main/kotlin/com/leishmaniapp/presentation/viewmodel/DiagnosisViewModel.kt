@@ -148,7 +148,17 @@ class DiagnosisViewModel @Inject constructor(
                 }
             }
             .flowOn(Dispatchers.IO)
-            .onEach { d -> Log.i(TAG, d?.let { "Loaded (${d.id})" } ?: "No diagnosis found") }
+            .onEach { d ->
+                Log.i(TAG, d?.let {
+                    "Loaded diagnosis (${d.id})" + when {
+                        d.background -> "[Background]"
+                        d.finalized -> "[Finalized]"
+                        d.analyzed -> "[Analyzed]"
+                        else -> "."
+                    }
+                } ?: "No diagnosis found")
+                Log.d(TAG, d.toString())
+            }
             .catch { e -> Log.e(TAG, "Exception thrown during Diagnosis StateFlow collection", e) }
             .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
@@ -226,8 +236,9 @@ class DiagnosisViewModel @Inject constructor(
      */
     fun setBackgroundDiagnosis() {
         viewModelScope.launch {
-            diagnosis.value?.let { d ->
+            diagnosis.value!!.let { d ->
                 diagnosesRepository.upsertDiagnosis(d.copy(background = true))
+                Log.i(TAG, "Diagnosis (${d.id}) deferred to background")
             }
         }
     }

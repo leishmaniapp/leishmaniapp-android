@@ -246,8 +246,6 @@ fun NavGraphBuilder.diagnosisNavGraph(
 
             DiagnosisImageGridScreen(
                 diagnosis = diagnosis!!,
-                isBackground = diagnosis!!.background,
-                allowReturn = !diagnosis!!.background,
                 onBackgroundProcessing = {
                     showSureBackgroundAlertDialog = true
                 },
@@ -299,11 +297,13 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 image = image!!,
                 onImageChange = { i ->
                     diagnosisViewModel.updateImageSample(i)
-                    navHostController.popBackStack()
                 },
                 onExit = {
                     navHostController.popBackStack()
                 },
+                onReanalyze = {
+                    diagnosisViewModel.startSampleAnalysis()
+                }
             )
         }
 

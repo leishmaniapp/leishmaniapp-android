@@ -1,5 +1,6 @@
 package com.leishmaniapp.presentation.ui.dialogs
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +34,7 @@ import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
  * @mockup D03_1
  */
 @Composable
-fun RemainingImagesProgress(modifier: Modifier = Modifier, done: Int, of: Int) {
+fun RemainingImagesProgressDialog(modifier: Modifier = Modifier, done: Int, of: Int) {
     Card(modifier) {
         Box(modifier = Modifier.padding(24.dp)) {
             Column {
@@ -68,7 +69,7 @@ fun RemainingImagesProgress(modifier: Modifier = Modifier, done: Int, of: Int) {
                         strokeCap = StrokeCap.Round,
                     )
                     Text(
-                        text = String.format("(%d/%d)", done, of),
+                        text = "($done/$of)",
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
@@ -79,8 +80,8 @@ fun RemainingImagesProgress(modifier: Modifier = Modifier, done: Int, of: Int) {
 
 @Composable
 @Preview
-fun RemainingImagesProgressPreview() {
+fun RemainingImagesProgressDialogPreview() {
     LeishmaniappTheme {
-        RemainingImagesProgress(done = 30, of = 60)
+        RemainingImagesProgressDialog(done = 30, of = 60)
     }
 }

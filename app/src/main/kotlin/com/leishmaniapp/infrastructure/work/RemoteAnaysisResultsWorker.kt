@@ -76,13 +76,20 @@ class RemoteAnaysisResultsWorker @AssistedInject constructor(
         .setOngoing(true).build()
 
     /**
-     * Show the [RemoteAnaysisResultsWorker]
+     * Show the [RemoteAnaysisResultsWorker] status
      */
     private fun showNotification() {
         // Create the notification channel
         notificationManager.createNotificationChannel(notificationChannel)
         // Show the notification
         notificationManager.notify(NOTIFICATION_ID, notification)
+    }
+
+    /**
+     * Remove the persistent notification
+     */
+    private fun cancelNotification() {
+        notificationManager.cancel(NOTIFICATION_ID)
     }
 
 
@@ -157,9 +164,13 @@ class RemoteAnaysisResultsWorker @AssistedInject constructor(
         } catch (e: Exception) {
             Log.e(TAG, "Failed to fetch results", e)
             analysisService.reset()
+
+            cancelNotification()
             return Result.retry()
         }
 
+
+        cancelNotification()
         return Result.success()
     }
 }
