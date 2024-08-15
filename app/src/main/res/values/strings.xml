@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+
     <!-- General application strings -->
     <string name="app_name">Leishmaniapp</string>
     <string name="app_description">Herramienta de diagnóstico en enfermedades parasitarias</string>
@@ -7,24 +9,6 @@
     <!-- Diseases -->
     <string name="unknown_disease">Enfermedad no Soportada</string>
     <string name="unknown_element">Elemento diagnóstico desconocido</string>
-
-    <!-- leishmaniapp.giemsa disease -->
-    <string name="leishmaniasis_giemsa_disease">Leishmaniasis con tinción Giemsa</string>
-    <string name="leishmaniasis_giemsa_disease_element_macrophages">Macrófagos</string>
-    <string name="leishmaniasis_giemsa_disease_element_parasites">Parásitos</string>
-
-    <!-- mock.dots disease -->
-    <string name="mock_dots_disease">Enfermedad de prueba: Detector de puntos</string>
-    <string name="mock_dots_disease_element">Punto de prueba</string>
-
-    <!-- mock.spots disease -->
-    <string name="mock_spots_disease">Enfermedad de prueba: Detector de colores</string>
-    <string name="mock_spots_disease_red">Rojo</string>
-    <string name="mock_spots_disease_green">Verde</string>
-    <string name="mock_spots_disease_blue">Azul</string>
-    <string name="mock_spots_disease_cyan">Celeste</string>
-    <string name="mock_spots_disease_yellow">Amarillo</string>
-    <string name="mock_spots_disease_magenta">Magenta</string>
 
     <!-- Exceptions -->
     <string name="exception_title">Ha ocurrido un error</string>

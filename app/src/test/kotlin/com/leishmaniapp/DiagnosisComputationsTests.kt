@@ -1,6 +1,6 @@
 package com.leishmaniapp
 
-import com.leishmaniapp.domain.disease.MockDotsDisease
+import com.leishmaniapp.domain.disease.MockSpotsDisease
 import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.domain.entities.Diagnosis
 import com.leishmaniapp.domain.entities.ImageSample
@@ -19,7 +19,7 @@ class DiagnosisComputationsTests {
                 elements = setOf(
                     // 3 Model diagnostic elements
                     ModelDiagnosticElement(
-                        MockDotsDisease.elements.first(), setOf(
+                        MockSpotsDisease.elements.first(), setOf(
                             Coordinates(0, 0),
                             Coordinates(1, 1),
                             Coordinates(2, 2),
@@ -27,38 +27,38 @@ class DiagnosisComputationsTests {
                     ),
                     // 2 Specialist diagnostic elements
                     SpecialistDiagnosticElement(
-                        MockDotsDisease.elements.first(), 2
+                        MockSpotsDisease.elements.first(), 2
                     )
                 )
             ), ImageSample.mock().copy(
                 elements = setOf(
                     // 1 Model diagnostic elements
                     ModelDiagnosticElement(
-                        MockDotsDisease.elements.first(), setOf(
+                        MockSpotsDisease.elements.first(), setOf(
                             Coordinates(0, 0),
                         )
                     ),
                     // 3 Specialist diagnostic elements
                     SpecialistDiagnosticElement(
-                        MockDotsDisease.elements.first(), 3
+                        MockSpotsDisease.elements.first(), 3
                     )
                 )
             )
         )
 
         val diagnosis = Diagnosis.mock()
-            .copy(disease = MockDotsDisease, images = images)
+            .copy(disease = MockSpotsDisease, images = images)
 
         val computedElements = diagnosis.computedResults
 
         Assert.assertEquals(
-            computedElements[MockDotsDisease.elements.first()]?.get(
+            computedElements[MockSpotsDisease.elements.first()]?.get(
                 ModelDiagnosticElement::class
             ), 4
         )
 
         Assert.assertEquals(
-            computedElements[MockDotsDisease.elements.first()]?.get(
+            computedElements[MockSpotsDisease.elements.first()]?.get(
                 SpecialistDiagnosticElement::class
             ), 5
         )
@@ -71,7 +71,7 @@ class DiagnosisComputationsTests {
                 elements = setOf(
                     // 3 Model diagnostic elements
                     ModelDiagnosticElement(
-                        MockDotsDisease.elements.first(),
+                        MockSpotsDisease.elements.first(),
                         List(10) { counter ->
                             Coordinates(counter, counter)
                         }.toSet()
@@ -81,11 +81,11 @@ class DiagnosisComputationsTests {
         )
 
         val diagnosis = Diagnosis.mock()
-            .copy(disease = MockDotsDisease, images = images)
+            .copy(disease = MockSpotsDisease, images = images)
 
         Assert.assertEquals(
             diagnosis.withResults().results.modelResult,
-            MockDotsDisease.modelResultForDisease(diagnosis.computedResults)
+            MockSpotsDisease.modelResultForDisease(diagnosis.computedResults)
         )
     }
 

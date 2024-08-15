@@ -19,7 +19,7 @@ import com.leishmaniapp.BuildConfig
 import com.leishmaniapp.R
 import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.disease.LeishmaniasisGiemsaDisease
-import com.leishmaniapp.domain.disease.MockDotsDisease
+import com.leishmaniapp.domain.disease.MockSpotsDisease
 import com.leishmaniapp.presentation.ui.composables.DiseaseItemList
 import com.leishmaniapp.presentation.ui.layout.InformationTopBar
 import com.leishmaniapp.presentation.ui.layout.LeishmaniappScaffold
@@ -84,7 +84,7 @@ private fun DiseasesMenuScreenPreview_Offline() {
     LeishmaniappTheme {
         DiseasesMenuScreen(
             diseases = setOf(
-                LeishmaniasisGiemsaDisease, MockDotsDisease
+                LeishmaniasisGiemsaDisease, MockSpotsDisease
             ),
             online = false,
             onProfileSelection = {},
@@ -99,7 +99,7 @@ private fun DiseasesMenuScreenPreview_Online() {
     LeishmaniappTheme {
         DiseasesMenuScreen(
             diseases = setOf(
-                LeishmaniasisGiemsaDisease, MockDotsDisease
+                LeishmaniasisGiemsaDisease, MockSpotsDisease
             ),
             onProfileSelection = {},
             onDiseaseSelection = { _ -> },

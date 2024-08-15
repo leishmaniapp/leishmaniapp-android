@@ -4,9 +4,11 @@ import com.leishmaniapp.domain.services.IAuthorizationService
 import com.leishmaniapp.infrastructure.service.sharing.ApplicationDiagnosisSharingServiceImpl
 import com.leishmaniapp.infrastructure.service.picture.ApplicationPictureStandardizationImpl
 import com.leishmaniapp.domain.services.IDiagnosisSharingService
+import com.leishmaniapp.domain.services.ILocalAnalysisService
 import com.leishmaniapp.domain.services.IOngoingDiagnosisService
 import com.leishmaniapp.domain.services.IPictureStandardizationService
 import com.leishmaniapp.domain.services.IQueuingService
+import com.leishmaniapp.infrastructure.service.lam.LamLocalAnalysisServiceImpl
 import com.leishmaniapp.infrastructure.service.analysis.WorkQueuingServiceImpl
 import com.leishmaniapp.infrastructure.service.preferences.DataStoreAuthorizationServiceImpl
 import com.leishmaniapp.infrastructure.service.preferences.DataStoreOngoingDiagnosisServiceImpl
@@ -67,4 +69,13 @@ interface ApplicationServicesModule {
     fun bindPictureStandardization(
         pictureStandardizationImpl: ApplicationPictureStandardizationImpl
     ): IPictureStandardizationService
+
+    /**
+     * Provide the [ILocalAnalysisService] via [LamLocalAnalysisServiceImpl]
+     */
+    @Binds
+    @Singleton
+    fun bindLocalAnalysisService(
+        localAnalysisService: LamLocalAnalysisServiceImpl
+    ): ILocalAnalysisService
 }

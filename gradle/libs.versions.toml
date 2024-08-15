@@ -10,22 +10,27 @@ espresso-core = "3.6.1"
 dagger-hilt = "2.51.1"
 wire = "4.9.9"
 okhttp = "4.12.0"
+# Gradle might complain about greater version available but that might not be what you're looking for
+# check the latest GitHub release in the repository (https://github.com/leishmaniapp/analysis-jvm)
+#noinspection GradleDependency
+leishmaniapp-analysis = "1.0.0"
 
 kotlinx-datetime = "0.6.0"
 kotlinx-coroutines = "1.8.1"
 kotlinx-serialization-json = "1.7.0"
 
-androidx-core-splashscreen = "1.0.0"
+androidx-core-splashscreen = "1.0.1"
 androidx-hilt = "1.2.0"
-androidx-lifecycle = "2.8.3"
+androidx-lifecycle = "2.8.4"
 androidx-compose = "2024.06.00"
-androidx-activity-compose = "1.9.0"
+androidx-activity-compose = "1.9.1"
 androidx-navigation = "2.7.7"
 androidx-datastore = "1.1.1"
 androidx-room = "2.6.1"
 androidx-startup = "1.1.1"
 androidx-camerax = "1.3.4"
 # Do not upgrade to 2.9.0, currently (KSP + Hilt) does not work for this WorkManager version
+#noinspection GradleDependency
 androidx-work = "2.8.0"
 
 coil = "2.6.0"
@@ -74,6 +79,10 @@ squareup-wire-grpc = { group = "com.squareup.wire", name = "wire-grpc-client", v
 okhttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okhttp" }
 okhttp-core = { group = "com.squareup.okhttp3", name = "okhttp" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor" }
+
+# Leishmaniapp LAM
+leishmaniapp-analysis-core = { group = "com.github.leishmaniapp.analysis-jvm", name = "core", version.ref = "leishmaniapp-analysis" }
+leishmaniapp-analysis-android = { group = "com.github.leishmaniapp.analysis-jvm", name = "android", version.ref = "leishmaniapp-analysis" }
 
 # JUnit
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -174,6 +183,11 @@ wire-grpc = [
 okhttp = [
     "okhttp-core",
     "okhttp-logging-interceptor"
+]
+
+leishmaniapp = [
+    "leishmaniapp-analysis-core",
+    "leishmaniapp-analysis-android",
 ]
 
 androidx-core = [

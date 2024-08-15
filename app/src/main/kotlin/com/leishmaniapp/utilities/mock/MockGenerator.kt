@@ -3,7 +3,7 @@ package com.leishmaniapp.utilities.mock
 import com.leishmaniapp.domain.calibration.ImageCalibrationData
 import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.disease.LeishmaniasisGiemsaDisease
-import com.leishmaniapp.domain.disease.MockDotsDisease
+import com.leishmaniapp.domain.disease.MockSpotsDisease
 import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.domain.entities.Diagnosis
 import com.leishmaniapp.domain.entities.DiagnosticElement
@@ -97,7 +97,7 @@ object MockGenerator {
     private fun ImageMetadata.Companion.mock(sample: Int) = ImageMetadata(
         diagnosis = UUID.randomUUID(),
         sample = sample,
-        disease = setOf(LeishmaniasisGiemsaDisease, MockDotsDisease).random(),
+        disease = setOf(LeishmaniasisGiemsaDisease, MockSpotsDisease).random(),
         date = LocalDateTime.utcNow(),
     )
 
@@ -106,7 +106,7 @@ object MockGenerator {
      */
     fun SpecialistDiagnosticElement.Companion.mock(): DiagnosticElement =
         SpecialistDiagnosticElement(
-            id = MockDotsDisease.elements.random(),
+            id = MockSpotsDisease.elements.random(),
             amount = faker.number.positive(0, 12)
         )
 
@@ -128,7 +128,7 @@ object MockGenerator {
         )
     ): DiagnosticElement =
         ModelDiagnosticElement(
-            id = MockDotsDisease.elements.first(),
+            id = MockSpotsDisease.elements.first(),
             coordinates = buildSet {
                 repeat(faker.number.positive(3, 12)) {
                     add(Coordinates.mock(0, imageSize))
@@ -177,7 +177,7 @@ object MockGenerator {
             specialist = Specialist.mock().toRecord(),
             patient = Patient.mock(),
             finalized = isFinished,
-            disease = MockDotsDisease,
+            disease = MockSpotsDisease,
             images = buildList {
                 repeat(faker.number.between(0, 10)) { idx ->
                     add(

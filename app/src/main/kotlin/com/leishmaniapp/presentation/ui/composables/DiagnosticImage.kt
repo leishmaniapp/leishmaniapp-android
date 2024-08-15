@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.leishmaniapp.R
-import com.leishmaniapp.domain.disease.MockDotsDisease
+import com.leishmaniapp.domain.disease.MockSpotsDisease
 import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.domain.entities.ImageSample
 import com.leishmaniapp.domain.entities.ModelDiagnosticElement
@@ -220,7 +220,7 @@ fun DiagnosticElementMarkPreview() {
         val image = ImageSample.mock(stage = AnalysisStage.Analyzed).copy(
             elements = setOf(
                 ModelDiagnosticElement(
-                    MockDotsDisease.elements.first(), setOf(
+                    MockSpotsDisease.elements.first(), setOf(
                         Coordinates(500, 500),
                         Coordinates(200, 250),
                         Coordinates(150, 1050),
@@ -228,7 +228,7 @@ fun DiagnosticElementMarkPreview() {
                         Coordinates(2000, 1500),
                     )
                 ), ModelDiagnosticElement(
-                    MockDotsDisease.elements.last(), setOf(
+                    MockSpotsDisease.elements.last(), setOf(
                         Coordinates(550, 600),
                         Coordinates(2200, 2000),
                         Coordinates(450, 1903),

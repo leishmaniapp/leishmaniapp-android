@@ -118,6 +118,10 @@ class RemoteAnaysisResultsWorker @AssistedInject constructor(
                                 TAG,
                                 "Got successfull response with status (${response.status}) for sample: ${response.ok?.metadata}"
                             )
+                            Log.d(
+                                TAG,
+                                "Raw = $v"
+                            )
                             // Parse the image metadata
                             val metadata = ImageMetadata.fromProto(v.metadata!!)
                             // Get the image (or create a new one)

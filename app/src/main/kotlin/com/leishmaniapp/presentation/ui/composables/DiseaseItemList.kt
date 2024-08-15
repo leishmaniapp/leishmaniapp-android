@@ -20,7 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leishmaniapp.domain.disease.Disease
-import com.leishmaniapp.domain.disease.MockDotsDisease
+import com.leishmaniapp.domain.disease.MockSpotsDisease
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 
 @Composable
@@ -59,6 +59,6 @@ fun DiseaseItemList(
 @Preview(showBackground = true)
 fun DiseaseItemListPreview() {
     LeishmaniappTheme {
-        DiseaseItemList(disease = MockDotsDisease) {}
+        DiseaseItemList(disease = MockSpotsDisease) {}
     }
 }

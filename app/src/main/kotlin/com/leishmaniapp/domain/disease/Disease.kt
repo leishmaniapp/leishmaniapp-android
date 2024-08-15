@@ -34,11 +34,6 @@ sealed class Disease(
     val crop: Int,
 
     /**
-     * List of [DiagnosticModel] associated to the disease
-     */
-    val models: Set<DiagnosticModel>,
-
-    /**
      * List of [DiagnosticElementName] associated to the disease
      */
     val elements: Set<DiagnosticElementName>,

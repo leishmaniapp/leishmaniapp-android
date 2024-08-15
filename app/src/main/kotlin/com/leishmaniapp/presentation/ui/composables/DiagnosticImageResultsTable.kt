@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leishmaniapp.R
 import com.leishmaniapp.domain.disease.Disease
-import com.leishmaniapp.domain.disease.MockDotsDisease
+import com.leishmaniapp.domain.disease.MockSpotsDisease
 import com.leishmaniapp.domain.entities.DiagnosticElementName
 import com.leishmaniapp.domain.entities.ModelDiagnosticElement
 import com.leishmaniapp.domain.entities.SpecialistDiagnosticElement
@@ -152,7 +152,7 @@ fun ResultsTablePreview_NoneProvided() {
 
     LeishmaniappTheme {
         DiagnosticImageResultsTable(
-            disease = MockDotsDisease,
+            disease = MockSpotsDisease,
             specialistDiagnosticElements = specialistDiagnosticElement?.let { setOf(it) },
             modelDiagnosticElements = null,
         ) { _, editedSpecialistDiagnosticElement ->
@@ -170,7 +170,7 @@ fun ResultsTablePreview_Dark() {
     LeishmaniappTheme {
         Surface {
             DiagnosticImageResultsTable(
-                disease = MockDotsDisease,
+                disease = MockSpotsDisease,
                 specialistDiagnosticElements = specialistDiagnosticElement?.let { setOf(it) },
                 modelDiagnosticElements = setOf(ModelDiagnosticElement.mock() as ModelDiagnosticElement),
             ) { _, editedSpecialistDiagnosticElement ->
@@ -190,7 +190,7 @@ fun ResultsTablePreview_FailedModel() {
 
     LeishmaniappTheme {
         DiagnosticImageResultsTable(
-            disease = MockDotsDisease,
+            disease = MockSpotsDisease,
             specialistDiagnosticElements = specialistDiagnosticElement?.let { setOf(it) },
             modelDiagnosticElements = null,
             modelFailIcon = true
@@ -209,7 +209,7 @@ fun ResultsTablePreview_OnlyModelProvided() {
 
     LeishmaniappTheme {
         DiagnosticImageResultsTable(
-            disease = MockDotsDisease,
+            disease = MockSpotsDisease,
             specialistDiagnosticElements = specialistDiagnosticElement?.let { setOf(it) },
             modelDiagnosticElements = setOf(ModelDiagnosticElement.mock() as ModelDiagnosticElement)
         ) { _, editedSpecialistDiagnosticElement ->
@@ -226,7 +226,7 @@ fun ResultsTablePreview_OnlySpecialistProvided() {
     }
     LeishmaniappTheme {
         DiagnosticImageResultsTable(
-            disease = MockDotsDisease,
+            disease = MockSpotsDisease,
             specialistDiagnosticElements = specialistDiagnosticElement?.let { setOf(it) },
             modelDiagnosticElements = null,
         ) { _, editedSpecialistDiagnosticElement ->
@@ -240,7 +240,7 @@ fun ResultsTablePreview_OnlySpecialistProvided() {
 fun ResultsTablePreview_TableIsShort() {
     LeishmaniappTheme {
         DiagnosticImageResultsTable(
-            disease = MockDotsDisease,
+            disease = MockSpotsDisease,
             specialistDiagnosticElements = null,
             modelDiagnosticElements = null,
         ) { _, _ -> }

@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leishmaniapp.R
 import com.leishmaniapp.domain.disease.Disease
-import com.leishmaniapp.domain.disease.MockDotsDisease
+import com.leishmaniapp.domain.disease.MockSpotsDisease
 import com.leishmaniapp.presentation.ui.composables.MainMenuActionButton
 import com.leishmaniapp.presentation.ui.layout.InformationTopBar
 import com.leishmaniapp.presentation.ui.layout.LeishmaniappScaffold
@@ -103,7 +103,7 @@ fun MainMenuScreen(
 private fun MainMenuScreenPreview() {
     LeishmaniappTheme {
         MainMenuScreen(
-            disease = MockDotsDisease,
+            disease = MockSpotsDisease,
             onBackButton = {},
             onProfileSelect = {},
             onStartDiagnosis = {},

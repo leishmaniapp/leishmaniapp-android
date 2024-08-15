@@ -133,6 +133,9 @@ dependencies {
     /* Wire Protobuf & gRPC */
     implementation(libs.bundles.wire.grpc)
 
+    /* Leishmaniapp Libraries */
+    implementation(libs.bundles.leishmaniapp)
+
     /* Androidx Core */
     implementation(libs.bundles.androidx.core)
 

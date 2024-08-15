@@ -3,25 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="LockedOrientationActivity">
 
+    <!-- Package visibility for LAM -->
+    <queries>
+        <!-- ** INCLUDE EVERY SUPPORTED DISEASE HERE ** -->
+        <package android:name="com.leishmaniapp.lam.mock.spots" />
+        <package android:name="com.leishmaniapp.lam.leishmaniasis.giemsa" />
+    </queries>
+
     <!-- Permissions -->
     <uses-feature android:name="android.hardware.camera.any" />
-
+    <!-- Requires camera to take sample photos -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Requires internet to communicate to the Leishmaniapp Analysis Backend -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Requires to know if internet is available to choose between cloud and local analysis -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Might notify the user about foreground services -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
-    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32"
-        tools:ignore="ScopedStorage" />
+    <!-- Requires permission to bind to LAM modules -->
+    <uses-permission android:name="com.leishmaniapp.lam.BIND_PERMISSION" />
 
     <!-- Application manifest -->
-
     <application
         android:name=".infrastructure.android.MainApplication"
         android:allowBackup="true"
@@ -48,16 +50,17 @@
 
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"
-            tools:node="merge"></service>
+            tools:node="merge" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
-            tools:node="remove"></provider>
+            tools:node="remove" />
 
+        <!-- Provider required to share files with LAM modules -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.leishmaniapp"
+            android:authorities="com.leishmaniapp.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

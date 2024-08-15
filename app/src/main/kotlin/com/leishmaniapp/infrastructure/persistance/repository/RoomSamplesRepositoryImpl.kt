@@ -9,6 +9,7 @@ import com.leishmaniapp.infrastructure.persistance.dao.RoomImagesDao
 import com.leishmaniapp.infrastructure.persistance.entities.RoomImageEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.util.UUID
@@ -32,6 +33,16 @@ class RoomSamplesRepositoryImpl @Inject constructor(
         // Delete the file
         image.file?.toFile()?.delete()
         dao.deleteImage(RoomImageEntity(image))
+    }
+
+    override suspend fun setSampleStage(
+        diagnosis: UUID,
+        sample: Int,
+        stage: AnalysisStage
+    ) {
+        getSampleForDiagnosis(diagnosis, sample).first()?.let {
+            upsertSample(it.copy(stage = stage))
+        }
     }
 
     override fun getSampleForDiagnosis(diagnosis: UUID, sample: Int): Flow<ImageSample?> =

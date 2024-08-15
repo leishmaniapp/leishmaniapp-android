@@ -8,9 +8,6 @@ import com.leishmaniapp.domain.types.ComputedResultsType
 data object MockSpotsDisease : Disease(
     id = "mock.spots",
     crop = 2000,
-    models = setOf(
-        DiagnosticModel("mock.spots")
-    ),
     elements = setOf(
         DiagnosticElementName("mock.spots:red", R.string.mock_spots_disease_red),
         DiagnosticElementName("mock.spots:green", R.string.mock_spots_disease_green),

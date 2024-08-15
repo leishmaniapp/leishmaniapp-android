@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
+    <!-- Cache for sharing samples with LAM modules -->
     <cache-path
-        name="shared_diagnosis"
-        path="/" />
+        name="analysis_cache"
+        path="." />
 </paths>

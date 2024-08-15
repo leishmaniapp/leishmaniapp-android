@@ -36,9 +36,10 @@ data class DiagnosticElementName(
     companion object {
         /**
          * Get one of the registered [DiagnosticElementName] given an identificator string
+         * Both _disease:item_ or _item_ should work
          */
         fun diagnosticElementNameById(id: String): DiagnosticElementName? =
-            Disease.diseases().flatMap { it.elements }.firstOrNull { it.id == id }
+            Disease.diseases().flatMap { it.elements }.firstOrNull { it.id.contains(id) }
     }
 
     override fun toString(): String = id

@@ -22,6 +22,11 @@ interface ISamplesRepository {
     suspend fun deleteSample(image: ImageSample)
 
     /**
+     * Set a new [stage] for the matching [ImageSample]
+     */
+    suspend fun setSampleStage(diagnosis: UUID, sample: Int, stage: AnalysisStage)
+
+    /**
      * Get an [ImageSample] given a [com.leishmaniapp.domain.entities.Diagnosis] id
      */
     fun getSampleForDiagnosis(diagnosis: UUID, sample: Int): Flow<ImageSample?>

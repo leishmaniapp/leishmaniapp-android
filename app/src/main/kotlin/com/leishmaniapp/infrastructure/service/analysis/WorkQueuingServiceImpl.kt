@@ -14,6 +14,7 @@ import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.domain.entities.ImageSample
 import com.leishmaniapp.domain.repository.ISamplesRepository
 import com.leishmaniapp.domain.services.IAvailabilityService
+import com.leishmaniapp.domain.services.ILocalAnalysisService
 import com.leishmaniapp.domain.services.IQueuingService
 import com.leishmaniapp.domain.types.Email
 import com.leishmaniapp.infrastructure.work.RemoteAnalysisQueuingWorker
@@ -39,6 +40,7 @@ class WorkQueuingServiceImpl @Inject constructor(
 
     // Services
     private val networkService: IAvailabilityService,
+    private val localAnalysisService: ILocalAnalysisService,
 
     ) : IQueuingService {
 
@@ -90,8 +92,7 @@ class WorkQueuingServiceImpl @Inject constructor(
     }
 
     /**
-     * Pass the image to either the [RemoteAnalysisQueuingWorker] or a [?]
-     * TODO: Use the LocalAnalysisWorker
+     * Pass the image to either the [RemoteAnalysisQueuingWorker] or a [ILocalAnalysisService]
      */
     override suspend fun enqueue(sample: ImageSample, specialist: Email, mime: String) {
 
@@ -100,11 +101,58 @@ class WorkQueuingServiceImpl @Inject constructor(
             samplesRepository.upsertSample(sample.copy(stage = AnalysisStage.Enqueued))
         }
 
-        // Set the deferred status
-        if (!networkService.checkServiceAvailability()) {
-            withContext(Dispatchers.IO) {
-                samplesRepository.upsertSample(sample.copy(stage = AnalysisStage.Deferred))
+        // Check if remote service is available
+        val shouldContinueAnalysis = if (!networkService.checkServiceAvailability()) {
+
+            // Check if LAM is available
+            localAnalysisService.tryAnalyze(sample).let { result ->
+
+                // Handle analysis failure or false as return value
+                if (result.isFailure || !result.getOrDefault(false)) {
+
+                    // Show an error or a warning depending on the severity
+                    result.onFailure {
+                        Log.e(TAG, "Failed to analyze image locally", it)
+                    }.onSuccess {
+                        Log.w(TAG, "LAM module not installed for (${sample.metadata.disease})")
+                    }
+
+                    // Mark the sample as deferred
+                    withContext(Dispatchers.IO) {
+                        samplesRepository.upsertSample(sample.copy(stage = AnalysisStage.Deferred))
+                    }
+
+                    // Should continue analysis as LAM cannot be used
+                    Log.d(
+                        TAG,
+                        "Deferred cloud analysis will be used as LAM could not be found"
+                    )
+                    true
+
+                } else {
+
+                    // Should not continue the analysis as LAM was used
+                    Log.d(
+                        TAG,
+                        "LAM analysis will be used as the online service is not available"
+                    )
+                    false
+                }
             }
+
+        } else {
+            // Should continue analysis as the service is currently online
+            Log.d(TAG, "Cloud analysis service will be used as preferred method of analysis")
+            true
+        }
+
+        // Complete the analysis request right now
+        if (!shouldContinueAnalysis) {
+            Log.d(
+                TAG,
+                "Request ended without a request to [RemoteAnalysisQueuingWorker]"
+            )
+            return
         }
 
         // Enqueue the online worker
