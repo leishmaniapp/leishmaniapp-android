@@ -20,6 +20,10 @@ import kotlinx.serialization.Transient
 data class DiagnosticElementName(
     /**
      * Unique id for the diagnostic element, the format must be <diasease>:<element>
+     * LAM modules are allowed to use just <element> as ID
+     *
+     * **Important:** Names must not be contained one into another ej: 'parasites' and 'parasites_b' are
+     * not valid as 'parasites' is contained within 'parasites_b'
      */
     val id: Identificator,
 

@@ -335,55 +335,57 @@ class LamLocalAnalysisServiceImpl @Inject constructor(
      * Try to analyze a sample, return true if analysis is possible, false if LAM module is not installed
      * or throws an exception if some other problem occurss
      */
-    override suspend fun tryAnalyze(sample: ImageSample): Result<Boolean> = try {
+    override suspend fun tryAnalyze(sample: ImageSample): Result<Boolean> {
+        try {
 
-        // Check if disease is currently connected or try to connect
-        if (!activeConnections.containsKey(sample.metadata.disease) &&
-            !connect(sample.metadata.disease)
-        ) {
-            // Failed to connect, LAM does not exist
-            Result.success(false)
-        }
+            // Check if disease is currently connected or try to connect
+            if (!activeConnections.containsKey(sample.metadata.disease) &&
+                !connect(sample.metadata.disease)
+            ) {
+                // Failed to connect, LAM does not exist
+                return Result.success(false)
+            }
 
-        // Create a copy of the image
-        val cacheFile = withContext(Dispatchers.IO) {
-            File.createTempFile(
-                "lam_${sample.metadata.disease.id}_${sample.metadata.sample}_${sample.metadata.diagnosis}",
-                sample.file!!.path.let { p -> p!!.substring(p.lastIndexOf(".")) })
-        }
+            // Create a copy of the image
+            val cacheFile = withContext(Dispatchers.IO) {
+                File.createTempFile(
+                    "lam_${sample.metadata.disease.id}_${sample.metadata.sample}_${sample.metadata.diagnosis}",
+                    sample.file!!.path.let { p -> p!!.substring(p.lastIndexOf(".")) })
+            }
 
-        // Delete the file when its no longer needed
-        cacheFile.deleteOnExit()
+            // Delete the file when its no longer needed
+            cacheFile.deleteOnExit()
 
-        // Copy the image back
-        withContext(Dispatchers.IO) {
-            applicationContext.contentResolver.openInputStream(sample.file!!)?.use { ins ->
-                FileOutputStream(cacheFile).use { outs ->
-                    ins.copyTo(outs)
+            // Copy the image back
+            withContext(Dispatchers.IO) {
+                applicationContext.contentResolver.openInputStream(sample.file!!)?.use { ins ->
+                    FileOutputStream(cacheFile).use { outs ->
+                        ins.copyTo(outs)
+                    }
                 }
             }
-        }
 
-        // Get the URI for the file
-        val uri = FileProvider.getUriForFile(
-            applicationContext,
-            FILEPROVIDER_AUTHORITY,
-            cacheFile
-        )
-
-        // Send the request to LAM module
-        activeConnections[sample.metadata.disease]!!.sendRequest(
-            LamAnalysisRequest(
-                diagnosis = sample.metadata.diagnosis,
-                sample = sample.metadata.sample,
-                uri = uri
+            // Get the URI for the file
+            val uri = FileProvider.getUriForFile(
+                applicationContext,
+                FILEPROVIDER_AUTHORITY,
+                cacheFile
             )
-        )
 
-        // LAM module binded
-        Result.success(true)
+            // Send the request to LAM module
+            activeConnections[sample.metadata.disease]!!.sendRequest(
+                LamAnalysisRequest(
+                    diagnosis = sample.metadata.diagnosis,
+                    sample = sample.metadata.sample,
+                    uri = uri
+                )
+            )
 
-    } catch (e: Exception) {
-        Result.failure(e)
+            // LAM module binded
+            return Result.success(true)
+
+        } catch (e: Exception) {
+            return Result.failure(e)
+        }
     }
 }
