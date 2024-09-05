@@ -8,6 +8,7 @@
         <!-- ** INCLUDE EVERY SUPPORTED DISEASE HERE ** -->
         <package android:name="com.leishmaniapp.lam.mock.spots" />
         <package android:name="com.leishmaniapp.lam.leishmaniasis.giemsa" />
+        <package android:name="com.leishmaniapp.lam.malaria.romanowsky" />
     </queries>
 
     <!-- Permissions -->

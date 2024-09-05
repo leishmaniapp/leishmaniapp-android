@@ -6,7 +6,7 @@ import com.leishmaniapp.domain.entities.Diagnosis
 import com.leishmaniapp.domain.entities.ImageSample
 import com.leishmaniapp.domain.entities.ModelDiagnosticElement
 import com.leishmaniapp.domain.entities.SpecialistDiagnosticElement
-import com.leishmaniapp.domain.types.Coordinates
+import com.leishmaniapp.domain.types.BoxCoordinates
 import com.leishmaniapp.utilities.mock.MockGenerator.mock
 import org.junit.Assert
 import org.junit.Test
@@ -19,10 +19,12 @@ class DiagnosisComputationsTests {
                 elements = setOf(
                     // 3 Model diagnostic elements
                     ModelDiagnosticElement(
-                        MockSpotsDisease.elements.first(), setOf(
-                            Coordinates(0, 0),
-                            Coordinates(1, 1),
-                            Coordinates(2, 2),
+                        MockSpotsDisease.elements.first(),
+                        "n/a",
+                        setOf(
+                            BoxCoordinates(0, 0),
+                            BoxCoordinates(1, 1),
+                            BoxCoordinates(2, 2),
                         )
                     ),
                     // 2 Specialist diagnostic elements
@@ -34,8 +36,10 @@ class DiagnosisComputationsTests {
                 elements = setOf(
                     // 1 Model diagnostic elements
                     ModelDiagnosticElement(
-                        MockSpotsDisease.elements.first(), setOf(
-                            Coordinates(0, 0),
+                        MockSpotsDisease.elements.first(),
+                        "n/a",
+                        setOf(
+                            BoxCoordinates(0, 0),
                         )
                     ),
                     // 3 Specialist diagnostic elements
@@ -72,8 +76,9 @@ class DiagnosisComputationsTests {
                     // 3 Model diagnostic elements
                     ModelDiagnosticElement(
                         MockSpotsDisease.elements.first(),
+                        "n/a",
                         List(10) { counter ->
-                            Coordinates(counter, counter)
+                            BoxCoordinates(counter, counter)
                         }.toSet()
                     ),
                 )

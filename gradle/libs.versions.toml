@@ -10,10 +10,7 @@ espresso-core = "3.6.1"
 dagger-hilt = "2.51.1"
 wire = "4.9.9"
 okhttp = "4.12.0"
-# Gradle might complain about greater version available but that might not be what you're looking for
-# check the latest GitHub release in the repository (https://github.com/leishmaniapp/analysis-jvm)
-#noinspection GradleDependency
-leishmaniapp-analysis = "1.0.0"
+leishmaniapp-analysis = "1.1.0"
 
 kotlinx-datetime = "0.6.0"
 kotlinx-coroutines = "1.8.1"
@@ -22,7 +19,7 @@ kotlinx-serialization-json = "1.7.0"
 androidx-core-splashscreen = "1.0.1"
 androidx-hilt = "1.2.0"
 androidx-lifecycle = "2.8.4"
-androidx-compose = "2024.06.00"
+androidx-compose = "2024.08.00"
 androidx-activity-compose = "1.9.1"
 androidx-navigation = "2.7.7"
 androidx-datastore = "1.1.1"

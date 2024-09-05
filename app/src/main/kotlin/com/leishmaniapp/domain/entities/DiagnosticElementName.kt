@@ -20,10 +20,7 @@ import kotlinx.serialization.Transient
 data class DiagnosticElementName(
     /**
      * Unique id for the diagnostic element, the format must be <diasease>:<element>
-     * LAM modules are allowed to use just <element> as ID
-     *
-     * **Important:** Names must not be contained one into another ej: 'parasites' and 'parasites_b' are
-     * not valid as 'parasites' is contained within 'parasites_b'
+     * **Important:** Names must be unique to the application
      */
     val id: Identificator,
 
@@ -40,10 +37,9 @@ data class DiagnosticElementName(
     companion object {
         /**
          * Get one of the registered [DiagnosticElementName] given an identificator string
-         * Both _disease:item_ or _item_ should work
          */
         fun diagnosticElementNameById(id: String): DiagnosticElementName? =
-            Disease.diseases().flatMap { it.elements }.firstOrNull { it.id.contains(id) }
+            Disease.diseases().flatMap { it.elements }.firstOrNull { it.id == id }
     }
 
     override fun toString(): String = id

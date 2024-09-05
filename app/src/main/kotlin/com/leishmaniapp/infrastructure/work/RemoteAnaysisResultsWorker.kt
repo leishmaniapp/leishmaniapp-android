@@ -11,6 +11,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.leishmaniapp.R
+import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.domain.entities.ImageMetadata
 import com.leishmaniapp.domain.entities.ImageSample
@@ -131,7 +132,11 @@ class RemoteAnaysisResultsWorker @AssistedInject constructor(
                                     stage = AnalysisStage.Analyzed,
                                 )
                             // Gather the results
-                            val results = ModelDiagnosticElement.from(v.results)
+                            val results = ModelDiagnosticElement.from(
+                                v.results, v.version,
+                                Disease.diseaseById(v.metadata.disease)!!
+                            )
+
                             Log.i(TAG, results.toString())
                             // Create a copy with the new elements
                             val copy = image

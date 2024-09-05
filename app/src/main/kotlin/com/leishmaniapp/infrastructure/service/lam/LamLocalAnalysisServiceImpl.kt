@@ -15,6 +15,8 @@ import com.leishmaniapp.analysis.lam.LamAnalysisRequest
 import com.leishmaniapp.analysis.lam.LamAnalysisResponse
 import com.leishmaniapp.analysis.lam.fromBundle
 import com.leishmaniapp.analysis.lam.toBundle
+import com.leishmaniapp.cloud.types.Coordinates
+import com.leishmaniapp.cloud.types.ListOfCoordinates
 import com.leishmaniapp.domain.disease.Disease
 import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.domain.entities.DiagnosticElementName
@@ -22,7 +24,7 @@ import com.leishmaniapp.domain.entities.ImageSample
 import com.leishmaniapp.domain.entities.ModelDiagnosticElement
 import com.leishmaniapp.domain.repository.ISamplesRepository
 import com.leishmaniapp.domain.services.ILocalAnalysisService
-import com.leishmaniapp.domain.types.Coordinates
+import com.leishmaniapp.domain.types.BoxCoordinates
 import com.leishmaniapp.infrastructure.di.InjectScopeWithDefaultDispatcher
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -128,13 +130,26 @@ class LamLocalAnalysisServiceImpl @Inject constructor(
                         AnalysisStatus.OK -> {
                             try {
                                 // Get the LAM results
-                                val results = r.results.results!!.map { (k, v) ->
-                                    ModelDiagnosticElement(
-                                        id = DiagnosticElementName.diagnosticElementNameById(k)!!,
-                                        coordinates = v.map { Coordinates(x = it.x, y = it.y) }
-                                            .toSet()
+                                val results = r.results.results!!.let { r ->
+                                    r.mapValues { v ->
+                                        ListOfCoordinates(
+                                            coordinates = v.value.map {
+                                                Coordinates(
+                                                    x = it.x,
+                                                    y = it.y,
+                                                    w = it.w,
+                                                    h = it.h,
+                                                )
+                                            }
+                                        )
+                                    }
+                                }.let {
+                                    ModelDiagnosticElement.from(
+                                        it,
+                                        r.results.version,
+                                        disease
                                     )
-                                }.toSet()
+                                }
 
                                 // Append them to image sample
                                 setSampleResult(r.diagnosis, r.sample, results)
@@ -288,7 +303,7 @@ class LamLocalAnalysisServiceImpl @Inject constructor(
         // Create an intent with the LAM bound action
         val intent = Intent(LAM_SERVICE_ACTION).apply {
             // Set the LAM package to the disease one
-            setPackage(BASE_LAM_PACKAGE + disease.id)
+            setPackage((BASE_LAM_PACKAGE + disease.id))
             // Grant permissions to read the Uri
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }

@@ -14,7 +14,7 @@ import com.leishmaniapp.domain.entities.ModelDiagnosticElement
 import com.leishmaniapp.domain.entities.Patient
 import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.entities.SpecialistDiagnosticElement
-import com.leishmaniapp.domain.types.Coordinates
+import com.leishmaniapp.domain.types.BoxCoordinates
 import com.leishmaniapp.infrastructure.camera.computeMichelsonContrast
 import com.leishmaniapp.infrastructure.camera.computeSimpleLuminance
 import com.leishmaniapp.utilities.extensions.toRecord
@@ -111,9 +111,9 @@ object MockGenerator {
         )
 
     /**
-     * Create a [Coordinates] with given [min] and [max] values
+     * Create a [BoxCoordinates] with given [min] and [max] values
      */
-    private fun Coordinates.Companion.mock(min: Int, max: Int) = Coordinates(
+    private fun BoxCoordinates.Companion.mock(min: Int, max: Int) = BoxCoordinates(
         x = faker.number.between(min, max),
         y = faker.number.between(min, max),
     )
@@ -129,9 +129,10 @@ object MockGenerator {
     ): DiagnosticElement =
         ModelDiagnosticElement(
             id = MockSpotsDisease.elements.first(),
+            version = "mock",
             coordinates = buildSet {
                 repeat(faker.number.positive(3, 12)) {
-                    add(Coordinates.mock(0, imageSize))
+                    add(BoxCoordinates.mock(0, imageSize))
                 }
             }
         )

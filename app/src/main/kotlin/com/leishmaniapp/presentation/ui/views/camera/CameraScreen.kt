@@ -2,15 +2,26 @@ package com.leishmaniapp.presentation.ui.views.camera
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.net.Uri
 import android.os.SystemClock
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.Vaccines
+import androidx.compose.material3.Button
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +31,7 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -28,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.leishmaniapp.BuildConfig
 import com.leishmaniapp.R
 import com.leishmaniapp.infrastructure.camera.CameraCalibrationAnalyzer
 import com.leishmaniapp.presentation.ui.composables.CameraCalibrationCard
@@ -42,6 +55,7 @@ fun CameraScreen(
     cameraCalibration: CameraCalibrationAnalyzer,
     onCancel: () -> Unit,
     onPictureTake: (Result<Bitmap>) -> Unit,
+    onPictureInjection: (Uri?) -> Unit = {},
 ) {
 
     // Application context and composable lifecycle
@@ -148,6 +162,34 @@ fun CameraScreen(
             modifier = Modifier.weight(1f),
             cameraController = cameraController
         )
+
+        // Allow for image injection within DEBUG mode
+        if (BuildConfig.DEBUG) {
+            val picturePickerLauncher =
+                rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) { uri ->
+                    onPictureInjection.invoke(uri)
+                }
+
+            Button(
+                modifier = Modifier.padding(8.dp),
+                onClick = {
+                    picturePickerLauncher.launch(
+                        PickVisualMediaRequest(
+                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                        )
+                    )
+                }) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(
+                        8.dp,
+                        Alignment.CenterHorizontally
+                    )
+                ) {
+                    Icon(imageVector = Icons.Sharp.Vaccines, contentDescription = null)
+                    Text(text = "Debug Injection")
+                }
+            }
+        }
     }
 
     // Show loading screen

@@ -2,6 +2,8 @@ package com.leishmaniapp.presentation.viewmodel
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
@@ -15,8 +17,11 @@ import com.leishmaniapp.domain.services.IPictureStandardizationService
 import com.leishmaniapp.infrastructure.camera.CameraCalibrationAnalyzer
 import com.leishmaniapp.presentation.viewmodel.state.CameraState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,10 +61,11 @@ class CameraViewModel @Inject constructor(
     /**
      * Callback when a picture is taken
      */
-    fun onPictureTake(result: Result<Bitmap>, disease: Disease, context: Context) =
+    fun onPictureTake(context: Context, result: Result<Bitmap>, disease: Disease) =
         viewModelScope.launch {
             File(
                 context.cacheDir,
+                // Short for LastTaken
                 File.separator + "lt0" + pictureStandardizationService.fileExtension
             ).let { file ->
 
@@ -87,6 +93,45 @@ class CameraViewModel @Inject constructor(
                     _cameraState.value = CameraState.Error(BadImageException(ex))
                 })
             }
+        }
+
+    /**
+     * Use an user-selected picture instead of a taken one (picture injection).
+     * This is meant to be a DEBUG only feature
+     */
+    fun onPictureInjectDebug(context: Context, uri: Uri, disease: Disease) =
+        viewModelScope.launch(Dispatchers.IO) {
+
+            Log.w(TAG, "Request for image injection = $uri")
+
+            // Create a file
+            val file = File(
+                context.cacheDir,
+                File.separator + "lt1" + uri.path.let { p -> p!!.substring(p.lastIndexOf(".")) },
+            )
+
+            // Copy from origin to cacheFile
+            context.contentResolver.openInputStream(uri)?.use { ins ->
+                FileOutputStream(file).use { outs ->
+                    ins.copyTo(outs)
+                }
+            }
+
+            // Get bitmap from file
+            val bitmap = BitmapFactory.decodeFile(file.path)
+
+            // Call picture take with the new bitmap
+            // Save the bitmap in storage
+            pictureStandardizationService.store(file, bitmap)
+
+            // Set new bitmap value (from the URI)
+            Log.w(TAG, "Injected successfully: ${file.path}")
+
+            withContext(Dispatchers.Main) {
+                _cameraState.value = CameraState.Photo(file.toUri())
+            }
+
+            bitmap.recycle()
         }
 
     /**

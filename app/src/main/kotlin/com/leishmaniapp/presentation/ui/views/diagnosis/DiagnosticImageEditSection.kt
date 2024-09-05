@@ -35,7 +35,7 @@ import com.leishmaniapp.R
 import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.domain.entities.ImageSample
 import com.leishmaniapp.domain.entities.ModelDiagnosticElement
-import com.leishmaniapp.domain.types.Coordinates
+import com.leishmaniapp.domain.types.BoxCoordinates
 import com.leishmaniapp.presentation.ui.composables.DiagnosticImage
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import com.leishmaniapp.utilities.mock.MockGenerator.mock
@@ -66,7 +66,7 @@ fun DiagnosticImageEditSection(
     var mutImageCopy: ImageSample by remember { mutableStateOf(image.copy()) }
 
     // Currently selected element
-    var selectedElement: Pair<ModelDiagnosticElement, Coordinates>? by remember {
+    var selectedElement: Pair<ModelDiagnosticElement, BoxCoordinates>? by remember {
         mutableStateOf(null)
     }
 

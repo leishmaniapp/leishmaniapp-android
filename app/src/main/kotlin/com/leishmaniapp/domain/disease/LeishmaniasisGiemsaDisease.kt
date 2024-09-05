@@ -15,11 +15,11 @@ data object LeishmaniasisGiemsaDisease : Disease(
     crop = 1944,
     elements = setOf(
         DiagnosticElementName(
-            "leishmaniasis.giemsa.macrophages:macrophage",
+            "leishmaniasis.giemsa:macrophage",
             R.string.leishmaniasis_giemsa_disease_element_macrophages
         ),
         DiagnosticElementName(
-            "leishmaniasis.giemsa.parasites:parasite",
+            "leishmaniasis.giemsa:parasite",
             R.string.leishmaniasis_giemsa_disease_element_parasites
         )
     ),

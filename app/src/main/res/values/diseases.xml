@@ -7,6 +7,14 @@
     <string name="leishmaniasis_giemsa_disease_element_macrophages">Macrófagos</string>
     <string name="leishmaniasis_giemsa_disease_element_parasites">Parásitos</string>
 
+    <!-- malaria.romanowsky disease -->
+    <string name="malaria_romanowsky_disease">Malaria con tinción Romanowsky</string>
+    <string name="malaria_romanowsky_disease_element_leukocyte">Leucocitos</string>
+    <string name="malaria_romanowsky_disease_element_trophozoite">Trofozoíto</string>
+    <string name="malaria_romanowsky_disease_element_schizont">Esquizonte</string>
+    <string name="malaria_romanowsky_disease_element_gametocyte">Gametocitos</string>
+
+
     <!-- mock.spots disease -->
     <string name="mock_spots_disease">Enfermedad de prueba: Detector de colores</string>
     <string name="mock_spots_disease_red">Rojo</string>

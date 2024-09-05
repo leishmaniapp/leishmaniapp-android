@@ -34,42 +34,43 @@ import com.leishmaniapp.domain.disease.MockSpotsDisease
 import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.domain.entities.ImageSample
 import com.leishmaniapp.domain.entities.ModelDiagnosticElement
-import com.leishmaniapp.domain.types.Coordinates
+import com.leishmaniapp.domain.types.BoxCoordinates
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import com.leishmaniapp.utilities.mock.MockGenerator.mock
 
 /// Radius at which the element will be
 const val COORDINATES_SELECTION_RADIUS: Int = 100
-const val OUTER_CIRCLE_RADIUS: Float = 0.35f
+const val OUTER_CIRCLE_RADIUS: Float = 0.20f
+const val COLOR_ALPHA: Float = 0.20f
 
 /**
  * Image's real coordinates do not match on-screen coordinates due to canvas being
  * smaller depending on the size of the devices thus coordinates need to be transformed
  */
 fun transformCoordinatesFromRealToCanvas(
-    realCoordinates: Coordinates, xreal: Int, yreal: Int, canvasSize: Size
-): Coordinates = Coordinates(
-    x = (realCoordinates.x * (canvasSize.width / xreal)).toInt(),
-    y = (realCoordinates.y * (canvasSize.height / yreal)).toInt()
+    realBoxCoordinates: BoxCoordinates, xreal: Int, yreal: Int, canvasSize: Size
+): BoxCoordinates = BoxCoordinates(
+    x = (realBoxCoordinates.x * (canvasSize.width / xreal)).toInt(),
+    y = (realBoxCoordinates.y * (canvasSize.height / yreal)).toInt()
 )
 
 /**
  * Canvas coordinates like taps need to be transformed to image's real size
  */
 fun transformCoordinatesFromCanvasToReal(
-    canvasCoordinates: Coordinates, xreal: Int, yreal: Int, canvasSize: Size
-): Coordinates = Coordinates(
-    x = (canvasCoordinates.x * (xreal / canvasSize.width)).toInt(),
-    y = (canvasCoordinates.y * (yreal / canvasSize.height)).toInt()
+    canvasBoxCoordinates: BoxCoordinates, xreal: Int, yreal: Int, canvasSize: Size
+): BoxCoordinates = BoxCoordinates(
+    x = (canvasBoxCoordinates.x * (xreal / canvasSize.width)).toInt(),
+    y = (canvasBoxCoordinates.y * (yreal / canvasSize.height)).toInt()
 )
 
 /**
  * Calculate the Painter's center of mass offset
  */
-fun calculatePainterCenterOfMass(coordinates: Coordinates, imageSize: Size): Coordinates =
-    Coordinates(
-        x = coordinates.x - (imageSize.width / 2f).toInt(),
-        y = coordinates.y - (imageSize.height / 2f).toInt()
+fun calculatePainterCenterOfMass(boxCoordinates: BoxCoordinates, imageSize: Size): BoxCoordinates =
+    BoxCoordinates(
+        x = boxCoordinates.x - (imageSize.width / 2f).toInt(),
+        y = boxCoordinates.y - (imageSize.height / 2f).toInt()
     )
 
 /**
@@ -81,13 +82,13 @@ fun calculatePainterCenterOfMass(coordinates: Coordinates, imageSize: Size): Coo
 @SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
 fun Modifier.onCanvasClick(
-    onCompleted: (coordinates: Coordinates) -> Unit
+    onCompleted: (boxCoordinates: BoxCoordinates) -> Unit
 ): Modifier = this.pointerInput(MutableInteractionSource()) {
     awaitEachGesture {
         val tap = awaitFirstDown().apply { if (pressed != previousPressed) consume() }
         waitForUpOrCancellation()?.apply { if (pressed != previousPressed) consume() }?.let {
             onCompleted.invoke(
-                Coordinates(
+                BoxCoordinates(
                     tap.position.x.toInt(), tap.position.y.toInt()
                 )
             )
@@ -100,15 +101,15 @@ fun DiagnosticImage(
     modifier: Modifier = Modifier,
     image: ImageSample,
     clickEnabled: Boolean = true,
-    selectedElement: Pair<ModelDiagnosticElement, Coordinates>? = null,
-    onElementPressed: (Pair<ModelDiagnosticElement, Coordinates>?) -> Unit,
+    selectedElement: Pair<ModelDiagnosticElement, BoxCoordinates>? = null,
+    onElementPressed: (Pair<ModelDiagnosticElement, BoxCoordinates>?) -> Unit,
 ) {
     // Late initialization of canvas size when rendered
     var canvasSize: Size? = null
 
     // Get the Icon to be painted
     val iconPainter = rememberVectorPainter(Icons.Filled.Close)
-    val iconPainterSize = 24.dp
+    val iconPainterSize = 16.dp
 
     val elementsWithCoordinates =
         image.elements.filterIsInstance<ModelDiagnosticElement>().map { it to it.coordinates }
@@ -148,18 +149,40 @@ fun DiagnosticImage(
                     assert(coordinates in element.coordinates)
 
                     // Calculate canvas position with painter center of mass
-                    val canvasPosition = transformCoordinatesFromRealToCanvas(
+                    var canvasPosition = transformCoordinatesFromRealToCanvas(
                         coordinates, bitmap.width, bitmap.height, canvasSize!!
                     )
 
-                    // Draw a circle behind the (x)
-                    drawCircle(alpha = OUTER_CIRCLE_RADIUS,
-                        color = Color.Yellow,
-                        // For some reason radius is multiplied by 2
-                        radius = (COORDINATES_SELECTION_RADIUS.toFloat() / 2f),
-                        center = canvasPosition.let {
-                            Offset(x = it.x.toFloat(), y = it.y.toFloat())
-                        })
+                    // Center the element offset
+                    canvasPosition = canvasPosition.copy(
+                        x = canvasPosition.x,
+                        y = canvasPosition.y,
+                    )
+
+                    // Draw the center of masses
+                    if (coordinates.isCenterOfMass()) {
+                        // Draw a circle behind the (x)
+                        drawCircle(alpha = COLOR_ALPHA,
+                            color = Color.Yellow,
+                            // For some reason radius is multiplied by 2
+                            radius = (COORDINATES_SELECTION_RADIUS.toFloat() / 2f),
+                            center = canvasPosition.let {
+                                Offset(x = it.x.toFloat(), y = it.y.toFloat())
+                            })
+                    } else {
+                        // Draw a box
+                        drawRect(
+                            alpha = COLOR_ALPHA,
+                            color = Color.Yellow,
+                            topLeft = canvasPosition.let {
+                                Offset(x = it.x.toFloat(), y = it.y.toFloat())
+                            },
+                            size = Size(
+                                coordinates.w.toFloat(),
+                                coordinates.h.toFloat(),
+                            ),
+                        )
+                    }
 
                     // Draw an (x) on top of the DiagnosticElement
                     with(iconPainter) {
@@ -220,18 +243,18 @@ fun DiagnosticElementMarkPreview() {
         val image = ImageSample.mock(stage = AnalysisStage.Analyzed).copy(
             elements = setOf(
                 ModelDiagnosticElement(
-                    MockSpotsDisease.elements.first(), setOf(
-                        Coordinates(500, 500),
-                        Coordinates(200, 250),
-                        Coordinates(150, 1050),
-                        Coordinates(1000, 1500),
-                        Coordinates(2000, 1500),
+                    MockSpotsDisease.elements.first(), "n/a", setOf(
+                        BoxCoordinates(100, 100, 10, 10),
+                        BoxCoordinates(200, 250, 10, 10),
+                        BoxCoordinates(150, 1050, 10, 10),
+                        BoxCoordinates(1000, 1500, 10, 10),
+                        BoxCoordinates(2000, 1500, 10, 10),
                     )
                 ), ModelDiagnosticElement(
-                    MockSpotsDisease.elements.last(), setOf(
-                        Coordinates(550, 600),
-                        Coordinates(2200, 2000),
-                        Coordinates(450, 1903),
+                    MockSpotsDisease.elements.last(), "n/a", setOf(
+                        BoxCoordinates(550, 600),
+                        BoxCoordinates(2200, 2000),
+                        BoxCoordinates(450, 1903),
                     )
                 )
             )
@@ -239,7 +262,7 @@ fun DiagnosticElementMarkPreview() {
 
         // Initialize with no selected element
         var selectedElement by remember {
-            mutableStateOf<Pair<ModelDiagnosticElement, Coordinates>?>(null)
+            mutableStateOf<Pair<ModelDiagnosticElement, BoxCoordinates>?>(null)
         }
 
         // Create the diagnostic image

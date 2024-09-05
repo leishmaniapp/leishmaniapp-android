@@ -1,22 +1,22 @@
 package com.leishmaniapp
 
-import com.leishmaniapp.domain.types.Coordinates
+import com.leishmaniapp.domain.types.BoxCoordinates
 import org.junit.Assert
 import org.junit.Test
 
 class EntitiesLogicTests {
     @Test
     fun coordinatesEuclideanDistance() {
-        val coordinates1 = Coordinates(30, 20)
-        val coordinates2 = Coordinates(10, 20)
+        val boxCoordinates1 = BoxCoordinates(30, 20)
+        val boxCoordinates2 = BoxCoordinates(10, 20)
 
         Assert.assertEquals(
-            coordinates1.distanceTo(coordinates2),
+            boxCoordinates1.distanceTo(boxCoordinates2),
             20.0f
         )
 
         Assert.assertEquals(
-            coordinates2.distanceTo(coordinates1),
+            boxCoordinates2.distanceTo(boxCoordinates1),
             20.0f
         )
     }

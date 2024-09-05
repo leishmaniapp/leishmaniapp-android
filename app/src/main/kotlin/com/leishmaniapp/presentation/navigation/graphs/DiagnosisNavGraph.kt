@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.leishmaniapp.BuildConfig
 import com.leishmaniapp.domain.entities.AnalysisStage
 import com.leishmaniapp.presentation.navigation.NavigationRoutes
 import com.leishmaniapp.presentation.ui.dialogs.BackgroundDiagnosisAlertDialog
@@ -110,7 +111,12 @@ fun NavGraphBuilder.diagnosisNavGraph(
                     lifecycleOwner = lifecycleOwner,
                     cameraCalibration = cameraViewModel.cameraCalibration,
                     onPictureTake = {
-                        cameraViewModel.onPictureTake(it, disease!!, context)
+                        cameraViewModel.onPictureTake(context, it, disease!!)
+                    },
+                    onPictureInjection = { uri ->
+                        if (BuildConfig.DEBUG && uri != null) {
+                            cameraViewModel.onPictureInjectDebug(context, uri, disease!!)
+                        }
                     },
                     onCancel = {
                         willPopScope = true

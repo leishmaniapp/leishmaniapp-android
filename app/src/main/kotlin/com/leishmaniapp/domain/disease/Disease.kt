@@ -35,8 +35,6 @@ sealed class Disease(
 
     /**
      * List of [DiagnosticElementName] associated to the disease
-     * **Important:** Names must not be contained one into another ej: 'parasites' and 'parasites_b' are
-     * not valid as 'parasites' is contained within 'parasites_b'
      */
     val elements: Set<DiagnosticElementName>,
 
