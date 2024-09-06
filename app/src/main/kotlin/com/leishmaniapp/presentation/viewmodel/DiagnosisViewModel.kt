@@ -2,6 +2,7 @@ package com.leishmaniapp.presentation.viewmodel
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
 import androidx.core.content.FileProvider
@@ -21,7 +22,6 @@ import com.leishmaniapp.domain.entities.Patient
 import com.leishmaniapp.domain.entities.Specialist
 import com.leishmaniapp.domain.protobuf.toProto
 import com.leishmaniapp.domain.repository.IDiagnosesRepository
-import com.leishmaniapp.domain.repository.IPatientsRepository
 import com.leishmaniapp.domain.repository.ISamplesRepository
 import com.leishmaniapp.domain.repository.ISpecialistsRepository
 import com.leishmaniapp.domain.services.IAuthorizationService
@@ -280,13 +280,23 @@ class DiagnosisViewModel @Inject constructor(
             val file = withContext(Dispatchers.IO) { diagnosisSharingService.share(d) }
 
             // Share the file
-            val uri = FileProvider.getUriForFile(context, "com.leishmaniapp", file)
+            val uri = FileProvider.getUriForFile(context, "com.leishmaniapp.fileprovider", file)
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = diagnosisSharingService.mime
                 putExtra(Intent.EXTRA_STREAM, uri)
             }
 
-            //
+            // Grant permissions
+            val resolve = context.packageManager.queryIntentActivities(
+                intent,
+                PackageManager.MATCH_DEFAULT_ONLY
+            )
+            for (resolveInfo in resolve) {
+                val packageName = resolveInfo.activityInfo.packageName
+                context.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            // Share via system
             context.startActivity(Intent.createChooser(intent, "Share via"))
         }
     }
@@ -336,6 +346,17 @@ class DiagnosisViewModel @Inject constructor(
                     // Set the metadata value
                     currentImageMetadata.value = sample.metadata
                 }
+            }
+        }
+    }
+
+    /**
+     * Set the previous image as the current one
+     */
+    fun setPreviousImageSample() {
+        viewModelScope.launch {
+            diagnosis.value?.let { diagnosis ->
+                currentImageMetadata.value = diagnosis.images.last().metadata
             }
         }
     }

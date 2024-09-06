@@ -7,8 +7,6 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,14 +18,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.leishmaniapp.R
 import com.leishmaniapp.domain.disease.MockSpotsDisease
@@ -38,10 +35,22 @@ import com.leishmaniapp.domain.types.BoxCoordinates
 import com.leishmaniapp.presentation.ui.theme.LeishmaniappTheme
 import com.leishmaniapp.utilities.mock.MockGenerator.mock
 
-/// Radius at which the element will be
-const val COORDINATES_SELECTION_RADIUS: Int = 100
-const val OUTER_CIRCLE_RADIUS: Float = 0.20f
-const val COLOR_ALPHA: Float = 0.20f
+val SELECTED_COLOR: Color = Color.Magenta
+const val BORDER_STROKE_WIDTH: Float = 5f
+
+const val CENTER_OF_MASS_DIAMETER: Int = 140
+
+val CENTER_OF_MASS_FILL_COLOR: Color = Color.Yellow
+const val CENTER_OF_MASS_FILL_ALPHA: Float = 0.10f
+
+val CENTER_OF_MASS_STROKE_COLOR: Color = Color.Red
+const val CENTER_OF_MASS_STROKE_ALPHA: Float = 0.50f
+
+val BOUNDING_BOX_STROKE_COLOR: Color = Color.Blue
+const val BOUNDING_BOX_STROKE_ALPHA: Float = 0.50f
+
+val BOUNDING_BOX_FILL_COLOR: Color = Color.Cyan
+const val BOUNDING_BOX_FILL_ALPHA: Float = 0.05f
 
 /**
  * Image's real coordinates do not match on-screen coordinates due to canvas being
@@ -65,13 +74,14 @@ fun transformCoordinatesFromCanvasToReal(
 )
 
 /**
- * Calculate the Painter's center of mass offset
+ * Transfor a box size into canvas size
  */
-fun calculatePainterCenterOfMass(boxCoordinates: BoxCoordinates, imageSize: Size): BoxCoordinates =
-    BoxCoordinates(
-        x = boxCoordinates.x - (imageSize.width / 2f).toInt(),
-        y = boxCoordinates.y - (imageSize.height / 2f).toInt()
-    )
+fun transformSizeFromRealToCanvas(
+    x: Size, realSize: Size, canvasSize: Size
+): Size = Size(
+    width = x.width * (canvasSize.width / realSize.width),
+    height = x.height * (canvasSize.height / realSize.height),
+)
 
 /**
  * Fetch user taps on Canvas
@@ -107,10 +117,6 @@ fun DiagnosticImage(
     // Late initialization of canvas size when rendered
     var canvasSize: Size? = null
 
-    // Get the Icon to be painted
-    val iconPainter = rememberVectorPainter(Icons.Filled.Close)
-    val iconPainterSize = 16.dp
-
     val elementsWithCoordinates =
         image.elements.filterIsInstance<ModelDiagnosticElement>().map { it to it.coordinates }
             .flatMap { (key, values) -> values.map { key to it } }
@@ -140,8 +146,6 @@ fun DiagnosticImage(
                 if (image.stage != AnalysisStage.Analyzed) return@drawWithContent
                 // Store the canvas size
                 canvasSize = this.size
-                // Get the Painter size in Px
-                val painterSizePx = Size(iconPainterSize.toPx(), iconPainterSize.toPx())
 
                 // For each coordinate
                 elementsWithCoordinates.forEach { (element, coordinates) ->
@@ -161,50 +165,81 @@ fun DiagnosticImage(
 
                     // Draw the center of masses
                     if (coordinates.isCenterOfMass()) {
-                        // Draw a circle behind the (x)
-                        drawCircle(alpha = COLOR_ALPHA,
-                            color = Color.Yellow,
-                            // For some reason radius is multiplied by 2
-                            radius = (COORDINATES_SELECTION_RADIUS.toFloat() / 2f),
-                            center = canvasPosition.let {
+
+                        canvasPosition
+                            .let {
                                 Offset(x = it.x.toFloat(), y = it.y.toFloat())
-                            })
+                            }
+                            .let { center ->
+
+                                // Draw a circle
+                                drawCircle(
+                                    alpha = CENTER_OF_MASS_FILL_ALPHA,
+                                    color = CENTER_OF_MASS_FILL_COLOR,
+                                    radius = (CENTER_OF_MASS_DIAMETER.toFloat() / 2f),
+                                    center = center,
+                                )
+
+                                // Draw a border
+                                drawCircle(
+                                    alpha = CENTER_OF_MASS_STROKE_ALPHA,
+                                    color = CENTER_OF_MASS_STROKE_COLOR,
+                                    style = Stroke(width = BORDER_STROKE_WIDTH),
+                                    radius = (CENTER_OF_MASS_DIAMETER.toFloat() / 2f),
+                                    center = center,
+                                    colorFilter = if ((element to coordinates) == selectedElement) {
+                                        // Item is selected
+                                        ColorFilter.tint(SELECTED_COLOR)
+                                    } else {
+                                        // Item is not selected
+                                        null
+                                    }
+                                )
+                            }
+
                     } else {
-                        // Draw a box
-                        drawRect(
-                            alpha = COLOR_ALPHA,
-                            color = Color.Yellow,
-                            topLeft = canvasPosition.let {
-                                Offset(x = it.x.toFloat(), y = it.y.toFloat())
-                            },
-                            size = Size(
+                        // Get properties
+                        val size = transformSizeFromRealToCanvas(
+                            Size(
                                 coordinates.w.toFloat(),
                                 coordinates.h.toFloat(),
                             ),
+                            Size(
+                                bitmap.width.toFloat(),
+                                bitmap.height.toFloat(),
+                            ),
+                            canvasSize!!,
                         )
-                    }
 
-                    // Draw an (x) on top of the DiagnosticElement
-                    with(iconPainter) {
-                        // Calculate offset due to center of mass
-                        val painterPosition = calculatePainterCenterOfMass(
-                            canvasPosition, painterSizePx
-                        )
-                        // Draw in canvas position
-                        translate(
-                            left = painterPosition.x.toFloat(),
-                            top = painterPosition.y.toFloat(),
-                        ) {
-                            draw(
-                                size = painterSizePx, colorFilter = ColorFilter.tint(
-                                    if ((element to coordinates) == selectedElement) {
-                                        Color.Magenta // Item is selected
-                                    } else { // Item is not selected
-                                        Color.Black
-                                    }
-                                )
-                            )
+                        val position = canvasPosition.let {
+                            Offset(x = it.x.toFloat(), y = it.y.toFloat())
                         }
+
+                        // Draw a box
+                        drawRect(
+                            alpha = BOUNDING_BOX_FILL_ALPHA,
+                            color = BOUNDING_BOX_FILL_COLOR,
+                            style = Fill,
+                            topLeft = position,
+                            size = size,
+                        )
+
+                        // Draw the border
+                        drawRect(
+                            alpha = BOUNDING_BOX_STROKE_ALPHA,
+                            color = BOUNDING_BOX_STROKE_COLOR,
+                            style = Stroke(width = BORDER_STROKE_WIDTH),
+                            topLeft = position,
+                            size = size,
+                            colorFilter = if ((element to coordinates) == selectedElement) {
+                                // Item is selected
+                                ColorFilter.tint(SELECTED_COLOR)
+                            } else {
+                                // Item is not selected
+                                null
+                            }
+                        )
+
                     }
                 }
             }
@@ -222,7 +257,7 @@ fun DiagnosticImage(
 
                     // Invoke with callback with null or value
                     onElementPressed.invoke(tappedElement?.let { (element, coordinates) ->
-                        if (coordinates distanceTo tapToRealCoordinates <= COORDINATES_SELECTION_RADIUS) {
+                        if (coordinates distanceTo tapToRealCoordinates <= CENTER_OF_MASS_DIAMETER) {
                             element to coordinates
                         } else null
                     })
@@ -232,43 +267,5 @@ fun DiagnosticImage(
             contentDescription = stringResource(id = R.string.diagnostic_image),
             contentScale = ContentScale.Crop
         )
-    }
-}
-
-@Composable
-@Preview(showBackground = true)
-fun DiagnosticElementMarkPreview() {
-    LeishmaniappTheme {
-        // Generate a mock image
-        val image = ImageSample.mock(stage = AnalysisStage.Analyzed).copy(
-            elements = setOf(
-                ModelDiagnosticElement(
-                    MockSpotsDisease.elements.first(), "n/a", setOf(
-                        BoxCoordinates(100, 100, 10, 10),
-                        BoxCoordinates(200, 250, 10, 10),
-                        BoxCoordinates(150, 1050, 10, 10),
-                        BoxCoordinates(1000, 1500, 10, 10),
-                        BoxCoordinates(2000, 1500, 10, 10),
-                    )
-                ), ModelDiagnosticElement(
-                    MockSpotsDisease.elements.last(), "n/a", setOf(
-                        BoxCoordinates(550, 600),
-                        BoxCoordinates(2200, 2000),
-                        BoxCoordinates(450, 1903),
-                    )
-                )
-            )
-        )
-
-        // Initialize with no selected element
-        var selectedElement by remember {
-            mutableStateOf<Pair<ModelDiagnosticElement, BoxCoordinates>?>(null)
-        }
-
-        // Create the diagnostic image
-        DiagnosticImage(
-            image = image,
-            selectedElement = selectedElement
-        ) { tappedSelectedElement -> selectedElement = tappedSelectedElement }
     }
 }

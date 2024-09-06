@@ -1,5 +1,6 @@
 package com.leishmaniapp.presentation.navigation.graphs
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.res.stringResource
@@ -37,13 +38,17 @@ fun NavGraphBuilder.patientsNavGraph(
             val state by patientViewModel.state.observeAsState(initial = PatientState.NotReady)
             val patients by patientViewModel.patients.collectAsStateWithLifecycle()
 
+            BackHandler {
+                navHostController.navigateReturnToMenu()
+            }
+
             if (state is PatientState.NotReady) {
                 BusyScreen()
             } else {
                 PatientListScreen(
                     patients = patients.toSet(),
                     onBackButton = {
-                        navHostController.popBackStack()
+                        navHostController.navigateReturnToMenu()
                     },
                     onAddPatient = {
                         navHostController.navigateToAddPatient()

@@ -19,14 +19,20 @@ sealed class CameraState : Parcelable {
     data object None : CameraState()
 
     /**
+     * Camera is busy processing the photo
+     */
+    @Parcelize
+    data object Busy : CameraState()
+
+    /**
      * Error during photo taking
      */
     @Parcelize
     data class Error(val e: LeishmaniappException) : CameraState()
 
     /**
-     * A photo was taken
+     * A photo was taken, is recovery flag is true then the image was previously taken but recovered
      */
     @Parcelize
-    data class Photo(val location: Uri) : CameraState()
+    data class Photo(val location: Uri, val recovery: Boolean = false) : CameraState()
 }

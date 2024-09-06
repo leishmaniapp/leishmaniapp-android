@@ -59,10 +59,20 @@ class CameraViewModel @Inject constructor(
     val cameraState: LiveData<CameraState> = _cameraState
 
     /**
+     * URI of the latest image, used for recovering latest image
+     */
+    private var latestImagePath: Uri? = null
+
+    /**
      * Callback when a picture is taken
      */
     fun onPictureTake(context: Context, result: Result<Bitmap>, disease: Disease) =
         viewModelScope.launch {
+
+            withContext(Dispatchers.Main) {
+                _cameraState.value = CameraState.Busy
+            }
+
             File(
                 context.cacheDir,
                 // Short for LastTaken
@@ -82,6 +92,7 @@ class CameraViewModel @Inject constructor(
 
                     // Set new bitmap value (from the URI)
                     _cameraState.value = CameraState.Photo(file.toUri())
+                    latestImagePath = file.toUri()
                     Log.d(TAG, "Stored new photo with uri: ${_cameraState.value}")
 
                     // Recycle the bitmap
@@ -103,6 +114,9 @@ class CameraViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
 
             Log.w(TAG, "Request for image injection = $uri")
+            withContext(Dispatchers.Main) {
+                _cameraState.value = CameraState.Busy
+            }
 
             // Create a file
             val file = File(
@@ -118,7 +132,11 @@ class CameraViewModel @Inject constructor(
             }
 
             // Get bitmap from file
-            val bitmap = BitmapFactory.decodeFile(file.path)
+            val bitmap = pictureStandardizationService.scale(
+                pictureStandardizationService.crop(BitmapFactory.decodeFile(file.path))
+                    .getOrThrow(),
+                disease,
+            ).getOrThrow()
 
             // Call picture take with the new bitmap
             // Save the bitmap in storage
@@ -129,10 +147,21 @@ class CameraViewModel @Inject constructor(
 
             withContext(Dispatchers.Main) {
                 _cameraState.value = CameraState.Photo(file.toUri())
+                latestImagePath = file.toUri()
             }
 
             bitmap.recycle()
         }
+
+    /**
+     * Recover latest taken photo
+     */
+    fun recover() {
+        latestImagePath?.let { uri ->
+            _cameraState.value = CameraState.Busy
+            _cameraState.value = CameraState.Photo(uri, recovery = true)
+        }
+    }
 
     /**
      * Dismiss all the current state

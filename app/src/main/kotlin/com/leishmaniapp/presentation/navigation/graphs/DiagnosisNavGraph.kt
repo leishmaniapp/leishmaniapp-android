@@ -24,6 +24,7 @@ import com.leishmaniapp.presentation.ui.dialogs.BackgroundDiagnosisAlertDialog
 import com.leishmaniapp.presentation.ui.dialogs.BusyAlertDialog
 import com.leishmaniapp.presentation.ui.dialogs.ErrorAlertDialog
 import com.leishmaniapp.presentation.ui.dialogs.FinalizeDiagnosisAlertDialog
+import com.leishmaniapp.presentation.ui.dialogs.WillPopCameraAlertDialog
 import com.leishmaniapp.presentation.ui.dialogs.WillPopScopeAlertDialog
 import com.leishmaniapp.presentation.ui.layout.BusyScreen
 import com.leishmaniapp.presentation.ui.views.camera.CameraPermissionHandler
@@ -106,6 +107,10 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 return@composable
             }
 
+            BackHandler {
+                willPopScope = true
+            }
+
             CameraPermissionHandler {
                 CameraScreen(executor = ContextCompat.getMainExecutor(context),
                     lifecycleOwner = lifecycleOwner,
@@ -124,6 +129,9 @@ fun NavGraphBuilder.diagnosisNavGraph(
             }
 
             when {
+                // Show busy camera
+                state is CameraState.Busy -> BusyAlertDialog()
+
                 // Show an error alert dialog
                 state is CameraState.Error -> ErrorAlertDialog(error = (state as CameraState.Error).e) {
                     cameraViewModel.dismiss()
@@ -133,7 +141,7 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 state is CameraState.Photo -> navHostController.navigateToDiagnosisAndAnalysis()
 
                 // Show exit alert dialog
-                willPopScope -> WillPopScopeAlertDialog(
+                willPopScope -> WillPopCameraAlertDialog(
                     onDismissRequest = {
                         willPopScope = false
                     },
@@ -142,18 +150,20 @@ fun NavGraphBuilder.diagnosisNavGraph(
                         if (navHostController.previousBackStackEntry?.destination?.route == NavigationRoutes.DiagnosisRoute.InitializeDiagnosis.route) {
                             navHostController.navigate(NavigationRoutes.MenuRoute.MainMenuRoute.route) {
                                 popUpTo(NavigationRoutes.MenuRoute.MainMenuRoute.route)
+
+                                // ! Cancel the diagnosis
+                                // Dismiss the current camera state
+                                cameraViewModel.dismiss()
+                                // Dismiss the current patient
+                                patientViewModel.dismiss()
+                                // Discard the diagnosis
+                                diagnosisViewModel.discard()
                             }
                         } else {
+                            // Recover the latest camera state
+                            cameraViewModel.recover()
                             navHostController.popBackStack()
                         }
-
-                        // ! Cancel the diagnosis
-                        // Dismiss the current camera state
-                        cameraViewModel.dismiss()
-                        // Dismiss the current patient
-                        patientViewModel.dismiss()
-                        // Discard the diagnosis
-                        diagnosisViewModel.discard()
                     },
                 )
             }
@@ -180,14 +190,22 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 }
 
                 // Show a loading screen
-                null -> BusyScreen()
+                null, CameraState.Busy -> BusyScreen()
 
                 // Show the analysis screen
                 is CameraState.Photo -> {
 
                     LaunchedEffect(key1 = cameraState) {
-                        // Set the image sample
-                        diagnosisViewModel.setNewImageSample((cameraState as CameraState.Photo).location)
+
+                        (cameraState as CameraState.Photo).let { st ->
+                            if (st.recovery) {
+                                // Recover latest image
+                                diagnosisViewModel.setPreviousImageSample()
+                            } else {
+                                // Set the image sample
+                                diagnosisViewModel.setNewImageSample(st.location)
+                            }
+                        }
                     }
 
                     when {

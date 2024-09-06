@@ -365,7 +365,9 @@ class LamLocalAnalysisServiceImpl @Inject constructor(
             val cacheFile = withContext(Dispatchers.IO) {
                 File.createTempFile(
                     "lam_${sample.metadata.disease.id}_${sample.metadata.sample}_${sample.metadata.diagnosis}",
-                    sample.file!!.path.let { p -> p!!.substring(p.lastIndexOf(".")) })
+                    sample.file!!.path.let { p -> p!!.substring(p.lastIndexOf(".")) },
+                    applicationContext.cacheDir,
+                )
             }
 
             // Delete the file when its no longer needed

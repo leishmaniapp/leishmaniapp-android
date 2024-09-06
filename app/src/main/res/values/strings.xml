@@ -186,7 +186,9 @@
     <string name="request_permission">Autorizar permisos</string>
     <string name="check_permission">Verificar permisos</string>
     <string name="cancel_camera">Cancelar toma de muestras</string>
-    <string name="take_photo">Tomar foto</string>
+    <string name="take_photo">Capturar</string>
+    <string name="cancel_photo">Cancelar captura de imágen</string>
+    <string name="cancel_photo_description">¿Cancelar la captura de esta imágen?, regresará a la muestra anterior</string>
 
     <!-- Real Time Calibration (RTC) -->
     <string name="calibration_title">Calibración</string>
