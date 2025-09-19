@@ -85,7 +85,6 @@ fun AddPatientScreen(
 
                 OutlinedTextField(
                     modifier = Modifier
-                        .menuAnchor()
                         .fillMaxWidth(),
                     readOnly = true,
                     value = documentTypeField.name,

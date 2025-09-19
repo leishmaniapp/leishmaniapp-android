@@ -9,7 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
@@ -25,7 +25,6 @@ import com.leishmaniapp.presentation.ui.dialogs.BusyAlertDialog
 import com.leishmaniapp.presentation.ui.dialogs.ErrorAlertDialog
 import com.leishmaniapp.presentation.ui.dialogs.FinalizeDiagnosisAlertDialog
 import com.leishmaniapp.presentation.ui.dialogs.WillPopCameraAlertDialog
-import com.leishmaniapp.presentation.ui.dialogs.WillPopScopeAlertDialog
 import com.leishmaniapp.presentation.ui.layout.BusyScreen
 import com.leishmaniapp.presentation.ui.views.camera.CameraPermissionHandler
 import com.leishmaniapp.presentation.ui.views.camera.CameraScreen
@@ -138,7 +137,9 @@ fun NavGraphBuilder.diagnosisNavGraph(
                 }
 
                 // Navigate to next page
-                state is CameraState.Photo -> navHostController.navigateToDiagnosisAndAnalysis()
+                state is CameraState.Photo -> LaunchedEffect(state) {
+                    navHostController.navigateToDiagnosisAndAnalysis()
+                }
 
                 // Show exit alert dialog
                 willPopScope -> WillPopCameraAlertDialog(
@@ -185,8 +186,10 @@ fun NavGraphBuilder.diagnosisNavGraph(
 
             when (cameraState) {
                 // Return to picture take
-                is CameraState.Error, CameraState.None -> navHostController.navigateToPictureTake {
-                    popUpTo(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route)
+                is CameraState.Error, CameraState.None -> LaunchedEffect(cameraState) {
+                    navHostController.navigateToPictureTake {
+                        popUpTo(NavigationRoutes.DiagnosisRoute.DiagnosisAndAnalysis.route)
+                    }
                 }
 
                 // Show a loading screen
@@ -342,7 +345,9 @@ fun NavGraphBuilder.diagnosisNavGraph(
 
             if (diagnosis!!.finalized) {
                 BusyAlertDialog()
-                navHostController.navigateToDiagnosisTable()
+                LaunchedEffect(diagnosis!!.finalized) {
+                    navHostController.navigateToDiagnosisTable()
+                }
             }
 
             FinalizeDiagnosisScreen(

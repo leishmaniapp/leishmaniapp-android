@@ -111,9 +111,7 @@ fun AuthenticationOfflineScreen(
                     }) {
 
                     OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .menuAnchor(),
+                        modifier = Modifier.fillMaxWidth(),
                         value = email,
                         readOnly = true,
                         onValueChange = {},

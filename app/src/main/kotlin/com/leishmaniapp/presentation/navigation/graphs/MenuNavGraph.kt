@@ -1,5 +1,6 @@
 package com.leishmaniapp.presentation.navigation.graphs
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +42,9 @@ fun NavGraphBuilder.menuNavGraph(
                 .observeAsState()
 
             if (authState == null) {
-                navHostController.navigateToAuthentication()
+                LaunchedEffect(Unit) {
+                    navHostController.navigateToAuthentication()
+                }
                 return@composable
             }
 
@@ -109,7 +112,9 @@ fun NavGraphBuilder.menuNavGraph(
                 .map { it.authenticatedOrNull() }
                 .observeAsState()
             if (authState == null) {
-                navHostController.navigateToAuthentication()
+                LaunchedEffect(Unit) {
+                    navHostController.navigateToAuthentication()
+                }
                 return@composable
             }
 

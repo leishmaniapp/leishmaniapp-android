@@ -24,11 +24,12 @@ val applicationProperties = Properties().apply {
 
 android {
     namespace = "com.leishmaniapp"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.leishmaniapp"
         minSdk = 27
+        //noinspection OldTargetApi
         targetSdk = 34
         versionCode = 2
         versionName = "2.0"
@@ -59,9 +60,6 @@ android {
 
         debug {
             isMinifyEnabled = false
-            kotlinOptions {
-                freeCompilerArgs = listOf("-Xdebug")
-            }
         }
     }
 

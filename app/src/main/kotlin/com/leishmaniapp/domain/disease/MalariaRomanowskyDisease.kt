@@ -2,7 +2,6 @@ package com.leishmaniapp.domain.disease
 
 import com.leishmaniapp.R
 import com.leishmaniapp.domain.entities.DiagnosticElementName
-import com.leishmaniapp.domain.entities.ModelDiagnosticElement
 import com.leishmaniapp.domain.types.ComputedResultsType
 
 /**
@@ -34,6 +33,7 @@ data object MalariaRomanowskyDisease : Disease(
     painterResource = R.drawable.disease_malaria_romanowsky_icon
 ) {
     override fun modelResultForDisease(computedResults: ComputedResultsType): Boolean {
-        TODO()
+        // TODO: Fill in criteria for positive diagnosis
+        return true
     }
 }

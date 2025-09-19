@@ -2,7 +2,6 @@ package com.leishmaniapp.domain.disease
 
 import com.leishmaniapp.R
 import com.leishmaniapp.domain.entities.DiagnosticElementName
-import com.leishmaniapp.domain.entities.DiagnosticModel
 import com.leishmaniapp.domain.entities.ModelDiagnosticElement
 import com.leishmaniapp.domain.types.ComputedResultsType
 

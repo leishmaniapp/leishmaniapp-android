@@ -47,7 +47,9 @@ fun NavGraphBuilder.startNavGraph(
 
             // If authenticated, then exit this screen
             if (authState is AuthState.Authenticated) {
-                navHostController.navigateToDiseasesMenu()
+                LaunchedEffect(authState) {
+                    navHostController.navigateToDiseasesMenu()
+                }
             }
 
             // Show auth screens
