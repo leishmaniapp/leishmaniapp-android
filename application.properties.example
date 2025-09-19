@@ -1,0 +1,10 @@
+# This file contains all the application configuration properties including secrets for connecting to the cloud
+# All the key, value fields are injected into BuildConfig with uppercase letters and their values are stored as strings
+#
+# Cloud access endpoint for gRPC classes
+remote_endpoint=http://localhost:8080
+# Cloud services timeout in seconds
+remote_timeout=30
+# Hashing algorithm
+# https://developer.android.com/reference/kotlin/java/security/MessageDigest
+hash_algorithm=SHA-256
